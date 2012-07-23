@@ -7,15 +7,8 @@ emacs --batch --script publish.el
 
 if [ $1"X" == "siteX" ]
 then
-    PASSWD=`grep "dirlt.com.password" ~/.password | awk -F= '{print $2;}'`
-    if [ $PASSWD"X" == "X" ]
-    then
-        echo "no password!!!"
-        exit -1
-    else
-        echo "password=$PASSWD"
-    fi
+    xv=123456
     tar czvf www.tar.gz www
-    ./publish.exp $PASSWD
+    ./publish.exp $xv
     rm -rf www.tar.gz
 fi
