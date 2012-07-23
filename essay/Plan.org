@@ -7,3 +7,7 @@
 * DONE 备份ProxySwitchySharp文件
 * TODO Ubuntu的virtualbox如何识别USB解决网银问题
 * TODO 考虑使用fvwm
+* TODO 搞定邮件thunderbird客户端
+* TODO thunderbird是否有配置可以导出？
+* TODO emacs邮件客户端
+* TODO emacsRSS阅读器

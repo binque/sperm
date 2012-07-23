@@ -299,3 +299,26 @@
 ;; default browser.
 (setq browse-url-generic-program (executable-find "chromium-browser")
       browse-url-browser-function 'browse-url-generic)
+
+;; 显示效果还是相当的不好
+;; ;; newsticker
+;; (autoload 'newsticker-start "newsticker" "Emacs Newsticker" t)
+;; (autoload 'newsticker-show-news "newsticker" "Emacs Newsticker" t)
+;; (setq newsticker-dir "~/.newsticker/")
+;; (setq newsticker-url-list-defaults nil)
+;; (setq newsticker-automatically-mark-visited-items-as-old t)
+;; (setq newsticker-retrieval-interval 600)
+;; (setq newsticker-treeview-treewindow-width 40)
+;; (setq newsticker-treeview-listwindow-height 30)
+;; (setq newsticker-url-list
+;;       '(("solitdot"
+;;          "http://solidot.org/index.rss"         
+;;          nil nil nil)
+;;         ("CoolShell"
+;;          "http://coolshell.cn/?feed=rss2"
+;;          nil nil nil)
+;;         ("Apee"
+;;          "http://feed.feedsky.com/aqee-net"
+;;          nil nil nil)))
+
+
