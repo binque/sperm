@@ -9,8 +9,8 @@ if [ -f ~/.bashrc ]; then
     fi
 fi
 
-export DOC="$HOME/github/tpircs/essay"
-export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64/x
+export DOC="$HOME/github/sperm/essay"
+export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64/
 export CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:.
 
 PATH=$JAVA_HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH
