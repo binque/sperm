@@ -1,0 +1,7 @@
+* lzf
+#+AUTHOR: dirtysalt1987@gmail.com
+#+OPTIONS: H:5
+
+http://oldhome.schmorp.de/marc/liblzf.html
+
+TODO(dirlt):

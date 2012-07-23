@@ -1,0 +1,105 @@
+* index
+#+AUTHOR: dirtysalt1987@gmail.com
+#+TITLE: 章炎的主页
+#+OPTIONS: H:3
+
+我叫章炎{dirtysalt}{dirlt}.我是一名软件工程师：
+   - 2012.5-now 在友盟{Umeng}的数据平台{DataPlatform}工作，主要是负责统计数据处理。
+   - 2008-2012.5 在百度{Baidu}的基础架构部{Infrastructure}工作，主要负责基础组件，开发工具以及分布式系统。
+
+可以从我的linkedin里面看到我做过的projects。感觉自己对各方面都感兴趣，不过现在关注的主要是:
+   - 内存管理(Memory Management)
+   - 单机存储系统(Storage)
+   - 网络编程框架(Network Programming)
+   - 程序设计语言和设计模式(Programming Language and Design Pattern)
+   - 计算机系统(Compute System)
+   - 分布式实践(Distributed System)
+
+我想找到自己最爱的编程语言，然后快速地写出有用的程序。(现在自认为还没有做到这点,what a shame!)
+   - linkedin http://www.linkedin.com/in/dirlt
+   - 邮箱 [[mailto:dirtysalt1987@gmail.com][dirtysalt1987@gmail.com]]
+   - 博客 http://dirlt.com/blog
+   - 新浪微博 http://weibo.com/dirlt
+   - github https://github.com/dirtysalt
+
+感谢xuchaoqian同学提供给我的空间，让我可以在上面把自己写的东西分享出来，他的空间是 http://xuchaoqian.com/ ，他是一位伟大的工程师。我也将主页内容同步到了[[http://dirlt.sinaapp.com/][SAE]]上。(not any more!!!)
+
+** [[file:./APUE.org][APUE]]
+Unix环境高级编程(Advanced Programming Unix Environment),W. Richard Stevens的神作。笔记里面没有包含书最后的几个部分，比如终端，打印机等，因为我觉得可能大家都不太需要这个东西了。
+我还尝试将一些跨章节的概念整合到一起，这样比较容易从总体把握Unix编程环境。同时在后面补充了一些Linux上面特定内容以及系统工具（移到了[[file:./Linux.org][Linux]] 的文章里面），这个在真正开发Linux程序时候非常有用。
+
+** [[file:./UNP.org][UNP]]
+Unix网络编程(Unix Network Programming),W. Richard Stevens的又一神作。笔记里面只是对于TCP原理有比较详细讨论，这部分笔记也包含了TCP Illustrated v1里面和TCP相关的章节内容。
+对于编程方面也着重TCP socket使用。希望大家可以理解，毕竟在大部分应用场景下面我们选用TCP模型更多，并且TCP里面有很多非常琐碎的知识。工具相关的内容已经移到了[[file:./Linux.org][Linux]] 文章里面。
+
+** [[file:./DBMS.org][DBMS]]
+DBMS(database management system)现在正在研究。打算首先阅读一下数据库系统基础教程(A First Course in Database Systems by Jeffrey D. Ullman),然后看看
+另外一本也是Jeffrey D. Ullman写的数据库系统实现(Database System Implementation).主要是了解DBMS方面的理论和大致实现，之后会稍微结合现有数据库实现阅读代码(MySQL/PostgreSQL).
+
+** [[file:./SIMD.org][SIMD]]
+SIMD(Single Instruction Muitple Data)单指令多数据。这个笔记其实是Intel Reference Manual中关于SIMD指令的总结。里面包含了一些理解SIMD指令需要的知识，以及对SIMD指令进行了分类。
+遗憾的是里面没有什么过多的例子，毕竟这个是结合场景来使用的。
+
+** [[file:./DesignPattern.org][DesignPattern]]
+将书<Design Patterns: Elements of Reusable Object-Oriented Software>中要表达的思想按照自己的意思整理出来(后面可能会添加一些自己的"设计模式"吧:)。
+不过我倒是觉得没有必要在使用中刻意地去拼凑使用某种模式，相反应该让模式渗入到自己的思想中去，指导自己写出更加优美更加可维护的代码，而不用在意"我使用了哪种模式".
+然后现在我开始逐渐认同一个观点，那就是"设计模式是语言表达能力存在缺陷的一种表现".
+
+** Compress
+   - [[file:./Snappy.org][snappy]] google的开源压缩解压库。在满足一定压缩比率的条件下着重提升压缩和解压速度。
+   - [[file:./lzf.org][lzf]] redis使用的开源压缩解压库。轻量(两个文件)可以很容易地独立纳入项目。
+
+** Memory Management
+   - [[file:./TCMalloc.org][tcmalloc]] google的开源线程缓存内存分配器，解决多线程下面内存分配效率问题。
+
+** Storage
+   - [[file:./LevelDB.org][leveldb]] google的开源kv存储系统。支持billion级别的数据量，适合于写少读多的情况。当时阅读的时候是从github上面clone下来的，可能还存相当多的bug.TODO(dirlt):更深入的阅读.
+   - [[file:./Redis.org][Redis]] 内存存储系统，支持丰富的数据类型以及相应的计算(支持持久化)。外围包装网络访问接口(并且提供了丰富的客户端),可以比较方便地在分布式系统内或者是环境下面使用.
+
+** Network Programming
+   - [[https://github.com/dirtysalt/sperm/tree/master/cc/itachi][itachi]] 自己两天时间写完的异步网络编程框架，当然有很多地方需要改进，但是内核基本稳定了。并且在上面做了asocket封装，编写网络程序非常方便。TODO(dirlt):是否需要专门写篇文章介绍
+   - [[file:./libev.org][libev]] 开源的事件触发器。被认为是更高效的libevent.itachi这个项目开始想自己编写事件触发器，但是发现工作比较琐碎枯燥，所以底层还是选择使用libev.
+   - [[file:./HPServer.org][hpserver]] 开源的网络编程框架。可以当做一个入门级的网络编程框架阅读。这个是我最开始阅读的网络编程框架(1st).
+   - [[file:./nmstl.org][nmstl]] 开源的网络编程框架。一个很早期的作品，代码十分简洁。主要是内部实现了SEDA的思想。这个是我第二个阅读的网络编程框架(2nd).
+   - [[file:./Muduo.org][muduo]] 开源的网络编程框架。作者理想中的网络编程框架实现，里面有很多mina/netty的影子。这个是我三个阅读的网络编程框架(3rd).
+   - [[file:./Kylin.org][kylin]] baidu in-house的异步编程框架。linsd的神作，通过阅读这个框架的代码让我理解了异步编程模型。这个是我第四个阅读的网络编程框架(4th).
+   - [[file:./ZeroMQ.org][zeromq]] 开源的消息传输系统。颠覆我们思考和编写网络通信程序的方式。TODO(dirlt):只是阅读了文档和API，可以考虑阅读一下代码.
+   - [[file:./ACE.org][ACE]] 开源的网络编程框架。非常重量级，也被人诟病为学术产物而不是适合生产实践。TODO(dirlt):只是有大概的了解，有待更深入的研究.
+
+** Computer System
+   - [[file:./PIC.org][位置无关代码]] 分析了一下PIC位置无关代码内部的原理以及和动态库之间的关系。通过阅读<深入理解计算机系统>并且结合实际的例子总结出来的。
+   - [[file:./GCCAssembly.org][GCC内嵌汇编]] 如何编写GCC内嵌汇编，以及一些关于GCC内嵌汇编的文章，主要是参考了GCC Manual。但是相信里面有一些理解还是模糊的。
+   - [[file:./Encoding.org][字符编码]] 介绍了GB2312/GBK/GB18030/Unicode/UTF16/UTF32/UTF8这几种字符编码格式。还是觉得UTF8在设计以及实现上都是更加合理的选择。
+   - [[file:./BuildSystem.org][构建系统]] 在实现baidu in-house的构建工具comake2之前，做过构建系统的调研总结出来的。在语法表达上面(非常重要)借鉴了SCons,考虑了其他构建系统提供的功能。
+   - [[file:./OProfile.org][OProfile]] OProfile(系统级profiler)的原理和应用。不过说实话没有分析过源代码(或者是自己技术背景不行)终究觉得对这个东西理解不够深入，而且自己也仅仅是使用OProfile功能的子集。
+   - [[file:./SWIG.org][SWIG]] C/C++多语言扩展接口生成器，使用起来非常方便(至于生成的代码没有看过效率如何).个人觉得比较适合quick & dirty的方案。
+   - [[file:./Maven.org][Maven]] 主要针对Java开发的基于工程对象模型(POM, Project Object Model)构建系统，主要记录了一些使用方面的问题和解决办法。
+   - [[file:./Git.org][Git]] 分布式版本控制系统。很多项目都在使用Git进行版本管理包括Linux Kernel, Ruby on Rails, WINE, X.org等。
+   - [[file:./Ubuntu.org][Ubuntu]] 如何更好地使用ubuntu， 之前有过痛苦的经历。http://dirlt.com/blog/?p=1490 主要记录自己使用出现的问题。
+   - [[file:./Emacs.org][Emacs]] 如何更好地使用Emacs。自己依然只是使用一些简单功能，身边有很多牛人用Emacs那是相当的出神入化。
+   - [[file:./Linux.org][Linux]] 主要是介绍Linux下面一些工具使用以及和内核相关的知识。（将原来[[file:./APUE.org][APUE]] 和 [[file:./UNP.org][UNP]] 中的一部分内容放在这里面来了，这样可以保持这两篇内容比较稳定）
+   - [[file:./FVWM.org][FVWM]] F* Virtual Windows Manager.Linux下面高度可定制化的窗口管理器。
+
+** Distributed System
+   - [[file:./StreamBase.org][StreamBase]] 在实现baidu in-house的分布式实时流式计算系统之前，调研的商用流式计算系统。没有办法获得源代码只能够从文档中猜测其内部实现以及参考其提供的功能与接口。
+   - [[file:./MongoDB.org][MongoDB]] 面向文档的分布式存储系统，但是却可以针对文档字段索引来加快查询。功能上比通常我们认为的NoSQL强但是弱于RDBMS.
+   - [[file:./Chubby.org][Chubby]] google为松耦合分布式系统开发的锁服务，但是在现实中还可以作为名字服务来使用。
+   - [[file:./GFS.org][GFS]] google分布式基础架构三驾马车之一，分布式文件系统。
+   - [[file:./Hadoop.org][Hadoop]] Apache基金会开发的分布式系统基础架构。Hadoop是这个项目的总称下面包含很多子项目。
+     - [[file:./HDFS.org][HDFS]] Apache Hadoop项目的分布式文件系统，GFS的开源实现但是功能上还是存在一些差别。
+     - [[file:./HBase.org][HBase]] Apache Hadoop项目的分布式表格系统，BigTable的开源实现但是功能上还是存在一些差别。
+   
+** Programming Language
+   - C/C++
+     - The C Programming Language(DMR & BWK)
+     - C and Pointers
+     - The C++ Programming Language(BS)
+     - Thinking in C++
+   - Scheme
+     - Structure and Interpretation of Computer Programs
+   - Java
+     - Core Java Volume I: Fundamentals.
+
+** project
+   - [[file:./dsgm.org][dsgm]] Documentation Synchronize based on Google Mail. https://github.com/dirtysalt/sperm/tree/master/py/dsgm
+

@@ -1,0 +1,1160 @@
+* Linux
+#+AUTHOR: dirtysalt1987@gmail.com
+#+OPTIONS: H:5
+
+** proc文件系统
+*** /proc/<pid>/
+其中pid为对应的进程号，目录下面就是这个进程对应的信息。
+   - attr ???
+   - auxv ???
+   - cgroup ???
+   - clear_refs ???
+   - cmdline 进程启动运行参数
+   - coredump_filter ???
+   - cpuset ???
+   - cwd 当前目录
+   - environ 环境变量
+   - exe 映像文件
+   - fd 打开fd
+   - fdinfo 打开fd对应信息(非常少).
+   - io 读写字节数目以及读写系统调用次数。
+   - limits 运行环境limits
+   - loginuid 运行程序用户登录的uid(不是euid).
+   - maps 进程运行内存镜像图示(文本)
+   - mountinfo 文件系统挂载信息
+   - mounts 文件系统挂载信息
+   - mountstatus 文件系统挂载信息
+   - net 网络信息
+   - numa_maps NUMA的内存映射 ???
+   - oom_adj 出现OOM时进程被kill的权值。
+   - oom_score 出现OOM时进程被kill的分值。
+   - pagemap 内存映像(二进制),类似于core
+   - personality ??
+   - root 根文件系统路径
+   - sched 进程调度信息
+   - sessionid ???
+   - smaps 进程运行内存镜像图示(文本)各个段大小
+   - stat ???
+   - status 进程运行系统状态
+   - syscall ???
+   - task 如果是多线程的话每个线程对应信息
+   - wchan ???
+
+**** fd
+TODO(zhangyan04):
+
+**** io
+TODO:
+
+**** limits
+TODO:
+
+**** maps
+TODO:
+
+**** mount
+TODO:
+
+**** net
+TODO(zhangyan04):
+
+**** sched
+TODO(zhangyan04):
+
+**** status
+TODO:
+
+*** /proc/meminfo
+TODO(dirlt):
+
+*** /proc/stat
+TODO(dirlt):系统数据
+
+*** /proc/uptime
+TODO(dirlt):
+
+*** /proc/diskstats
+TODO(dirlt):磁盘数据
+
+*** /proc/sys
+在/proc/sys下面有一些可以动态修改的内核参数，有两种方式可以修改这些参数。
+
+首先可以使用sysctl工具来进行修改。比如如果想修改sys/vm/swappiness==0的话，那么可以
+#+BEGIN_EXAMPLE
+dirlt@dirlt-virtual-machine:~/github/tpircs/essay$ sudo sysctl vm.swappiness=0
+[sudo] password for dirlt:
+vm.swappiness = 0
+#+END_EXAMPLE
+
+上面修改方式是临时的，如果想进行永久修改的话可以修改/etc/sysctl.conf文件
+#+BEGIN_EXAMPLE
+vm.swappiness = 0
+#+END_EXAMPLE
+然后重启那么这个设置就会永久生效。
+
+*** /proc/sys/vm/overcommit_memory
+所谓的overcommit是过量使用的意思。
+   - OVERCOMMIT_GUESS=0 用户申请内存的时候，系统会判断剩余的内存有多少。如果不够的话那么就会失败。这种方式是比较保守的，因为有时候比如用户申请1G内存但是可能只是会使用其中1K.
+   - OVERCOMMIT_ALWAYS=1 用户申请内存的时候，系统不进行任何检查认为内存足够使用，直到使用内存超过可用内存。
+   - OVERCOMMIT_NEVER=2 用户一次申请内存的大小不允许超过<可用内存>的大小。关于这个<可用内存>的大小计算可以看下面overcommit_ration这个参数，可以上面两种所说的可用内存不太一样。
+
+*** /proc/sys/vm/overcommit_ratio
+如果overcommit_memory值为2的话，那么这个参数决定了系统的<可用内存>的大小。计算方式是 (Physical-RAM-Size) - ratio / 100 + (Swap-Size).
+#+BEGIN_EXAMPLE
+dirlt@dirlt-virtual-machine:~/github/tpircs/essay$ free -m
+             total       used       free     shared    buffers     cached
+Mem:           491        484          6          0         43        296
+-/+ buffers/cache:        145        346
+Swap:          509          0        509
+dirlt@dirlt-virtual-machine:~/github/tpircs/essay$ cat /proc/sys/vm/overcommit_ratio
+50
+#+END_EXAMPLE
+所以对于我这个系统来说，可用的虚拟内存在(491*50/100)+509=754M. NOTE(dirlt):这个仅仅是在overcommit_memory=2的时候估算的<可用内存>大小，
+实际上对于其他情况来说可用内存大小还是(Physical-RAM-Size) + (Swap-Size).
+
+*** /proc/sys/vm/swappiness
+这个参数决定系统使用swap的程度。但是这个参数并没有禁止使用swap分区，而只是一个依赖于swap分区的程度。
+如果这个值设置成为0的话那么，那么系统会尽可能地将减少page swap in/out操作，将更多的内存操作于物理内存上面。
+
+*** /proc/sys/vm/dirty_*
+这几个参数主要是用来控制脏页刷回磁盘策略。关于脏页刷回磁盘的过程可以参看"文件IO/write"一节。
+
+** 系统工具
+*** mpstat
+mpstat - Report processors related statistics.
+
+#+BEGIN_EXAMPLE
+mpstat -P [cpu|ALL] -V internal count
+#+END_EXAMPLE
+   - -P 能够选择特定的CPU来察看,或者是察看所有的CPU
+   - internal 表示多少秒显示一次
+   - count 表示显示多少次
+通常使用就是"mpstat -P ALL 1"
+#+BEGIN_EXAMPLE
+[zhangyan@tc-cm-et18.tc.baidu.com]$ mpstat -P ALL 1
+Linux 2.6.9_5-10-0-1 (tc-cm-et18.tc.baidu.com)  2011年09月20日
+
+08时39分58秒  CPU   %user   %nice %system %iowait    %irq   %soft   %idle    intr/s
+08时39分59秒  all   37.55    0.00    0.00    0.00    0.00    0.00   62.45   1009.00
+08时39分59秒    0    0.00    0.00    0.00    0.00    0.00    0.00  100.00   1002.00
+08时39分59秒    1  100.00    0.00    0.00    0.00    0.00    0.00    0.00      0.00
+08时39分59秒    2    0.00    0.00    0.00    0.00    0.00    0.00  100.00      7.00
+08时39分59秒    3  100.00    0.00    0.00    0.00    0.00    0.00    0.00      0.00
+08时39分59秒    4  100.00    0.00    0.00    0.00    0.00    0.00    0.00      0.00
+08时39分59秒    5    0.00    0.00    0.00    0.00    0.00    0.00  100.00      0.00
+08时39分59秒    6    0.00    0.00    0.00    0.00    0.00    0.00   99.00      0.00
+08时39分59秒    7    0.00    0.00    0.00    0.00    0.00    0.00  100.00      0.00
+#+END_EXAMPLE
+
+其中每个字段的意思分别是：
+   - CPU 处理器编号
+   - %user 处理user状态占用率
+   - %nice 处理user状态并且是nice priority占用率
+   - %system 处理system状态占用率(不包括硬中断和软中断)
+   - %iowait 在进行io操作时候有cpu idle时间比率
+   - %irq CPU耗费在硬中断上时间比率
+   - %soft CPU耗费在软中断上时间比率(软中断可以被任何一个CPU处理)
+   - %idle 在没有io操作时候的cpu idle时间比率
+   - intr/s 每秒CPU中断次数(包括硬中断和软终端)
+
+*** vmstat
+
+#+BEGIN_EXAMPLE
+vmstat [-a] [-n] [-S unit] [delay [ count]] // 查看全局内存开销
+vmstat [-f] // 查看自从boot依赖forks的次数(fork,vfork,clone)，可以认为就是创建的task数目(包括线程)
+vmstat [-s] // 系统事件统计次数以及内存统计
+vmstat [-d] // 磁盘使用统计数据
+vmstat [-m] // 内核开辟对象slabinfo
+#+END_EXAMPLE
+
+#+BEGIN_EXAMPLE
+[dirlt@localhost.localdomain]$ vmstat 1
+procs -----------memory---------- ---swap-- -----io---- --system-- -----cpu------
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ 0  0      4  45752  33460  99324    0    0     1     1    1    9  0  0 99  0  0
+ 0  0      4  45752  33460  99324    0    0     0     0    1    8  0  0 100  0  0
+#+END_EXAMPLE
+   - r 多少个进程正在等待运行
+   - b 多少个进程block住了
+   - swpd 虚拟内存(swap)
+   - free 空闲内存
+   - buff 缓冲内存(buffers,用户缓存文件inode)
+   - cache 缓冲内存(cache,用户作为文件系统page-cache)
+   - 前面三个参数相加才是可用内存大小
+   - si 读取disk使用的虚拟内存
+   - so 写disk使用的虚拟内存
+   - bi[block in] 块设备读取速率,blocks/s
+   - bo[block out] 块设备写速度,blocks/s
+   - in[interrupt] 每秒中断个数
+   - cs[context switch] 每秒上下文切换次数
+   - us 用户态时间[user]
+   - sy 系统时间[system]
+   - id 空闲时间[idle]
+   - wa 等待io时间[wait IO]
+   - st 虚拟机使用时间[stolen from VM]
+
+#+BEGIN_EXAMPLE
+[zhangyan04@tc-hpc-dev.tc.baidu.com]$ vmstat -d
+disk- ------------reads------------ ------------writes----------- -----IO------
+       total merged sectors      ms  total merged sectors      ms    cur    sec
+sda    13873   1504  633974   37617 1366407 89873356 108823150 37820617      0    323
+sda1      46     88    1072      34      0      0       0       0      0      0
+sda2   10274    242  595386   24867  34050  35092 2474128 1078425      0    239
+sda3    3515   1125   36820   12653 1332349 89838264 106349006 36742192      0    292
+#+END_EXAMPLE
+   - total 总共发起读写次数
+   - merged 聚合读写次数
+   - sectors 读写多少扇区
+   - ms 耗时毫秒
+   - cur 当前是否存在IO操作
+   - sec 耗费在IO的时间(秒)
+
+#+BEGIN_EXAMPLE
+[zhangyan04@tc-hpc-dev.tc.baidu.com]$ vmstat -m
+Cache                       Num  Total   Size  Pages
+nfs_direct_cache              0      0    168     24
+nfs_write_data               69     69    704     23
+#+END_EXAMPLE
+   - Num 当前多少个对象正在被使用
+   - Total 总共有多少个对象可以被使用
+   - Size 每个对象大小
+   - Pages 占用了多少个Page(这个Page上面至少包含一个正在被使用的对象)
+
+#+BEGIN_EXAMPLE
+[zhangyan04@tc-hpc-dev.tc.baidu.com]$ vmstat -s
+      8191996  total memory
+      4519256  used memory
+      1760044  active memory
+      2327204  inactive memory
+      3672740  free memory
+        76200  buffer memory
+      3935788  swap cache
+      1020088  total swap
+            0  used swap
+      1020088  free swap
+       423476 non-nice user cpu ticks
+           91 nice user cpu ticks
+       295803 system cpu ticks
+     70621941 idle cpu ticks
+        39354 IO-wait cpu ticks
+          800 IRQ cpu ticks
+        52009 softirq cpu ticks
+       317179 pages paged in
+     54413375 pages paged out
+            0 pages swapped in
+            0 pages swapped out
+    754373489 interrupts
+    500998741 CPU context switches
+   1323083318 boot time
+       418742 forks
+#+END_EXAMPLE
+
+*** free
+#+BEGIN_EXAMPLE
+[zhangyan04@tc-hpc-dev.tc.baidu.com]$ free -t
+             total       used       free     shared    buffers     cached
+Mem:       8191996    4519868    3672128          0      76204    3935864
+-/+ buffers/cache:     507800    7684196
+Swap:      1020088          0    1020088
+Total:     9212084    4519868    4692216
+#+END_EXAMPLE
+   - total 总内存大小[实际内存大小]
+   - used 已经使用大小[buffers+shared+cached+应用程序使用]
+   - free 未使用大小
+   - shared 共享内存大小
+   - buffers 缓存大小包括目录inode
+   - cached 用于操作文件使用缓冲[所谓cached的内容还是可以被使用的]
+   - - buffers/cache 表示used-buffers/cached的大小，就是应用程序已经使用内存大小
+   - + buffers/cache 表示free+buffers/cached的大小，就是所有可供应用程序使用的大小
+   - Swap:total 交换分区大小
+   - Swap:used 交换分区使用大小
+   - Swap:free 可以使用的分区大小
+
+*** dmesg
+能够察看开机时启动信息(启动信息保存在/var/log/dmesg文件里)
+#+BEGIN_EXAMPLE
+[dirlt@localhost.localdomain]$ dmesg | less
+Linux version 2.6.23.1-42.fc8 (kojibuilder@xenbuilder4.fedora.phx.redhat.com) (gcc version 4.1.2 20070925 (Red Hat 4.1.2-33)) #1 SMP Tue Oct 30 13:55:12 EDT 2007
+BIOS-provided physical RAM map:
+ BIOS-e820: 0000000000000000 - 000000000009f800 (usable)
+ BIOS-e820: 000000000009f800 - 00000000000a0000 (reserved)
+ BIOS-e820: 00000000000ca000 - 00000000000cc000 (reserved)
+ BIOS-e820: 00000000000dc000 - 0000000000100000 (reserved)
+ BIOS-e820: 0000000000100000 - 000000000fef0000 (usable)
+ BIOS-e820: 000000000fef0000 - 000000000feff000 (ACPI data)
+ BIOS-e820: 000000000feff000 - 000000000ff00000 (ACPI NVS)
+ BIOS-e820: 000000000ff00000 - 0000000010000000 (usable)
+ BIOS-e820: 00000000fec00000 - 00000000fec10000 (reserved)
+ BIOS-e820: 00000000fee00000 - 00000000fee01000 (reserved)
+ BIOS-e820: 00000000fffe0000 - 0000000100000000 (reserved)
+#+END_EXAMPLE
+
+*** taskset
+可以用来获取和修改进程的CPU亲和性。
+   - taskset -c 1,2,3 cmd (指定在CPU #1,#2,#3上运行cmd)
+   - taskset -cp 1,2,3 pid (指定在CPU #1,#2,#3上运行进程pid)
+   - taskset -c mask cmd|pid 通过mask格式进行设置，比如0x3就是#0和#1亲和性
+如果不指定-c的话那么就是获取亲和性。程序上的话可以使用sched_setaffinity/sched_getaffinity调用来修改和获取某个进程和CPU的亲和性。
+
+#+BEGIN_EXAMPLE
+       taskset  is used to set or retrieve the CPU affinity of a running pro-
+       cess given its PID or to launch a new COMMAND with a given CPU  affin-
+       ity.  CPU affinity is a scheduler property that "bonds" a process to a
+       given set of CPUs on the system.  The Linux scheduler will  honor  the
+       given  CPU  affinity  and  the process will not run on any other CPUs.
+       Note that the Linux scheduler also supports natural CPU affinity:  the
+       scheduler  attempts to keep processes on the same CPU as long as prac-
+       tical for performance reasons.   Therefore,  forcing  a  specific  CPU
+       affinity is useful only in certain applications.
+#+END_EXAMPLE
+
+*** lsof
+TODO(zhangyan04):
+
+*** quota
+http://blog.itpub.net/post/7184/488931
+
+quota用来为用户编辑磁盘配额。
+   - 初始化磁盘配额功能
+修改/etc/fstab增加usrquota以及grpquota
+#+BEGIN_EXAMPLE
+/dev/hdb1 /home/extra ext3 defaults,noatime,usrquota,grpquota 1 2
+#+END_EXAMPLE
+
+   - 建立磁盘配额文件
+#+BEGIN_EXAMPLE
+# cd /home/extra
+# touch aquota.user
+# touch aquota.group
+# chmod 600 aquota.user
+# chmod 600 aquota.group
+#+END_EXAMPLE
+
+   - 重新挂载磁盘。mount -o remount /home/extra
+   - 扫描磁盘，初始化磁盘配额表。修改之前建立的aquota文件。/sbin/quotacheck -uvg /home/extra
+
+   - 编辑用户磁盘配额
+如果为用户设定可以使用/usr/sbin/edquota -u testuser,如果需要为群组设定的话/usr/sbin/edquota -g testgrp.
+#+BEGIN_EXAMPLE
+Disk quotas for user testuser (uid 517):
+Filesystem blocks soft hard inodes soft hard
+/dev/hdb1 0 0 0 0 0 0
+#+END_EXAMPLE
+各个字段含义如下：
+   - blocks：已经使用的磁盘块(1k bytes)
+   - soft：软限额大小，如果用户超出了这个限额，系统会发出警告，如果在设定的时间内还没有回到该限额以下，系统将拒绝该用户使用额外的磁盘空间。
+   - hard：硬限额，用户不允许超出的磁盘限制
+   - inodes：用户已经使用的inodes数
+   - soft和hard含义同上，不过，这里是限制用户创建的文件/目录总数。
+可以使用/usr/sbin/edquota -t来修改软限额期限。
+
+   - 启动磁盘配额可以使用/sbin/quotaon -av,关闭磁盘配额可以使用/sbin/quotaoff -av.
+   - 查看整体磁盘配额可以使用/usr/sbin/repquota -a,查看用户配额情况可以使用quota -vu test
+
+可以对WWW空间，FTP空间，Email空间进行磁盘配额限制。Quota只能基于磁盘分区进行配额管理，不能基于目录进行配额管理，因此只能把数据存放在有配额限制的分区，再用符号链接到实际应用的目录。
+*** crontab
+crontab就是为了能够使得工作自动化在特定的时间或者是时间间隔执行特定的程序。crontab -e就可以编辑crontab配置文件，默认是vim编辑器。crontab配置文件里面可以像shell一样定义变量，之后就是任务描述，每一个任务分为6个字段: minute hour day month week command
+   1. minute范围是0-59
+   2. hour范围是0-23
+   3. day范围是1-31
+   4. month范围是1-12
+   5. week范围是0-7[0/7表示Sun]
+对于每个字段可以有3种表示方式
+   1. - 表示匹配所有时间
+   2. num 表示完全匹配
+   3. num1-num2 表示匹配范围
+   4. num1,num2,num3... 进行枚举匹配
+   5. num1-num2/interval 表示从num1-num2时间段内每interval间隔
+对于系统级别的crontab配置文件在/etc/crontab貌似里面还多了一个用户字段.下面是几个配置的例子:
+#+BEGIN_EXAMPLE
+0 6 * * * /home/dirlt/platform/apache/bin/apachectl restart 每天早上6点重启apache
+0,30 18-23 * * * /home/dirlt/platform/apache/bin/apachectl restart 每天18-23时候每隔半小时重启apache
+\* 23-7/1 * * * /* 23-7/1 * * * /usr/local/apache/bin/apachectl restart 每天从23到次日7点每隔一小时重启apache
+#+END_EXAMPLE
+
+*** hdparm
+hdparm - get/set hard disk parameters
+
+下面是使用的用法
+#+BEGIN_EXAMPLE
+/sbin/hdparm [ flags ] [device] ..
+#+END_EXAMPLE
+
+对于device的话可以通过mount来查看
+#+BEGIN_EXAMPLE
+[dirlt@localhost.localdomain]$ mount
+/dev/mapper/VolGroup00-LogVol00 on / type ext3 (rw)
+proc on /proc type proc (rw)
+sysfs on /sys type sysfs (rw)
+devpts on /dev/pts type devpts (rw,gid=5,mode=620)
+/dev/sda1 on /boot type ext3 (rw)
+tmpfs on /dev/shm type tmpfs (rw)
+none on /proc/sys/fs/binfmt_misc type binfmt_misc (rw)
+sunrpc on /var/lib/nfs/rpc_pipefs type rpc_pipefs (rw)
+#+END_EXAMPLE
+我们关注自己读写目录，比如通常在/home下面，这里就是使用的device就是/dev/mapper/VolGroup00-LogVol00
+
+TODO(dirlt):好多选项都不太清楚是什么意思.
+*** nmon
+http://nmon.sourceforge.net/pmwiki.php Nigel's performance Monitor for Linux
+
+TODO(dirlt):
+
+*** pmap
+TODO(dirlt):
+
+*** strace
+TODO(dirlt):
+
+*** uptime
+TODO(dirlt):
+
+*** top
+TODO(dirlt):
+
+*** pmap
+TODO(dirlt)
+
+*** iostat
+iostat主要用来观察io设备的负载情况的。首先我们看看iostat的样例输出
+#+BEGIN_EXAMPLE
+dirlt@dirlt-virtual-machine:~$ iostat
+Linux 3.2.0-23-generic (dirlt-virtual-machine)  2012年06月18日  _x86_64_        (1 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+           0.91    0.05    4.05    5.08    0.00   89.91
+
+Device:            tps    kB_read/s    kB_wrtn/s    kB_read    kB_wrtn
+scd0              0.01         0.04         0.00         48          0
+sda              31.09       203.67      9862.91     260487   12614468
+#+END_EXAMPLE
+第一行显示了CPU平均负载情况，然后给出的信息是自从上一次reboot起来今的iostat平均信息。如果我们使用iostat
+采用interval输出的话，那么下一次的数值是相对于上一次的数值而言的。这里解释一下CPU的各个状态：
+   - %user 用户态比率
+   - %nice 用户态使用nice priority比率
+   - %system 系统态比率
+   - %iowait CPU在等待IO操作时候idle比率
+   - %steal TODO(dirlt)
+   - %idle idle比率但是不包括在等待IO操作idle比率
+
+然后在来看看iostat的命令行参数
+#+BEGIN_EXAMPLE
+iostat [ -c ] [ -d ] [ -h ] [ -N ] [ -k | -m ] [ -t ] [ -V ] [ -x ] [ -z ] [ device [...] | ALL  ]  [  -p  [
+device [,...] | ALL ] ] [ interval [ count ] ]
+#+END_EXAMPLE
+其中interval表示每隔x时间刷新一次输出，而count表示希望输出多少次.下面解释一下每隔参数的含义：
+   - -c 产生CPU输出(只是生成CPU输出)
+   - -d 生成device使用情况输出
+   - -h 和-d一样只不过human readable一些(不过其实差不多)
+   - -k 统计数据按照kilobytes为单位
+   - -m 统计数据按照megabytes为单位
+   - -N TODO(dirlt)
+   - -p 选择block device以及其partitions.如果使用ALL的话那么选择所有block devices.
+   - -t 每次输出都是打印当前时间
+   - -V version
+   - -x 显示扩展数据(extended)
+   - -z 忽略输出那些在period期间没有任何活动的device.
+iostat也可以指定选择输出哪些block device.
+
+通常命令也就是iostat -d -k -x 1.我们来看看样例输出
+#+BEGIN_EXAMPLE
+dirlt@dirlt-virtual-machine:~$ iostat -d -x -k 1
+Linux 3.2.0-23-generic (dirlt-virtual-machine)  2012年06月18日  _x86_64_        (1 CPU)
+
+xsDevice:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
+scd0              0.00     0.00    0.00    0.00     0.02     0.00     8.00     0.00   29.00   29.00    0.00  29.00   0.01
+sda               6.34     5.72   15.95   12.60   192.62  5675.85   411.10     2.48   87.41   18.33  174.88   2.74   7.83
+
+Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
+scd0              0.00     0.00    0.00    0.00     0.00     0.00     0.00     0.00    0.00    0.00    0.00   0.00   0.00
+sda               0.00     0.00    0.00    0.00     0.00     0.00     0.00     0.00    0.00    0.00    0.00   0.00   0.00
+
+Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await r_await w_await  svctm  %util
+scd0              0.00     0.00    0.00    0.00     0.00     0.00     0.00     0.00    0.00    0.00    0.00   0.00   0.00
+sda               0.00     0.00    0.00    0.00     0.00     0.00     0.00     0.00    0.00    0.00    0.00   0.00   0.00
+#+END_EXAMPLE
+然后分析其中字段：
+   - Device 设备名
+   - tps number of transfers per second.对于IO device多个请求可能会合并成为一个transfer.不过似乎没有太大意义。
+   - Blk_read/s(kB_read/s, MB_read/s). 读速度，这里Block相当于一个扇区占据512bytes.
+   - Blk_wrtn/s(kB_wrtn/s, MB_wrtn/s). 写速度。
+   - Blk_read(kb_read, MB_read). 读总量
+   - Blk_wrtn(kB_wrtn, MB_wrtn). 写总量
+   - rrqm/s 每秒多少个读请求被merge.当系统调用需要读取数据的时候，VFS将请求发到各个FS，如果FS发现不同的读取请求读取的是相同Block的数据，FS会将这个请求合并Merge
+   - wrqm/s 每秒多少个些请求被merge
+   - r/s 每秒多少个读请求(after merged)
+   - w/s 每秒多少个写请求(after merged)
+   - rsec/s(rkB/s, rMB/s) 读速度。sec表示sector.
+   - wsec/s(wkB/s, wMB/s) 写速度
+   - avgrq-sz 提交到这个device queue上面请求的平均大小(in sectors)
+   - avgqu-sz 提交到这个device queue上面请求的平均长度
+   - await 提交到这个device上面请求处理的平均时间(ms)
+   - r_await 提交到这个device上面读请求处理的平均时间
+   - w_await 提交到这个device上面写请求处理的平均时间
+   - svctm TODO(dirlt):don't use it.
+   - %util CPU在处理IO请求时的百分比.可以认为是IO设备使用率.
+
+*** blockdev
+TODO(dirlt):
+
+*** systemtap
+TODO(dirlt): http://sourceware.org/systemtap/
+
+*** latencytop
+TODO(dirlt): https://latencytop.org/
+
+*** iotop
+TODO(dirlt):
+
+*** htop
+TODO(dirlt):
+
+*** cssh
+TODO(dirlt):
+
+*** dstat
+TODO(dirlt): http://dag.wieers.com/rpm/packages/dstat/
+
+*** slurm
+Simple Linux Utility for Resource Management 
+TODO(dirlt): https://computing.llnl.gov/linux/slurm/
+
+
+*** sar
+sar - Collect, report, or save system activity information.
+
+下面是所有的选项
+   - -A 相当于指定 -bBcdqrRuvwWy -I SUM  -n FULL -P ALL.
+   - -b 这个选项只是针对2.5以下的内核.统计磁盘的IO运行情况
+      - tps // 对磁盘总共有多少个请求.
+      - rtps // 对磁盘总共有多少个读请求.
+      - wtps // 对磁盘总共有多少个写请求.
+      - bread/s // 磁盘每秒多少个read block.(512bytes/block)
+      - bwrtn/s // 磁盘每秒多少个write block.(512bytes/block)
+   - -B 内存页面情况
+      - pgpgin/s // page in from disk
+      - pgpgout/s // page out to disk.
+      - fault/s // (major+mintor) page fault
+      - majflt/s // major page fault
+   - -c 进程创建情况
+      - proc/s 每秒创建进程个数
+   - -d 块设备运行情况.打印出的dev m-n(major-mior device number)
+      - tps 对这个设备总共有多少个请求.如果多个逻辑请求的话可能会结合成为一个请求.
+      - rd_sec/s 每秒读取多少个sector.一个sector 512bytes.
+      - wr_sec/s 每秒写入多少个sector.一个sector 512bytes.
+   - -e hh:mm:ss 设置汇报的终止时间
+   - -f filename 从文件中读入
+   - -h -H 从文件读入时转换称为分析方便的格式
+   - -i interval 从文件中读入的话选取interval seconds的间隔的记录
+   - -I <irq> | SUM | ALL | XALL 中断统计
+      - <irq> interrupt number
+      - SUM 所有中断次数之和/s
+      - ALL 前16个中断次数/s
+      - XALL 所有中断次数/s.包括APIC
+   - -n DEV | EDEV | SOCK | FULL 网络统计数据
+      - DEV 所有网络接口正常数据
+      - EDEV 所有网络接口异常数据
+      - SOCK socket数据统计
+      - FULL DEV + EDEV + SOCK
+      - 关于网络接口显示数据在后面会仔细讨论
+   - -o filename 可以将sar输出重定位
+   - -P <cpu> | ALL 处理器统计数据
+   - -q 处理器请求队列长度以及平均负载
+      - runq-sz 处理器上有多少个进程在等待执行
+      - plist-sz 当前有多少个进程运行
+      - ldavg-1 过去1分钟系统负载
+      - ldavg-5 过去5分钟系统负载
+      - ldavg-15 过去15分钟系统负载
+   - -r 内存和swap空间利用率数据
+      - kbmemfree 多少free内存(KB)
+      - kbmemused 多少使用内存(KB)(不包括kernel使用)
+      - %memused 使用内存率
+      - kbbuffers kenel内部使用buffer(KB)
+      - kbcached kernel内部使用cache data(KB)
+      - kbswpfree swap可用大小(KB)
+      - kbswpused swap使用大小(KB)
+      - %swpused swap使用比率
+      - kbswpcad cached swap内存大小(KB)(曾经被换出现在换入，但是依然占用swap分区)
+   - -R 内存使用数据
+      - frmpg/s free出来的page数目/s
+      - bufpg/s 当做buffer使用的page数目/s
+      - campg/s 当做cache使用的page数目/s
+   - -s hh:mm:ss 设置汇报起始时间
+   - -t 从文件载入时候使用使用原有locale time表示而不是当前locale
+   - -u CPU使用情况
+      - %user 用户态CPU占用率
+      - %nice 用户态使用nice的CPU占用率
+      - %system 内核态CPU占用率
+      - %iowait CPU因为等待io的idle比率
+      - %idle CPU idle比率
+   - -v inode,file以及kernel tables情况
+      - dentunusd 在directory cache里面没有使用的cache entries个数
+      - file-sz 使用文件句柄数
+      - inode-sz 使用inode句柄数
+      - super-sz 内存使用的超级块句柄数
+      - %super-sz 当前超级块句柄数使用比率
+      - dquot-sz 磁盘配额分配的entries个数
+      - %dquot-sz 磁盘配额分配的entries比率
+      - rtsig-sz 排队的RT signals数量
+      - %rtsig-sz 排队的RT signals比率
+   - -V 版本号
+   - -w 系统切换情况
+      - cswch/s 上下文切换次数/s
+   - -W swap统计数据
+      - pswpin/s 每秒换入swap pages
+      - pswpout/s 每秒换出swap pages
+   - -x pid | SELF | ALL  进程统计数据
+      - minflt/s minor faults/s
+      - majflt/s major faults/s
+      - %user 用户态CPU利用率
+      - %system 内核态CPU利用率
+      - nswap/s 每秒换出pages
+      - CPU 处理器编号
+   - -X pid | SELF | ALL 统计子进程数据
+      - cminflt/s
+      - cmajflt/s
+      - %cuser
+      - %csystem
+      - cnswaps/s
+   - -y TTY设备情况
+      - rcvin/s 每个serial line接收中断数目/s
+      - xmtin/s 每个serial line发出中断数目/s
+
+------------------------------------------------------------
+
+关于网络接口数据显示的话，下面是使用DEV可以查看的字段
+   - IFACE network interface
+   - rxpck/s rcv packets/s
+   - txpck/s snd packets/s
+   - rxbyt/s rcv bytes/s
+   - txbyt/s snd bytes/s
+   - rxcmp/s rcv compressed packets/s
+   - txcmp/s snd compressed packets/s
+   - rxmcst/s 接收多播packets/s
+下面是使用EDEV可以查看的字段
+   - rxerr/s 接收bad packets/s
+   - txerr/s 发送bad packets/s
+   - coll/s 每秒发送packets出现collisions数目
+   - rxdrop/s 每秒因为linux缺少buffer而丢弃packets
+   - txcarr/s 每秒发送packets出现carrier-errors数目
+   - rxfram/s 每秒接收packets出现frame alignment error数目
+   - rxfifo/s 每秒接收packets出现FIFO overrun error数目
+   - txfifo/s 每秒发送packets出现FIFO overrun error数目
+下面是使用SOCK可以查看的字段
+   - totsock 总共使用socket数目
+   - tcpsck 正在使用tcp socket数目
+   - udpsck 正在使用udp socket数目
+   - rawsck 正在使用RAW socket数目
+   - ip-frag 当前使用IP fragments数目
+
+------------------------------------------------------------
+
+选项非常多，但是很多选项没有必要打开。对于网络程序来说的话，通常我们使用到的选项会包括
+   - -n DEV 网卡流量
+   - -n EDEV 网卡丢包以及kerner buffer问题
+   - -n SOCK 多少连接
+   - -r 内存使用。不常用。很多时候只关心大概使用多少内存，是否持续增长)
+   - -u CPU使用 -P ALL查看所有CPU
+   - -w 上下文切换。相对来说也不常用。
+通常我们使用的命令就应该是sar -n DEV -P ALL -u 1 0(1表示1秒刷新，0表示持续显示)
+#+BEGIN_EXAMPLE
+01时56分18秒       CPU     %user     %nice   %system   %iowait     %idle
+01时56分19秒       all      7.52      0.00     78.95      0.25     13.28
+01时56分19秒         0      7.00      0.00     81.00      0.00     12.00
+01时56分19秒         1      7.92      0.00     79.21      0.00     12.87
+01时56分19秒         2      9.00      0.00     78.00      1.00     12.00
+01时56分19秒         3      7.07      0.00     77.78      0.00     15.15
+
+01时56分18秒     IFACE   rxpck/s   txpck/s   rxbyt/s   txbyt/s   rxcmp/s   txcmp/s  rxmcst/s
+01时56分19秒        lo      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+01时56分19秒      eth0      0.00      0.00      0.00      0.00      0.00      0.00      0.00
+01时56分19秒      eth1 159997.00 320006.00 175029796.00 186239160.00      0.00      0.00      0.00
+#+END_EXAMPLE
+
+*** netstat
+netstat - Print network connections, routing tables, interface statistics, masquerade connections, and multicast memberships
+
+netstat可以查看很多信息，包括网络链接,路由表，网卡信息,伪装链接以及多播成员关系。但是从文档上看，一部分工作可以在/sbin/ip里面完成
+#+BEGIN_EXAMPLE
+NOTE
+       This program is obsolete.  Replacement for netstat is ss.  Replacement
+       for netstat -r is ip route.  Replacement for netstat -i is ip -s link.
+       Replacement for netstat -g is ip maddr.
+#+END_EXAMPLE
+我们这里打算对netstat使用限制在查看网络连接，以及各种协议的统计数据上.
+
+------------------------------------------------------------
+
+首先我们看看如何查看各种协议的统计数据.
+#+BEGIN_EXAMPLE
+netstat {--statistics|-s} [--tcp|-t] [--udp|-u] [--raw|-w] [delay]
+#+END_EXAMPLE
+我们可以查看和tcp,udp以及raw socket相关的数据,delay表示刷新时间。
+
+
+#+BEGIN_EXAMPLE
+[zhangyan04@tc-hpc-dev.tc.baidu.com]$ netstat -s
+Ip:
+    322405625 total packets received
+    0 forwarded
+    0 incoming packets discarded
+    322405625 incoming packets delivered
+    369134846 requests sent out
+    33 dropped because of missing route
+Icmp:
+    30255 ICMP messages received
+    0 input ICMP message failed.
+    ICMP input histogram:
+        echo requests: 30170
+        echo replies: 83
+        timestamp request: 2
+    30265 ICMP messages sent
+    0 ICMP messages failed
+    ICMP output histogram:
+        destination unreachable: 10
+        echo request: 83
+        echo replies: 30170
+        timestamp replies: 2
+IcmpMsg:
+        InType0: 83
+        InType8: 30170
+        InType13: 2
+        OutType0: 30170
+        OutType3: 10
+        OutType8: 83
+        OutType14: 2
+Tcp:
+    860322 active connections openings
+    199165 passive connection openings
+    824990 failed connection attempts
+    43268 connection resets received
+    17 connections established
+    322306693 segments received
+    368937621 segments send out
+    56075 segments retransmited
+    0 bad segments received.
+    423873 resets sent
+Udp:
+    68643 packets received
+    10 packets to unknown port received.
+    0 packet receive errors
+    110838 packets sent
+UdpLite:
+TcpExt:
+    1999 invalid SYN cookies received
+    5143 resets received for embryonic SYN_RECV sockets
+    2925 packets pruned from receive queue because of socket buffer overrun
+    73337 TCP sockets finished time wait in fast timer
+    85 time wait sockets recycled by time stamp
+    4 delayed acks further delayed because of locked socket
+    Quick ack mode was activated 7106 times
+    5141 times the listen queue of a socket overflowed
+    5141 SYNs to LISTEN sockets ignored
+    81288 packets directly queued to recvmsg prequeue.
+    297394763 packets directly received from backlog
+    65102525 packets directly received from prequeue
+    180740292 packets header predicted
+    257396 packets header predicted and directly queued to user
+    5983677 acknowledgments not containing data received
+    176944382 predicted acknowledgments
+    2988 times recovered from packet loss due to SACK data
+    Detected reordering 9 times using FACK
+    Detected reordering 15 times using SACK
+    Detected reordering 179 times using time stamp
+    835 congestion windows fully recovered
+    1883 congestion windows partially recovered using Hoe heuristic
+    TCPDSACKUndo: 1806
+    1093 congestion windows recovered after partial ack
+    655 TCP data loss events
+    TCPLostRetransmit: 6
+    458 timeouts after SACK recovery
+    7 timeouts in loss state
+    3586 fast retransmits
+    178 forward retransmits
+    425 retransmits in slow start
+    51048 other TCP timeouts
+    37 sack retransmits failed
+    1610293 packets collapsed in receive queue due to low socket buffer
+    7094 DSACKs sent for old packets
+    14430 DSACKs received
+    4358 connections reset due to unexpected data
+    12564 connections reset due to early user close
+    29 connections aborted due to timeout
+    TCPDSACKIgnoredOld: 12177
+    TCPDSACKIgnoredNoUndo: 347
+    TCPSackShifted: 6421
+    TCPSackMerged: 5600
+    TCPSackShiftFallback: 119131
+IpExt:
+    InBcastPkts: 22
+    InOctets: 167720101517
+    OutOctets: 169409102263
+    InBcastOctets: 8810
+#+END_EXAMPLE
+内容非常多这里也不详细分析了。
+
+------------------------------------------------------------
+
+然后看看连接这个部分的功能
+#+BEGIN_EXAMPLE
+       netstat  [address_family_options]  [--tcp|-t]  [--udp|-u]   [--raw|-w]
+       [--listening|-l]       [--all|-a]      [--numeric|-n]      [--numeric-
+       hosts][--numeric-ports][--numeric-ports]               [--symbolic|-N]
+       [--extend|-e[--extend|-e]] [--timers|-o] [--program|-p] [--verbose|-v]
+       [--continuous|-c] [delay]
+#+END_EXAMPLE
+对于address_family允许指定协议族，通常来说我们可能会使用
+   - --unix -x unix域协议族
+   - --inet --ip ip协议族
+然后剩下的选项
+   - --tcp -t tcp socket
+   - --udp -u udp socket
+   - --raw -w raw socket
+   - --listening -l listen socket
+   - --all -a listen socket和connected socket.
+   - --numeric -n
+   - --numeric-hosts
+   - --numeric-ports
+   - --numeric-users
+   - --symbolic -N ???
+   - --extend -e 扩展信息
+   - --timers -o 网络计时器信息(???)
+   - --program -p socket所属program
+   - --verbose -v
+   - --continuous -c 1s刷新
+   - delay 刷新时间(sec)
+
+我们看看一个使用的例子
+#+BEGIN_EXAMPLE
+[zhangyan04@tc-hpc-dev.tc.baidu.com]$ netstat --ip --tcp -a -e -p
+(Not all processes could be identified, non-owned process info
+ will not be shown, you would have to be root to see it all.)
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address               Foreign Address             State       User       Inode      PID/Program name
+tcp        0      0 tc-hpc-dev.tc.baidu.c:19870 *:*                         LISTEN      zhangyan04 30549010   28965/echo_server
+tcp     1024      0 tc-hpc-dev.tc.baidu.c:19870 tc-com-test00.tc.baid:60746 ESTABLISHED zhangyan04 30549012   28965/echo_server
+tcp        0   1024 tc-hpc-dev.tc.baidu.c:19870 tc-com-test00.tc.baid:60745 ESTABLISHED zhangyan04 30549011   28965/echo_server
+#+END_EXAMPLE
+
+下面是对于tcp socket的字段解释.对于unix domain socket字段不同但是这里不写出来了.
+   - Proto socket类型
+   - Recv-Q 在这个socket上还有多少bytes没有copy到用户态
+   - Send-Q 在这个socket还有多少bytes没有ack
+   - Local Address 本地地址
+   - Foreign Address 远程地址
+   - State 连接状态
+      - ESTABLISHED
+      - SYN_SENT
+      - SYN_RECV
+      - FIN_WAIT1
+      - FIN_WAIT2
+      - TIME_WAIT
+      - CLOSED
+      - CLOSE_WAIT 大量状态表示服务器句柄泄露
+      - LAST_ACK
+      - LISTEN
+      - CLOSING
+      - UNKNOWN
+   - User
+   - PID/Program name
+
+*** ifconfig
+ifconfig - configure a network interface
+
+/sbin/ifconfig可以用来配置和查看network interface.不过从文档上看的话，更加推荐使用/sbin/ip这个工具
+#+BEGIN_EXAMPLE
+NOTE
+       This  program is obsolete!  For replacement check ip addr and ip link.
+       For statistics use ip -s link.
+#+END_EXAMPLE
+
+这里我们不打算学习如何配置network interface只是想查看一下网卡的信息。使用/sbin/ifconfig -a可以查看所有的网卡信息，即使这个网卡关闭。
+#+BEGIN_EXAMPLE
+[zhangyan04@tc-hpc-dev.tc.baidu.com]$ /sbin/ifconfig -a
+eth0      Link encap:Ethernet  HWaddr 00:1D:09:22:C9:A9
+          BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:0 (0.0 b)  TX bytes:0 (0.0 b)
+          Interrupt:16 Memory:f4000000-f4012800
+
+eth1      Link encap:Ethernet  HWaddr 00:1D:09:22:C9:A7
+          inet addr:10.26.140.39  Bcast:10.26.140.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:90671796 errors:0 dropped:14456 overruns:0 frame:0
+          TX packets:143541932 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:71169282564 (66.2 GiB)  TX bytes:74096812979 (69.0 GiB)
+          Interrupt:16 Memory:f8000000-f8012800
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:16436  Metric:1
+          RX packets:231762640 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:231762640 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:98089257363 (91.3 GiB)  TX bytes:98089257363 (91.3 GiB)
+#+END_EXAMPLE
+我们这里稍微仔细看看eht1的网卡信息
+   - encap 网卡连接网络类型Ethernet(以太网)
+   - HWaddr 网卡物理地址
+   - inet_addr 绑定IP地址
+   - Bcast 这个IP对应的广播地址
+   - Mask 子网掩码
+   - UP(打开) BROADCAST(广播) MULTICAST(多播) RUNNING(运行)
+   - MTU (Maximum Transport Unit)最大传输单元，以太网一般就是1500字节
+   - Metric ???
+   - RX packets 接受packets数目
+   - TX packets 传输packets数目
+   - errors 错误packets数目
+   - dropped 丢弃packets数目
+   - overruns frame carrier ???
+   - collisions ???
+   - txqueuelen 发送packets的queue长度上限.0应该是无限
+   - RX bytes 接收字节
+   - TX bytes 发送字节
+
+*** /sbin/ip
+TODO(zhangyan04):
+
+*** ping
+TODO(zhangyan04):
+
+*** route
+TODO(zhangyan04):
+
+*** tcpdump
+TODO(zhangyan04):
+
+*** httperf
+download http://www.hpl.hp.com/research/linux/httperf/
+
+paper http://www.hpl.hp.com/research/linux/httperf/wisp98/httperf.pdf
+
+httperf是用来测试HTTP server性能的工具，支持HTTP1.0和1.1.下面是这个工具命令行参数
+#+BEGIN_EXAMPLE
+       httperf  [--add-header S] [--burst-length N] [--client I/N] [--close-with-reset] [-d|--debug N] [--failure-
+       status N] [-h|--help] [--hog] [--http-version S] [--max-connections N] [--max-piped-calls N]  [--method  S]
+       [--no-host-hdr]  [--num-calls  N]  [--num-conns  N]  [--period  [d|u|e]T1[,T2]]  [--port  N] [--print-reply
+       [header|body]] [--print-request [header|body]] [--rate X] [--recv-buffer N]  [--retry-on-failure]  [--send-
+       buffer  N]  [--server  S]  [--server-name  S] [--session-cookie] [--ssl] [--ssl-ciphers L] [--ssl-no-reuse]
+       [--think-timeout X] [--timeout X] [--uri S] [-v|--verbose] [-V|--version] [--wlog  y|n,F]  [--wsess  N,N,X]
+       [--wsesslog N,X,F] [--wset N,X]
+#+END_EXAMPLE
+httperf有几种不同的workload方式：
+   - request-oriented(RO)
+   - session-oriented(SO)
+NOTE(dirlt):关于session-oriented这个概念，是后来看了论文里面才清楚的。主要解决的就是实际中browse的场景。
+通常我们请求一个页面里面都会嵌入很多objects包括js或者是css等。我们一次浏览称为session,而session里面会有很多请求。
+这些请求通常是，首先等待第一个请求处理完成(浏览器解析页面)，然后同时发起其他请求。
+
+下面是每个参数含义
+   - --add-header=S 在http里面添加header. 比如--add-header="Referer: foo\nAuth: Secret\n".允许使用转义字符。
+   - --burst-length=N 每个burst包含N个calls.
+   - --no-host-hdr 在header不带上Host字段
+   - --client=I/N 指定我们模拟实际有N个clients而我们作为第I个clients情况。因为一些参数会根据clients的特征不同生成不同的workload.如果是单机情况的话那么就是0/1
+   - --close-with-reset 不通过正常关闭流程而是直接RST分节
+   - ---debug=N 调试级别
+   - --failure-status=N 如果http coder=N的话那么就认为失败
+   - --help
+   - --hog 尽可能使用更多的TCP端口。在压力测试下通常开启
+   - --http-version=S 指定http协议版本
+   - --max-conections=N 在一个session上最多建立N个连接。(session?)
+   - --max-piped-calls=N 在一个连接上最多发起N个pipelined calls.(非阻塞上write多次然后read多次)
+   - --method=S 指定http请求方法
+   - --num-calls=N RO模式下有效。每个connection上发起N次calls.如果如果burst-length=B的话那么，一次发起B个pipelined calls.总共发起N/B个bursts.
+   - --num-conns=N RO模式下有效。指定创建多少个链接。对于一个测试来说的话，必须等待到N个connections完成或者是失败。失败定义是在连接上没有任何活动超过--timeout或者是--think-timeout.
+   - --period=[D]T1[,T2] 各个连接或者是session之间创建的时间间隔，包括固定间隔，泊松分布以及一致分布。--rate只是--period的简化用法，作为固定间隔使用。
+   - --port=N webserver服务端口
+   - --print-reply[=[header|body]] 打印响应
+   - --print-request[=[header|body]] 打印请求
+   - --rate=X 每秒创建多少个链接或者是session.在每秒内链接或者是session都是均匀创建。如果==0的话表示所有连接/session都是顺序创建(等待前面一个链接/session完成之后才创建下一个).
+   - --recv-buffer=N 接收缓冲区大小
+   - --retry-on-failure 失败的话会继续重试
+   - --send-buffer=N 发送缓冲区大小
+   - --server=S webserver服务地址
+   - --server=name=S 设置header的Host字段
+   - --session-cookie ???
+   - --ssl 使用SSL进行通信
+   - --ssl-ciphers=L SSL相关 TODO(dirlt):
+   - --ssl-no-reuse SSL相关 TODO(dirlt):
+   - --think-timeout=X 这个主要是为了解决动态页面。如果是静态页面可以直接=0.这个超时主要是为了考虑动态页面生成时间。
+   - --timeout=X 超时时间。默认无限。
+   - --uri=S 请求URI.比如--uri=/foreground/all_stars
+   - --verbose
+   - --wlog=B,F 允许从文件中读取访问的URI.其中B表示是否读取，F表示要读取的文件。
+   - --wsess=N1,N2,X 是用session模式测试。发起N1个session，一个session内部会调用N2次calls.calls被聚合称为burst.各个burst之间等待X秒(这里称为user-think time.还是很贴切的。这个就好比用户浏览一次页面之后，看一段时间，然后访问下一个页面).通过burst-length来控制一次burst中间存在多少个calls.工作场景是首先发起一个calls,然后将其余calls发送。定义session成功或者是失败，是要求任意一个calls不能超过超时时间。
+   - --wsesslog=N,X,F 类似于--wess选项，但是关于请求以及各种参数可以从文件读取。N表示发起多少个session,X表示user-think time.F就是提供其他内容的文件。
+   - --wset=N,X 生成URI用来访问。其中X=0.25的话表示每次生成的URI都会访问4次。N表示生成多少个页面。假设N=100的话，那么从[0,100]，对于每个数字补齐到N-1的数字位，比如9就是09.然后根据每个数字分隔形成0/9.如果URI为x作为前缀，那么就是x/0/9.html.
+
+NOTE(dirlt):不过httperf采用select模型，导致最大连接数存在上限。
+
+然后来看看具体结果
+#+BEGIN_EXAMPLE
+              Total: connections 30000 requests 29997 replies 29997 test-duration 299.992 s
+
+              Connection rate: 100.0 conn/s (10.0 ms/conn, <=14 concurrent connections) 
+              Connection time [ms]: min 1.4 avg 3.0 max 163.4 median 1.5 stddev 7.3 
+              Connection time [ms]: connect 0.6
+              Connection length [replies/conn]: 1.000
+
+              Request rate: 100.0 req/s (10.0 ms/req)
+              Request size [B]: 75.0
+
+              Reply rate [replies/s]: min 98.8 avg 100.0 max 101.2 stddev 0.3 (60 samples)
+              Reply time [ms]: response 2.4 transfer 0.0
+              Reply size [B]: header 242.0 content 1010.0 footer 0.0 (total 1252.0)
+              Reply status: 1xx=0 2xx=29997 3xx=0 4xx=0 5xx=0
+
+              CPU time [s]: user 94.31 system 205.26 (user 31.4% system 68.4% total 99.9%)
+              Net I/O: 129.6 KB/s (1.1*10^6 bps)
+
+              Errors: total 3 client-timo 0 socket-timo 0 connrefused 3 connreset 0
+              Errors: fd-unavail 0 addrunavail 0 ftab-full 0 other 0
+#+END_EXAMPLE
+我们可能最需要关心的就是Request和Reply部分了，但是大部分字段还是很好理解的。其中repsonse表示从发出第一个字节到接收到第一个字节时间，而transfer表示接收reply的时间。Connection部分的话，connection rate表示发起connection频率，concurrent connections表示并发数最高达到14个连接。connection time表示从connection发起到断开间隔，connection connect表示建立连接时间。connection length表示reply和connection数目比。
+
+如果使用session模式的话，那么结果会有
+#+BEGIN_EXAMPLE
+Session rate [sess/s]:min 0.00 avg 0.59 max 2.40 stddev0.37 (240/450)
+Session:avg6.45 connections/session
+Session lifetime [s]:123.9
+Session failtime [s]:58.5
+Session length histogram:4 7 4... 3 3 240
+#+END_EXAMPLE
+session rate表示session完成频率。240/250表示发起250个但是完成240个。session length表示每个session包含多少个连接。lifetime平均每个session完成占用时间，failtime平均每个session要是失败的话在失败之前占用时间。length historagm表示每个session得到的reply个数，4个没有接收到任何reply,7个接受到1个。
+
+*** ab
+ab(apache benchmarking)是apache httpd自带的一个HTTP Server个的工具。下面是这个工具命令行参数
+#+BEGIN_EXAMPLE
+       ab  [ -A auth-username:password ] [ -b windowsize ] [ -c concurrency ] [ -C cookie-name=value ] [ -d ] [ -e
+       csv-file ] [ -f protocol ] [ -g gnuplot-file ] [ -h ] [ -H custom-header ] [ -i ] [ -k ] [ -n requests ]  [
+       -p  POST-file  ] [ -P proxy-auth-username:password ] [ -q ] [ -r ] [ -s ] [ -S ] [ -t timelimit ] [ -T con‐
+       tent-type ] [ -u PUT-file ] [ -v verbosity] [ -V ] [ -w ] [ -x <table>-attributes ] [ -X proxy[:port]  ]  [
+       -y <tr>-attributes ] [ -z <td>-attributes ] [ -Z ciphersuite ] [http[s]://]hostname[:port]/path
+#+END_EXAMPLE
+功能上没有httperf多但是觉得应该大部分时候足够使用的。
+
+NOTE(dirlt):ab和httperf工作模型不同。httperf是指定建立多少个链接，每个链接上发起多少个calls。而ab指定一共发送多少个请求，
+每批发送多少个请求，然后计算每批时间统计。ab必须等待这批请求全部返回或者是失败或者是超时。可以作为对方的互补。nice!!!
+
+下面看看每个参数的含义：
+   - -A auth-username:password 提供Basic Auth选项
+   - -b windowsize TCP的读写buffer
+   - -c concurrency 每次发起请求数目(认为这是一批请求，必须等待这批请求完全返回)这个和httperf模型还不太相同。
+   - -C cookie-name=value 提供cookie参数
+   - -d
+   - -e csv-file 提供CSV文件包含处理请求时间在各个级别上的百分比，通常结合gnuplot使用。
+   - -f protocol 指定SSL/TSL协议
+   - -g gnuplot-file 将测量参数写成gnuplot格式或者是TSV(Tab separate values)文件可以导入Gnuplot或者是Excel中
+   - -h 帮助信息
+   - -H custom-header 提供自定义头
+   - -i 发送HEAD而不是GET请求
+   - -k 使用keepalive选项
+   - -n requests 总共发起请求数目
+   - -p POST-file 指定文件提供POST数据。通常需要设置content-type.
+   - -P proxy-auth-username:password 为proxy提供Basic Auth验证。
+   - -q 安静模式
+   - -r socket处理错误不退出
+   - -s
+   - -S
+   - -t timelimit 作为benchmark总体时间，内部就使用-n 50000.默认没有超时
+   - -T content-type 设置content-type.
+   - -u PUT-file 指定文件提供PUT数据。通常需要设置content-type.
+   - -v
+   - -V
+   - -w 将结果输出成为HTML文件
+   - -x <table>-attributes 设置HTML文件的table属性
+   - -X proxy[:port] 设置proxy服务器
+   - -y <tr>-attributes 设置HTML文件的tr属性
+   - -z <td>-attributes 设置HTML文件的td属性
+   - Z ciphersuite 指定SSL/TLS cipher suite
+
+我们可以这样使用ab -c 100 -n 10000 -r localhost/ 输出还是很好理解的。对于最后面百分比时间，注意是包含100个concurrency的结果。
+#+BEGIN_EXAMPLE
+Server Software:        nginx/1.2.1
+Server Hostname:        localhost
+Server Port:            80
+
+Document Path:          /
+Document Length:        1439 bytes
+
+Concurrency Level:      100
+Time taken for tests:   0.760 seconds
+Complete requests:      10000
+Failed requests:        0
+Write errors:           0
+Total transferred:      16500000 bytes
+HTML transferred:       14390000 bytes
+Requests per second:    13150.09 [#/sec] (mean)
+Time per request:       7.605 [ms] (mean)
+Time per request:       0.076 [ms] (mean, across all concurrent requests)
+Transfer rate:          21189.11 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   1.4      0      18
+Processing:     2    7   1.8      7      20
+Waiting:        1    7   1.8      7      20
+Total:          5    7   2.0      7      20
+
+Percentage of the requests served within a certain time (ms)
+  50%      7
+  66%      7
+  75%      8
+  80%      8
+  90%      9
+  95%     10
+  98%     14
+  99%     19
+ 100%     20 (longest request)
+#+END_EXAMPLE
+
+*** autobench
+http://www.xenoclast.org/autobench/
+
+autobench作为httperf包装，也提供了分布式压力测试的工具。
+
+这里先介绍一下单机使用情况。autobench的manpage提供了非常清晰的说明 http://www.xenoclast.org/autobench/man/autobench.html. 可以看到autobench提供了比较两个站点的性能。
+   - --file 性能测试结果
+   - --high_rate 指定最高rate
+   - --low_rate 指定最低rate(所谓rate和httperf相同)
+   - --rate_step rate的步进
+   - --host1
+   - --host2
+   - --port1
+   - --port2
+   - --num_conn 总连接数
+   - --num_call 单个连接的调用次数
+   - --output_fmt 测试结果格式有TSV和CSV
+   - --quiet
+   - --single_host 只是测量单个host
+   - --timeout
+   - --uri1
+   - --uri2
+   - --version
+默认配置文件是~/.autobench.conf,方便经常使用。常用命令方式就是
+#+BEGIN_EXAMPLE
+autobench --single_host --host1=localhost --port1=19880 --low_rate=10 --high_rate=1000 --rate_step=100 --num_conn=10000 --num_call=1 --file=bench.tsv
+autobench --host1=www.sina.com --host2=www.sohu.com  --low_rate=10 --high_rate=1000 --rate_step=100 --num_conn=10000 --num_call=1 --file=bench.tsv
+#+END_EXAMPLE
+
+得到tsv文件之后可以使用bench2graph转换成为png格式。bench2graph需要做一些修改
+#+BEGIN_EXAMPLE
+#echo set terminal postscript color > gnuplot.cmd
+echo set terminal png xffffff > gnuplot.cmd
+
+#echo set data style linespoints >> gnuplot.cmd
+echo set style data linespoints >> gnuplot.cmd
+#+END_EXAMPLE
+使用bench2graph bench.tsv bench.png,然后会提示输入title即可生成比较图。
+
+TODO(dirlt):后续可能需要学习如何使用autobench分布式测试，因为httperf该死的select模型。
+
+*** iftop
+TODO(dirlt): http://www.ex-parrot.com/~pdw/iftop/
+
+*** iftraf
+TODO(dirlt): http://iptraf.seul.org/
+

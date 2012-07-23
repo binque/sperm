@@ -1,0 +1,87 @@
+* Git
+#+AUTHOR: dirtysalt1987@gmail.com
+#+OPTIONS: H:5
+
+参考资源
+   - Git – Fast Version Control System. http://git.or.cz/index.html 
+   - Git 简易指南. http://rogerdudler.github.com/git-guide/index.zh.html
+   - Git Tutorial. http://www.vogella.com/articles/Git/article.html
+   - Pro Git. http://git-scm.com/book/zh
+   - Git Manual Page. http://www.kernel.org/pub/software/scm/git/docs/
+   - 图解Git. http://blog.jobbole.com/22647
+   - Git Reference. http://gitref.org/
+
+** FAQ
+*** git仓库
+git分为远程仓库和本地仓库。可以从不同的远程仓库拉下内容到本地仓库，并且也可以推送本地仓库到不同的远程仓库去。
+可以通过git remote add origin https://github.com/dirtysalt/sperm 来为仓库建立别名。在pull或者是push的时候就
+可以指定远程仓库。
+
+git本地仓库由下面三棵树构成：
+   - 工作目录(working directory/WD).我们实际持有的文件。
+   - 缓存区(index/stage,INDEX).临时保存我们所做的修改。
+   - HEAD.指向我们最后一次提交的结果。
+整个变化过程是这样的：WD -> "git add" -> INDEX -> "git commit" -> HEAD
+
+
+   - git init 初始化本地git仓库
+   - git clone <repo> 克隆到本地git仓库
+   - git add <files> 将WD放入INDEX
+   - git commit 将INDEX放入HEAD
+   - git commit -a <files> 将WD放入INDEX和HEAD
+   - git checkout -- <files> INDEX移到WD
+   - git checkout HEAD -- <files> HEAD移到INDEX和WD
+   - git reset -- <files> 从HEAD移到INDEX
+   - git diff WD和INDEX差别
+   - git diff --cached INDEX和HEAD差别
+
+*** git分支
+默认来说git包含一个master分支，也可以很容易地创建和删除分支。当从远程clone到本地的时候，
+会将远程repo里面所有的分支内容全部clone到本地，维护所有版本信息以及历史文件，所以本地切换分支非常快。
+
+   - git branch <branch> 创建分支
+   - git checkout <branch> 切换分支
+   - git checkout -b <branch> 创建并且切换分支
+   - git branch -d <branch> 删除分支
+   - git push <repo> <branch> 将本地branch HEAD信息推送到远程repo的branch
+   - git push <repo> :<branch> 将删除分支信息推送。NOTE(dirlt):这个可以这样理解，:之前表示null,将null推到branch相当于清空x。
+   - git pull <repo> 将远程repo合并到本地HEAD
+   - git merge <branch> 将本地branch进行合并
+   - git fetch <repo> <branch> 将远程repo的branch拉到本地但是并不进行任何修改
+
+*** git-flow
+参考资源
+   - Git flow 开发流程。http://ihower.tw/blog/archives/5140/
+   - A successful Git branching model. http://nvie.com/posts/a-successful-git-branching-model/
+
+git-flow主要推行的就是一种开发方式，然后通过工具来配合这种开发方式。git-flow分为下面几类分支：
+   - master 线上使用版本始终都是ready状态。    
+   - develop 作为开发基线版本。
+   - feature 专门用于开发特性(可以有很多).
+   - release 开发到一定阶段发布的版本，作为master candidate.(直接在上面做bug修复)
+   - hotfix master上面出现bug临时修复(可以有很多).
+     
+然后说说各个分支之间的关系(这个在链接里面给出的图表示非常清楚)
+   - master
+     - 第一个版本之后，就会从master开出develop
+     - release OK会merge回master.
+     - hotfix OK会merge回master.
+   - develop
+     - hotfix OK会merge回develop.
+     - feature开发完毕会merge回develop，
+     - release做完bug fix之后会merge回develop.
+     - 从develop可以开出新的feature分支。
+     - develop OK之后可以开出release.
+   - feature
+     - 从develop开出
+     - OK之后会合并到develop
+   - release
+     - 从develop开出
+     - 期间测试发现的问题会在上面修复
+     - 修复会同时merge回develop
+     - OK之后会合并到master
+   - hotfix
+     - 从master开出
+     - OK之后合并到master和develop
+关系还是非常清楚的(不过我这里可能描述比较混乱).
+

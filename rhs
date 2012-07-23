@@ -1,0 +1,20 @@
+#!/bin/bash
+# root http server.
+function start() {
+    echo "cd / && sudo python -m SimpleHTTPServer 80"
+    cd / && sudo python -m SimpleHTTPServer 80
+}
+
+function stop() {
+    for pid in `ps aux | grep "python -m SimpleHTTPServer 80" | grep -v "grep" | awk '{print $2;}'`
+    do
+        echo "sudo kill -9 $pid of 'python -m SimpleHTTPServer 80"
+        sudo kill -9 $pid
+    done    
+}
+
+stop
+start
+
+
+

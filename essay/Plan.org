@@ -1,0 +1,9 @@
+* Plan
+#+OPTIONS: H:5
+#+AUTHOR: dirtysalt1987@gmail.com
+
+* DONE 调整桌面字体大小。
+* TODO 调整ubuntu窗口管理器。
+* DONE 备份ProxySwitchySharp文件
+* TODO Ubuntu的virtualbox如何识别USB解决网银问题
+* TODO 考虑使用fvwm

@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# export EDITOR=emacs
+# svn propedit svn:mime-type <FILE>
+# text/plain
+
+mkdir -p www
+# do publish
+emacs --batch --script publish.el
+./appbdstat # append baidu stat(tongji.baidu.com)
+
+if [ $1"X" == "siteX" ]
+then
+    tar czvf www.tar.gz www
+    scp micronodes www.tar.gz dirlt@dirlt.com:~/
+    ssh dirlt@dirlt.com "cd ~/;./micronodes"
+    rm -rf www.tar.gz
+fi
+

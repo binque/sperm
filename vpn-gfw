@@ -1,0 +1,16 @@
+#!/bin/bash
+function start() {
+    echo "ssh -qTfnN -D 7070 dirlt@106.187.37.37"
+    ssh -qTfnN -D 7070 dirlt@106.187.37.37
+}
+
+function stop() {
+    for pid in `ps aux | grep "ssh -qTfnN -D 7070 dirlt@106.187.37.37" | grep -v "grep" | awk '{print $2;}'`    
+    do
+        echo "kill -9 $pid of 'ssh -qTfnN -D 7070 dirlt@106.187.37.37'"
+        kill -9 $pid
+    done
+}
+
+stop
+start

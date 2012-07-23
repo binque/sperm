@@ -1,0 +1,873 @@
+* Maven
+#+AUTHOR: dirtysalt1987@gmail.com
+#+OPTIONS: H:5
+  
+** FAQ
+参考资源
+   - http://maven.apache.org/
+   - http://www.ibm.com/developerworks/cn/education/java/j-mavenv2/
+
+** maven能够用来做什么
+  - 理解项目通常是如何构建的。
+  - 利用其内嵌的项目知识简化和便利项目构建。
+  - 利用其内嵌的项目知识来帮助用户理解复杂的项目结构和构建过程中潜在的变数。
+  - 设计并实现一个经证实的依赖项管理系统，该系统顺应了当今全球化和相互联系的项目团队的需求。
+  - 利用其内部知识，针对简单项目提供简单的用户体验。
+  - 对于高级用户来说相当灵活；针对特别的应用场景，可以覆盖其内嵌模型，也可以通过配置、部署元数据或创建自定义插件对其内嵌模型进行改写。
+  - 全面扩展现有行为之外的场景细节。
+  - 捕获新出现的最佳实践和各个用户社区间的经确认的共同性，并将它们纳入到 Maven 的内嵌项目知识中，从而不断地得到改进。
+
+** maven模型
+maven模型分为几个部分：
+   - 项目对象模型（POM）： POM 是 Maven 2 中的里程碑式的模型。该模型的一部分已经构建到 Maven 引擎（被亲切地称为反应堆 ）中，其余部分则通过一个名叫 pom.xml 的基于 XML 的元数据文件来声明。
+   - 依赖项管理模型： Maven 对如何管理项目的依赖项很在行。依赖项管理是一片灰色地带，典型的构建-管理工具和系统都未明确涉及。Maven 2 构建了 Maven 依赖项管理模型，该模型能够适应大多数需求。这个模型被证明是有效而高产的模型，目前，主要的开源项目都部署了该模型。
+   - 构建生命周期和阶段：和 POM 相关的概念是构建生命周期 和阶段。这是 Maven 2 的内嵌概念模型和现实物理世界之间的接口。使用 Maven 时，工作主要是通过插件来执行的。在构建周期中，Maven 2 通过遵循一系列定义好的阶段，将这些插件协调起来。
+   - 插件：插件中每个认为被称为mojo（构建任务）。Maven 引擎在执行构建生命周期中相应的阶段时，执行插件中的 mojo（构建任务）。插件的 mojo 和生命周期中的阶段间的关联叫做绑定 。插件开发人员能够灵活地将一个或多个生命周期阶段和一个插件关联起来。 
+
+** maven生命周期
+| 生命周期     | 阶段描述                                                                                                                           |
+|--------------+------------------------------------------------------------------------------------------------------------------------------------|
+| 验证         | 确保当前配置和 POM 的内容是有效的。这包含对 pom.xml 文件树的验证。                                                                 |
+| 初始化       | 在执行构建生命周期的主任务之前可以进行初始化。                                                                                     |
+| 生成源码代码 | 生成器可以开始生成在以后阶段中处理或编译的源代码。                                                                                 |
+| 处理源码     | 提供解析、修改和转换源码。常规源码和生成的源码都可以在这里处理。                                                                   |
+| 生成资源     | 可以生成非源码资源。通常包括元数据文件和配置文件。                                                                                 |
+| 处理资源     | 处理非源码资源。修改、转换和重定位资源都能在这阶段发生。                                                                           |
+| 编译         | 编译源码。编译过的类被放到目标目录树中。                                                                                           |
+| 处理类处理   | 类文件转换和增强步骤。字节码交织器和常用工具常在这一阶段操作。                                                                     |
+| 生成测试源码 | mojo 可以生成要操作的单元测试代码。                                                                                                |
+| 处理测试源码 | 在编译前对测试源码执行任何必要的处理。在这一阶段，可以修改、转换或复制源代码。                                                     |
+| 生成测试资源 | 允许生成与测试相关的（非源码）资源。                                                                                               |
+| 处理测试资源 | 可以处理、转换和重新定位与测试相关的资源。                                                                                         |
+| 测试编译     | 编译单元测试的源码。                                                                                                               |
+| 测试         | 运行编译过的单元测试并累计结果。                                                                                                   |
+| 打包         | 将可执行的二进制文件打包到一个分布式归档文件中，如 JAR 或 WAR。                                                                    |
+| 前集成测试   | 准备集成测试。这种情况下的集成测试是指在一个受到一定控制的模拟的真实部署环境中测试代码。这一步能将归档文件部署到一个服务器上执行。 |
+| 集成测试     | 执行真正的集成测试。                                                                                                               |
+| 后集成测试   | 解除集成测试准备。这一步涉及测试环境重置或重新初始化。                                                                             |
+| 检验检验     | 可部署归档的有效性和完整性。过了这个阶段，将安装该归档。                                                                           |
+| 安装         | 将该归档添加到本地 Maven 目录。这一步让其他可能依赖该归档的模块可以使用它。                                                        |
+| 部署         | 将该归档添加到远程 Maven 目录。这一步让这个工件能为更多的人所用。                                                                  |
+Maven 从开源社区中汲取了十多年的项目构建管理经验。很难找到一个构建周期不符合上表中的生命周期阶段的软件项目。启动 Maven 2 引擎后，它会按顺序经历表中的各阶段，执行可能与该阶段绑定的 mojo。每个 mojo 则可以使用 Maven 2 丰富的 POM 支持、依赖项管理，也可以访问执行这一专门任务时的构建状态信息。调用 Maven 2 引擎时，可以将一个生命周期阶段指定为命令行参数。该引擎一直执行到指定的阶段（包括该指定的阶段）。包含的阶段中所有的 mojo 都会被触发。
+
+但是在这里有另外一个版本，大家可以参考一下 http://maven.apache.org/guides/getting-started/maven-in-five-minutes.html 
+   - validate: validate the project is correct and all necessary information is available
+   - compile: compile the source code of the project
+   - test: test the compiled source code using a suitable unit testing framework. These tests should not require the code be packaged or deployed
+   - package: take the compiled code and package it in its distributable format, such as a JAR.
+   - integration-test: process and deploy the package if necessary into an environment where integration tests can be run
+   - verify: run any checks to verify the package is valid and meets quality criteria
+   - install: install the package into the local repository, for use as a dependency in other projects locally
+   - deploy: done in an integration or release environment, copies the final package to the remote repository for sharing with other developers and projects.
+There are two other Maven lifecycles of note beyond the default list above. They are
+   - clean: cleans up artifacts created by prior builds
+   - site: generates site documentation for this project
+
+** maven仓库
+Maven 2 仓库存储 Maven 在一个项目的依赖项解析中使用过的工件集。在本地磁盘上访问本地仓库，通过网络访问远程仓库。工件通常被打包成包含二进制库或可执行库的 JAR 文件。这被认为是工件的一个类型。但在实践中，工件也可以是 WAR、EAR 或其他代码捆绑类型。Maven 2 利用操作系统的目录结构对存储在仓库中的工件集进行快速索引。这个仓库索引系统依赖于这种能力来通过工件的坐标惟一标识工件。Maven 坐标是一组可以惟一标识工件的三元组值。坐标包含了下列三条信息：
+   - (groupId)组 ID：代表制造该工件的实体或组织。例如，com.ibm.devworks 就是一个组 ID。
+   - (artifactId)工件 ID：实际的工件的名称。例如，主体类名为 OpsImp 的项目也许会用 OpsImp 作为其工件 ID。
+   - (version)版本：该工件的版本号。支持的格式为 mmm.nnn.bbb-qqqqqqq-dd ，其中， mmm 是主版本号， nnn 是次版本号， bbb 代表其 bug 修复水平。 qqqqq （限定词）或 dd （构建号）也能添加到版本号中，这两项是可选项。
+下面是JUnit依赖项的Maven坐标：
+#+BEGIN_SRC XML
+<dependencies>
+   <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+   </dependency>
+</dependencies>
+#+END_SRC
+NOTE(dirlt):另外两个并不常用的坐标指标是：TODO(dirlt):add some examples.
+   - packaging. jar, pom etc.
+   - classifier. javadoc, jdk15 etc.
+
+*** 本地仓库
+maven默认设置~/.m2/repository为本地仓库。将项目所需要的依赖全部都缓存下来，这样不用每次都重新下载依赖。
+#+BEGIN_EXAMPLE
+dirlt@dirlt-virtual-machine:~/.m2/repository$ ls -l
+total 68
+drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 antlr
+drwxrwxr-x 8 dirlt dirlt 4096  6月 24 22:36 asm
+drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 classworlds
+drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 com
+drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 commons-cli
+drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 commons-collections
+drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 commons-io
+drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 commons-lang
+drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 dom4j
+drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 jdom
+drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 jtidy
+drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 junit
+drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 net
+drwxrwxr-x 6 dirlt dirlt 4096  6月 24 23:42 org
+drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 oro
+drwxrwxr-x 5 dirlt dirlt 4096  6月 24 23:40 plexus
+drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 xml-apis
+#+END_EXAMPLE
+但是我们可以通过修改~/.m2/setting.xml来配置本地仓库位置。
+#+BEGIN_SRC XML
+<settings>  
+<localRepository>D:\java\repository</localRepository>  
+</settings> 
+#+END_SRC
+
+*** 远程仓库
+参考资源 http://juvenshun.iteye.com/blog/359256
+
+如果本地仓库没有某个工件的话，那么就会尝试从远程仓库下载。在{M2_HOME}/lib/maven-2.0.10-uber.jar能够找到\org\apache\maven\project\pom-4.0.0.xml,它是所有Maven POM的父POM,所有Maven项目继承该配置，你可以在这个POM中发现如下配置：
+#+BEGIN_SRC XML
+<repositories>  
+  <repository>  
+    <id>central</id>  
+    <name>Maven Repository Switchboard</name>  
+    <layout>default</layout>  
+    <url>http://repo1.maven.org/maven2</url>  
+    <snapshots>  
+      <enabled>false</enabled>  
+    </snapshots>  
+  </repository>  
+</repositories>  
+#+END_SRC
+它的id是central表示是一个中央仓库，地址是http://repo1.maven.org/maven2, 它关闭了snapshot版本构件下载的支持。
+
+为了能够在我们的项目中配置远程仓库，可以在项目pom.xml里面添加下面代码。大致结构是这样的：
+   - repositories(工件仓库)
+     - repository
+       - id
+       - name
+       - url
+       - releases
+         - enabled(是否可以使用release版本)
+       - snapshots
+         - enabled(是否可以使用snapshot版本)
+  - pluginRepositories(插件仓库)
+    - pluginRepository
+#+BEGIN_SRC XML
+<project>  
+  ...  
+  <repositories>  
+    <repository>  
+      <id>maven-net-cn</id>  
+      <name>Maven China Mirror</name>  
+      <url>http://maven.net.cn/content/groups/public/</url>  
+      <releases>  
+        <enabled>true</enabled>  
+      </releases>  
+      <snapshots>  
+        <enabled>false</enabled>  
+      </snapshots>  
+    </repository>  
+  </repositories>  
+  <pluginRepositories>  
+    <pluginRepository>  
+      <id>maven-net-cn</id>  
+      <name>Maven China Mirror</name>  
+      <url>http://maven.net.cn/content/groups/public/</url>  
+      <releases>  
+        <enabled>true</enabled>  
+      </releases>  
+      <snapshots>  
+        <enabled>false</enabled>  
+      </snapshots>      
+    </pluginRepository>  
+  </pluginRepositories>  
+  ...  
+</project>  
+#+END_SRC
+
+当然使用上面方式在每个项目pom.xml添加就会产生重复，一种比较好的方式就是加在settings.xml下面
+   - profiles
+     - profile
+       - id(profile id)
+   - activeProfiles
+     - activeProfile(激活的profile通过id识别)
+#+BEGIN_SRC XML
+<settings>  
+  ...  
+  <profiles>  
+    <profile>  
+      <id>dev</id>  
+      <!-- repositories and pluginRepositories here-->  
+    </profile>  
+  </profiles>  
+  <activeProfiles>  
+    <activeProfile>dev</activeProfile>  
+  </activeProfiles>  
+  ...  
+</settings>  
+#+END_SRC
+
+如果你的地理位置附近有一个速度更快的central镜像，或者你想覆盖central仓库配置，或者你想为所有POM使用唯一的一个远程仓库（这个远程仓库代理的所有必要的其它仓库），
+你可以使用settings.xml中的mirror配置。以下的mirror配置用maven.net.cn覆盖了Maven自带的central：
+   - mirrors
+     - mirror
+       - id
+       - name
+       - url
+       - mirrorOf(作为哪一个repo的镜像通过id识别)
+#+BEGIN_SRC XML
+<settings>  
+  ...  
+  <mirrors>  
+    <mirror>  
+      <id>maven-net-cn</id>  
+      <name>Maven China Mirror</name>  
+      <url>http://maven.net.cn/content/groups/public/</url>  
+      <mirrorOf>central</mirrorOf>  
+    </mirror>  
+  </mirrors>  
+  ...  
+</settings>
+#+END_SRC
+这里仅仅是配置了central的镜像，如果希望配置所有仓库镜像的话那么<mirrorOf>*</mirrorOf>. 关于更加高级的镜像配置，
+可以参考：http://maven.apache.org/guides/mini/guide-mirror-settings.html. TODO(dirlt):maven是如何在中央仓库和本地仓库，以及镜像之间选择下载工件的。
+
+*** 分发构件至远程仓库
+mvn install 会将项目生成的构件安装到本地Maven仓库，mvn deploy 用来将项目生成的构件分发到远程Maven仓库。
+本地Maven仓库的构件只能供当前用户使用，在分发到远程Maven仓库之后，所有能访问该仓库的用户都能使用你的构件。
+
+我们可以在settings.xml里面指定maven分发构件位置。注意这里我们通常将release和snapshot区分开来放在不同的repo下面。
+   - distributionManagement
+     - repository
+       - id
+       - name
+       - url
+     - snapshotRepository
+       - id
+       - name
+       - url
+   - servers
+     - server(对于远程服务器的话可能需要提供用户名和密码)
+       - id
+       - username
+       - password
+#+BEGIN_SRC XML
+<project>    
+  ...    
+  <distributionManagement>    
+    <repository>    
+      <id>nexus-releases</id>    
+      <name>Nexus Release Repository</name>    
+      <url>http://127.0.0.1:8080/nexus/content/repositories/releases/</url>    
+    </repository>    
+    <snapshotRepository>    
+      <id>nexus-snapshots</id>    
+      <name>Nexus Snapshot Repository</name>    
+      <url>http://127.0.0.1:8080/nexus/content/repositories/snapshots/</url>    
+    </snapshotRepository>    
+  </distributionManagement>
+  <servers>
+    <server>
+      <id>nexus-releases</id>
+      <username>admin</username>  
+      <password>admin123</password>
+    </server>
+    <server>    
+      <id>nexus-snapshots</id> 
+      <username>admin</username>
+      <password>admin123</password>
+    </server>
+  </servers>
+  ...    
+</project>
+#+END_SRC
+
+*** 远程仓库搭建
+参考资源 http://juvenshun.iteye.com/blog/34
+   - Nexus
+   - Apache Archiva
+NOTE(dirlt):自己维护了一下公司内部的Apache Archive看起来似乎使用并不麻烦。
+
+** maven常用操作
+TODO(dirlt):add more and add more comprehensive description.
+NOTE(dirlt):似乎这些命令和maven生命周期非常相似。
+   - mvn validate. 验证工程是否正确，所有需要的资源是否可用
+   - mvn compile. 编译项目源代码
+   - mvn test-compile. 编译测试项目源代码
+   - mvn test. 运行测试用例
+   - mvn package. 将编译输出打包
+   - mvn integration-test. 运行集成测试. TODO(dirlt):
+   - mvn verify. 检查是否可以发布. TODO(dirlt):
+   - mvn install. 将包安装到本地的repository.
+   - mvn deploy. 将包部署到远程的repository.
+   - mvn generate-sources 生成应用所需要的额外代码
+   - mvn archetype:create. 创建maven项目文件
+   - mvn clean. 清除编译输出
+常用参数有下面这些：
+   - -Dmaven.test.skip=true 跳过单元测试
+
+*** 创建项目(archetype)
+使用archetype插件可以很方便地创建项目。假设我们需要创建项目com.dirlt.chaos.JTest,我们可以执行下面命令
+#+BEGIN_EXAMPLE
+mvn archetype:create -DarchetypeGroupId=org.apache.maven.archetypes -DgroupId=com.dirlt.chaos -DartifactId=JTest
+#+END_EXAMPLE
+NOTE(dirlt):使用archetype:generate就是使用交互式方式生成pom.xml.似乎看起来也挺不错的。
+
+那么在当前目录下面就有JTest目录，JTest目录下面有pom.xml文件，其中：
+   - modelVersion. pom.xml使用的工程对象模型版本
+   - groupId. 项目名字空间
+   - artifactId. 项目名称
+   - version.可以通过-Dversion来指定，没有指定的话使用1.0-SNAPSHOT.SNAPSHOT表示当前版本并不稳定。
+   - packaging. 打包物的扩展名。jar单模块项目，pom多模块项目
+   - name. 项目显示名称，常用于maven生成的文档。
+   - url. 组织的站点，常用于maven生成的文档。
+   - description. 项目描述信息。
+   - dependencies. 项目依赖库.关于scope的含义后面会讲到
+#+BEGIN_SRC XML
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.dirlt.chaos</groupId>
+  <artifactId>JTest</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>JTest</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+</project>
+#+END_SRC XML
+
+这里稍微解释一下denepdency/scope字段。这个字段主要用来解释如何使用这个模块的：
+#+BEGIN_SRC XML
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+#+END_SRC
+   - compile. 缺省，适用于所有阶段，会随着项目一起发布。比如log4j.
+   - provided. 类似compile,但是期望JDK或者是使用者会提供这个依赖。比如servlet-api.
+   - runtime. 只是在运行时候使用。比如JDBC Driver.
+   - test. 只是在测试时使用。比如junit.
+   - system. 类似provided,但是需要显示提供所包含依赖的jar,maven不会在repo中查找它。
+
+*** 编译测试项目(maven-compiler-plugin)
+在pom.xml里面加入下面代码：
+#+BEGIN_SRC XML
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source> 
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+#+END_SRC
+然后执行
+#+BEGIN_EXAMPLE
+dirlt@dirlt-virtual-machine:~/maven/JTest$ mvn compile
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Building JTest
+[INFO]    task-segment: [compile]
+[INFO] ------------------------------------------------------------------------
+[INFO] [resources:resources {execution: default-resources}]
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/dirlt/maven/JTest/src/main/resources
+[INFO] [compiler:compile {execution: default-compile}]
+[INFO] Nothing to compile - all classes are up to date
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1 second
+[INFO] Finished at: Mon Jun 25 00:20:42 CST 2012
+[INFO] Final Memory: 7M/18M
+[INFO] ------------------------------------------------------------------------
+#+END_EXAMPLE
+
+这个命令使 Maven 2 引擎从构建生命周期一直运行到编译阶段，并执行相应的 mojo。如果这是第一次运行，那会花点时间，因为一些依赖项需要经过 Internet 从中央仓库下载（可以查看"maven仓库"这节）。 如何需要执行测试用例的话，可以执行
+#+BEGIN_EXAMPLE
+dirlt@dirlt-virtual-machine:~/maven/JTest$ mvn test
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Building JTest
+[INFO]    task-segment: [test]
+[INFO] ------------------------------------------------------------------------
+[INFO] [resources:resources {execution: default-resources}]
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/dirlt/maven/JTest/src/main/resources
+[INFO] [compiler:compile {execution: default-compile}]
+[INFO] Nothing to compile - all classes are up to date
+[INFO] [resources:testResources {execution: default-testResources}]
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /home/dirlt/maven/JTest/src/test/resources
+[INFO] [compiler:testCompile {execution: default-testCompile}]
+[INFO] Compiling 1 source file to /home/dirlt/maven/JTest/target/test-classes
+[INFO] [surefire:test {execution: default-test}]
+[INFO] Surefire report directory: /home/dirlt/maven/JTest/target/surefire-reports
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running com.dirlt.chaos.AppTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.043 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 4 seconds
+[INFO] Finished at: Mon Jun 25 00:22:40 CST 2012
+[INFO] Final Memory: 15M/37M
+[INFO] ------------------------------------------------------------------------
+#+END_EXAMPLE
+
+为了形成jar文件的话可以执行mvn intsall,之后在target目录下面就会生成.jar文件，同时在~/.m2/repository下面也存在一份。
+当然你可以直接执行mvn package这样只是直接在target目录下面生成.jar文件。
+
+*** 配置多模块项目(multiple modules project)
+假设我们存在A,B两个项目，A需要依赖于B的话，那么组织形式可以是这样的：
+   - pom.xml
+   - A
+     - pom.xml
+   - B
+     - pom.xml
+在最上层使用单独的pom.xml并且在下面子目录也包含相应的pom.xml.父目录的pom.xml如下(添加下面这些信息):
+#+BEGIN_SRC XML
+<packaging>pom</packaging>
+...
+<modules>
+  <module>A</module>
+  <module>B</module>
+</modules>
+...
+<dependencies>
+  <dependency>
+    <groupId>com.dirlt.chaos</groupId>
+    <artifactId>A</artifactId>
+    <version>${project.version}</version>
+  </dependency>
+  <dependency>
+      <groupId>com.dirlt.chaos</groupId>
+      <artifactId>B</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+#+END_SRC
+
+然后再目录A下面的pom.xml如下(添加下面这些信息)
+#+BEGIN_SRC XML
+...
+<parent>
+  <groupId>com.dirlt.chaos</groupId>
+  <artifactId>JTest</artifactId>
+  <version>1.0-SNAPSHOT</version>
+</parent>
+<dependencies>
+  <dependency>
+    <groupId>com.dirlt.chaos</groupId>
+    <artifactId>B</artifactId>
+   </dependency>
+</dependencies>
+#+END_SRC
+
+然后再目录B下面的pom.xml如下(添加下面这些信息)
+#+BEGIN_SRC XML
+<parent>
+  <groupId>com.dirlt.chaos</groupId>
+  <artifactId>JTest</artifactId>
+  <version>1.0-SNAPSHOT</version>
+</parent>
+#+END_SRC
+
+*** 部署项目(deploy)
+首先需要在项目内容添加好部署的配置。
+#+BEGIN_SRC XML
+  <distributionManagement>
+    <repository>
+      <id>releases</id>
+      <url>http://118.194.160.11:8088/nexus/content/repositories/releases</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <url>http://118.194.160.11:8088/nexus/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+#+END_SRC
+NOTE(dirlt):注意这两个repository id的用户名和密码必须在settings.xml里面给出。
+
+但是这样有一个不好的地方，就是每一个项目都都需要填写这样的配置。一个比较好的方法就是
+   - 新建项目叫做X.Y.Z:1.0
+   - 在这个项目的pom.xml里面填写上面部署信息
+   - 然后将这个项目推送到repo上面。
+之后我们只需要在我们自己项目里面填写
+#+BEGIN_EXAMPLE
+  <parent>
+    <groupId>X.Y</groupId>
+    <artifactId>Z</artifactId>
+    <version>1.0</version>
+  </parent>
+#+END_EXAMPLE
+maven会自动将父项目的pom.xml包含进来。NOTE(dirlt):实际上可以在这里填写很多公共配置。
+
+完成之后执行mvn deploy即可进行部署。done!!! :)    
+
+** maven常用插件
+*** maven-compiler-plugin
+TODO(dirlt):
+
+*** maven-jar-plugin
+TODO(dirlt):
+
+** .m2/settings.xml
+里面有几个地方值得一提：
+   - 我们使用了nexus来搭建个人maven服务器，对于umeng.public将很多外网的repo都做了proxy并且进行了group
+   - 我们只需要使用umeng.public来作为依赖以及插件的repo即可，非常方便。
+   - 这里存在存在releases和snapshots的id server.主要是为了部署使用的。
+
+NOTE(dirlt):网上有很多教程如何搭建nexus maven服务器，对于企业开发的话这样的单独服务器还是非常需要的。
+
+#+BEGIN_SRC XML
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed to the Apache Software Foundation (ASF) under one
+or more contributor license agreements.  See the NOTICE file
+distributed with this work for additional information
+regarding copyright ownership.  The ASF licenses this file
+to you under the Apache License, Version 2.0 (the
+"License"); you may not use this file except in compliance
+with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
+-->
+
+<!--
+ | This is the configuration file for Maven. It can be specified at two levels:
+ |
+ |  1. User Level. This settings.xml file provides configuration for a single user,
+ |                 and is normally provided in ${user.home}/.m2/settings.xml.
+ |
+ |                 NOTE: This location can be overridden with the CLI option:
+ |
+ |                 -s /path/to/user/settings.xml
+ |
+ |  2. Global Level. This settings.xml file provides configuration for all Maven
+ |                 users on a machine (assuming they're all using the same Maven
+ |                 installation). It's normally provided in
+ |                 ${maven.home}/conf/settings.xml.
+ |
+ |                 NOTE: This location can be overridden with the CLI option:
+ |
+ |                 -gs /path/to/global/settings.xml
+ |
+ | The sections in this sample file are intended to give you a running start at
+ | getting the most out of your Maven installation. Where appropriate, the default
+ | values (values used when the setting is not specified) are provided.
+ |
+ |-->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <!-- localRepository
+   | The path to the local repository maven will use to store artifacts.
+   |
+   | Default: ~/.m2/repository
+  <localRepository>/path/to/local/repo</localRepository>
+  -->
+
+  <!-- interactiveMode
+   | This will determine whether maven prompts you when it needs input. If set to false,
+   | maven will use a sensible default value, perhaps based on some other setting, for
+   | the parameter in question.
+   |
+   | Default: true
+  <interactiveMode>true</interactiveMode>
+  -->
+
+  <!-- offline
+   | Determines whether maven should attempt to connect to the network when executing a build.
+   | This will have an effect on artifact downloads, artifact deployment, and others.
+   |
+   | Default: false
+  <offline>false</offline>
+  -->
+
+  <!-- pluginGroups
+   | This is a list of additional group identifiers that will be searched when resolving plugins by their prefix, i.e.
+   | when invoking a command line like "mvn prefix:goal". Maven will automatically add the group identifiers
+   | "org.apache.maven.plugins" and "org.codehaus.mojo" if these are not already contained in the list.
+   |-->
+  <pluginGroups>
+    <!-- pluginGroup
+     | Specifies a further group identifier to use for plugin lookup.
+    <pluginGroup>com.your.plugins</pluginGroup>
+    -->
+  </pluginGroups>
+
+  <!-- proxies
+   | This is a list of proxies which can be used on this machine to connect to the network.
+   | Unless otherwise specified (by system property or command-line switch), the first proxy
+   | specification in this list marked as active will be used.
+   |-->
+  <proxies>
+    <!-- proxy
+     | Specification for one proxy, to be used in connecting to the network.
+     |
+    <proxy>
+      <id>optional</id>
+      <active>true</active>
+      <protocol>http</protocol>
+      <username>proxyuser</username>
+      <password>proxypass</password>
+      <host>proxy.host.net</host>
+      <port>80</port>
+      <nonProxyHosts>local.net|some.host.com</nonProxyHosts>
+    </proxy>
+    -->
+  </proxies>
+
+  <!-- servers
+   | This is a list of authentication profiles, keyed by the server-id used within the system.
+   | Authentication profiles can be used whenever maven must make a connection to a remote server.
+   |-->
+  <servers>
+    <server>
+      <id>umeng.public</id>
+      <username>dp</username>
+      <password>dp1234</password>      
+    </server>
+
+    <server comment="release repository uri">
+      <id>releases</id>
+      <username>dp</username>
+      <password>dp1234</password>      
+    </server>
+
+    <server comment="snapshot repository uri">
+      <id>snapshots</id>
+      <username>dp</username>
+      <password>dp1234</password>      
+    </server>
+
+    <!-- server
+     | Specifies the authentication information to use when connecting to a particular server, identified by
+     | a unique name within the system (referred to by the 'id' attribute below).
+     |
+     | NOTE: You should either specify username/password OR privateKey/passphrase, since these pairings are
+     |       used together.
+     |
+    <server>
+      <id>deploymentRepo</id>
+      <username>repouser</username>
+      <password>repopwd</password>
+    </server>
+    -->
+
+    <!-- Another sample, using keys to authenticate.
+    <server>
+      <id>siteServer</id>
+      <privateKey>/path/to/private/key</privateKey>
+      <passphrase>optional; leave empty if not used.</passphrase>
+    </server>
+    -->
+  </servers>
+
+  <!-- mirrors
+   | This is a list of mirrors to be used in downloading artifacts from remote repositories.
+   |
+   | It works like this: a POM may declare a repository to use in resolving certain artifacts.
+   | However, this repository may have problems with heavy traffic at times, so people have mirrored
+   | it to several places.
+   |
+   | That repository definition will have a unique id, so we can create a mirror reference for that
+   | repository, to be used as an alternate download site. The mirror site will be the preferred
+   | server for that repository.
+   |-->
+  <mirrors>
+    <!-- mirror
+     | Specifies a repository mirror site to use instead of a given repository. The repository that
+     | this mirror serves has an ID that matches the mirrorOf element of this mirror. IDs are used
+     | for inheritance and direct lookup purposes, and must be unique across the set of mirrors.
+     | 
+    <mirror>
+      <id>umeng.public</id>
+      <mirrorOf>central</mirrorOf>
+      <name>Umeng Public Maven Repository</name>
+      <url>http://118.194.160.11:8088/nexus/content/groups/public</url>
+    </mirror>
+    -->
+  </mirrors>
+
+  <!-- profiles
+   | This is a list of profiles which can be activated in a variety of ways, and which can modify
+   | the build process. Profiles provided in the settings.xml are intended to provide local machine-
+   | specific paths and repository locations which allow the build to work in the local environment.
+   |
+   | For example, if you have an integration testing plugin - like cactus - that needs to know where
+   | your Tomcat instance is installed, you can provide a variable here such that the variable is
+   | dereferenced during the build process to configure the cactus plugin.
+   |
+   | As noted above, profiles can be activated in a variety of ways. One way - the activeProfiles
+   | section of this document (settings.xml) - will be discussed later. Another way essentially
+   | relies on the detection of a system property, either matching a particular value for the property,
+   | or merely testing its existence. Profiles can also be activated by JDK version prefix, where a
+   | value of '1.4' might activate a profile when the build is executed on a JDK version of '1.4.2_07'.
+   | Finally, the list of active profiles can be specified directly from the command line.
+   |
+   | NOTE: For profiles defined in the settings.xml, you are restricted to specifying only artifact
+   |       repositories, plugin repositories, and free-form properties to be used as configuration
+   |       variables for plugins in the POM.
+   |
+   |-->
+  <profiles>
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <repositories>
+        
+        <repository>
+          <id>umeng.public</id>
+          <name>Umeng Public Maven Repository</name>
+          <url>http://118.194.160.11:8088/nexus/content/groups/public/</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+        
+        <!-- repository outside
+        <repository>
+          <id>apache.snapshots</id>
+          <name>Apache Snapshots</name>
+          <url>http://repository.apache.org/snapshots/</url>
+        </repository>        
+
+        <repository>
+          <id>codehaus.snapshots</id>
+          <name>Codehaus Snapshots</name>
+          <url>http://nexus.codehaus.org/snapshots/</url>
+        </repository>        
+
+        <repository>
+          <id>java.net2</id>
+          <name>Java Net2</name>
+          <url>http://download.java.net/maven/2/</url>
+          </repository>
+
+        <repository>
+          <id>cloudera</id>
+          <name>cloudera repository</name>
+          <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+        </repository>
+        --> 
+      </repositories>
+
+      <pluginRepositories>
+        <pluginRepository>
+          <id>umeng.public</id>
+          <name>Umeng Public Maven Repository</name>
+          <url>http://118.194.160.11:8088/nexus/content/groups/public</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+      
+    </profile>
+    <!-- profile
+     | Specifies a set of introductions to the build process, to be activated using one or more of the
+     | mechanisms described above. For inheritance purposes, and to activate profiles via <activatedProfiles/>
+     | or the command line, profiles have to have an ID that is unique.
+     |
+     | An encouraged best practice for profile identification is to use a consistent naming convention
+     | for profiles, such as 'env-dev', 'env-test', 'env-production', 'user-jdcasey', 'user-brett', etc.
+     | This will make it more intuitive to understand what the set of introduced profiles is attempting
+     | to accomplish, particularly when you only have a list of profile id's for debug.
+     |
+     | This profile example uses the JDK version to trigger activation, and provides a JDK-specific repo.
+    <profile>
+      <id>jdk-1.4</id>
+
+      <activation>
+        <jdk>1.4</jdk>
+      </activation>
+
+      <repositories>
+        <repository>
+          <id>jdk14</id>
+          <name>Repository for JDK 1.4 builds</name>
+          <url>http://www.myhost.com/maven/jdk14</url>
+          <layout>default</layout>
+          <snapshotPolicy>always</snapshotPolicy>
+        </repository>
+      </repositories>
+    </profile>
+    -->
+
+    <!--
+     | Here is another profile, activated by the system property 'target-env' with a value of 'dev',
+     | which provides a specific path to the Tomcat instance. To use this, your plugin configuration
+     | might hypothetically look like:
+     |
+     | ...
+     | <plugin>
+     |   <groupId>org.myco.myplugins</groupId>
+     |   <artifactId>myplugin</artifactId>
+     |
+     |   <configuration>
+     |     <tomcatLocation>${tomcatPath}</tomcatLocation>
+     |   </configuration>
+     | </plugin>
+     | ...
+     |
+     | NOTE: If you just wanted to inject this configuration whenever someone set 'target-env' to
+     |       anything, you could just leave off the <value/> inside the activation-property.
+     |
+    <profile>
+      <id>env-dev</id>
+
+      <activation>
+        <property>
+          <name>target-env</name>
+          <value>dev</value>
+        </property>
+      </activation>
+
+      <properties>
+        <tomcatPath>/path/to/tomcat/instance</tomcatPath>
+      </properties>
+    </profile>
+    -->
+  </profiles>
+
+  <!-- activeProfiles
+   | List of profiles that are active for all builds.
+   |
+  <activeProfiles>
+    <activeProfile>alwaysActiveProfile</activeProfile>
+    <activeProfile>anotherAlwaysActiveProfile</activeProfile>
+  </activeProfiles>
+  -->
+</settings>
+
+#+END_SRC

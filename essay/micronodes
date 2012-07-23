@@ -1,0 +1,7 @@
+#!/bin/bash
+rm -rf www/*
+tar xzvf www.tar.gz
+cd www
+ln -s ../wpbackup/wordpress wp
+ln -s ../wpbackup/wordpress blog
+

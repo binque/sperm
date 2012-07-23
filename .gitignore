@@ -1,0 +1,12 @@
+*.elc
+*.pyc
+.sconsign.dblite
+.emacs.d/ac-comphist.dat
+.emacs.d/auto-save-list/
+.emacs.d/session.*
+essay/www/
+essay/*.html
+code/dsgm.tgz
+code/dsgm/sync
+
+

@@ -1,0 +1,16 @@
+#!/bin/bash
+function start() {
+    echo "cd $HOME/.vpn-umeng && sudo openvpn --daemon --config 21vianet.ovpn"
+    cd $HOME/.vpn-umeng && sudo openvpn --daemon --config 21vianet.ovpn
+}
+
+function stop() {
+    for pid in `ps aux | grep "openvpn --daemon --config 21vianet.ovpn" | grep -v "grep" | awk '{print $2;}'`
+    do
+        echo "sudo kill -9 $pid of 'openvpn --daemon --config 21vianet.ovpn"
+        sudo kill -9 $pid
+    done
+}
+
+stop
+start

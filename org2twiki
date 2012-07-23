@@ -1,0 +1,75 @@
+#!/usr/bin/env python
+#coding:utf-8
+#Copyright (C) dirlt
+
+import string
+import os
+import sys
+
+def org2twiki(lines):
+    nlines=[]
+    TEXT_MODE=0
+    VERBOSE_MODE=1
+    status=TEXT_MODE
+    for line in lines:
+        #VERBOSE_MODE.
+        if(status==VERBOSE_MODE):
+            if(string.strip(line)=='#+END_EXAMPLE'):
+                nlines.append('</pre>')
+                status=TEXT_MODE
+            elif(string.strip(line)=='#+END_SRC'):
+                nlines.append('%ENDGESHI%')
+                status=TEXT_MODE
+            else:
+                nlines.append(line)
+            continue
+        
+        #TEXT_MODE.
+        if(line.startswith('*')):
+            (captag,content)=string.split(line,maxsplit=1)
+            depth=len(captag)+1
+            nlines.append('---%s %s'%('+'*depth,content))
+        elif(line.startswith('#+')):
+            #some mode.
+            line=string.strip(line)
+            if(line=='#+BEGIN_EXAMPLE'):
+                #example.
+                nlines.append('<pre>')
+                status=VERBOSE_MODE
+            elif(line.startswith('#+BEGIN_SRC')):
+                #source.
+                mode=string.split(line,maxsplit=1)[1]
+                nlines.append('%%GESHI{"%s"}%%'%(string.lower(mode)))
+                status=VERBOSE_MODE
+            elif(line.startswith("#+AUTHOR:") or
+                 line.startswith("#+OPTIONS:") or
+                 line.startswith('#+TITLE:') or
+                 line.startswith('#+ -*- org -*-')):
+                pass
+            else:
+                nlines.append(line)
+        #table header.
+        elif(line.startswith('|--')):
+            pass
+        else:
+            nlines.append(line)
+    return nlines
+
+def main(fname):
+    (root,_)=os.path.splitext(fname)
+    base=os.path.basename(root)
+    nfname='%s.twiki.txt'%(root)
+    lines=map(lambda x:string.rstrip(x),open(fname).readlines())
+    nlines=[]
+    nlines.append('---# %s'%(base))
+    nlines.append('%TOC%')
+    nlines.extend(org2twiki(lines))
+    open(nfname,'w').writelines(map(lambda x:'%s\n'%x,nlines))
+    return 
+
+if __name__=='__main__':
+    if(len(sys.argv)!=2):
+        print "convert emacs org to twiki"
+        print "usage:%s FILENAME"%(sys.argv[0])
+        sys.exit(-1)
+    main(sys.argv[1])

@@ -1,0 +1,11 @@
+* HBase
+#+AUTHOR: dirtysalt1987@gmail.com
+#+OPTIONS: H:5
+
+** hbase shell
+   - scan 'test'
+   - scan 'test' , { LIMIT=>10 }
+   - scan 'test' , { COLUMN=>['cf:url'] }
+   - scan 'test' , { STARTROW=>'xyz' }
+   - count 'test'
+

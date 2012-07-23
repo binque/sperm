@@ -1,0 +1,268 @@
+* dsgm
+#+OPTIONS: H:5
+#+AUTHOR: dirtysalt1987@gmail.com
+
+code: https://github.com/dirtysalt/sperm/tree/master/py/dsgm
+
+dsgm(Documentation Synchronize based on Google Mail)主要是为了解决文档数据同步问题。这里所谓的文档包括
+   - .doc
+   - .ppt
+   - .pdf
+通常来说这些文档都是不经常变化的，一旦存储之后很少修改。对于这些之后的版本都可以使用全量进行保存。
+之所以考虑使用gmail来进行存储的话，一方面考虑的是免费存储空间，另外一方面考虑的是使用gmail可以与
+google docs互连，方便在线打开编辑，以及共享等操作。
+
+** Design
+assumption:
+   - file number : 10k
+   - 本地不考虑多进程启动情况。工作方式非常类似于git pull和git push.这个决定了使用方式。
+   - 本地需要同步的文档全部都放在单独一个文件夹下面，在这个文件夹下面也可以建立层级文件夹而不强制平级放置。
+   - 同步文件夹下面所有文件，而不仅仅只是文档。但是文档更加preferred原因之前说过。
+   - 文件上传之后就很少发生修改。如果频繁修改的文档可以考虑使用github进行备份。
+   - 不考虑文档删除情况。我们始终以本地和邮箱文档的{并集合}作为标准。
+
+NOTE(dirlt):我们可以稍微限制一下上传文件类型。这样文件上传之后就可以很方便地查看了。
+   - .doc
+   - .docx
+   - .ppt
+   - .pptx
+   - .pps
+   - .pdf
+这个类型可以不断地增加对于原有系统不会存在任何问题。
+
+dsgm workflow:
+   - 从gmail上面将邮箱里面所有的uid全部拿下，和本地DB进行对比，确认哪些uid可能是本地不存在的。
+   - 从gmail上面检查远端新邮件标题信息，标题信息里面包含文件名称以及对应的md5.更新本地DB.(这个DB保存gmail端的信息).
+   - 扫描本地目录，得到所有的文件名称以及对应的md5.形成集合X
+   - 如果集合X中存在元素而DB中不存在的话，那么就进行push.如果集合X中不存在元素而DB存在的话，那么就pull. 
+
+** Implementation
+以boost/libs为例，扫描一遍大约在80ms.然后如果每个文件都做md5的话，扫描一遍大约在600ms以内。但是每个文件都是.cpp或者是.h.大约在1K级别，
+而平均文档的话都在1M左右，所以扫描一遍并且做md5的话大约会在10s内。如果可以通过考虑首先判断时间戳，然后判断md5的方式来减少开销代价。
+#+BEGIN_EXAMPLE
+dirlt@dirlt-virtual-machine:~/utils/boost_1_49_0/libs$ time find . -type f | wc
+  21322   21322 1007902
+
+real    0m0.080s
+user    0m0.040s
+sys     0m0.040s
+
+dirlt@dirlt-virtual-machine:~/utils/boost_1_49_0/libs$ time find . -type f | xargs md5sum >/dev/null     
+
+real    0m0.657s
+user    0m0.460s
+sys     0m0.232s
+#+END_EXAMPLE
+使用检测新增文件的话那么就需要启动一个daemon程序，这样会加大程序复杂度。
+
+假设同步文件为X/Y/Z.doc的话：
+   - 那么邮件标题是[dsgm]Z.doc@(md5 X/Y/Z.doc)$X@Y.这样文件的元信息都可以通过分析邮箱标题得到，同时可以通过邮箱引擎检索到。
+   - 邮件正文没有任何内容，但是后面可以考虑做一些摘要信息。TODO(dirlt):how to extract digest from doc???
+   - 邮件附件保存的是所需要同步的文件，名称为Z.doc
+
+如何管理冲突：
+   - 出现的情况就是AB两处各有D的一个版本，然后A先上传，之后B在进行pull的时候，文件同名。
+   - 对于这种情况，B在pull的时候，会判断本地是否有同名文件存在
+   - 如果存在文件同名的话，那么将新下载的文件修改成为Z-C{md5}.doc这样的格式。NOTE(dirlt):使用时间标记的话可以让我们了解冲突。
+   - 然后再push的时候，需要忽略这样的文件，因为这种格式的文件并不是本地用户自己产生的。
+NOTE(dirlt):如果用户想进行merge的话，可以新创建一个文件，叫做Z-M{version-number}.doc(只是推荐这么叫).因为我们并不支持用户删除文件。
+
+** Code
+首先看是否有现成的gmail libary. in Java or Python. 
+
+gmail4j http://code.google.com/p/gmail4j/ 似乎已经停止更新了，而且API docs也找不到了。
+google search 到这个 API http://www.jarvana.com/jarvana/view/com/googlecode/gmail4j/gmail4j/0.4/gmail4j-0.4-javadoc.jar!/index.html
+粗略地浏览了一下，发现很多功能还是不具备的，只能够下载Unread Message.同时Message里面没有办法嵌入附件。这点非常讨厌。
+#+BEGIN_SRC Java
+    // GmailClient client=new ImapGmailClient();
+    // GmailConnection conn=new ImapGmailConnection();
+    // conn.setLoginCredentials(gmailUser,gmailPass.toCharArray());
+    // client.setConnection(conn);
+    
+    GmailClient client = new RssGmailClient();
+    GmailConnection conn= new HttpGmailConnection(gmailUser, gmailPass.toCharArray());
+    client.setConnection(conn);
+    for (GmailMessage message : client.getUnreadMessages()) {
+      System.out.println(message.getFrom() + ": " + message.getSubject());
+    }
+#+END_SRC
+另外使用ImapGmailClient/ImapGmailConnection似乎没有办法使用(可能gmail接口变化了).只能够使用Rss这个接口。放弃!!!
+
+TODO(dirlt):使用原生SMTP以及IMAP接口 in python.
+
+libgmail http://libgmail.sourceforge.net/ 似乎已经停止更新很久了。看了一下代码应该是使用gmail提供的API完成的。
+简单使用了一下发现还是有很多问题的。虽然我修改了一下代码，但是依然不能够工作。应该是gmail API发生了变化。
+#+BEGIN_EXAMPLE
+dirlt@dirlt-virtual-machine:~$ ./test.py 
+Traceback (most recent call last):
+  File "./test.py", line 12, in <module>
+    ga.login()
+  File "/usr/local/lib/python2.7/dist-packages/libgmail.py", line 305, in login
+    pageData = self._retrievePage(req)
+  File "/usr/local/lib/python2.7/dist-packages/libgmail.py", line 340, in _retrievePage
+    req = ClientCookie.Request(urlOrRequest)
+  File "/usr/local/lib/python2.7/dist-packages/mechanize-0.2.5-py2.7.egg/mechanize/_request.py", line 31, in __init__
+    if not _rfc3986.is_clean_uri(url):
+  File "/usr/local/lib/python2.7/dist-packages/mechanize-0.2.5-py2.7.egg/mechanize/_rfc3986.py", line 62, in is_clean_uri
+    return not bool(BAD_URI_CHARS_RE.search(uri))
+#+END_EXAMPLE
+
+使用Python imaplib吧!!!
+   - http://www.doughellmann.com/PyMOTW/imaplib/
+   - http://stackoverflow.com/questions/2792623/reading-and-parsing-email-from-gmail-using-c-c-or-python
+   - http://www.cnblogs.com/lonelycatcher/archive/2012/02/09/2343480.html
+   - 
+
+NOTE(dirlt):似乎我们没有明确我们需要的操作。大致上我们需要的操作包括：
+   - 下载某个mailbox所有标题。
+   - 下载某个邮件以及对应的附件。
+   - 发送带附件的邮件。
+
+*** 创建IMAP对象
+#+BEGIN_SRC Python
+def make_gmail_imap(username,password,mailbox):
+    import imaplib
+    m=imaplib.IMAP4_SSL('imap.gmail.com',993)
+    m.login(username,password)
+    if(mailbox):
+        m.create(mailbox) # to assure it exists
+        m.select(mailbox)
+    return m
+#+END_SRC
+
+*** 检查邮箱内部邮件数目
+#+BEGIN_SRC Python
+(type,data)=m.select(mailbox)
+if(type=='OK'):
+    return int(data)
+#+END_SRC
+
+*** 查询某个时间点以后的mail uid
+NOTE(dirlt):使用这个函数可以做到不需要同步很早之前的数据了。
+
+NOTE(dirlt):不过这个似乎现在没有必要用上了。因为uid非常小所以我们每次fetch全量即可。
+#+BEGIN_SRC Python
+def make_imapdate(reserve_day=10):
+    import time
+    now=time.time()
+    now-=(reserve_day * 3600 * 24)
+    return time.strftime('%d-%b-%Y',time.localtime(now))
+print make_imapdate()
+
+def request_uids_after_imapdate(imap, imapdate):
+    type, data=imap.uid('SEARCH','(SENTSINCE '+imapdate+')')
+    return data[0].split()
+#+END_SRC
+
+
+*** 请求mail的body_header提取subject
+NOTE(dirlt):现在代码里面不是这样实现的，不过基本结构类似。
+
+#+BEGIN_SRC Python
+def request_body_header(imap, uid):
+    type, data=imap.uid('FETCH',uid, '(RFC822.HEADER)')
+    if(type != 'OK'):
+        return None
+    return data
+
+def extract_subject_from_body_header(body_header):
+    headers=body_header[0][1].split('\r\n')
+    #Subject: Fwd: =?GB2312?B?1cLR19C0uPjP/rartcTQxQ==?=
+    subject=filter(lambda x:x.startswith('Subject: '),headers)[0][len('Subject: '):]
+    return subject
+
+def parse_subject(subject):
+    import email.header
+    parts=email.header.decode_header(subject)
+    return map(lambda x:x[0].decode(x[1] or 'utf8'),parts)
+
+print parse_subject('Fwd: =?GB2312?B?1cLR19C0uPjP/rartcTQxQ==?=')
+#+END_SRC
+
+*** 请求mail的body提取附件
+NOTE(dirlt):只是提取一个附件.
+#+BEGIN_SRC Python
+def request_body(imap, uid):
+    type, data=imap.uid('FETCH', uid, '(RFC822)')
+    if(type != 'OK'):
+        return None
+    return data
+
+def extract_attachment_from_body(body):
+    import email
+    msg=email.message_from_string(body[0][1])
+    assert(msg.is_multipart()) # usually it is!!!
+    for part in msg.walk():
+        if(part.get_filename()): # find attachment.
+            filename=part.get_filename()
+            payload=part.get_payload()
+            # base64 decode
+            import base64
+            content=base64.b64decode(payload)
+            # I think just one attachment.
+            return content
+    return None
+#+END_SRC
+
+*** 发送带附件的mail
+NOTE(dirlt):这里最好能够只能地判断MIME类型就好了。
+
+#+BEGIN_SRC Python
+def make_mail_with_attachment(f, to, subject, text, file):
+    import os
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.base import MIMEBase
+    from email.mime.text import MIMEText    
+    from email import encoders
+
+    msg = MIMEMultipart()
+    msg['From'] = f
+    msg['To'] = to
+    msg['Subject'] = subject 
+    if(text):
+        msg.attach(MIMEText(text))
+    if(file):        
+        #part = MIMEBase('application', 'octet-stream') #'octet-stream': binary data 
+        part = MIMEBase('text','plain')
+        part.set_payload(open(file, 'rb').read())
+        encoders.encode_base64(part) 
+        part.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(file))
+        msg.attach(part)
+    return msg
+
+def send_mail(imap, mailbox, mail):
+    import time
+    imap.append(mailbox, '' , time.localtime(time.time()), msg.as_string())
+#+END_SRC
+
+*** 数据库管理
+使用gdbm来进行数据库管理，因为我们只需要简单的key-value即可。对于同步的文件可以使用上传邮件标题来作为key,value=mail uid.
+如果邮件删除的话，那么mail uid=0来单独标记。
+
+NOTE(dirlt):自己实现了一个简单的redo-log方式的db.更加可读。
+
+*** 配置文件
+配置文件使用简单的key=value格式完成。配置项在程序目录下面称为dsgm.conf文件。需要用户提供
+   - gmail.user
+   - gmail.password
+   - document.directory
+NOTE(dirlt):用户最好注册一个单独的gmail,这个gmail不要使用pop来收邮件，不然会重复下载邮件。
+
+
+** Tutorial
+   - 我们希望同步本地目录/home/xyz/dsgm-sync
+   - 申请一个gmail邮箱。假设mail和password为 xyz@gmail.com xyz
+   - 在dsgm的目录下面新建文件dsgm.conf，内容为
+#+BEGIN_EXAMPLE
+gmail.username = xyz@gmail.com
+gmail.password = xyz
+document.directory= /home/xyz/dsgm-sync
+#+END_EXAMPLE
+   - 然后使用dsgm
+
+dsgm命令行参数
+   - dsgm help # 帮助信息     
+   - dsgm pull # 
+   - dsgm push # 
+   - dsgm # dsgm pull + dsgm push
+
