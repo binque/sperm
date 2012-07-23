@@ -6,7 +6,7 @@
 看到身边很多牛人使用它确实极大地提高了工作效率。对于emacs这个东西来说最主要的是，它提供了
 哪些功能，这些功能是如何来更好地提高工作效率的。
 
-我的.emacs以及.emacs.d托管在了github上面 https://github.com/dirtysalt/tpircs
+我的.emacs以及.emacs.d托管在了github上面 https://github.com/dirtysalt/sperm
 so feel free to use it because I just feel free to steal them from else:)
 
 

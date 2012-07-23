@@ -57,7 +57,7 @@ SIMD(Single Instruction Muitple Data)单指令多数据。这个笔记其实是I
    - [[file:./Redis.org][Redis]] 内存存储系统，支持丰富的数据类型以及相应的计算(支持持久化)。外围包装网络访问接口(并且提供了丰富的客户端),可以比较方便地在分布式系统内或者是环境下面使用.
 
 ** Network Programming
-   - [[https://github.com/dirtysalt/sperm/tree/master/cc/itachi][itachi]] 自己两天时间写完的异步网络编程框架，当然有很多地方需要改进，但是内核基本稳定了。并且在上面做了asocket封装，编写网络程序非常方便。TODO(dirlt):是否需要专门写篇文章介绍
+   - [[https://github.com/dirtysalt/sperm/tree/master/code/cc/itachi][itachi]] 自己两天时间写完的异步网络编程框架，当然有很多地方需要改进，但是内核基本稳定了。并且在上面做了asocket封装，编写网络程序非常方便。TODO(dirlt):是否需要专门写篇文章介绍
    - [[file:./libev.org][libev]] 开源的事件触发器。被认为是更高效的libevent.itachi这个项目开始想自己编写事件触发器，但是发现工作比较琐碎枯燥，所以底层还是选择使用libev.
    - [[file:./HPServer.org][hpserver]] 开源的网络编程框架。可以当做一个入门级的网络编程框架阅读。这个是我最开始阅读的网络编程框架(1st).
    - [[file:./nmstl.org][nmstl]] 开源的网络编程框架。一个很早期的作品，代码十分简洁。主要是内部实现了SEDA的思想。这个是我第二个阅读的网络编程框架(2nd).
@@ -101,5 +101,5 @@ SIMD(Single Instruction Muitple Data)单指令多数据。这个笔记其实是I
      - Core Java Volume I: Fundamentals.
 
 ** project
-   - [[file:./dsgm.org][dsgm]] Documentation Synchronize based on Google Mail. https://github.com/dirtysalt/sperm/tree/master/py/dsgm
+   - [[file:./dsgm.org][dsgm]] Documentation Synchronize based on Google Mail. https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm
 

@@ -81,7 +81,7 @@ TODO(dirlt):磁盘数据
 
 首先可以使用sysctl工具来进行修改。比如如果想修改sys/vm/swappiness==0的话，那么可以
 #+BEGIN_EXAMPLE
-dirlt@dirlt-virtual-machine:~/github/tpircs/essay$ sudo sysctl vm.swappiness=0
+dirlt@dirlt-virtual-machine:~/github/sperm/essay$ sudo sysctl vm.swappiness=0
 [sudo] password for dirlt:
 vm.swappiness = 0
 #+END_EXAMPLE
@@ -101,12 +101,12 @@ vm.swappiness = 0
 *** /proc/sys/vm/overcommit_ratio
 如果overcommit_memory值为2的话，那么这个参数决定了系统的<可用内存>的大小。计算方式是 (Physical-RAM-Size) - ratio / 100 + (Swap-Size).
 #+BEGIN_EXAMPLE
-dirlt@dirlt-virtual-machine:~/github/tpircs/essay$ free -m
+dirlt@dirlt-virtual-machine:~/github/sperm/essay$ free -m
              total       used       free     shared    buffers     cached
 Mem:           491        484          6          0         43        296
 -/+ buffers/cache:        145        346
 Swap:          509          0        509
-dirlt@dirlt-virtual-machine:~/github/tpircs/essay$ cat /proc/sys/vm/overcommit_ratio
+dirlt@dirlt-virtual-machine:~/github/sperm/essay$ cat /proc/sys/vm/overcommit_ratio
 50
 #+END_EXAMPLE
 所以对于我这个系统来说，可用的虚拟内存在(491*50/100)+509=754M. NOTE(dirlt):这个仅仅是在overcommit_memory=2的时候估算的<可用内存>大小，
