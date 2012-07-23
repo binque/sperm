@@ -62,11 +62,7 @@ System Settings =》 Details 里面可以设置默认浏览器。至于emacs里�
 *** virtualbox不能检测到USB
 首先需要在 https://www.virtualbox.org/wiki/Downloads VirtualBox Extension Pack，双击执行。
 然后在Settings =》 USB选项里面勾选 Enable USB Controller 和 Enable USB2.0（EHCI） Controller。
-
-
-** 视频
-安装：
-   - vlc # video player
+TODO（dirlt）：
 
 ** 外观和快捷键
 *** 常用快捷键
@@ -80,20 +76,25 @@ System Settings =》 Universal Access里面的Seeing部分可以用来调整字�
 参考链接 http://ltek.dyndns.org/wordpress/?p=282
 
 ** 系统管理
-*** 重启电脑
+*** 重启
 似乎Ubuntu下面限制用户进行重启，所以要重启的话可以执行sudo reboot.
 
 ** 窗口管理器
-*** gnome窗口管理器
+*** gnome
 安装：
    - gnome-shell # gnome窗口管理器
 
-** 聊天
+** 娱乐
+*** 视频
+安装：
+   - vlc # video player
+
+*** 聊天
 安装：
    - pidgin
    - 
 
-** 词典
+*** 词典
 安装：
    - stardict
    - 
