@@ -3,6 +3,13 @@
 ;;; misc.
 (setq load-path (cons "~/.emacs.d/misc" load-path))
 (require 'xml-parse)
+(autoload 'make-regexp "make-regexp"
+  "Return a regexp to match a string item in STRINGS.")
+(autoload 'make-regexps "make-regexp"
+  "Return a regexp to REGEXPS.")
+
+;;; htmlize.
+(require 'htmlize)
 
 ;;; go.
 (setq load-path (cons "~/.emacs.d/go-mode" load-path))
@@ -13,13 +20,13 @@
 (require 'clojure-mode)
 
 ;;; clisp.
-;; (setq load-path (cons "~/.emacs.d/clisp-mode" load-path))
-;; (require 'clisp-indent)
-;; (load-library "clisp-coding")
-;; (load-library "clisp-ffi")
-;; (load-library "clhs")
-;; (require 'd-mode)
-;; (add-to-list (quote auto-mode-alist) (cons "\\.d$" (function d-mode)))
+(setq load-path (cons "~/.emacs.d/clisp-mode" load-path))
+(require 'clisp-indent)
+(load-library "clisp-coding")
+(load-library "clisp-ffi")
+(load-library "clhs")
+(require 'd-mode)
+(add-to-list (quote auto-mode-alist) (cons "\\.d$" (function d-mode)))
 
 ;;; google c style.
 (setq load-path (cons "~/.emacs.d/google-c-style" load-path))
@@ -50,17 +57,17 @@
 ;;   - C-c d m will insert a blank multiline Doxygen comment.
 ;;   - C-c d s will insert a blank singleline Doxygen comment.
 ;;   - C-c d @ will insert grouping comments around the current region.
-;; (require 'doxymacs)
-;; (add-hook 'c-mode-common-hook 'doxymacs-mode)
-;; (add-hook 'python-mode-hook 'doxymacs-mode)
-;; (add-hook 'html-mode-hook 'doxymacs-mode)
-;; (defun my-doxymacs-font-lock-hook ()
-;;   (if (or (eq major-mode 'c-mode) 
-;;           (eq major-mode 'c++-mode)
-;;           (eq major-mode 'python-mode)
-;;           (eq major-mode 'java-mode))
-;;       (doxymacs-font-lock)))
-;; (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
+(require 'doxymacs)
+(add-hook 'c-mode-common-hook 'doxymacs-mode)
+(add-hook 'python-mode-hook 'doxymacs-mode)
+(add-hook 'html-mode-hook 'doxymacs-mode)
+(defun my-doxymacs-font-lock-hook ()
+  (if (or (eq major-mode 'c-mode) 
+          (eq major-mode 'c++-mode)
+          (eq major-mode 'python-mode)
+          (eq major-mode 'java-mode))
+      (doxymacs-font-lock)))
+(add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
 
 ;;; hippie-expand.
 (setq hippie-expand-try-functions-list
@@ -117,15 +124,15 @@
          :section-numbers 't
          :table-of-contents 't)))
 
-;; ;;; yacc-mode.
-;; (setq load-path (cons "~/.emacs.d/yacc-mode" load-path))
-;; (require 'yacc-mode)
-;; (add-to-list 'auto-mode-alist '("\\.l" . yacc-mode))
-;; (add-to-list 'auto-mode-alist '("\\.y" . yacc-mode))
+;;; yacc-mode.
+(setq load-path (cons "~/.emacs.d/yacc-mode" load-path))
+(require 'yacc-mode)
+(add-to-list 'auto-mode-alist '("\\.l" . yacc-mode))
+(add-to-list 'auto-mode-alist '("\\.y" . yacc-mode))
 
-;; ;;; cmake-mode.
-;; (setq load-path (cons "~/.emacs.d/cmake-mode" load-path))
-;; (require 'cmake-mode)
+;;; cmake-mode.
+(setq load-path (cons "~/.emacs.d/cmake-mode" load-path))
+(require 'cmake-mode)
 
 ;;; auto-complete.
 (setq load-path (cons "~/.emacs.d/auto-complete" load-path))
@@ -141,7 +148,12 @@
                                   c++-mode
                                   java-mode
                                   python-mode)))
-;; ;;; ropemacs.
+
+;;; python-mode.
+(require 'python-mode)
+
+;;; ropemacs. I feel some bugs in it so I disable it first.
+;;; sudo apt-get install python-ropemacs
 ;; (autoload 'pymacs-apply "pymacs")
 ;; (autoload 'pymacs-call "pymacs")
 ;; (autoload 'pymacs-eval "pymacs" nil t)
@@ -150,9 +162,12 @@
 ;; (pymacs-load "ropemacs" "rope-")
 ;; (setq ropemacs-enable-autoimport t)
 
-;; ;;; cedet.
-;; (setq load-path (cons "~/.emacs.d/cedet-1.1/common" load-path))
-;; (require 'cedet)
+;;; php-mode
+(require 'php-mode)
+
+;;; cedet.
+(setq load-path (cons "~/.emacs.d/cedet-1.1/common" load-path))
+(require 'cedet)
 
 ;;; ido.
 (require 'ido)
@@ -199,13 +214,12 @@
 (setq ibus-cursor-color '("red" "blue" "limegreen"))
 
 ;;; desktop.
-;; (load "desktop")
-;; (desktop-save-mode t)
+(require 'desktop)
+(desktop-save-mode t)
 
 ;;; session.
-;; (setq load-path (cons "~/.emacs.d/session/lisp" load-path))
-;; (require 'session)
-;; (add-hook 'after-init-hook 'session-initialize)
+(require 'session)
+(add-hook 'after-init-hook 'session-initialize)
 
 ;;; nxml mode
 ;; 通常来说使用C-c C-f/ C-c C-b / C-c C-i比较多.
@@ -244,7 +258,7 @@
 (global-set-key "\C-x." 'multi-term)
 (setq multi-term-dedicated-select-after-open-p t)
 
-;;; personal perference.
+;;; perference.
 ;; (setq inhibit-default-init t)
 (when (fboundp 'global-font-lock-mode) 
   (global-font-lock-mode t))
@@ -261,7 +275,7 @@
 (setq inhibit-splash-screen t)
 (setq x-select-enable-clipboard t) ;;允许复制到外部剪贴板
 
-;;; personal global keybindings.
+;;; global keybindings.
 (global-set-key "\M-g" 'goto-line)
 (global-set-key "\M-m" 'compile)
 (global-set-key "\M-/" 'hippie-expand)
@@ -271,6 +285,7 @@
 (global-set-key [(f10)] 'bookmark-set)
 (global-set-key [(f12)] 'multi-term)
 
+;;; encoding.
 (setq current-language-environment "UTF-8")
 (setq locale-coding-system 'utf-8)
 (set-terminal-coding-system 'utf-8)
@@ -278,13 +293,18 @@
 (set-selection-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-;; default browser.
+;;; default browser.
 (setq browse-url-generic-program 
       (executable-find "chromium-browser")
       browse-url-browser-function 'browse-url-generic)
 
-;; 显示效果还是相当的不好
-;; ;; newsticker
+;;; NOTE(dirlt):比较感慨就是基本上所有Web方面的东西在Emacs上面都会显得很烂。
+;;; 并且中文处理能力也非常查。基本上强项还是文本编辑。
+
+;; ;;; emacs-w3m. 浏览网页的效果可谓是相当的烂！ sudo apt-get install w3m-el
+;; (require 'w3m)
+
+;; ;;; newsticker. 显示效果还是相当的不好！
 ;; (autoload 'newsticker-start "newsticker" "Emacs Newsticker" t)
 ;; (autoload 'newsticker-show-news "newsticker" "Emacs Newsticker" t)
 ;; (setq newsticker-dir "~/.newsticker/")
@@ -296,10 +316,4 @@
 ;; (setq newsticker-url-list
 ;;       '(("solitdot"
 ;;          "http://solidot.org/index.rss"         
-;;          nil nil nil)
-;;         ("CoolShell"
-;;          "http://coolshell.cn/?feed=rss2"
-;;          nil nil nil)
-;;         ("Apee"
-;;          "http://feed.feedsky.com/aqee-net"
 ;;          nil nil nil)))

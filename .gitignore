@@ -9,6 +9,7 @@
 .emacs.d/ac-comphist.dat
 .emacs.d/auto-save-list/
 .emacs.d/session.*
+.emacs.d/.session
 essay/www/
 essay/*.html
 code/py/dsgm.tgz

@@ -10,12 +10,9 @@
 so feel free to use it because I just feel free to steal them from else:)
 
 ** prerequisite
-   - sudo apt-get install emacs-goodies-el
-   - sudo apt-get install doxymacs
-   - sudo apt-get install cscope-el
-   - sudo apt-get install php-elisp
-   - sudo apt-get install python-mode
-   - sudo apt-get install python-ropemacs
-   - sudo apt-get install cscope-el
-
-
+   - emacs-goodies-el
+   - doxymacs
+   - cscope-el
+   - php-elisp
+   - python-mode
+   - cscope-el       
