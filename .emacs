@@ -165,9 +165,9 @@
 ;;; php-mode
 (require 'php-mode)
 
-;;; cedet.
-(setq load-path (cons "~/.emacs.d/cedet-1.1/common" load-path))
-(require 'cedet)
+;; ;;; cedet.
+;; (setq load-path (cons "~/.emacs.d/cedet-1.1/common" load-path))
+;; (require 'cedet)
 
 ;;; ido.
 (require 'ido)

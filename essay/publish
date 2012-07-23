@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# export EDITOR=emacs
-# svn propedit svn:mime-type <FILE>
-# text/plain
-
 mkdir -p www
 # do publish
 emacs --batch --script publish.el
@@ -11,9 +7,15 @@ emacs --batch --script publish.el
 
 if [ $1"X" == "siteX" ]
 then
+    PASSWD=`grep "dirlt.com.password" ~/.password | awk -F= '{print $2;}'`
+    if [ $PASSWD"X" == "X" ]
+    then
+        echo "no password!!!"
+        exit -1
+    else
+        echo "password=$PASSWD"
+    fi
     tar czvf www.tar.gz www
-    scp micronodes www.tar.gz dirlt@dirlt.com:~/
-    ssh dirlt@dirlt.com "cd ~/;./micronodes"
+    ./publish.exp $PASSWD
     rm -rf www.tar.gz
 fi
-
