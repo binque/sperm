@@ -9,5 +9,13 @@
 我的.emacs以及.emacs.d托管在了github上面 https://github.com/dirtysalt/sperm
 so feel free to use it because I just feel free to steal them from else:)
 
+** prerequisite
+   - sudo apt-get install emacs-goodies-el
+   - sudo apt-get install doxymacs
+   - sudo apt-get install cscope-el
+   - sudo apt-get install php-elisp
+   - sudo apt-get install python-mode
+   - sudo apt-get install python-ropemacs
+   - sudo apt-get install cscope-el
 
 
