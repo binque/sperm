@@ -241,7 +241,8 @@ int echo(){
   1b:   b8 00 00 00 00          mov    $0x0,%eax
   20:   c9                      leave
   21:   c3                      ret
-#+END_EXAPLE
+#+END_EXAMPLE
+
 而在生成.so之后，因为没有经过最终链接步骤，使得这段call代码没有被重定位
 #+BEGIN_EXAMPLE
 000004fc <echo2>:

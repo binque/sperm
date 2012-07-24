@@ -9,12 +9,3 @@
 我的.emacs以及.emacs.d托管在了github上面 https://github.com/dirtysalt/sperm
 so feel free to use it because I just feel free to steal them from else:)
 
-** prerequisite
-   - emacs-goodies-el
-   - doxymacs
-   - cscope-el
-   - php-elisp
-   - python-mode
-   - ibus-el
-   - 
-

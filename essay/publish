@@ -5,10 +5,13 @@ mkdir -p www
 emacs --batch --script publish.el
 ./appbdstat # append baidu stat(tongji.baidu.com)
 
-if [ $1"X" == "siteX" ]
+if [ ! -d sae/1 ]
 then
-    xv=123456
-    tar czvf www.tar.gz www
-    ./publish.exp $xv
-    rm -rf www.tar.gz
+    svn co https://svn.sinaapp.com/dirlt/ sae
+    mkdir -p sae/1
 fi
+cp www/*.html sae/1/
+cd sae
+svn add 1
+svn ci -m 'ci sae'
+cd ../

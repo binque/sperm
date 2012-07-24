@@ -59,10 +59,16 @@ System Settings =》 Details 里面可以设置默认浏览器。至于emacs里�
    
 我是参考这篇图文并茂的文章的 http://hi.baidu.com/hifinan/item/79f22545a8400ed3c1a592f3
 
-*** virtualbox不能检测到USB
+*** virtualbox使用U盾
 首先需要在 https://www.virtualbox.org/wiki/Downloads VirtualBox Extension Pack，双击执行。
-然后在Settings =》 USB选项里面勾选 Enable USB Controller 和 Enable USB2.0（EHCI） Controller。
-TODO（dirlt）：
+在Settings =》 USB选项里面勾选 Enable USB Controller 和 Enable USB2.0（EHCI） Controller。
+
+然后我们需要添加vboxusers这个群组，同时将自己加入到这个群组内：
+   - sudo groupadd vboxusers
+   - sudo gpasswd -a dirlt vboxusers
+接着重新启动ubuntu。
+
+接着Settings =》 USB里面添加那些已经识别的设备，接着启动windows虚拟机就可以使用U盾了。
 
 ** 外观和快捷键
 *** 常用快捷键
@@ -76,8 +82,11 @@ System Settings =》 Universal Access里面的Seeing部分可以用来调整字�
 参考链接 http://ltek.dyndns.org/wordpress/?p=282
 
 ** 系统管理
-*** 重启
+*** 重启机器
 似乎Ubuntu下面限制用户进行重启，所以要重启的话可以执行sudo reboot.
+
+*** 重启unity
+unity restart &
 
 ** 窗口管理器
 *** gnome
@@ -98,3 +107,7 @@ System Settings =》 Universal Access里面的Seeing部分可以用来调整字�
 安装：
    - stardict
    - 
+
+*** 音乐
+安装：
+   - amarok

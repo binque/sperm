@@ -10,7 +10,9 @@
 .emacs.d/auto-save-list/
 .emacs.d/session.*
 .emacs.d/.session
+.emacs.d/anything-c-adaptive-history
 essay/www/
+essay/sae/
 essay/*.html
 code/py/dsgm.tgz
 code/py/dsgm/dsgm.conf
