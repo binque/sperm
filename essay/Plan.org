@@ -13,3 +13,4 @@
 * DONE 支付网银
 * TODO org-s5插件制slide
 * TODO 考虑同步到dirlt.com更好办法并且同步到BAE
+* TODO 搞定Evernote的linux客户端
