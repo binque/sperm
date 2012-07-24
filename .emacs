@@ -396,8 +396,9 @@
 ;;; NOTE(dirlt):比较感慨就是基本上所有Web方面的东西在Emacs上面都会显得很烂。
 ;;; 并且中文处理能力也非常查。基本上强项还是文本编辑。
 
-;; ;;; emacs-w3m. 浏览网页的效果可谓是相当的烂！
-;; (require 'w3m)
+;;; emacs-w3m. 浏览网页的效果可谓是相当的烂！
+;; sudo apt-get install w3m-el
+(require 'w3m)
 
 ;; ;;; newsticker. 显示效果还是相当的不好！
 ;; (autoload 'newsticker-start "newsticker" "Emacs Newsticker" t)
@@ -413,18 +414,19 @@
 ;;          "http://solidot.org/index.rss"         
 ;;          nil nil nil)))
 
-;; ;;; evernote.
-;; (require 'evernote-mode)
-;; ;; (setq evernote-username "<your evernote user name>") ; optional: you can use this username as default.
-;; (setq evernote-username "dirtysalt1987@gmail.com")
-;; (setq evernote-enml-formatter-command '("w3m" "-dump" "-I" "UTF8" "-O" "UTF8")) ; option
-;; (global-set-key "\C-cec" 'evernote-create-note)
-;; (global-set-key "\C-ceo" 'evernote-open-note)
-;; (global-set-key "\C-ces" 'evernote-search-notes)
-;; (global-set-key "\C-ceS" 'evernote-do-saved-search)
-;; (global-set-key "\C-cew" 'evernote-write-note)
-;; (global-set-key "\C-cep" 'evernote-post-region)
-;; (global-set-key "\C-ceb" 'evernote-browser)
+;;; evernote.
+;; sudo apt-get install evernote-mode
+(require 'evernote-mode)
+;; (setq evernote-username "<your evernote user name>") ; optional: you can use this username as default.
+(setq evernote-username "dirtysalt1987@gmail.com")
+(setq evernote-enml-formatter-command '("w3m" "-dump" "-I" "UTF8" "-O" "UTF8")) ; option
+(global-set-key "\C-cec" 'evernote-create-note)
+(global-set-key "\C-ceo" 'evernote-open-note)
+(global-set-key "\C-ces" 'evernote-search-notes)
+(global-set-key "\C-ceS" 'evernote-do-saved-search)
+(global-set-key "\C-cew" 'evernote-write-note)
+(global-set-key "\C-cep" 'evernote-post-region)
+(global-set-key "\C-ceb" 'evernote-browser)
 
 ;;; dvorak-mode.
 ;; Define M-2 (Escape then "2") to turn on Dvorak mode
