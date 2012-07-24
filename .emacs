@@ -1,36 +1,24 @@
 ;;; .emacs
 
-;;; misc.
-(setq load-path (cons "~/.emacs.d/misc" load-path))
+;;; common code.
 (require 'xml-parse)
 (autoload 'make-regexp "make-regexp"
   "Return a regexp to match a string item in STRINGS.")
 (autoload 'make-regexps "make-regexp"
   "Return a regexp to REGEXPS.")
+(require 'syntax)
+(setq load-path (cons "~/.emacs.d" load-path))
 
 ;;; htmlize.
 (require 'htmlize)
 
 ;;; go.
-(setq load-path (cons "~/.emacs.d/go-mode" load-path))
 (require 'go-mode-load)
 
 ;;; clojure.
-(setq load-path (cons "~/.emacs.d/clojure-mode" load-path))
 (require 'clojure-mode)
 
-;;; clisp.
-(setq load-path (cons "~/.emacs.d/clisp-mode" load-path))
-(require 'clisp-indent)
-(load-library "clisp-coding")
-(load-library "clisp-ffi")
-(load-library "clhs")
-(require 'd-mode)
-(add-to-list (quote auto-mode-alist) (cons "\\.d$" (function d-mode)))
-
 ;;; google c style.
-(setq load-path (cons "~/.emacs.d/google-c-style" load-path))
-(setq c-basic-offset 2)
 (require 'google-c-style)
 (setq c-basic-offset 2)
 (setq c-default-style "java")
@@ -107,8 +95,10 @@
 ;; C-c C-u //高一层标题
 ;; C-c C-o //打开连接
 ;; C-c C-l //查看连接
-(setq load-path (cons "~/.emacs.d/org-mode/lisp" load-path))
-(setq load-path (cons "~/.emacs.d/org-mode/contrib/lisp" load-path))
+;;(setq load-path (cons "~/.emacs.d/org-mode/lisp" load-path))
+;;(setq load-path (cons "~/.emacs.d/org-mode/contrib/lisp" load-path))
+(setq load-path (cons "~/.emacs.d/org-7.8.11/lisp" load-path))
+(setq load-path (cons "~/.emacs.d/org-7.8.11/contrib/lisp" load-path))
 (require 'org-install)
 (require 'org-publish)
 (add-to-list 'auto-mode-alist '("\\.org" . org-mode))
@@ -125,13 +115,11 @@
          :table-of-contents 't)))
 
 ;;; yacc-mode.
-(setq load-path (cons "~/.emacs.d/yacc-mode" load-path))
 (require 'yacc-mode)
 (add-to-list 'auto-mode-alist '("\\.l" . yacc-mode))
 (add-to-list 'auto-mode-alist '("\\.y" . yacc-mode))
 
 ;;; cmake-mode.
-(setq load-path (cons "~/.emacs.d/cmake-mode" load-path))
 (require 'cmake-mode)
 
 ;;; auto-complete.
@@ -244,14 +232,13 @@
 ;;           (define-key map "\M-\t"  'nxml-complete))
 ;;         map)
 ;;       "Keymap used by NXML Mode.")
-(setq load-path (cons "~/.emacs.d/nxml-mode" load-path))
+(setq load-path (cons "~/.emacs.d/nxml-mode-20041004" load-path))
 (require 'nxml-mode)
 (setq auto-mode-alist
-      (cons '("\\.\\(xml\\|xsl\\|rng\\|xhtml\\|html\\|htm\\)\\'" . nxml-mode)
-            auto-mode-alist))
+        (cons '("\\.\\(xml\\|xsl\\|rng\\|xhtml\\|html\\|htm\\)\\'" . nxml-mode)
+              auto-mode-alist))
 
 ;;; multi-term.
-(setq load-path (cons "~/.emacs.d/multi-term" load-path))
 (require 'multi-term)
 (setq multi-term-program "/bin/bash")
 (setq multi-term-buffer-name "multi-term")

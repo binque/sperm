@@ -15,5 +15,6 @@ so feel free to use it because I just feel free to steal them from else:)
    - cscope-el
    - php-elisp
    - python-mode
-   - cscope-el     
+   - ibus-el
+   - 
 
