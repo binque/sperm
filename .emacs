@@ -23,14 +23,13 @@
 ;; (setq make-backup-files nil) 
 (setq backup-directory-alist (quote (("." . "~/.backups"))))
 (setq bookmark-save-flag 1) 
-(setq default-major-mode 'text-mode)
-;;(add-hook 'text-mode-hook 'turn-on-auto-fill) ;;自动换行.
 (setq inhibit-startup-message t)
 (setq inhibit-splash-screen t)
 (setq x-select-enable-clipboard t) ;;允许复制到外部剪贴板
 (setq default-major-mode 'text-mode)
-(add-to-list 'auto-mode-alist '("\\.el\\'" . emacs-lisp-mode))
+;;(add-hook 'text-mode-hook 'turn-on-auto-fill) ;;自动换行.
 (setq initial-major-mode 'emacs-lisp-mode)
+(add-to-list 'auto-mode-alist '("\\.el\\'" . emacs-lisp-mode))
 (setq visible-bell nil)
 (setq kill-ring-max 200)
 (show-paren-mode t)
@@ -42,7 +41,6 @@
 (tool-bar-mode 0)
 (menu-bar-mode 1)
 (scroll-bar-mode -1)
-
 
 ;; Most of the settings are from sk8er's HomePage
 ;; (start-server)
