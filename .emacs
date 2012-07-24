@@ -454,4 +454,3 @@
 ;; activate the appt
 (appt-activate 1)
 (setq appt-display-format 'window)
-
