@@ -198,6 +198,10 @@
          :table-of-contents 't)))
 ;;auto indent
 (setq org-startup-indented t)
+;; arrange for the clock information to persist across Emacs sessions
+(setq org-clock-persist t)
+(org-clock-persistence-insinuate)
+
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-cxa" 'org-agenda)
 
@@ -443,6 +447,7 @@
 ;; F F to do a git pull
 ;; try to press TAB
 ;; sudo apt-get install magit
+;; http://zagadka.vm.bytemark.co.uk/magit/magit.html
 (require 'magit)
 (global-set-key '[f6] 'magit-status)
 

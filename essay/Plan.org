@@ -1,4 +1,3 @@
-* Plan
 #+OPTIONS: H:5
 #+AUTHOR: dirtysalt1987@gmail.com
 
@@ -12,9 +11,5 @@
 * DONE emacs邮件客户端
 * DONE emacsRSS阅读器
 * DONE 支付网银
-
-
-
-
-
-
+* TODO org-s5插件制slide
+* TODO 考虑同步到dirlt.com更好办法并且同步到BAE
