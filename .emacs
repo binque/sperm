@@ -240,8 +240,8 @@
 (setq load-path (cons "~/.emacs.d/nxml-mode-20041004" load-path))
 (require 'nxml-mode)
 (setq auto-mode-alist
-        (cons '("\\.\\(xml\\|xsl\\|rng\\|xhtml\\|html\\|htm\\)\\'" . nxml-mode)
-              auto-mode-alist))
+      (cons '("\\.\\(xml\\|xsl\\|rng\\|xhtml\\|html\\|htm\\)\\'" . nxml-mode)
+            auto-mode-alist))
 
 ;;; multi-term.
 (require 'multi-term)
@@ -298,6 +298,7 @@
 ;; BEGIN_VERSE TODO(dirlt):?
 ;; BEGIN_QUOTE
 ;; BEGIN_CENTER
+;; C-C C-e t // 插入export模版
 ;; C-c C-n //下一个标题
 ;; C-c C-p //上一个标题
 ;; C-c C-f //同级下一个标题
@@ -306,6 +307,7 @@
 ;; C-c C-o //打开连接
 ;; C-c C-l //查看连接
 ;; C-cxa // 日程安排 org-agenda
+;; C-c C-e // export.
 (require 'org-install)
 (require 'org-publish)
 (define-key global-map "\C-ca" 'org-agenda)
@@ -326,8 +328,39 @@
          :section-numbers 't
          :table-of-contents 't)))
 ;; auto indent
-(setq org-startup-indented t)
+;;(setq org-startup-indented t)
+(global-set-key "\C-coi" 'org-indent-mode) ;; 切换indent视图
 
 ;; ;; arrange for the clock information to persist across Emacs sessions
 ;; (setq org-clock-persist t)
 ;; (org-clock-persistence-insinuate)
+
+;;; yasnippet
+;; sudo apt-get install yasnippet
+;; http://capitaomorte.github.com/yasnippet/
+(require 'yasnippet)
+(yas/initialize)
+(setq yas/root-directory (cons "~/.emacs.d/snippets"
+                               yas/root-directory))
+(yas/load-directory "~/.emacs.d/snippets")
+;; default TAB key is occupied by auto-complete
+;; yas/insert-snippet ; insert a template
+;; yas/new-snippet ; create a template
+(global-set-key "\C-c," 'yas/expand)
+;; give yas/dropdown-prompt in yas/prompt-functions a chance
+(require 'dropdown-list)
+;; use yas/completing-prompt when ONLY when `M-x yas/insert-snippet'
+;; thanks to capitaomorte for providing the trick.
+(defadvice yas/insert-snippet (around use-completing-prompt activate)
+  "Use `yas/completing-prompt' for `yas/prompt-functions' but only here..."
+  (let ((yas/prompt-functions '(yas/completing-prompt)))
+    ad-do-it))
+
+;; give yas/dropdown-prompt in yas/prompt-functions a chance
+(require 'dropdown-list)
+;; use yas/completing-prompt when ONLY when `M-x yas/insert-snippet'
+;; thanks to capitaomorte for providing the trick.
+(defadvice yas/insert-snippet (around use-completing-prompt activate)
+     "Use `yas/completing-prompt' for `yas/prompt-functions' but only here..."
+       (let ((yas/prompt-functions '(yas/completing-prompt)))
+             ad-do-it))

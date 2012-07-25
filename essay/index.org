@@ -92,16 +92,15 @@ SIMD(Single Instruction Muitple Data)单指令多数据。这个笔记其实是I
      - [[file:./HBase.org][HBase]] Apache Hadoop项目的分布式表格系统，BigTable的开源实现但是功能上还是存在一些差别。
    
 ** Programming Language
-   - C/C++
+   - [[file:./cpp.org][C/C++]]
      - The C Programming Language(DMR & BWK)
      - C and Pointers
      - The C++ Programming Language(BS)
      - Thinking in C++
-   - Scheme
+   - [[file:./scheme.org][Scheme]]
      - Structure and Interpretation of Computer Programs
-   - Java
-     - Core Java Volume I: Fundamentals.
-
+   - [[file:./java.org][Java]]
+     - Core Java Volume I: Fundamentals       
 ** project
    - [[file:./dsgm.org][dsgm]] Document Synchronization based on Google Mail. https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm
    - [[file:./Plan.org][Plan]] Personal Plan including todolist and memo.
