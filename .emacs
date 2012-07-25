@@ -330,6 +330,9 @@
 ;; auto indent
 ;;(setq org-startup-indented t)
 (global-set-key "\C-coi" 'org-indent-mode) ;; 切换indent视图
+(autoload 'iimage-mode "iimage" "Support Inline image minor mode." t)
+(autoload 'turn-on-iimage-mode "iimage" "Turn on Inline image minor mode." t)
+(global-set-key "\C-cii" 'iimage-mode) ;; 允许在org-mode里面显示图片
 
 ;; ;; arrange for the clock information to persist across Emacs sessions
 ;; (setq org-clock-persist t)
@@ -347,6 +350,7 @@
 ;; yas/insert-snippet ; insert a template
 ;; yas/new-snippet ; create a template
 (global-set-key "\C-c," 'yas/expand)
+(global-set-key "\C-cye" 'yas/expand)
 ;; give yas/dropdown-prompt in yas/prompt-functions a chance
 (require 'dropdown-list)
 ;; use yas/completing-prompt when ONLY when `M-x yas/insert-snippet'

@@ -14,6 +14,8 @@ Private.org
 .emacs.d/anything-c-adaptive-history
 .emacs.d/org-clock-save.el
 
+note/
+
 essay/sae/
 essay/*.html
 

@@ -8,8 +8,12 @@ do
   rm -rf $HOME/$target
   ln -s $BINDIR/$target $HOME/$target
 done
+echo "[$PROGNAME]installing index.html..."
 sudo rm -rf /index.html
 sudo ln -s $BINDIR/index.html /index.html
+echo "[$PROGNAME]installing note..."
+rm -rf $BINDIR/note
+ln -s $HOME/vmshare/note $BINDIR/note
 
 TARGETS="2utf8 cxxindent \
 oprof mysqldb syslog \
