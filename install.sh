@@ -14,7 +14,7 @@ sudo ln -s $BINDIR/index.html /index.html
 TARGETS="2utf8 cxxindent \
 oprof mysqldb syslog \
 local-install org2twiki \
-ngx gc pom-create vpn-umeng vpn-gfw
+gc pom-create vpn-umeng vpn-gfw
 rhs"
 
 INSTALLDIR=$HOME/utils/bin
