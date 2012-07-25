@@ -6,7 +6,6 @@ function start() {
 }
 
 function stop() {
-    sudo nginx -s stop
     for pid in `ps aux | grep "python -m SimpleHTTPServer 80" | grep -v "grep" | awk '{print $2;}'`
     do
         echo "sudo kill -9 $pid of 'python -m SimpleHTTPServer 80"
