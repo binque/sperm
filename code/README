@@ -1,11 +1,12 @@
 * prerequisite
+   - ./dep-install to install all following packages.
    - sudo apt-get install libprotobuf-dev
    - sudo apt-get install libprotoc-dev
    - sudo apt-get install libev-dev
    - sudo apt-get install libzmq-dev
    - sudo apt-get install libzookeeper-mt-dev
    - sudo apt-get install libgoogle-perftools-dev
-   - sudo apt-get install google-perftools
+   - sudo apt-get install google-perftools   
 
 * cc
    - common // some common code.
