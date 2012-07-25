@@ -94,20 +94,11 @@ unity restart &
    - gnome-shell # gnome窗口管理器
 
 ** 娱乐
-*** 视频
 安装：
-   - vlc # video player
+   - vlc # 视频
+   - pidgin 聊天
+   - stardict 词典
+   - amarok 音乐
 
-*** 聊天
-安装：
-   - pidgin
-   - 
-
-*** 词典
-安装：
-   - stardict
-   - 
-
-*** 音乐
-安装：
-   - amarok
+*** amarok循环播放
+在amarok的右下角有task progression的图标，选择repeat track即可。

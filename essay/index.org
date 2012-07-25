@@ -24,7 +24,7 @@
 
 感谢xuchaoqian同学提供给我的空间，让我可以在上面把自己写的东西分享出来，他的空间是 http://xuchaoqian.com/ ，他是一位伟大的工程师。同时我也将内容放在了
    - SAE http://dirlt.sinaapp.com/
-   - BAE TODO(dirlt)
+   - BAE TODO(dirlt)：没有邀请码：（
 
 ** [[file:./APUE.org][APUE]]
 Unix环境高级编程(Advanced Programming Unix Environment),W. Richard Stevens的神作。笔记里面没有包含书最后的几个部分，比如终端，打印机等，因为我觉得可能大家都不太需要这个东西了。
@@ -103,4 +103,4 @@ SIMD(Single Instruction Muitple Data)单指令多数据。这个笔记其实是I
      - Core Java Volume I: Fundamentals.
 
 ** project
-   - [[file:./dsgm.org][dsgm]] Documentation Synchronize based on Google Mail. https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm
+   - [[file:./dsgm.org][dsgm]] Document Synchronization based on Google Mail. https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm

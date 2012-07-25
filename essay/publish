@@ -3,15 +3,20 @@
 mkdir -p www
 # do publish
 emacs --batch --script publish.el
+rm -rf www/Private.html
 ./appbdstat # append baidu stat(tongji.baidu.com)
 
 if [ ! -d sae/1 ]
 then
     svn co https://svn.sinaapp.com/dirlt/ sae
     mkdir -p sae/1
+    cd sae
+    svn add 1/
+    cd ..
 fi
 cp www/*.html sae/1/
-cd sae
-svn add 1
+cd sae/1
+svn add *
 svn ci -m 'ci sae'
-cd ../
+cd ../../
+
