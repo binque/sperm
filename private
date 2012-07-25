@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+#coding:utf-8
+#Copyright (C) dirlt
+
+import os
+import string
+curdir=os.path.dirname(os.path.realpath(__file__))
+import sys
+sys.path.append(os.path.join(curdir,'code/py/common'))
+from des import DES
+
+# read from ~/.passwd
+passwd=string.strip(open(os.path.join(os.environ['HOME'],'.passwd')).read())
+
+def encryptFile(if2,of):
+    d=DES()
+    d.input_key(passwd)
+    open(of,'w').write(d.encode(open(if2,'r').read()))
+
+def decryptFile(if2,of):
+    d=DES()
+    d.input_key(passwd)
+    open(of,'w').write(d.decode(open(if2,'r').read()))
+
+plain=os.path.join(curdir,'essay/Private.org')
+crypt=os.path.join(curdir,'essay/Private.crypt')
+
+plain_mtime=0
+if(os.path.exists(plain)):
+    plain_mtime=os.stat(plain)[8]
+crypt_mtime=0
+if(os.path.exists(crypt)):
+    crypt_mtime=os.stat(crypt)[8]
+
+if((plain_mtime + crypt_mtime)==0):
+    sys.exit(0)
+
+if(plain_mtime > crypt_mtime):
+    encryptFile(plain,crypt)
+    os.utime(crypt,(-1, plain_mtime)) # we don't care access time
+elif(plain_mtime < crypt_mtime):
+    decryptFile(crypt,plain)
+    os.utime(plain,(-1, crypt_mtime)) # too.
+    
