@@ -5,13 +5,28 @@ mkdir -p www
 emacs --batch --script publish.el
 ./appbdstat # append baidu stat(tongji.baidu.com)
 
+if [ $1"X" != "siteX" ]
+then
+    exit 0
+fi
+
+# publish to dirlt.com
+# use git to sync.:(
+
+# publish to sae.
 if [ ! -d sae/1 ]
 then
     svn co https://svn.sinaapp.com/dirlt/ sae
     mkdir -p sae/1
+    cd sae
+    svn add 1/
+    cd ..
 fi
-cp www/*.html sae/1/
-cd sae
-svn add 1
+cp -r www/* sae/1/
+cd sae/1
+svn add *
 svn ci -m 'ci sae'
-cd ../
+cd ../../
+
+
+

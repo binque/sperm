@@ -4,7 +4,7 @@
 
 code: https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm
 
-dsgm(Documentation Synchronize based on Google Mail)主要是为了解决文档数据同步问题。这里所谓的文档包括
+dsgm(Document Synchronization based on Google Mail)主要是为了解决文档数据同步问题。这里所谓的文档包括
    - .doc
    - .ppt
    - .pdf
