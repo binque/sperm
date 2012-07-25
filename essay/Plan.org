@@ -23,10 +23,5 @@ CLOSED: [2012-07-25 Wed 15:08]
 *** TODO 搞定Evernote的linux客户端
 *** TODO 整理org以及剩余的.emacs部分,以及doxymacs部分。
 *** TODO 调研yasnippet。这个考虑是否可以代替doxymacs来做当前模版插入。
-*** TODO 整理当前同步方案
 *** TODO org-s5插件制slide
 *** TODO 考虑使用fvwm
-** Memo
-*** 当前同步方案
-TODO（dirlt）：
-
