@@ -6,6 +6,9 @@ emacs --batch --script publish.el
 rm -rf www/Private.html
 ./appbdstat # append baidu stat(tongji.baidu.com)
 
+# publish to dirlt.com
+
+# publish to sae.
 if [ ! -d sae/1 ]
 then
     svn co https://svn.sinaapp.com/dirlt/ sae
@@ -19,4 +22,6 @@ cd sae/1
 svn add *
 svn ci -m 'ci sae'
 cd ../../
+
+
 

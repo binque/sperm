@@ -285,6 +285,7 @@
       browse-url-browser-function 'browse-url-generic)
 
 ;;; org-mode. I have to include it because I've changed the code.
+;; sudo apt-get install org-mode
 ;; BEGIN_VERSE TODO(dirlt):?
 ;; BEGIN_QUOTE
 ;; BEGIN_CENTER
@@ -295,21 +296,17 @@
 ;; C-c C-u //高一层标题
 ;; C-c C-o //打开连接
 ;; C-c C-l //查看连接
-;; C-cl // 保存链接 org-store-link
 ;; C-cxa // 日程安排 org-agenda
-;;(setq load-path (cons "~/.emacs.d/org-mode/lisp" load-path))
-;;(setq load-path (cons "~/.emacs.d/org-mode/contrib/lisp" load-path))
-(setq load-path (cons "~/.emacs.d/org-7.8.11/lisp" load-path))
-(setq load-path (cons "~/.emacs.d/org-7.8.11/contrib/lisp" load-path))
 (require 'org-install)
 (require 'org-publish)
+(define-key global-map "\C-ca" 'org-agenda)
 ;; (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (add-hook 'org-mode-hook 'turn-on-font-lock)
 (add-hook 'org-mode-hook 
           (lambda () (setq truncate-lines nil)))
 (setq org-log-done t)
-;;(setq org-agenta-files (file-expand-wildcards "~/github/sperm/essay/Plan.org"))
+;;(setq org-agenta-files (file-expand-wildcards "~/github/sperm/essay/*.org"))
 (setq org-agenta-files "~/github/sperm/essay/Plan.org")
 (setq org-export-have-math nil)
 (setq org-use-sub-superscripts (quote {}))
@@ -319,11 +316,8 @@
          :publishing-directory "~/github/sperm/essay/www/"
          :section-numbers 't
          :table-of-contents 't)))
-;;auto indent
+;; ;; auto indent
 (setq org-startup-indented t)
-;; arrange for the clock information to persist across Emacs sessions
-(setq org-clock-persist t)
-(org-clock-persistence-insinuate)
-
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
+;; ;; arrange for the clock information to persist across Emacs sessions
+;; (setq org-clock-persist t)
+;; (org-clock-persistence-insinuate)

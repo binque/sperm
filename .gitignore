@@ -12,11 +12,10 @@
 .emacs.d/.session
 .emacs.d/anything-c-adaptive-history
 .emacs.d/org-clock-save.el
-essay/www/
 essay/sae/
 essay/*.html
 essay/Private.org
-code/py/dsgm.tgz
+code/py/dsgm/dsgm.db
 code/py/dsgm/dsgm.conf
 code/cc/astyle/test/test_astyle
 code/cc/bench/t_cond
