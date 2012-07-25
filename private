@@ -22,8 +22,8 @@ def decryptFile(if2,of):
     d.input_key(passwd)
     open(of,'w').write(d.decode(open(if2,'r').read()))
 
-plain=os.path.join(curdir,'essay/Private.org')
-crypt=os.path.join(curdir,'essay/Private.crypt')
+plain=os.path.join(curdir,'Private.org')
+crypt=os.path.join(curdir,'Private.crypt')
 
 plain_mtime=0
 if(os.path.exists(plain)):

@@ -64,6 +64,12 @@
 ;;; clojure.
 (require 'clojure-mode)
 
+;;; anything.
+;; sudo apt-get install anything-el
+(require 'anything)
+(require 'anything-config)
+(global-set-key "\C-cat" 'anything)
+
 ;;; google c style.
 (require 'google-c-style)
 (setq c-basic-offset 2)
@@ -130,6 +136,7 @@
 (require 'auto-complete-config)
 (ac-config-default)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+(global-auto-complete-mode 1)
 
 ;;; yacc-mode.
 (require 'yacc-mode)
@@ -268,6 +275,8 @@
 (global-set-key "\C-chdv" 'describe-variable) ;; help describe variable.
 (global-set-key "\C-chdk" 'describe-key) ;; help describe key.
 (global-set-key "\C-c;" 'comment-or-uncomment-region)
+(global-set-key "\C-cc" 'calendar)
+
 
 ;;; encoding.
 (set-language-environment "utf-8")
@@ -316,8 +325,9 @@
          :publishing-directory "~/github/sperm/essay/www/"
          :section-numbers 't
          :table-of-contents 't)))
-;; ;; auto indent
+;; auto indent
 (setq org-startup-indented t)
+
 ;; ;; arrange for the clock information to persist across Emacs sessions
 ;; (setq org-clock-persist t)
 ;; (org-clock-persistence-insinuate)

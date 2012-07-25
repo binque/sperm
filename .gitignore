@@ -4,7 +4,8 @@
 *.so
 *.elc
 *.pyc
-.sconsign.dblite
+Private.org
+
 .emacs.d/tramp
 .emacs.d/ac-comphist.dat
 .emacs.d/auto-save-list/
@@ -12,11 +13,13 @@
 .emacs.d/.session
 .emacs.d/anything-c-adaptive-history
 .emacs.d/org-clock-save.el
+
 essay/sae/
 essay/*.html
-essay/Private.org
+
 code/py/dsgm/dsgm.db
-code/py/dsgm/dsgm.conf
+code/py/dsgm/dsgm.conf     
+code/cc/.sconsign.dblite
 code/cc/astyle/test/test_astyle
 code/cc/bench/t_cond
 code/cc/bench/t_lock

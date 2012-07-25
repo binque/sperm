@@ -183,12 +183,15 @@ def decryptFile(if2,of,passwd):
     d.input_key(passwd)
     open(of,'w').write(d.decode(open(if2,'r').read()))
 
-# modify them.
-passwd=''
-if2='./Private.crypt'
-of='./Private.org'
+if __name__=='__main__':
+    import sys
+    if(len(sys.argv)!=4):
+        print "easy private"
+        print "usage:%s passwd input output"%(sys.argv[0])
+        sys.exit(-1)
+    # decrypt.
+    decryptFile(sys.argv[1],sys.argv[2],sys.argv[3])
 
-# decrypt.
-decryptFile(if2,of,passwd)
+
 
 
