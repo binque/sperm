@@ -32,44 +32,22 @@
 (setq kill-ring-max 200)
 (show-paren-mode t)
 (setq show-paren-style 'parentheses)
-(mouse-avoidance-mode 'animate)
-(display-time)
 
 ;; turn off tool-bar, menu-bar, and scroll-bar
 (tool-bar-mode 0)
 (menu-bar-mode 1)
 (scroll-bar-mode -1)
-
-;; Most of the settings are from sk8er's HomePage
-;; (start-server)
-(setq indent-tabs-mode nil)
-(setq tab-width 4)
-(setq tab-stop-list ())
-(setq sentence-end-double-space nil)
-
-(setq scroll-margin 3
-      scroll-conservatively 10000)
-
-(auto-image-file-mode t)
-
-(put 'set-goal-column 'disabled nil)
-(put 'narrow-to-region 'disabled nil)
-(put 'upcase-region 'disabled nil)
-(put 'downcase-region 'disabled nil)
-(put 'LaTeX-hide-environment 'disabled nil)
-(put 'narrow-to-page 'disabled nil)
-
-(setq version-control t)
+(auto-image-file-mode t) ;; 自动打开图片
+(setq version-control t) ;; backup使用版本管理
+;; confused by following settings.!!!
 (setq kept-new-versions 3)
 (setq delete-old-versions t)
 (setq kept-old-versions 2)
 (setq dired-kept-versions 1)
 ;; (setq make-backup-files nil) 
 (setq backup-directory-alist (quote (("." . "~/.backups"))))
-;; (setq ansi-color-for-comint-mode t)
 (setq user-full-name "dirtysalt") 
 (setq user-mail-address "dirtysalt1987@gmail.com")
-
 (setq dired-recursive-copies 'top)
 (setq dired-recursive-deletes 'top)
 
@@ -79,10 +57,6 @@
 ;;; recentf.
 (require 'recentf)
 (recentf-mode 1)
-
-;;; calendar.
-(add-hook 'diary-display-hook 'fancy-diary-display)
-(add-hook 'list-diary-entries-hook 'sort-diary-entries t)
 
 ;;; go.
 (require 'go-mode-load)
@@ -100,8 +74,7 @@
                                '(("\\.hpp\\'" . c++-mode))
                                '(("\\.c\\'" . c++-mode)) 
                                '(("\\.cc\\'" . c++-mode)) 
-                               '(("\\.cpp\\'" . c++-mode)) 
-                               '(("\\.java\\'".c++-mode))
+                               '(("\\.cpp\\'" . c++-mode))
                                auto-mode-alist))
 (setq-default indent-tabs-mode nil)
 (setq-default nuke-trailing-whitespace-p t)
@@ -121,7 +94,7 @@
 (require 'doxymacs)
 (add-hook 'c-mode-common-hook 'doxymacs-mode)
 (add-hook 'python-mode-hook 'doxymacs-mode)
-(add-hook 'html-mode-hook 'doxymacs-mode)
+(add-hook 'java-mode-hook 'doxymacs-mode)
 (defun my-doxymacs-font-lock-hook ()
   (if (or (eq major-mode 'c-mode) 
           (eq major-mode 'c++-mode)
@@ -353,4 +326,4 @@
 (org-clock-persistence-insinuate)
 
 (define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-cxa" 'org-agenda)
+(define-key global-map "\C-ca" 'org-agenda)
