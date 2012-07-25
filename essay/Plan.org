@@ -2,11 +2,14 @@
 #+AUTHOR: dirtysalt1987@gmail.com
 
 * DONE 调整桌面字体大小。
-* TODO 调整ubuntu窗口管理器。
+* DONE 调整ubuntu窗口管理器。
+CLOSED: [2012-07-25 Wed 01:05]
 * DONE 备份ProxySwitchySharp文件
-* TODO Ubuntu的virtualbox如何识别USB解决网银问题
+* DONE Ubuntu的virtualbox如何识别USB解决网银问题
+CLOSED: [2012-07-25 Wed 01:04]
 * TODO 考虑使用fvwm
-* TODO 搞定邮件thunderbird客户端
+* DONE 搞定邮件thunderbird客户端
+CLOSED: [2012-07-25 Wed 01:04]
 * TODO thunderbird是否有配置可以导出？
 * DONE emacs邮件客户端
 * DONE emacsRSS阅读器
@@ -14,3 +17,4 @@
 * TODO org-s5插件制slide
 * TODO 考虑同步到dirlt.com更好办法并且同步到BAE
 * TODO 搞定Evernote的linux客户端
+* TODO 整理org以及剩余的.emacs部分。
