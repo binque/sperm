@@ -11,15 +11,12 @@ done
 echo "[$PROGNAME]installing index.html..."
 sudo rm -rf /index.html
 sudo ln -s $BINDIR/index.html /index.html
-echo "[$PROGNAME]installing note..."
-rm -f $BINDIR/note # be sure it's a symlink.
-ln -s $HOME/vmshare/note $BINDIR/note
 
 TARGETS="2utf8 cxxindent \
 oprof mysqldb syslog \
 local-install org2twiki \
  gc pom-create vpn-umeng vpn-gfw
-rhs private eprivate einstall"
+rhs private einstall"
 
 INSTALLDIR=$HOME/utils/bin
 if [ ! -d $INSTALLDIR ]
