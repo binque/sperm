@@ -103,3 +103,9 @@ SIMD(Single Instruction Muitple Data)单指令多数据。这个笔记其实是I
      - Core Java Volume I: Fundamentals       
 ** Project
    - [[file:./dsgm.org][dsgm]] Document Synchronization based on Google Mail. https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm
+
+** Note
+   - [[file:./note/diary.org][diary]] 记录日常琐碎的事情以及自己的想法。
+   - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
+
+

@@ -3,7 +3,10 @@
 # do publish
 emacs --batch --script publish.el
 ./appbdstat # append baidu stat(tongji.baidu.com)
+
 rm -rf ../www/note/private.html
+rm -rf ../www/note/plan.html
+
 if [ $1"X" != "siteX" ]
 then
     exit 0

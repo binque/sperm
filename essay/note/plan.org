@@ -1,37 +1,5 @@
-* Plan
-#+AUTHOR: dirtysalt1987@gmail.com
-#+OPTIONS: H:5
-
-** TodoList
-*** DONE 调整桌面字体大小。
-*** DONE 调整ubuntu窗口管理器。
-CLOSED: [2012-07-25 Wed 01:05]
-*** DONE 备份ProxySwitchySharp文件
-*** DONE Ubuntu的virtualbox如何识别USB解决网银问题
-CLOSED: [2012-07-25 Wed 01:04]
-*** DONE 搞定邮件thunderbird客户端
-CLOSED: [2012-07-25 Wed 01:04]
-*** DONE thunderbird是否有配置可以导出？
-CLOSED: [2012-07-25 Wed 15:08]
-*** DONE emacs邮件客户端
-*** DONE emacsRSS阅读器
-*** DONE 支付网银
-*** DONE 考虑同步到dirlt.com更好办法并且同步到BAE
-CLOSED: [2012-07-25 Wed 15:08]
-*** DONE 如何在essay里面保存密码
-CLOSED: [2012-07-25 Wed 15:08]
-*** DONE 搞定Evernote的linux客户端
-    CLOSED: [2012-07-26 Thu 00:48]
-*** DONE 调研yasnippet,这个考虑是否可以代替doxymacs来做当前模版插入
-CLOSED: [2012-07-25 Wed 22:37]
-*** DONE org-s5插件制slide（discard）
-    CLOSED: [2012-07-25 Wed 22:52]
-*** DONE 考虑使用fvwm（pending）
-    CLOSED: [2012-07-25 Wed 22:52]
-*** TODO 整理org以及剩余的.emacs部分.主要是学习agenda的管理
-*** TODO 晓峰创业总结
-*** TODO http://library.readscheme.org/page6.html continuation
-*** TODO http://www.ps.uni-saarland.de/~duchier/python/continuations.html continuation
-*** TODO http://pgbovine.net/PhD-memoir.htm
-
-
+* plan
+** monthly
+** weekly
+** daily
+*** TODO 调研ooize并且整理调度器需求文档

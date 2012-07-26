@@ -225,8 +225,8 @@ if __name__=='__main__':
         # read from ~/.passwd
         passwd=string.strip(open(os.path.join(os.environ['HOME'],'.passwd')).read())
         curdir=os.path.dirname(os.path.realpath(__file__))
-        plain=os.path.join(curdir,'note','private.org')
-        crypt=os.path.join(curdir,'note','private.crypt')
+        plain=os.path.join(curdir,'essay','note','private.org')
+        crypt=os.path.join(curdir,'essay','note','private.crypt')
     else:
         passwd=sys.argv[1]
         plain=sys.argv[2]
