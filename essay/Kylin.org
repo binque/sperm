@@ -583,6 +583,7 @@ bool CThreadPool::CancelJob(Job* pJob, int nWhich)
 TranBuf.h CTranBufPool是一个内存分配器。对于很多系统来说，合理地使用资源是非常必要的。
 这里引用linsd的原话是这样的TODO(dirlt):
 #+BEGIN_EXAMPLE
+要得到稳定的高吞吐，对内存的合理使用是必要条件。是否用Ring Buffer倒不一定，简单的buffer pool效果也差不多。另外，为了应付极限情况，还需要为buffer请求分级，当资源不足时优先给紧急请求。也可设定高低几条watermark，让各种复杂条件下的资源使用变得平顺。
 #+END_EXAMPLE
 了解一下真实系统里面定制话的内存分配器是非常有帮助的(相对来说 [[file:./TCMalloc.org][TCMalloc]] 是通用系统).
 

@@ -290,8 +290,9 @@
 ;;; default browser.
 ;; 使用chromium浏览器打开链接
 (setq browse-url-generic-program 
-      (executable-find "google-chrome")
+      ;; (executable-find "google-chrome")
       ;; (executable-find "chromium-browser")
+      (executable-find "firefox")
       browse-url-browser-function 'browse-url-generic)
 
 ;;; org-mode. I have to include it because I've changed the code.
@@ -323,9 +324,14 @@
 (setq org-export-have-math nil)
 (setq org-use-sub-superscripts (quote {}))
 (setq org-publish-project-alist
-      '(("blog"
+      '(("essay"
          :base-directory "~/github/sperm/essay"
-         :publishing-directory "~/github/sperm/essay/www/"
+         :publishing-directory "~/github/sperm/www/"
+         :section-numbers 't
+         :table-of-contents 't)
+        ("note"
+         :base-directory "~/github/sperm/essay/note"
+         :publishing-directory "~/github/sperm/www/note"
          :section-numbers 't
          :table-of-contents 't)))
 ;; auto indent

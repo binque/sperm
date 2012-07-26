@@ -14,9 +14,10 @@ Private.org
 .emacs.d/anything-c-adaptive-history
 .emacs.d/org-clock-save.el
 
-note/private.org
-essay/sae/
 essay/*.html
+essay/note/*.html
+essay/note/private.org
+sae/
 
 code/py/dsgm/dsgm.db
 code/py/dsgm/dsgm.conf     

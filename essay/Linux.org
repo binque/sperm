@@ -1158,3 +1158,10 @@ TODO(dirlt): http://www.ex-parrot.com/~pdw/iftop/
 *** iftraf
 TODO(dirlt): http://iptraf.seul.org/
 
+*** rsync
+常用选项：
+   - -a --archive
+   - -r --recursive
+   - -v --verbose
+   - -z --compress
+

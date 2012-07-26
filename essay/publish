@@ -14,19 +14,28 @@ fi
 # use git to sync.:(
 
 # publish to sae.
+cd ..
 if [ ! -d sae/1 ]
 then
     svn co https://svn.sinaapp.com/dirlt/ sae
     mkdir -p sae/1
+    mkdir -p sae/1/note
+    mkdir -p sae/1/images
     cd sae
     svn add 1/
+    svn add 1/note
+    svn add 1/images
     cd ..
 fi
-cp -r www/* sae/1/
+rsync -arzv www/ sae/1/
+rsync -arzv essay/images/ sae/1/images/
 cd sae/1
 svn add *
+svn add note/*
+svn add images/*
 svn ci -m 'ci sae'
-cd ../../
+cd ../../essay
+
 
 
 

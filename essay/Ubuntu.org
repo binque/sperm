@@ -28,13 +28,33 @@ TODO（dirlt）：在Emacs里面需要安装ibus.el以及ibus-agent。但是现�
 安装：
    - sudo apt-get install chromium-browser # 实验性质版本
    - sudo apt-get install google-chrome-stable # 稳定版本
+   - sudo apt-get install firefox
 
 *** 设置默认浏览器
+
 System Settings =》 Details 里面可以设置默认浏览器。至于emacs里面的话可以使用如下配置。
 #+BEGIN_SRC elisp
 (setq browse-url-generic-program (executable-find "chromium-browser")
       browse-url-browser-function 'browse-url-generic)
 #+END_SRC
+
+** 邮件客户端
+安装：
+   - sudo apt-get install thunderbird
+
+*** 配置gmail
+   - pop3 pop.gmail.com SSL/TLS 995 normal password
+   - smtp smtp.gmail.com SSL/TLS 465 normal password
+   - server settings => 1) leave mesages on server until I delete them. 2) empty trash on exit. 3) check for new messages at startup. 4) check for new messages every 10 minutes.
+   - copies and folders => 1) cc these email addresses: dirtysalt1987@gmail.com
+   - composition and addressing => 1) start my reply above the quote and place my signature below the quote.
+
+设置签名为
+#+BEGIN_EXAMPLE
+章炎(dirtysalt)
+home:http://dirlt.com
+dirtysalt1987@gmail.com
+#+END_EXAMPLE
 
 ** 虚拟机
 安装
@@ -94,21 +114,23 @@ unity restart &
 安装：
    - gnome-shell # gnome窗口管理器
 
-** 娱乐
+** 开发和娱乐
 安装：
    - sudo apt-get install vlc # 视频
    - sudo apt-get install pidgin # 聊天
    - sudo apt-get install stardict # 词典
    - sudo apt-get install amarok # 音乐
-
-*** amarok循环播放
-在amarok的右下角有task progression的图标，选择repeat track即可。
-
-** 开发
-安装：
+   - sudo apt-get install git
    - sudo apt-get install subversion
    - sudo apt-get install htop
    - sudo apt-get install dstat
    - sudo apt-get install sysstat
    - sudo apt-get install httperf
-   - 
+   - sudo apt-get install rsync
+   - sudp apt-get install tree
+   - sudo apt-get install tcpdump
+
+
+*** amarok循环播放
+在amarok的右下角有task progression的图标，选择repeat track即可。
+
