@@ -107,3 +107,8 @@ unity restart &
 ** 开发
 安装：
    - sudo apt-get install subversion
+   - sudo apt-get install htop
+   - sudo apt-get install dstat
+   - sudo apt-get install sysstat
+   - sudo apt-get install httperf
+   - 
