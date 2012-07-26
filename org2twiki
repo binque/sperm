@@ -29,7 +29,7 @@ def org2twiki(lines):
             (captag,content)=string.split(line,maxsplit=1)
             depth=len(captag)+1
             nlines.append('---%s %s'%('+'*depth,content))
-        elif(line.startswith('#+')):
+        elif(string.strip(line).startswith('#+')):
             #some mode.
             line=string.strip(line)
             if(line=='#+BEGIN_EXAMPLE'):

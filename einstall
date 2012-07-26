@@ -2,6 +2,7 @@
 #coding:utf-8
 #Copyright (C) dirlt
 
+# install .emacs dependencies.
 import os
 import string
 import sys
