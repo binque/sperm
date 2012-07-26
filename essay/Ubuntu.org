@@ -7,9 +7,9 @@
 
 ** 输入法
 安装：
-   - ibus
-   - ibus-sunpinyin
-   - python-xlib # 需要在emacs下面调用ibus
+   - sudo apt-get install ibus
+   - sudo apt-get install ibus-sunpinyin
+   - sudo apt-get install python-xlib # 需要在emacs下面调用ibus
 
 *** 切换输入法
 在Preferences里面：
@@ -26,7 +26,8 @@ TODO（dirlt）：在Emacs里面需要安装ibus.el以及ibus-agent。但是现�
 
 ** 浏览器
 安装：
-   - chromium-browser
+   - sudo apt-get install chromium-browser # 实验性质版本
+   - sudo apt-get install google-chrome-stable # 稳定版本
 
 *** 设置默认浏览器
 System Settings =》 Details 里面可以设置默认浏览器。至于emacs里面的话可以使用如下配置。
@@ -37,8 +38,8 @@ System Settings =》 Details 里面可以设置默认浏览器。至于emacs里�
 
 ** 虚拟机
 安装
-   - virtualbox
-   - virtualbox-guest-additions # 设置windows虚拟机共享文件夹
+   - sudo apt-get install virtualbox
+   - sudo apt-get install virtualbox-guest-additions # 设置windows虚拟机共享文件夹
 
 *** 安装windows虚拟机
 安装windows虚拟机主要是为了方便一些需要在windows下面完成的操作，比如U盾。
@@ -95,10 +96,14 @@ unity restart &
 
 ** 娱乐
 安装：
-   - vlc # 视频
-   - pidgin 聊天
-   - stardict 词典
-   - amarok 音乐
+   - sudo apt-get install vlc # 视频
+   - sudo apt-get install pidgin # 聊天
+   - sudo apt-get install stardict # 词典
+   - sudo apt-get install amarok # 音乐
 
 *** amarok循环播放
 在amarok的右下角有task progression的图标，选择repeat track即可。
+
+** 开发
+安装：
+   - sudo apt-get install subversion

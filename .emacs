@@ -290,7 +290,8 @@
 ;;; default browser.
 ;; 使用chromium浏览器打开链接
 (setq browse-url-generic-program 
-      (executable-find "chromium-browser")
+      (executable-find "google-chrome")
+      ;; (executable-find "chromium-browser")
       browse-url-browser-function 'browse-url-generic)
 
 ;;; org-mode. I have to include it because I've changed the code.
