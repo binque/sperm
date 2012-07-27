@@ -53,6 +53,7 @@ git本地仓库由下面三棵树构成：
 参考资源
    - Git flow 开发流程。http://ihower.tw/blog/archives/5140/
    - A successful Git branching model. http://nvie.com/posts/a-successful-git-branching-model/
+   - Git分支管理策略 http://www.ruanyifeng.com/blog/2012/07/git.html
 
 git-flow主要推行的就是一种开发方式，然后通过工具来配合这种开发方式。git-flow分为下面几类分支：
    - master 线上使用版本始终都是ready状态。    
