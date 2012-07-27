@@ -1,5 +1,0 @@
-* plan
-** monthly
-** weekly
-** daily
-*** TODO 调研ooize并且整理调度器需求文档

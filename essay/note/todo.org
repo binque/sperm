@@ -1,7 +1,7 @@
 * todo
 ** monthly
 ** weekly
-** daily
+** daily done
 *** DONE 调整桌面字体大小。
 *** DONE 调整ubuntu窗口管理器。
 CLOSED: [2012-07-25 Wed 01:05]
@@ -25,8 +25,9 @@ CLOSED: [2012-07-25 Wed 15:08]
 CLOSED: [2012-07-25 Wed 22:37]
 *** DONE org-s5插件制slide（discard）
     CLOSED: [2012-07-25 Wed 22:52]
-*** DONE 考虑使用fvwm（pending）
-    CLOSED: [2012-07-25 Wed 22:52]
+
+** daily todo
+*** TODO 考虑使用fvwm
 *** TODO 整理org以及剩余的.emacs部分.主要是学习agenda的管理
 *** TODO 晓峰创业总结
-
+*** TODO 调研ooize并且整理调度器需求文档

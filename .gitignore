@@ -4,7 +4,6 @@
 *.so
 *.elc
 *.pyc
-Private.org
 
 .emacs.d/tramp
 .emacs.d/ac-comphist.dat
