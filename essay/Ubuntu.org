@@ -26,8 +26,8 @@ TODO（dirlt）：在Emacs里面需要安装ibus.el以及ibus-agent。但是现�
 
 ** 浏览器
 安装：
-   - sudo apt-get install chromium-browser # 实验性质版本
-   - sudo apt-get install google-chrome-stable # 稳定版本
+   - # sudo apt-get install chromium-browser # 实验性质版本
+   - # sudo apt-get install google-chrome-stable # 稳定版本
    - sudo apt-get install firefox
 
 *** 设置默认浏览器
