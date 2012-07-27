@@ -29,6 +29,4 @@ CLOSED: [2012-07-25 Wed 22:37]
     CLOSED: [2012-07-25 Wed 22:52]
 *** TODO 整理org以及剩余的.emacs部分.主要是学习agenda的管理
 *** TODO 晓峰创业总结
-*** TODO http://library.readscheme.org/page6.html continuation
-*** TODO http://www.ps.uni-saarland.de/~duchier/python/continuations.html continuation
-*** TODO http://pgbovine.net/PhD-memoir.htm
+
