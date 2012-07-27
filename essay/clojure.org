@@ -1,0 +1,21 @@
+* clojure
+#+TITLE:     clojure
+#+AUTHOR:    dirtysalt
+#+EMAIL:     dirtysalt1987@gmail.com
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:5 num:t toc:t \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+
+** 相关资料
+   - http://clojure.org/
+   - http://clojure.github.com/clojure/
+   - http://java.ociweb.com/mark/clojure/
+
