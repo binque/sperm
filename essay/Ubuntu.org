@@ -43,8 +43,9 @@ System Settings =》 Details 里面可以设置默认浏览器。至于emacs里�
    - sudo apt-get install thunderbird
 
 *** 配置gmail
-   - pop3 pop.gmail.com SSL/TLS 995 normal password
-   - smtp smtp.gmail.com SSL/TLS 465 normal password
+   - pop3 pop.gmail.com/pop.googlmail.com SSL/TLS 995 normal password
+   - smtp smtp.gmail.com/pop.googlmail.com SSL/TLS 465 normal password
+   - 不过似乎现在thunderbird已经非常智能了，只要输入username以及email的话就可以自动进行配置了。nice！！！
    - server settings => 1) leave mesages on server until I delete them. 2) empty trash on exit. 3) check for new messages at startup. 4) check for new messages every 10 minutes.
    - copies and folders => 1) cc these email addresses: dirtysalt1987@gmail.com
    - composition and addressing => 1) start my reply above the quote and place my signature below the quote.
