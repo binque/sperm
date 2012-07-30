@@ -358,9 +358,7 @@
 ;; yas/new-snippet ; create a template
 (global-set-key "\C-c," 'yas/expand)
 (global-set-key "\C-cye" 'yas/expand)
-;; give yas/dropdown-prompt in yas/prompt-functions a chance
-(require 'dropdown-list)
-;; use yas/completing-prompt when ONLY when `M-x yas/insert-snippet'
+
 ;; thanks to capitaomorte for providing the trick.
 (defadvice yas/insert-snippet (around use-completing-prompt activate)
   "Use `yas/completing-prompt' for `yas/prompt-functions' but only here..."

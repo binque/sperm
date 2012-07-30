@@ -29,6 +29,9 @@ CLOSED: [2012-07-25 Wed 22:37]
     CLOSED: [2012-07-30 Mon 18:04]
 *** DONE python encode/decode
     CLOSED: [2012-07-30 Mon 20:13]
+*** DONE linux io_setup
+    CLOSED: [2012-07-30 Mon 22:42]
+    - http://www.kernel.org/doc/man-pages/online/pages/man2/io_setup.2.html
 
 ** daily todo
 *** TODO 和别人交流emacs是如何工作的！
@@ -37,21 +40,21 @@ CLOSED: [2012-07-25 Wed 22:37]
 *** TODO 调研ooize并且整理调度器需求文档
 *** TODO 总结一下flex/bison是如何使用的（低）
 *** TODO 阅读业务逻辑代码（高）
-*** TODO linux io_setup
-    - http://www.kernel.org/doc/man-pages/online/pages/man2/io_setup.2.html
 *** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
     - http://blog.nosqlfan.com/html/3180.html Riak
 *** TODO 统计现在所有的任务运行情况，占用槽位等。
 *** TODO 整理收藏以及微薄收藏等
 *** TODO 阅读完Core Java I    
-
+*** TODO http://linuxtoy.org/feed
+*** TODO 探索Evernote的意义
 ** read it later
 *** TODO GFS
 *** TODO HDFS
 *** TODO BigTable
 *** TODO MapReduce
 *** TODO Kafka
-*** TODO 晓峰创业总结
+*** DONE 晓峰创业总结
+    CLOSED: [2012-07-31 Tue 00:28]
 *** TODO The anatomy of google
 *** TODO RSS redplanet
 *** TODO RSS system we make

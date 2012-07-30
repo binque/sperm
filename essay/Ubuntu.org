@@ -121,6 +121,7 @@ unity restart &
    - sudo apt-get install pidgin # 聊天
    - # sudo apt-get install stardict # 词典
    - sudo apt-get install amarok # 音乐
+   - sudo apt-get install okular # pdf阅读
    - sudo apt-get install git
    - sudo apt-get install subversion
    - sudo apt-get install htop
@@ -134,7 +135,8 @@ unity restart &
    - sudo apt-get install libjs-extjs
    - sudo apt-get install libjs-extjs-doc
    - sudo apt-get install openssh-server
-   - 
+   - sudo apt-get install sqlite3
+
 *** amarok循环播放
 在amarok的右下角有task progression的图标，选择repeat track即可。
 
