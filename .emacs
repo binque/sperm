@@ -64,11 +64,11 @@
 ;;; clojure.
 (require 'clojure-mode)
 
-;;; anything.
-;; sudo apt-get install anything-el
-(require 'anything)
-(require 'anything-config)
-(global-set-key "\C-cat" 'anything)
+;; ;;; anything.
+;; ;; sudo apt-get install anything-el
+;; (require 'anything)
+;; (require 'anything-config)
+;; (global-set-key "\C-cat" 'anything)
 
 ;;; google c style.
 (require 'google-c-style)

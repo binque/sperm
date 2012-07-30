@@ -131,7 +131,10 @@ unity restart &
    - sudp apt-get install tree
    - sudo apt-get install tcpdump
    - sudo apt-get install clusterssh
-
+   - sudo apt-get install libjs-extjs
+   - sudo apt-get install libjs-extjs-doc
+   - sudo apt-get install openssh-server
+   - 
 *** amarok循环播放
 在amarok的右下角有task progression的图标，选择repeat track即可。
 

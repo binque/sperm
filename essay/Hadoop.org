@@ -50,4 +50,4 @@ TODO(dirlt):translate it!!!
    - Does Cloudera contribute their changes back to Apache? / We do, and will continue to contribute all eligible changes back to Apache. We occasionally release code we know to be stable even if our contribution to Apache is still in progress. Some of our changes are not eligible for contribution, as they capture the Cloudera brand, or link to our tools and documentation, but these do not affect compatibility with core project.
 
 ** Projects
-   - [[file:./HDFS.org][HDFS]]   
+   - [[file:./HDFS.org][HDFS]]
