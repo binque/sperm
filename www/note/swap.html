@@ -3,11 +3,11 @@
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>阅读完当天的订阅</title>
+<title>swap</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="阅读完当天的订阅"/>
+<meta name="title" content="swap"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-07-27 11:53:36 CST"/>
+<meta name="generated" content="2012-07-30 16:47:40 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -91,80 +91,126 @@
 </div>
 
 <div id="content">
-<h1 class="title">阅读完当天的订阅</h1>
+<h1 class="title">swap</h1>
 
-<p>周一整理fun里面内容
-阅读GFS论文
-阅读Bigtable论文
-阅读Mapreduce论文
-阅读LSM论文
-Riak,CouchDB,CouchBase,MemSQL
-如何测量httpserver性能 
-<a href="http://blog.nosqlfan.com/html/3180.html">http://blog.nosqlfan.com/html/3180.html</a> Riak
-linux aio具体了解，是否可以使用在net io上面。 <a href="http://www.kernel.org/doc/man-pages/online/pages/man2/io_setup.2.html">http://www.kernel.org/doc/man-pages/online/pages/man2/io_setup.2.html</a>
-log4j如何使用？现在来看似乎使用起来还不错.
-</p>
-<p>
-<a href="http://www.36kr.com/p/106563.html">http://www.36kr.com/p/106563.html</a>
-</p>
-<p>
-和别人交流emacs是如何工作的！
-阅读当前所有任务的工作流程。
-统计现在所有的任务运行情况，占用槽位等。需要了解一下Hadoop的工作原理才行。
-</p>
-<p>
-2012Q3 OKR
-1、参与线上线下统计分析逻辑整合和后端改造工作 30%
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 swap</a>
+<ul>
+<li><a href="#sec-1-1">1.1 2012Q3 OKR</a></li>
+<li><a href="#sec-1-2">1.2 ozzie</a></li>
+<li><a href="#sec-1-3">1.3 java</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> swap</h2>
+<div class="outline-text-2" id="text-1">
+
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 2012Q3 OKR</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p>1、参与线上线下统计分析逻辑整合和后端改造工作 30%
 2、数据平台调度器的设计实现和上线，满足目前的需求 30%
 3、统计分析3.0设计和实现 20%
 4、数据平台数据流改造，kafka直接写入hdfs 10%
 5、hadoop/hbase加深了解 10%
 </p>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> ozzie</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<p>今天粗看了一下oozie的一些内容，下面这些链接可以很容易地baidu到
+</p><ul>
+<li><a href="http://www.infoq.com/cn/articles/introductionOozie">http://www.infoq.com/cn/articles/introductionOozie</a> oozie简介
+</li>
+<li><a href="http://incubator.apache.org/oozie/overview.html">http://incubator.apache.org/oozie/overview.html</a> oozie overview
+</li>
+<li><a href="http://incubator.apache.org/oozie/map-reduce-cookbook.html">http://incubator.apache.org/oozie/map-reduce-cookbook.html</a> oozie简单地跑一个mapreduce
+</li>
+<li><a href="http://incubator.apache.org/oozie/docs/3.2.0-incubating/docs/index.html">http://incubator.apache.org/oozie/docs/3.2.0-incubating/docs/index.html</a> oozie文档
+<ul>
+<li>workflow <a href="http://incubator.apache.org/oozie/docs/3.2.0-incubating/docs/WorkflowFunctionalSpec.html">http://incubator.apache.org/oozie/docs/3.2.0-incubating/docs/WorkflowFunctionalSpec.html</a>
+</li>
+<li>coordinator <a href="http://incubator.apache.org/oozie/docs/3.2.0-incubating/docs/CoordinatorFunctionalSpec.html">http://incubator.apache.org/oozie/docs/3.2.0-incubating/docs/CoordinatorFunctionalSpec.html</a>
+</li>
+<li>bundle <a href="http://incubator.apache.org/oozie/docs/3.2.0-incubating/docs/BundleFunctionalSpec.html">http://incubator.apache.org/oozie/docs/3.2.0-incubating/docs/BundleFunctionalSpec.html</a>
+</li>
+</ul>
+
+</li>
+</ul>
+
+
 <p>
-The anatomy of google
-Hybrid research of google
-GFS
-HDFS
-Kafka
-python encode/decode
-</p>
-<p>
-链接
-redplanet
-system we make
-paper planes.
-bookmarks里面的dobbs
-</p>
-<p>
-java日志部分 泛型 容器 多线程
-</p>
-<p>
-业务背景（高）
-阅读一下dp-comproc的maven编译文件/(现有maven是如何编写以及常用的编译选项以及参数)
-总结一下flex/bison是如何使用的（低）
-</p>
-<p>
-==================
-财经郎眼 20120609
-naruto 487
-bleach 367
-赵主任 江西米粉 三杯 芦蒿
-</p>
-<p>
-lin482477@163.com
-<a href="http://v.youku.com/v_show/id_XMzQ5NzYzOTk2.html">http://v.youku.com/v_show/id_XMzQ5NzYzOTk2.html</a>
-<a href="http://www.happylives.coms.hk/">http://www.happylives.coms.hk/</a>
-<a href="http://x.rt97.org/">http://x.rt97.org/</a>
-<a href="http://se.ix44.com/">http://se.ix44.com/</a>
-<a href="http://solidot.org/article.pl?sid=10/07/16/0954241">http://solidot.org/article.pl?sid=10/07/16/0954241</a>
-<a href="http://blog.renren.com/share/238138950/5084078758">http://blog.renren.com/share/238138950/5084078758</a>
-<a href="https://lwn.net/Archives/">https://lwn.net/Archives/</a> 
-学习Java语言
-了解IO工具使用等 TODO
-</p></div>
+oozie工作方式也是启动一个mapper任务放在cluster上面运行。大致上来看的话需要三个文件：
+</p><ul>
+<li>workflow.xml ozzie读取它来知道每个任务DAG如何并且失败以及成功之后如何处理。
+</li>
+<li>job.properties 这个用来存放一些任务相关的参数等。这个部分其实可以和workflow.xml放在一起，但是分离出来的话可以方便分离。
+</li>
+<li>lib 目录下面存放启动启动需要的库文件比如jar或者是so等。
+</li>
+</ul>
+
+<p>然后我们需要将这写文件提交到hdfs上面，然后使用ozzie启动。ozzie会提供一个回调url，启动的任务应该会定时向这些url进行汇报状态（回调），或者是
+ozzie去查询这些任务状态（这些任务应该也会内置httpserver）。总地来说oozie执行分为三种模式：
+</p><ul>
+<li>workflow. 这种方式非常简单，就是定义DAG来执行。
+</li>
+<li>coordinator. workflow缺点非常明显，就是没有办法定时触发或者是条件触发。coordinator可以完成这个需求。coordinator构建在workflow工作方式上面，可以定时运行也可以触发运行。
+</li>
+</ul>
+
+<p>触发条件非常巧妙，提供一个叫做synchronous dataset的数据集。这个数据集其实就是一个url，不过这个url通过时间来进行区分。比如hdfs://foo:9000/usr/logs/2009/04/15/23/30.
+</p><ul>
+<li>bundle. bundle的作用就是将多个coordinator管理起来。这样我们只需要提供一个bundle提交即可。然后可以start/stop/suspend/resume任何coordinator.
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> java</h3>
+<div class="outline-text-3" id="text-1-3">
+
+<ul>
+<li>日志,log4j
+</li>
+<li>泛型 
+</li>
+<li>容器 
+</li>
+<li>多线程
+</li>
+</ul>
+
+
+</div>
+</div>
+</div>
+</div>
 
 <div id="postamble">
-<p class="date">Date: 2012-07-27 11:53:36 CST</p>
+<p class="date">Date: 2012-07-30 16:47:40 CST</p>
 <p class="author">Author: dirtysalt</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
