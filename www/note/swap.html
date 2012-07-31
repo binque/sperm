@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="swap"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-07-31 17:25:20 CST"/>
+<meta name="generated" content="2012-07-31 18:14:14 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -182,7 +182,7 @@ oozie执行分为三种模式：
 </li>
 </ul>
 
-<p>触发条件非常巧妙，提供一个叫做synchronous dataset的数据集。这个数据集其实就是一个url，不过这个url通过时间来进行区分。比如hdfs://foo:9000/usr/logs/2009/04/15/23/30.
+<p>触发条件非常巧妙，提供一个叫做synchronous dataset的数据集。这个数据集其实就是一个url（文件系统url），不过这个url通过时间来进行区分。比如hdfs://foo:9000/usr/logs/2009/04/15/23/30.
 </p><ul>
 <li>bundle. bundle的作用就是将多个coordinator管理起来。这样我们只需要提供一个bundle提交即可。然后可以start/stop/suspend/resume任何coordinator.
 </li>
@@ -332,7 +332,7 @@ hbase支持increment <a href="http://hbase.apache.org/apidocs/org/apache/hadoop/
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-07-31 17:25:20 CST</p>
+<p class="date">Date: 2012-07-31 18:14:14 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

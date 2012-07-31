@@ -22,7 +22,7 @@ ozzie去查询这些任务状态（这些任务应该也会内置httpserver）�
 oozie执行分为三种模式：
    - workflow. 这种方式非常简单，就是定义DAG来执行。
    - coordinator. workflow缺点非常明显，就是没有办法定时触发或者是条件触发。coordinator可以完成这个需求。coordinator构建在workflow工作方式上面，可以定时运行也可以触发运行。
-触发条件非常巧妙，提供一个叫做synchronous dataset的数据集。这个数据集其实就是一个url，不过这个url通过时间来进行区分。比如hdfs://foo:9000/usr/logs/2009/04/15/23/30.
+触发条件非常巧妙，提供一个叫做synchronous dataset的数据集。这个数据集其实就是一个url（文件系统url），不过这个url通过时间来进行区分。比如hdfs://foo:9000/usr/logs/2009/04/15/23/30.
    - bundle. bundle的作用就是将多个coordinator管理起来。这样我们只需要提供一个bundle提交即可。然后可以start/stop/suspend/resume任何coordinator.
 
 *** deployment
@@ -58,6 +58,7 @@ oozie执行分为三种模式：
 
 *** coordinator
 
+
 ** java
    - 日志,log4j
    - 泛型 
@@ -68,4 +69,3 @@ oozie执行分为三种模式：
 存在两套API，现在比较推荐使用mapreduce而非mapred名字空间下面的类，现在mapreduce下面的类使用起来更加简单。
 
 hbase支持increment http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html
-
