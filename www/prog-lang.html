@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>prog-lang</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="prog-lang"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2012-07-31 17:24:44 CST"/>
+<meta name="author" content="dirtysalt"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">prog-lang</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 prog-lang</a>
+<ul>
+<li><a href="#sec-1-1">1.1 overview</a>
+<ul>
+<li><a href="#sec-1-1-1">1.1.1 编程语言要素</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-2">1.2 cpp</a>
+<ul>
+<li><a href="#sec-1-2-1">1.2.1 相关资料</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-3">1.3 java</a>
+<ul>
+<li><a href="#sec-1-3-1">1.3.1 相关资料</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-4">1.4 clojure</a>
+<ul>
+<li><a href="#sec-1-4-1">1.4.1 相关资料</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-5">1.5 python</a>
+<ul>
+<li><a href="#sec-1-5-1">1.5.1 encode/decode</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-6">1.6 scheme</a>
+<ul>
+<li><a href="#sec-1-6-1">1.6.1 相关资料</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> prog-lang</h2>
+<div class="outline-text-2" id="text-1">
+
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> overview</h3>
+<div class="outline-text-3" id="text-1-1">
+
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> 编程语言要素</h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+<p>所谓编程语言要素就是说，一旦我们对于这些编程语言的要素掌握之后，我们就可以用这个语言做一些事情了。编程语言要素必须是基本的(atomic)，
+然后我们在学习语言的时候，首先学习这些基本的内容之后，就可以开动了。不要使用形式的东西来概括，必须是一些可以put into practice的东西
+</p>
+<ul>
+<li>基本类型 // 比如字符串如何表示等
+</li>
+<li>复合结构 // 如何将基本类型复合出来
+</li>
+<li>内存管理 // 如何进行内存分配释放
+</li>
+<li>程序结构 // 变量作用域，变量声明，类的访问权限，程序结构
+</li>
+<li>语言特有特性 // 反射，动态代码生成，continuation
+</li>
+<li>工程组织性 // 如何组织一个大的项目，如何服用代码比如库
+</li>
+<li>文件系统 // 如何操作文件，读取特定字节等
+</li>
+<li>并发控制 // 比如进程，线程，锁
+</li>
+<li>网络通信 // 通讯设施
+</li>
+<li>C/C++扩展 // 如何使用C/C++来编写扩展提高效率
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> cpp</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+</div>
+
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> 相关资料</h4>
+<div class="outline-text-4" id="text-1-2-1">
+
+<ul>
+<li>The C Programming Language(DMR &amp; BWK)
+</li>
+<li>C and Pointers
+</li>
+<li>The C++ Programming Language(BS)
+</li>
+<li>Thinking in C++
+</li>
+<li><a href="http://www.cplusplus.com/doc/tutorial/">http://www.cplusplus.com/doc/tutorial/</a>
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> java</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> 相关资料</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+<ul>
+<li>Core Java Volume I: Fundamentals
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> clojure</h3>
+<div class="outline-text-3" id="text-1-4">
+
+
+</div>
+
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> 相关资料</h4>
+<div class="outline-text-4" id="text-1-4-1">
+
+<ul>
+<li><a href="http://clojure.org/">http://clojure.org/</a>
+</li>
+<li><a href="http://clojure.github.com/clojure/">http://clojure.github.com/clojure/</a>
+</li>
+<li><a href="http://java.ociweb.com/mark/clojure/">http://java.ociweb.com/mark/clojure/</a>
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> python</h3>
+<div class="outline-text-3" id="text-1-5">
+
+
+</div>
+
+<div id="outline-container-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> encode/decode</h4>
+<div class="outline-text-4" id="text-1-5-1">
+
+<p>python字符串是unicode类型，二进制是str类型。
+</p><ul>
+<li>encode是将unicode转换成为str
+</li>
+<li>decode是将str转换成为unicode
+</li>
+</ul>
+
+
+
+
+<pre class="example">&gt;&gt;&gt; a="中国"
+&gt;&gt;&gt; a
+'\xe4\xb8\xad\xe5\x9b\xbd'
+&gt;&gt;&gt; a.decode('utf8')
+u'\u4e2d\u56fd'
+&gt;&gt;&gt; print a.decode('utf8')
+中国
+&gt;&gt;&gt; print a.decode('gb18030')
+涓浗
+</pre>
+
+
+<p>
+这里一个比较难处理的问题就是字符编码的识别，这个在我的项目<a href="./dsgm.html">dsgm</a> 遇到过。个人现在处理的办法就是尝试全部转换成为utf8来进行处理。实现办法就是首先尝试转换
+到gb18030,如果转换失败的话那么转换成为utf8（当然这不是最好的，使用chardet这样的模块似乎是更合理的选择），这样的操作对于我们中国大陆用户来说基本上应该
+OK，就我所知道的系统XP都是GB2312编码，linux/mac通常设置成为utf8，而cygwin这样架在windows上面的系统通常也是gb2312。
+</p>
+
+
+
+<pre class="src src-Python">def toUTF8(s):
+    try:
+        # detect gb2312 first.
+        return s.decode('gb2312').encode('utf8')
+    except UnicodeDecodeError,e:
+        return s
+
+def toLocal(s):
+    try:
+        open(s,'r') # what a tricky way.
+        return s
+    except IOError,e:
+        if(e.errno==22): # errno.EINVAL
+            return s.decode('utf8').encode('gb2312')
+        return s
+</pre>
+
+<p>
+对于从本地转换出去的话，我们首先尝试使用gb2312进行decode，如果失败的话那么就认为是utf8编码，当然这里会有一定的错误机率（但是不大）。
+转换到本地的话，我们唯一不确定的就是本地是utf8格式还是gb2312格式。可以通过尝试打开一个文件来判断，其中22是errno.EINVAL的错误编码。
+如果字符编码错误的话，那么返回的就是invalid argument的错误，同样会存在一定错误机率（但是不大）。出现错误几率的原因就是这些码点，使用
+gb2312可以正常解释，使用utf8也可以正常解释。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> scheme</h3>
+<div class="outline-text-3" id="text-1-6">
+
+
+</div>
+
+<div id="outline-container-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> 相关资料</h4>
+<div class="outline-text-4" id="text-1-6-1">
+
+<ul>
+<li>Structure and Interpretation of Computer Programs
+</li>
+</ul>
+
+
+
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2012-07-31 17:24:44 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>
