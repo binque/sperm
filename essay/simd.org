@@ -1,4 +1,4 @@
-* SIMD
+* simd
 #+OPTIONS: H:4
 
 从Pentium II和Pentium MMX处理器系列开始,芯片开始支持SIMD操作.

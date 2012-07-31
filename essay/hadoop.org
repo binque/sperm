@@ -1,4 +1,4 @@
-* Hadoop
+* hadoop
 #+OPTIONS: H:5
 
 参考资源

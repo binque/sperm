@@ -1,4 +1,4 @@
-* Linux
+* linux
 #+OPTIONS: H:5
 
 ** proc文件系统

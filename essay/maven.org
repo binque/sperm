@@ -1,4 +1,4 @@
-* Maven
+* maven
 #+OPTIONS: H:5
   
 ** FAQ

@@ -1,4 +1,4 @@
-* ZeroMQ
+* zeromq
 #+OPTIONS: H:5
 
 ** Philosophy

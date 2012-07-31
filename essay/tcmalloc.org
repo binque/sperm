@@ -1,4 +1,4 @@
-* TCMalloc
+* tcmalloc
 #+OPTIONS: H:5
 
    - 内存管理内幕 http://www.ibm.com/developerworks/cn/linux/l-memory/

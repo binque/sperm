@@ -1,4 +1,4 @@
-* HBase
+* hbase
 ** hbase shell
    - scan 'test'
    - scan 'test' , { LIMIT=>10 }

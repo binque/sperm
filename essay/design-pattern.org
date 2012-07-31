@@ -1,4 +1,4 @@
-* 设计模式
+* design-pattern
 #+OPTIONS: H:5
 
 设计模式(Design Pattern)是一本神作，而且需要注意子标题就是这个设计模式是针对面向对象编程而言的。

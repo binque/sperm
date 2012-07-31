@@ -1,5 +1,4 @@
-* PIC
-#+TITLE: 位置无关代码
+* pic-code
 #+OPTIONS: H:5
 
 ** 什么是PIC

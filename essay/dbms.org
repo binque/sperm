@@ -1,4 +1,4 @@
-* DBMS
+* dbms
 #+OPTIONS: H:5
 
 数据库系统基础教程

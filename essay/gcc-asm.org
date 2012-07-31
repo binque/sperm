@@ -1,4 +1,4 @@
-* GCC内嵌汇编
+* gcc-asm
 #+OPTIONS: H:5
 
 ** 基本形式

@@ -1,4 +1,4 @@
-* Chubby
+* chubby
 #+OPTIONS: H:5
 
    - link: http://research.google.com/archive/chubby.html

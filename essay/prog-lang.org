@@ -1,4 +1,4 @@
-* proglang
+* prog-lang
 #+OPTIONS: H:5
 
 ** overview

@@ -1,4 +1,4 @@
-* BuildSystem
+* build-system
 #+OPTIONS: H:4
 
 words from huangjun@baidu.com(leemars528)

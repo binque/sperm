@@ -1,4 +1,4 @@
-* Snappy
+* snappy
 #+OPTIONS: H:5
 
 http://code.google.com/p/snappy/

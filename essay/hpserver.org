@@ -1,4 +1,4 @@
-* HPServer
+* hpserver
 #+OPTIONS: H:5
 
 http://code.google.com/p/hpserver/
