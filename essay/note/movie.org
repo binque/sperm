@@ -1,19 +1,4 @@
 * movie
-#+TITLE:     movie
-#+AUTHOR:    dirtysalt
-#+EMAIL:     dirtysalt1987@gmail.com
-#+DESCRIPTION:
-#+KEYWORDS:
-#+LANGUAGE:  en
-#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t
-#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
-#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
-#+EXPORT_SELECT_TAGS: export
-#+EXPORT_EXCLUDE_TAGS: noexport
-#+LINK_UP:   
-#+LINK_HOME: 
-#+XSLT:
-
 ** 听说看了这20部电影相当于读完清华大学经济管理学院
 在复杂的商业社会，你想创业，不懂经济、不懂商业、不懂人情世故、不懂法律边沿，你只有勇气、只有梦想、只有天真，那么也就只有一场空。这20部电影都是商学院学生在学习商科时被要求必须看的影片，其中包括哈佛商学院一直首推的《华尔街》，还有沃顿商学院排第一位的《颠倒乾坤》，斯坦福要求商科学生必看的《锅炉房》。看完之后，你会对商业运行的本质和规则有更深入的了解，对你的职场生涯亦会有不小的帮助。
 

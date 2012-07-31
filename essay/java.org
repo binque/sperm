@@ -1,7 +1,4 @@
 * java
-#+AUTHOR: dirtysalt1987@gmail.com
-#+OPTIONS: H:5
-
 ** 相关资料
    - Core Java Volume I: Fundamentals
 

@@ -1,8 +1,8 @@
 * HPServer
-#+AUTHOR: dirtysalt1987@gmail.com
 #+OPTIONS: H:5
 
-http://code.google.com/p/hpserver/.
+http://code.google.com/p/hpserver/
+
 虽然主页上介绍"HPServer is a free, open-source light-weighted framework for concurrent networking software. "，但是实际上hpserver完成事情是相当有限的。
 类似于libevent,没有管理线程，内部也没有异步队列的实现。所以基本上可以认为就是一个libevent的简单实现。hpserver的特点有下面这些：
    - object-oriented;

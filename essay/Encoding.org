@@ -1,5 +1,4 @@
 * 字符编码
-#+AUTHOR: dirtysalt1987@gmail.com
 #+OPTIONS: H:4
 
 ** 参考文献

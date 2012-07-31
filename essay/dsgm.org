@@ -1,6 +1,5 @@
 * dsgm
 #+OPTIONS: H:5
-#+AUTHOR: dirtysalt1987@gmail.com
 
 code: https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm
 

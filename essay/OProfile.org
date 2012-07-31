@@ -1,5 +1,4 @@
 * OProfile
-#+AUTHOR: dirtysalt1987@gmail.com
 #+OPTIONS: H:4
 
 ** OProfile简介

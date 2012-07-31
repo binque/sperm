@@ -1,5 +1,4 @@
 * Ubuntu
-#+AUTHOR: dirtysalt1987@gmail.com
 #+OPTIONS: H:5
 
 千万不要抱有一朝一兮就可以搞定的想法。最好的话身边有一个群体，大家都使用Ubuntu这个东西。

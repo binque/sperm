@@ -1,5 +1,4 @@
 * Redis
-#+AUTHOR: dirtysalt1987@gmail.com
 #+OPTIONS: H:5
 
 ** 简介

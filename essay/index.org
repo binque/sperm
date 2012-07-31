@@ -1,5 +1,4 @@
 * index
-#+AUTHOR: dirtysalt1987@gmail.com
 #+TITLE: 章炎的主页
 #+OPTIONS: H:3
 
@@ -102,7 +101,7 @@ SIMD(Single Instruction Muitple Data)单指令多数据。这个笔记其实是I
    - [[file:./dsgm.org][dsgm]] Document Synchronization based on Google Mail. https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm
 
 ** Note
-   - [[file:./note/diary.org][diary]] 记录日常琐碎的事情以及自己的想法。
+   - [[file:./note/diary.org][diary]] 记录日常的事情以及自己的想法。提醒一下，其内容可能过于琐碎或者是无聊：）
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
-   - [[file:./note/fun.org][fun]] 搞笑的文字等
+   - [[file:./note/fun.org][fun]] 搞笑的文字等。通常这些文字是不配图的，纯文字。那些需要配图的内容我通常放在了blog里面。
 

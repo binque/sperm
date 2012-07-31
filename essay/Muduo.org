@@ -1,5 +1,4 @@
 * Muduo
-#+AUTHOR: dirtysalt1987@gmail.com
 #+OPTIONS: H:5
 
 http://code.google.com/p/muduo/.

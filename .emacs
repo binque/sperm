@@ -323,6 +323,7 @@
 (setq org-agenta-files "~/github/sperm/essay/Plan.org")
 (setq org-export-have-math nil)
 (setq org-use-sub-superscripts (quote {}))
+(setq org-export-author-info nil)
 (setq org-publish-project-alist
       '(("essay"
          :base-directory "~/github/sperm/essay"

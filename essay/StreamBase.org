@@ -1,5 +1,4 @@
 * StreamBase
-#+AUTHOR: dirtysalt1987@gmail.com
 #+OPTIONS: H:4
 
 StreamBase是IBM公司开发的一款商业流式计算系统，在一些金融行业和政府部门正在被使用。

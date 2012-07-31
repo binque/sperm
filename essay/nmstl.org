@@ -1,5 +1,4 @@
 * nmstl
-#+AUTHOR: dirtysalt1987@gmail.com
 #+OPTIONS: H:5
 
 http://sourceforge.net/projects/nmstl/.

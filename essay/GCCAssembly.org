@@ -1,5 +1,4 @@
 * GCC内嵌汇编
-#+AUTHOR: dirtysalt1987@gmail.com
 #+OPTIONS: H:5
 
 ** 基本形式

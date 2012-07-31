@@ -1,7 +1,4 @@
 * ACE
-#+AUTHOR:dirtysalt1987@gmail.com
-#+OPTIONS: H:5
-
 http://www.cs.wustl.edu/~schmidt/ACE.html
 
 参考书籍有C++网络编程卷1(运用ACE和模式消除复杂性),C++网络编程卷2(基于ACE和框架的系统化复用).

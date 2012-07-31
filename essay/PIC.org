@@ -1,5 +1,5 @@
-* 位置无关代码
-#+AUTHOR: dirtysalt1987@gmail.com
+* PIC
+#+TITLE: 位置无关代码
 #+OPTIONS: H:5
 
 ** 什么是PIC

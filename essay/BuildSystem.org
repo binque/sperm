@@ -1,5 +1,4 @@
 * BuildSystem
-#+AUTHOR: dirtysalt1987@gmail.com
 #+OPTIONS: H:4
 
 words from huangjun@baidu.com(leemars528)

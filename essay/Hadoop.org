@@ -1,5 +1,4 @@
 * Hadoop
-#+AUTHOR: dirtysalt1987@gmai.com
 #+OPTIONS: H:5
 
 参考资源

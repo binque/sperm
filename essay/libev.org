@@ -1,5 +1,4 @@
 * libev
-#+AUTHOR: dirtysalt1987@gmail.com
 #+OPTIONS: H:5
 
 主页http://software.schmorp.de/pkg/libev.html

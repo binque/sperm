@@ -1,5 +1,4 @@
 * APUE
-#+AUTHOR: dirtysalt1987@gmail.com
 #+OPTIONS: H:5
 
 ** Unix基础知识

@@ -1,19 +1,4 @@
 * swap
-#+TITLE:     swap
-#+AUTHOR:    dirtysalt
-#+EMAIL:     dirtysalt1987@gmail.com
-#+DESCRIPTION:
-#+KEYWORDS:
-#+LANGUAGE:  en
-#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t
-#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
-#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
-#+EXPORT_SELECT_TAGS: export
-#+EXPORT_EXCLUDE_TAGS: noexport
-#+LINK_UP:   
-#+LINK_HOME: 
-#+XSLT:
-
 ** ozzie
 今天粗看了一下oozie的一些内容，下面这些链接可以很容易地baidu到
    - http://www.infoq.com/cn/articles/introductionOozie oozie简介

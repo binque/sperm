@@ -1,5 +1,4 @@
 * DBMS
-#+AUTHOR: dirtysalt1987@gmail.com
 #+OPTIONS: H:5
 
 数据库系统基础教程
