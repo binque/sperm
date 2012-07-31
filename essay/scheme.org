@@ -1,4 +1,0 @@
-* scheme
-** 相关资料
-   - Structure and Interpretation of Computer Programs
-

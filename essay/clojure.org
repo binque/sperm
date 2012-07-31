@@ -1,6 +1,0 @@
-* clojure
-** 相关资料
-   - http://clojure.org/
-   - http://clojure.github.com/clojure/
-   - http://java.ociweb.com/mark/clojure/
-

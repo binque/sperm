@@ -69,6 +69,10 @@ PATH=$HOME/utils/clisp/bin:$PATH
 MANPATH=$HOME/utils/clisp/share/man:$MANPATH
 PATH=$HOME/github/depot_tools:$PATH
 PATH=$HOME/utils/nginx/sbin:$PATH
+PATH=$HOME/utils/hadoop-0.20.2-cdh3u3/bin:$PATH
+PATH=$HOME/utils/hbase-0.90.4-cdh3u3/bin:$PATH
+PATH=$HOME/utils/oozie-2.3.2-cdh3u3/bin:$PATH
+
 
 export PATH
 export MANPATH

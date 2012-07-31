@@ -1,7 +1,0 @@
-* cpp
-** 相关资料
-  - The C Programming Language(DMR & BWK)
-  - C and Pointers
-  - The C++ Programming Language(BS)
-  - Thinking in C++
-  - http://www.cplusplus.com/doc/tutorial/

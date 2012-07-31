@@ -25,19 +25,19 @@
    - SAE http://dirlt.sinaapp.com/
    - BAE TODO(dirlt)：没有邀请码：（
 
-** [[file:./APUE.org][APUE]]
+** [[file:./apue.org][APUE]]
 Unix环境高级编程(Advanced Programming Unix Environment),W. Richard Stevens的神作。笔记里面没有包含书最后的几个部分，比如终端，打印机等，因为我觉得可能大家都不太需要这个东西了。
 我还尝试将一些跨章节的概念整合到一起，这样比较容易从总体把握Unix编程环境。同时在后面补充了一些Linux上面特定内容以及系统工具（移到了[[file:./Linux.org][Linux]] 的文章里面），这个在真正开发Linux程序时候非常有用。
 
-** [[file:./UNP.org][UNP]]
+** [[file:./unp.org][UNP]]
 Unix网络编程(Unix Network Programming),W. Richard Stevens的又一神作。笔记里面只是对于TCP原理有比较详细讨论，这部分笔记也包含了TCP Illustrated v1里面和TCP相关的章节内容。
 对于编程方面也着重TCP socket使用。希望大家可以理解，毕竟在大部分应用场景下面我们选用TCP模型更多，并且TCP里面有很多非常琐碎的知识。工具相关的内容已经移到了[[file:./Linux.org][Linux]] 文章里面。
 
-** [[file:./DBMS.org][DBMS]]
+** [[file:./dbms.org][DBMS]]
 DBMS(database management system)现在正在研究。打算首先阅读一下数据库系统基础教程(A First Course in Database Systems by Jeffrey D. Ullman),然后看看
 另外一本也是Jeffrey D. Ullman写的数据库系统实现(Database System Implementation).主要是了解DBMS方面的理论和大致实现，之后会稍微结合现有数据库实现阅读代码(MySQL/PostgreSQL).
 
-** [[file:./SIMD.org][SIMD]]
+** [[file:./simd.org][SIMD]]
 SIMD(Single Instruction Muitple Data)单指令多数据。这个笔记其实是Intel Reference Manual中关于SIMD指令的总结。里面包含了一些理解SIMD指令需要的知识，以及对SIMD指令进行了分类。
 遗憾的是里面没有什么过多的例子，毕竟这个是结合场景来使用的。
 
@@ -90,12 +90,12 @@ SIMD(Single Instruction Muitple Data)单指令多数据。这个笔记其实是I
      - [[file:./HDFS.org][HDFS]] Apache Hadoop项目的分布式文件系统，GFS的开源实现但是功能上还是存在一些差别。
      - [[file:./HBase.org][HBase]] Apache Hadoop项目的分布式表格系统，BigTable的开源实现但是功能上还是存在一些差别。
    
-** Programming Language
-   - [[file:./cpp.org][C/C++]] C++ (pronounced "cee plus plus") is a statically typed, free-form, multi-paradigm, compiled, general-purpose programming language. It is regarded as an intermediate-level language, as it comprises a combination of both high-level and low-level language features. [[http://en.wikipedia.org/wiki/C%2B%2B][Wikipedia]]
-   - [[file:./scheme.org][Scheme]] Scheme is a functional programming language and one of the two main dialects of the programming language Lisp. [[http://en.wikipedia.org/wiki/Scheme_%28programming_language%29][Wikipedia]]
-   - [[file:./java.org][Java]] Java is a programming language originally developed by James Gosling at Sun Microsystems (which has since merged into Oracle Corporation) and released in 1995 as a core component of Sun Microsystems' Java platform. The language derives much of its syntax from C and C++ but has a simpler object model and fewer low-level facilities. [[http://en.wikipedia.org/wiki/Java_%28programming_language%29][Wikipedia]]
-   - [[file:./clojure.org][Clojure]] Clojure (pronounced like "closure") is a recent dialect of the Lisp programming language created by Rich Hickey. It is a functional general-purpose language. Its focus on programming with immutable values and explicit progression-of-time constructs are intended to facilitate the development of more robust programs, particularly multithreaded ones. [[http://en.wikipedia.org/wiki/Clojure][Wikipedia]]
-   - [[file:./python.org][Python]] Python is a general-purpose, high-level programming language whose design philosophy emphasizes code readability. Its syntax is said to be clear and expressive. Python has a large and comprehensive standard library. [[http://en.wikipedia.org/wiki/Python_(programming_language)][Wikipedia]]
+** [[file:./proglang.org][Programming Language]]
+   - C/C++ # C++ (pronounced "cee plus plus") is a statically typed, free-form, multi-paradigm, compiled, general-purpose programming language. It is regarded as an intermediate-level language, as it comprises a combination of both high-level and low-level language features. [[http://en.wikipedia.org/wiki/C%2B%2B][Wikipedia]]
+   - Scheme # Scheme is a functional programming language and one of the two main dialects of the programming language Lisp. [[http://en.wikipedia.org/wiki/Scheme_%28programming_language%29][Wikipedia]]
+   - Java # Java is a programming language originally developed by James Gosling at Sun Microsystems (which has since merged into Oracle Corporation) and released in 1995 as a core component of Sun Microsystems' Java platform. The language derives much of its syntax from C and C++ but has a simpler object model and fewer low-level facilities. [[http://en.wikipedia.org/wiki/Java_%28programming_language%29][Wikipedia]]
+   - Clojure # Clojure (pronounced like "closure") is a recent dialect of the Lisp programming language created by Rich Hickey. It is a functional general-purpose language. Its focus on programming with immutable values and explicit progression-of-time constructs are intended to facilitate the development of more robust programs, particularly multithreaded ones. [[http://en.wikipedia.org/wiki/Clojure][Wikipedia]]
+   - Python # Python is a general-purpose, high-level programming language whose design philosophy emphasizes code readability. Its syntax is said to be clear and expressive. Python has a large and comprehensive standard library. [[http://en.wikipedia.org/wiki/Python_(programming_language)][Wikipedia]]
 
 ** Project
    - [[file:./dsgm.org][dsgm]] Document Synchronization based on Google Mail. https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm

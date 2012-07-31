@@ -1,7 +1,9 @@
 * swap
 ** ozzie
-今天粗看了一下oozie的一些内容，下面这些链接可以很容易地baidu到
+*** overview
+一些链接：
    - http://www.infoq.com/cn/articles/introductionOozie oozie简介
+   - http://incubator.apache.org/oozie/ homepage
    - http://incubator.apache.org/oozie/overview.html oozie overview
    - http://incubator.apache.org/oozie/map-reduce-cookbook.html oozie简单地跑一个mapreduce
    - http://incubator.apache.org/oozie/docs/3.2.0-incubating/docs/index.html oozie文档
@@ -9,16 +11,53 @@
      - coordinator http://incubator.apache.org/oozie/docs/3.2.0-incubating/docs/CoordinatorFunctionalSpec.html
      - bundle http://incubator.apache.org/oozie/docs/3.2.0-incubating/docs/BundleFunctionalSpec.html
 
-oozie工作方式也是启动一个mapper任务放在cluster上面运行。大致上来看的话需要三个文件：
-   - workflow.xml ozzie读取它来知道每个任务DAG如何并且失败以及成功之后如何处理。
-   - job.properties 这个用来存放一些任务相关的参数等。这个部分其实可以和workflow.xml放在一起，但是分离出来的话可以方便分离。
-   - lib 目录下面存放启动启动需要的库文件比如jar或者是so等。
+oozie工作方式也是启动一个mapper任务（这个任务启动真正任务）放在cluster上面运行。大致上来看的话需要三个文件：
+   - workflow.xml ozzie读取它来知道每个任务DAG如何并且失败以及成功之后如何处理。需要提交到hdfs上面。
+   - job.properties 这个用来存放一些任务相关的参数等。这个部分其实可以和workflow.xml放在一起，但是分离出来的话可以方便分离。本地使用。
+   - lib 目录下面存放启动启动需要的库文件比如jar或者是so等。需要提交到hdfs上面。
 然后我们需要将这写文件提交到hdfs上面，然后使用ozzie启动。ozzie会提供一个回调url，启动的任务应该会定时向这些url进行汇报状态（回调），或者是
-ozzie去查询这些任务状态（这些任务应该也会内置httpserver）。总地来说oozie执行分为三种模式：
+ozzie去查询这些任务状态（这些任务应该也会内置httpserver）。（应该是通过回调方式完成 http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/WorkflowFunctionalSpec.html#a5_Oozie_Notifications ，
+并且这里注意到oozie只是使用best-effort方式来做notification）。值得一提的就是oozie也有local-mode方便调试和测试。
+
+oozie执行分为三种模式：
    - workflow. 这种方式非常简单，就是定义DAG来执行。
    - coordinator. workflow缺点非常明显，就是没有办法定时触发或者是条件触发。coordinator可以完成这个需求。coordinator构建在workflow工作方式上面，可以定时运行也可以触发运行。
 触发条件非常巧妙，提供一个叫做synchronous dataset的数据集。这个数据集其实就是一个url，不过这个url通过时间来进行区分。比如hdfs://foo:9000/usr/logs/2009/04/15/23/30.
    - bundle. bundle的作用就是将多个coordinator管理起来。这样我们只需要提供一个bundle提交即可。然后可以start/stop/suspend/resume任何coordinator.
+
+*** deployment
+   - 设置job.properties里面地址
+   - 修改core-site.xml里面的key-value，包括hadoop.proxyuser.<name>.host/group
+
+*** workflow
+对于workflow来说，最主要关注下面几个部分：
+   - node
+     - control flow node // 控制流节点，决定这个DAG。
+     - action node // 动作节点。TODO（dirlt）：这里不是很明白streaming和pipe方式之间的差别。
+   - parameterization // 参数化，可以获得很多外部状态变量并且进行计算判断。
+
+一些细节：
+   - action有两个状态ok/error http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/WorkflowFunctionalSpec.html#a3.2.1.3_Actions_Have_2_Transitions_ok_and_error 
+     - 对于error而言的话，需要提供error-code以及error-message，这样可以方便下面的决策。
+   - action如何进行recovery的 http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/WorkflowFunctionalSpec.html#a3.2.1.4_Action_Recovery
+   - workflow job生命周期（lift cycle） http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/WorkflowFunctionalSpec.html#a9_Workflow_Jobs_Lifecycle
+     - prepare
+     - running
+     - suspend
+     - succeed
+     - killed
+     - failed
+   - rerun可以用来重新提交任务 http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/WorkflowFunctionalSpec.html#a10_Workflow_Jobs_Recovery_re-run
+     - 用户自己标记哪些任务需要skip
+     - 如果这个任务之前没有complete但是却被skip的话，那么fail
+     - 这个job和原来的job使用同一个jobID
+     - TODO（dirlt）；文档似乎没有写明如何具体提交！
+   - 提供了webservice API接口来控制 http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/WorkflowFunctionalSpec.html#a11_Oozie_Web_Services_API_V0
+   - 没有提供优先级控制的方式 http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/WorkflowFunctionalSpec.html#a16_Workflow_Jobs_Priority
+     - Any prioritization of jobs in the remote systems is outside of the scope of Oozie.
+
+*** coordinator
+
 
 ** java
    - 日志,log4j
@@ -26,3 +65,15 @@ ozzie去查询这些任务状态（这些任务应该也会内置httpserver）�
    - 容器 
    - 多线程
 
+** hadoop
+存在两套API，现在比较推荐使用mapreduce而非mapred名字空间下面的类，现在mapreduce下面的类使用起来更加简单。
+
+hbase支持increment http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html
+
+
+** 2012Q3 OKR
+   - 参与线上线下统计分析逻辑整合和后端改造工作 30%
+   - 数据平台调度器的设计实现和上线，满足目前的需求 30%
+   - 统计分析3.0设计和实现 20%
+   - 数据平台数据流改造，kafka直接写入hdfs 10%
+   - hadoop/hbase加深了解 10%

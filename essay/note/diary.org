@@ -24,24 +24,6 @@ firefox的收藏栏相对于chrome确实好用：
    - 之后如果决定需要收藏的话，那么可以直接Ctrl+D进行收藏，默认是收藏到bookmark menus里面去，并且焦点在tags上面，输入回车即可。
 
 ** 2012-7-27
-*** 编程语言要素
-将原来思考过的”编程语言要素整理“整理过来。
-
-大家好，一直想整理一下编程语言要素。所谓编程语言要素就是说，一旦我们对于这些编程语言的要素掌握之后，我们就可以用这个语言做一些事情了。
-编程语言要素必须是基本的(atomic)，然后我们在学习语言的时候，首先学习这些基本的内容之后，就可以开动了。不要使用形式的东西来概括，
-必须是一些可以put into practice的东西
-
-   - 基本类型 // 比如字符串如何表示等
-   - 复合结构 // 如何将基本类型复合出来
-   - 内存管理 // 如何进行内存分配释放
-   - 程序结构 // 变量作用域，变量声明，类的访问权限，程序结构
-   - 语言特有特性 // 反射，动态代码生成，continuation
-   - 工程组织性 // 如何组织一个大的项目，如何服用代码比如库
-   - 文件系统 // 如何操作文件，读取特定字节等
-   - 并发控制 // 比如进程，线程，锁
-   - 网络通信 // 通讯设施
-   - C/C++扩展 // 如何使用C/C++来编写扩展提高效率
-
 *** 书签整理
 关于书签这个tag来说，其实大部分不用打，因为标题信息已经十分丰富可以很容易地找到，同时firefox也会从链接中提取一些description来方便检索。
 所以打tag大部分是因为，如果以后想检索到这个书签的话我们可能希望使用什么关键字来进行检索，这个关键字是否出现在标题内部。如果没有出现在标题
@@ -72,165 +54,16 @@ IDC（internet data center）管理团队做的事情大致包括下面这些事
 大约需要维持在20-25度左右，空气湿度在50-60%左右。每个小机房大约有20个机柜吧，最后通过一个交换机链接起来。对于现在普通的交换机来说，带宽也就是在1Gbps上，
 和服务器的网卡带宽相似。如果服务器需要提供内网和外网地址的话，需要提供两块网卡绑定IP。
 
-*** linux aio
-前几天准备公司内部关于异步编程交流的时候，想到看看linux aio。这个很早之前在百度的时候就听同事说过，但是一直没有机会看看API以及如何使用。
-趁着这个机会稍微翻了一些API这里稍微总结一下吧（其实看的还是不深入，不过稍微有点概念了）。可以参考下面这些链接：
-   - http://www.kernel.org/doc/man-pages/online/pages/man2/io_setup.2.html
-   - http://hi.baidu.com/_kouu/blog/item/e225f67b337841f42f73b341.html 深入分析
-linux aio的API大抵包括下面这些：
-   - // #include <libaio.h>
-   - io_setup  // create aio context
-   - io_submit // submit aio task
-   - io_getevents // poll aio completion
-   - io_destroy // destroy aio context
-   - io_cancel // cancel aio task
-这个API接口只能够用于disk IO而不能够用于network IO上。
-
-#+BEGIN_SRC C++
-int io_setup(unsigned nr_events, aio_context_t *ctxp);
-int io_destroy(aio_context_t ctx);
-#+END_SRC
-创建和销毁aio context非常简单无须多言。
-
-#+BEGIN_SRC C++
-int io_submit(aio_context_t ctx_id, long nr, struct iocb **iocbpp);
-#+END_SRC
-可以看到可以提交多个task.具体每个task都是通过struct iocb来指定的。这个结构可以在/usr/include/linux/aio_abi.h里面找到。
-#+BEGIN_SRC C++
-/* include/linux/aio_abi.h
- *
- * Copyright 2000,2001,2002 Red Hat.
- *
- * Written by Benjamin LaHaise <bcrl@kvack.org>
- *
- * Distribute under the terms of the GPLv2 (see ../../COPYING) or under 
- * the following terms.
- *
- * Permission to use, copy, modify, and distribute this software and its
- * documentation is hereby granted, provided that the above copyright
- * notice appears in all copies.  This software is provided without any
- * warranty, express or implied.  Red Hat makes no representations about
- * the suitability of this software for any purpose.
- *
- * IN NO EVENT SHALL RED HAT BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
- * SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OF
- * THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF RED HAT HAS BEEN ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * RED HAT DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND
- * RED HAT HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
- * ENHANCEMENTS, OR MODIFICATIONS.
- */
-#ifndef __LINUX__AIO_ABI_H
-#define __LINUX__AIO_ABI_H
-
-#include <linux/types.h>
-#include <asm/byteorder.h>
-
-typedef unsigned long	aio_context_t;
-
-enum {
-	IOCB_CMD_PREAD = 0,
-	IOCB_CMD_PWRITE = 1,
-	IOCB_CMD_FSYNC = 2,
-	IOCB_CMD_FDSYNC = 3,
-	/* These two are experimental.
-	 * IOCB_CMD_PREADX = 4,
-	 * IOCB_CMD_POLL = 5,
-	 */
-	IOCB_CMD_NOOP = 6,
-	IOCB_CMD_PREADV = 7,
-	IOCB_CMD_PWRITEV = 8,
-};
-
-/*
- * Valid flags for the "aio_flags" member of the "struct iocb".
- *
- * IOCB_FLAG_RESFD - Set if the "aio_resfd" member of the "struct iocb"
- *                   is valid.
- */
-#define IOCB_FLAG_RESFD		(1 << 0)
-
-/* read() from /dev/aio returns these structures. */
-struct io_event {
-	__u64		data;		/* the data field from the iocb */
-	__u64		obj;		/* what iocb this event came from */
-	__s64		res;		/* result code for this event */
-	__s64		res2;		/* secondary result */
-};
-
-#if defined(__LITTLE_ENDIAN)
-#define PADDED(x,y)	x, y
-#elif defined(__BIG_ENDIAN)
-#define PADDED(x,y)	y, x
-#else
-#error edit for your odd byteorder.
-#endif
-
-/*
- * we always use a 64bit off_t when communicating
- * with userland.  its up to libraries to do the
- * proper padding and aio_error abstraction
- */
-
-struct iocb {
-	/* these are internal to the kernel/libc. */
-	__u64	aio_data;	/* data to be returned in event's data */
-	__u32	PADDED(aio_key, aio_reserved1);
-				/* the kernel sets aio_key to the req # */
-
-	/* common fields */
-	__u16	aio_lio_opcode;	/* see IOCB_CMD_ above */
-	__s16	aio_reqprio;
-	__u32	aio_fildes; // 文件fd
-
-	__u64	aio_buf; // buffer地址
-	__u64	aio_nbytes; // 字节数 
-	__s64	aio_offset; // 偏移
-
-	/* extra parameters */
-	__u64	aio_reserved2;	/* TODO: use this for a (struct sigevent *) */
-
-	/* flags for the "struct iocb" */
-	__u32	aio_flags;
-
-	/*
-	 * if the IOCB_FLAG_RESFD flag of "aio_flags" is set, this is an
-	 * eventfd to signal AIO readiness to
-	 */
-	__u32	aio_resfd; // 如果设置RESFD标记的话，那么当完成这个操作的话也会通知这个fd。
-}; /* 64 bytes */
-
-#undef IFBIG
-#undef IFLITTLE
-
-#endif /* __LINUX__AIO_ABI_H */
-#+END_SRC
-最常用的大概就是pread和pwrite操作。
-
-发起之后的话，可以有两种方式得到通知：1）使用我RESFD 2）使用io_getevents。我们主要看第二个方式。看看API
-#+BEGIN_SRC C++
-int io_getevents(aio_context_t ctx_id, long min_nr, long nr,
-                 struct io_event *events, struct timespec *timeout);
-int io_cancel(aio_context_t ctx_id, struct iocb *iocb,
-                 struct io_event *result);
-#+END_SRC
-可以看到非常类似epoll的返回，返回借口是io_event（在上面有说明，各个字段含义也很明确）。
-
-*** 2012Q3 OKR
-   - 参与线上线下统计分析逻辑整合和后端改造工作 30%
-   - 数据平台调度器的设计实现和上线，满足目前的需求 30%
-   - 统计分析3.0设计和实现 20%
-   - 数据平台数据流改造，kafka直接写入hdfs 10%
-   - hadoop/hbase加深了解 10%
-
-
-*** firemacs配置    
+*** firemacs配置
 原来firemacs的配置放在了pref.js里面（可以通过about:config察看到），所以应该是可以进行同步的。
 但是有个问题就是，这个配置必须等待firefox正常关闭之后才会生效，否则只是存在于Cache里面，这点非常重要。
 所以如果修改了firemacs配置的话，尽可能重启一次确保修改写入了配置。
+
+NOTE（dirlt）：似乎配置文件并没有进行同步。看来还必须自己同步pref.js这个文件了？OMG。不过现在看起来
+自己机器数量还非常少，在各个地方稍微简单配置一下即可，没有必要始终同步。
+
+*** wget断点续传
+使用wget -c就可以使用断点续传功能，但是这个似乎需要服务器端的支持。服务器需要支持从某一个offset读取文件。
 
 ** 2012-7-31
 *** 一种阅读方式

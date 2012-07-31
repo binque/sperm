@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="APUE"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-07-31 08:26:58 CST"/>
+<meta name="generated" content="2012-07-31 16:43:59 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -370,6 +370,7 @@
 <li><a href="#sec-1-13-4">1.13.4 异步IO</a></li>
 <li><a href="#sec-1-13-5">1.13.5 readv/writev</a></li>
 <li><a href="#sec-1-13-6">1.13.6 存储映射IO</a></li>
+<li><a href="#sec-1-13-7">1.13.7 linux aio</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-14">1.14 进程间通信</a>
@@ -8406,6 +8407,191 @@ mprotect可以修改内存的访问权限，prot字段和mmap的prot字段含义
 而对于MAP_PRIVATE的存储区域就直接丢弃。
 </p>
 </div>
+
+</div>
+
+<div id="outline-container-1-13-7" class="outline-4">
+<h4 id="sec-1-13-7"><span class="section-number-4">1.13.7</span> linux aio</h4>
+<div class="outline-text-4" id="text-1-13-7">
+
+<p>前几天准备公司内部关于异步编程交流的时候，想到看看linux aio。这个很早之前在百度的时候就听同事说过，但是一直没有机会看看API以及如何使用。
+趁着这个机会稍微翻了一些API这里稍微总结一下吧（其实看的还是不深入，不过稍微有点概念了）。可以参考下面这些链接：
+</p><ul>
+<li><a href="http://www.kernel.org/doc/man-pages/online/pages/man2/io_setup.2.html">http://www.kernel.org/doc/man-pages/online/pages/man2/io_setup.2.html</a>
+</li>
+<li><a href="http://hi.baidu.com/_kouu/blog/item/e225f67b337841f42f73b341.html">http://hi.baidu.com/_kouu/blog/item/e225f67b337841f42f73b341.html</a> 深入分析
+</li>
+</ul>
+
+<p>linux aio的API大抵包括下面这些：
+</p><ul>
+<li>// #include &lt;libaio.h&gt;
+</li>
+<li>io_setup  // create aio context
+</li>
+<li>io_submit // submit aio task
+</li>
+<li>io_getevents // poll aio completion
+</li>
+<li>io_destroy // destroy aio context
+</li>
+<li>io_cancel // cancel aio task
+</li>
+</ul>
+
+<p>这个API接口只能够用于disk IO而不能够用于network IO上。
+</p>
+
+
+
+<pre class="src src-C++">int io_setup(unsigned nr_events, aio_context_t *ctxp);
+int io_destroy(aio_context_t ctx);
+</pre>
+
+<p>
+创建和销毁aio context非常简单无须多言。
+</p>
+
+
+
+<pre class="src src-C++">int io_submit(aio_context_t ctx_id, long nr, struct iocb **iocbpp);
+</pre>
+
+<p>
+可以看到可以提交多个task.具体每个task都是通过struct iocb来指定的。这个结构可以在/usr/include/linux/aio_abi.h里面找到。
+</p>
+
+
+<pre class="src src-C++">/* include/linux/aio_abi.h
+ *
+ * Copyright 2000,2001,2002 Red Hat.
+ *
+ * Written by Benjamin LaHaise &lt;<a href="mailto:bcrl&#64;kvack.org">bcrl&#64;kvack.org</a>&gt;
+ *
+ * Distribute under the terms of the GPLv2 (see ../../COPYING) or under 
+ * the following terms.
+ *
+ * Permission to use, copy, modify, and distribute this software and its
+ * documentation is hereby granted, provided that the above copyright
+ * notice appears in all copies.  This software is provided without any
+ * warranty, express or implied.  Red Hat makes no representations about
+ * the suitability of this software for any purpose.
+ *
+ * IN NO EVENT SHALL RED HAT BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT,
+ * SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OF
+ * THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF RED HAT HAS BEEN ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * RED HAT DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS ON AN <span style="color: #ffff00;">"AS IS"</span> BASIS, AND
+ * RED HAT HAS NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES,
+ * ENHANCEMENTS, OR MODIFICATIONS.
+ */
+#ifndef __LINUX__AIO_ABI_H
+#define __LINUX__AIO_ABI_H
+
+#include &lt;linux/types.h&gt;
+#include &lt;asm/byteorder.h&gt;
+
+typedef unsigned long   aio_context_t;
+
+enum {
+        IOCB_CMD_PREAD = 0,
+        IOCB_CMD_PWRITE = 1,
+        IOCB_CMD_FSYNC = 2,
+        IOCB_CMD_FDSYNC = 3,
+        /* These two are experimental.
+         * IOCB_CMD_PREADX = 4,
+         * IOCB_CMD_POLL = 5,
+         */
+        IOCB_CMD_NOOP = 6,
+        IOCB_CMD_PREADV = 7,
+        IOCB_CMD_PWRITEV = 8,
+};
+
+/*
+ * Valid flags for the <span style="color: #ffff00;">"aio_flags"</span> member of the <span style="color: #ffff00;">"struct iocb"</span>.
+ *
+ * IOCB_FLAG_RESFD - Set if the <span style="color: #ffff00;">"aio_resfd"</span> member of the <span style="color: #ffff00;">"struct iocb"</span>
+ *                   is valid.
+ */
+#define IOCB_FLAG_RESFD         (1 &lt;&lt; 0)
+
+/* read() from /dev/aio returns these structures. */
+struct io_event {
+        __u64           data;           /* the data field from the iocb */
+        __u64           obj;            /* what iocb this event came from */
+        __s64           res;            /* result code for this event */
+        __s64           res2;           /* secondary result */
+};
+
+#if defined(__LITTLE_ENDIAN)
+#define PADDED(x,y)     x, y
+#elif defined(__BIG_ENDIAN)
+#define PADDED(x,y)     y, x
+#else
+#error edit for your odd byteorder.
+#endif
+
+/*
+ * we always use a 64bit off_t when communicating
+ * with userland.  its up to libraries to do the
+ * proper padding and aio_error abstraction
+ */
+
+struct iocb {
+        /* these are internal to the kernel/libc. */
+        __u64   aio_data;       /* data to be returned in event's data */
+        __u32   PADDED(aio_key, aio_reserved1);
+                                /* the kernel sets aio_key to the req # */
+
+        /* common fields */
+        __u16   aio_lio_opcode; /* see IOCB_CMD_ above */
+        __s16   aio_reqprio;
+        __u32   aio_fildes; // &#25991;&#20214;fd
+
+        __u64   aio_buf; // buffer&#22320;&#22336;
+        __u64   aio_nbytes; // &#23383;&#33410;&#25968; 
+        __s64   aio_offset; // &#20559;&#31227;
+
+        /* extra parameters */
+        __u64   aio_reserved2;  /* TODO: use this for a (struct sigevent *) */
+
+        /* flags for the <span style="color: #ffff00;">"struct iocb"</span> */
+        __u32   aio_flags;
+
+        /*
+         * if the IOCB_FLAG_RESFD flag of <span style="color: #ffff00;">"aio_flags"</span> is set, this is an
+         * eventfd to signal AIO readiness to
+         */
+        __u32   aio_resfd; // &#22914;&#26524;&#35774;&#32622;RESFD&#26631;&#35760;&#30340;&#35805;&#65292;&#37027;&#20040;&#24403;&#23436;&#25104;&#36825;&#20010;&#25805;&#20316;&#30340;&#35805;&#20063;&#20250;&#36890;&#30693;&#36825;&#20010;fd&#12290;
+}; /* 64 bytes */
+
+#undef IFBIG
+#undef IFLITTLE
+
+#endif /* __LINUX__AIO_ABI_H */
+</pre>
+
+<p>
+最常用的大概就是pread和pwrite操作。
+</p>
+<p>
+发起之后的话，可以有两种方式得到通知：1）使用我RESFD 2）使用io_getevents。我们主要看第二个方式。看看API
+</p>
+
+
+<pre class="src src-C++">int io_getevents(aio_context_t ctx_id, long min_nr, long nr,
+                 struct io_event *events, struct timespec *timeout);
+int io_cancel(aio_context_t ctx_id, struct iocb *iocb,
+                 struct io_event *result);
+</pre>
+
+<p>
+可以看到非常类似epoll的返回，返回借口是io_event（在上面有说明，各个字段含义也很明确）。
+</p>
+</div>
 </div>
 
 </div>
@@ -9376,7 +9562,7 @@ child about to exit
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-07-31 08:26:58 CST</p>
+<p class="date">Date: 2012-07-31 16:43:59 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
