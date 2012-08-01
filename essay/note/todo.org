@@ -34,6 +34,14 @@ CLOSED: [2012-07-25 Wed 22:37]
     - http://www.kernel.org/doc/man-pages/online/pages/man2/io_setup.2.html
 *** DONE 调研ooize并且整理调度器需求文档
     CLOSED: [2012-07-31 Tue 15:28]
+*** DONE 整理收藏以及微薄收藏等
+    CLOSED: [2012-08-01 Wed 23:30]
+*** DONE 晓峰创业总结
+    CLOSED: [2012-07-31 Tue 00:28]
+*** DONE 阅读完成oozie的workflow流程部分
+    CLOSED: [2012-07-31 Tue 21:04]
+*** DONE http://linuxtoy.org/feed
+    CLOSED: [2012-08-01 Wed 23:43]
 
 ** daily todo
 *** TODO 和别人交流emacs是如何工作的！
@@ -44,16 +52,11 @@ CLOSED: [2012-07-25 Wed 22:37]
 *** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
     - http://blog.nosqlfan.com/html/3180.html Riak
 *** TODO 统计现在所有的任务运行情况，占用槽位等。
-*** DONE 整理收藏以及微薄收藏等
-    CLOSED: [2012-08-01 Wed 23:30]
 *** TODO 阅读完Core Java I
-*** TODO http://linuxtoy.org/feed
 *** TODO 探索Evernote的意义
 *** TODO hadoop单节点集群搭建
 *** TODO oozie简单搭建以及运行
 *** TODO 应该收藏哪些内容
-*** DONE 阅读完成oozie的workflow流程部分
-    CLOSED: [2012-07-31 Tue 21:04]
 *** TODO 阅读完成oozie的coordinator流程部分
 *** TODO 整理wife.org
 
@@ -63,8 +66,6 @@ CLOSED: [2012-07-25 Wed 22:37]
 *** TODO BigTable
 *** TODO MapReduce
 *** TODO Kafka
-*** DONE 晓峰创业总结
-    CLOSED: [2012-07-31 Tue 00:28]
 *** TODO The anatomy of google
 *** TODO RSS redplanet
 *** TODO RSS system we make
