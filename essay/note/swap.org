@@ -11,8 +11,9 @@
      - coordinator http://incubator.apache.org/oozie/docs/3.2.0-incubating/docs/CoordinatorFunctionalSpec.html
      - bundle http://incubator.apache.org/oozie/docs/3.2.0-incubating/docs/BundleFunctionalSpec.html
 
-oozie工作方式也是启动一个mapper任务（这个任务启动真正任务）放在cluster上面运行。大致上来看的话需要三个文件：
+oozie工作方式也是启动一个mapper任务（这个任务启动真正任务）放在cluster上面运行。大致上来看的话需要几个文件：
    - workflow.xml ozzie读取它来知道每个任务DAG如何并且失败以及成功之后如何处理。需要提交到hdfs上面。
+   - coordinator.xml 如果是coordinator模式的话，还需要这个文件。需要提交到hdfs上面。
    - job.properties 这个用来存放一些任务相关的参数等。这个部分其实可以和workflow.xml放在一起，但是分离出来的话可以方便分离。本地使用。
    - lib 目录下面存放启动启动需要的库文件比如jar或者是so等。需要提交到hdfs上面。
 然后我们需要将这写文件提交到hdfs上面，然后使用ozzie启动。ozzie会提供一个回调url，启动的任务应该会定时向这些url进行汇报状态（回调），或者是
@@ -35,8 +36,7 @@ oozie执行分为三种模式：
      - control flow node // 控制流节点，决定这个DAG。
      - action node // 动作节点。TODO（dirlt）：这里不是很明白streaming和pipe方式之间的差别。
    - parameterization // 参数化，可以获得很多外部状态变量并且进行计算判断。
-
-一些细节：
+下面是一些具体细节：
    - action有两个状态ok/error http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/WorkflowFunctionalSpec.html#a3.2.1.3_Actions_Have_2_Transitions_ok_and_error 
      - 对于error而言的话，需要提供error-code以及error-message，这样可以方便下面的决策。
    - action如何进行recovery的 http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/WorkflowFunctionalSpec.html#a3.2.1.4_Action_Recovery
@@ -56,8 +56,209 @@ oozie执行分为三种模式：
    - 没有提供优先级控制的方式 http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/WorkflowFunctionalSpec.html#a16_Workflow_Jobs_Priority
      - Any prioritization of jobs in the remote systems is outside of the scope of Oozie.
 
-*** coordinator
+这里给出一个例子配置文件作为说明（这个例子就是oozie homepage里面run example使用的例子 examples/app/map-reduce）。首先是workflow.xml
+#+BEGIN_SRC XML
+<!--
+  Copyright (c) 2010 Yahoo! Inc. All rights reserved.
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
 
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+<workflow-app xmlns="uri:oozie:workflow:0.1" name="map-reduce-wf">
+    <start to="mr-node"/>
+    <action name="mr-node">
+        <map-reduce>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+            <prepare>
+                <delete path="${nameNode}/user/${wf:user()}/${examplesRoot}/output-data/${outputDir}"/>
+            </prepare>
+            <configuration>
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>${queueName}</value>
+                </property>
+                <property>
+                    <name>mapred.mapper.class</name>
+                    <value>org.apache.oozie.example.SampleMapper</value>
+                </property>
+                <property>
+                    <name>mapred.reducer.class</name>
+                    <value>org.apache.oozie.example.SampleReducer</value>
+                </property>
+                <property>
+                    <name>mapred.map.tasks</name>
+                    <value>1</value>
+                </property>
+                <property>
+                    <name>mapred.input.dir</name>
+                    <value>/user/${wf:user()}/${examplesRoot}/input-data/text</value>
+                </property>
+                <property>
+                    <name>mapred.output.dir</name>
+                    <value>/user/${wf:user()}/${examplesRoot}/output-data/${outputDir}</value>
+                </property>
+            </configuration>
+        </map-reduce>
+        <ok to="end"/>
+        <error to="fail"/>
+    </action>
+    <kill name="fail">
+        <message>Map/Reduce failed, error message[${wf:errorMessage(wf:lastErrorNode())}]</message>
+    </kill>
+    <end name="end"/>
+</workflow-app>
+#+END_SRC
+这是一个map-reduce的action，在prepare阶段将原来的输出文件删除掉，在configuration部分配置了一些参数。${}部分就是parameterization，
+这些参数内容都是从job.properties里面得到的。下面看看这个job.properties是如何定义的
+
+#+BEGIN_EXAMPLE
+nameNode=hdfs://localhost:9000
+jobTracker=localhost:9001
+queueName=default
+examplesRoot=examples
+
+oozie.wf.application.path=${nameNode}/user/${user.name}/${examplesRoot}/apps/map-reduce
+outputDir=map-reduce
+
+#+END_EXAMPLE
+
+接着使用 oozie job -oozie http://localhost:11000/oozie/ -config job.properties -run 就可以进行提交。提交完成之后就可以得到一个jobID。
+接着使用 oozie job -oozie http://localhost:11000/oozie/ -kill ${jobID} 就可以用来将这个job kill掉。
+http://localhost:11000/oozie/ 也提供了webconsole的方式来察看所有提交的job运行状况（在workflow jobs这个tab里面）
+
+为了方便我编写了下面几个脚本：
+   - submit
+   - cancel
+   - update
+#+BEGIN_SRC Shell
+#!/bin/bash
+oozie job -oozie http://localhost:11000/oozie/ -config job.properties -run
+
+#!/bin/bash
+oozie job -oozie http://localhost:11000/oozie/ -kill $@
+
+#!/bin/bash
+hadoop fs -rm /user/dirlt/examples/apps/map-reduce/workflow.xml
+hadoop fs -put workflow.xml /user/dirlt/examples/apps/map-reduce/
+
+#+END_SRC
+
+*** coordinator
+对于coordinator来说，有几个比较重要的概念：
+   - time & frequency // 指定触发时间以及触发频率等 http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/CoordinatorFunctionalSpec.html#a4._Datetime_Frequency_and_Time-Period_Representation
+   - sync dataset // 可以用来指定各个workflow之间的相互数据依赖 http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/CoordinatorFunctionalSpec.html#a5.1._Synchronous_Datasets
+     - input events
+     - output events
+   - coord application 
+     - coord job // app的instance http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/CoordinatorFunctionalSpec.html#a6.1.2._Coordinator_Job
+       - timeout // 对于一个action被调度到的超时时间
+       - concurrency // 可以执行的action的并发度
+       - execution strategy // 对于所有可执行action的执行策略 http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/CoordinatorFunctionalSpec.html#a6.1.6._Coordinator_Action_Execution_Policies
+     - coord action // 一个job里面包含的action。这里所谓的action会包含很多的workflow,甚至这些workflow都是recurrent的。 http://z/home/dirlt/utils/oozie-2.3.2-cdh3u3/docs/CoordinatorFunctionalSpec.html#a6.1.3._Coordinator_Action
+       - 每个action到固定时刻都会被create，即使这些action还不需要执行。
+       - action应该执行时刻被成为nominal time
+       - create也被成为materialization（物化）
+sync dataset通常是一个hdfs uri，你可以让uri里面指定date以及time来对应到每一个具体的任务。一旦某个任务完成的话，那么这个hdfs uri就会建立，
+并且在先面会存在一个_SUCCESS的文件（当然你也可以指定其他文件名，如果没有指定的话那么就以目录是否存在作为依据），来表示任务完成。各个任务之间可以通过这种方式来做数据流之间的依赖。
+
+NOTE（dirlt）：关于coordinator的文档非常少，而且使用起来有诸多不便。比如时区设置难以设置正确，以及在webconsole下面不方便察看killed掉workflow的原因。
+另外如果想做一些定制化执行策略的话，还需要通过使用一些workaround的方法才可以OK。
+
+下面看一个使用coordinator的例子（这个例子在 examples/apps/aggregator/ 目录下面）。我们现在需要三个文件
+   - coordinator.xml
+   - workflow.xml
+   - job.properties
+和workflow工作方式非常类似，需要.xmlf放到hdfs上面，而job.properties在本地提供一些参数。先看看coordinator.xml
+
+#+BEGIN_SRC XML
+<coordinator-app name="coord" frequency="${coord:minutes(1)}"
+                 start="2012-08-01T16:30Z" end="2020-01-04T08:00Z" timezone="${tz}"
+                 xmlns="uri:oozie:coordinator:0.1">
+  <controls>
+    <timeout>-1</timeout>
+    <concurrency>2</concurrency>
+    <execution>FIFO</execution>
+  </controls>     
+  
+  <datasets>
+    <dataset name="din" frequency="${coord:minutes(1)}"
+             initial-instance="2012-08-01T16:30Z" timezone="${tz}">
+      <uri-template>${appPath}/input-data/${YEAR}/${MONTH}/${DAY}/${HOUR}/${MINUTE}</uri-template>
+    </dataset>
+    <dataset name="dout" frequency="${coord:minutes(1)}"
+             initial-instance="2012-08-01T16:30Z" timezone="${tz}">
+      <uri-template>${appPath}/output-data/${YEAR}/${MONTH}/${DAY}/${HOUR}/${MINUTE}</uri-template>
+    </dataset>
+  </datasets>
+         
+  <input-events>
+    <data-in name="input" dataset="din">
+      <instance>${coord:current(0)}</instance>
+    </data-in>
+  </input-events>
+  <output-events>
+    <data-out name="output" dataset="dout">
+      <instance>${coord:current(0)}</instance>
+    </data-out>
+  </output-events>
+  
+  <action>
+    <workflow>
+      <app-path>${appPath}</app-path>
+      <configuration>
+        <property>
+          <name>jobTracker</name>
+          <value>${jobTracker}</value>
+        </property>
+        <property>
+          <name>nameNode</name>
+          <value>${nameNode}</value>
+        </property>
+        <property>
+          <name>queueName</name>
+          <value>${queueName}</value>
+        </property>
+        <property>
+          <name>inputData</name>
+          <value>${coord:dataIn('input')}</value>
+        </property>
+        <property>
+          <name>outputData</name>
+          <value>${coord:dataOut('output')}</value>
+        </property>        
+      </configuration>
+    </workflow>
+  </action>
+</coordinator-app>
+#+END_SRC
+
+其中appPath就是我们之前提到的workflow目录。所以可见coordinator是架在workflow上面的。至于workflow.xml不需要做任何修改。
+同样job.properties里面定义也是参数化的内容。不过需要注意的一点就是，这里必须指定oozie.coord.application.path而不是
+oozie.wf.application.path.
+
+#+BEGIN_EXAMPLE
+nameNode=hdfs://localhost:9000
+jobTracker=localhost:9001
+queueName=default
+examplesRoot=examples
+tz=Asia/Shanghai
+appPath=${nameNode}/user/${user.name}/${examplesRoot}/apps/map-reduce
+
+oozie.coord.application.path=${nameNode}/user/${user.name}/${examplesRoot}/apps/map-reduce
+
+#+END_EXAMPLE
+
+运行和取消方式都和之前的workflow方式没有任何差别。至于察看webconsole内容在coordinator jobs这个tab里面。
+比较郁闷的就是，不能够察看每一个action具体的情况，这点是非常不利于调试的。
 
 ** java
    - 日志,log4j
@@ -69,3 +270,4 @@ oozie执行分为三种模式：
 存在两套API，现在比较推荐使用mapreduce而非mapred名字空间下面的类，现在mapreduce下面的类使用起来更加简单。
 
 hbase支持increment http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html
+
