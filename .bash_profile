@@ -81,6 +81,9 @@ export LC_ALL=zh_CN.UTF8
 export LANG=zn_CN.UTF8
 alias ed="emacs"
 
+# default value of oozie url.
+export OOZIE_URL="http://localhost:11000/oozie" 
+
 # not set ls colors.
 if [ $LS_COLORS"X" == "X" ];  then
     # fi = file

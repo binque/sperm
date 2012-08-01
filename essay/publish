@@ -33,6 +33,9 @@ then
     svn add 1/images
     cd ..
 fi
+cd sae/1
+svn up
+cd ../../
 rsync -arzv www/ sae/1/
 rsync -arzv essay/images/ sae/1/images/
 cd sae/1
