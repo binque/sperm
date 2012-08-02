@@ -9,7 +9,7 @@ document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3
 </script></body></html>"""
 
 import glob
-for x in glob.glob('www/*.html')+glob.glob('www/note/*.html'):
+for x in glob.glob('../www/*.html')+glob.glob('../www/note/*.html'):
     d=open(x,'r').read()
     if(not d.endswith(S)):
         print 'append bdstat code to \'%s\''%(x)
