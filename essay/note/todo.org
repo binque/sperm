@@ -48,6 +48,14 @@ CLOSED: [2012-07-25 Wed 22:37]
     CLOSED: [2012-08-02 Thu 13:32]
 *** DONE hadoop单节点集群搭建
     CLOSED: [2012-08-02 Thu 13:44]
+*** DONE 统计现在所有的任务运行情况，占用槽位等。
+    CLOSED: [2012-08-02 Thu 17:15]
+*** DONE 总结当前业务逻辑
+    CLOSED: [2012-08-02 Thu 20:11]
+*** DONE 探索Evernote的意义
+    CLOSED: [2012-08-02 Thu 20:26]
+*** DONE 应该收藏哪些内容
+    CLOSED: [2012-08-02 Thu 20:26]
 
 ** daily todo
 *** TODO 和别人交流emacs是如何工作的！
@@ -57,11 +65,9 @@ CLOSED: [2012-07-25 Wed 22:37]
 *** TODO 阅读业务逻辑代码（高）
 *** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
     - http://blog.nosqlfan.com/html/3180.html Riak
-*** TODO 统计现在所有的任务运行情况，占用槽位等。
 *** TODO 阅读完Core Java I
-*** TODO 探索Evernote的意义
-*** TODO 应该收藏哪些内容
 *** TODO 整理wife.org
+*** TODO 重新阅读当前分群需求
 
 ** read it later
 *** TODO GFS

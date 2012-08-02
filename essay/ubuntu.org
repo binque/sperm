@@ -135,6 +135,7 @@ unity restart &
    - sudo apt-get install libjs-extjs-doc
    - sudo apt-get install openssh-server
    - sudo apt-get install sqlite3
+   - sudo apt-get install eclipse
 
 *** amarok循环播放
 在amarok的右下角有task progression的图标，选择repeat track即可。
