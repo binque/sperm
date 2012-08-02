@@ -69,6 +69,7 @@
    - [[file:hadoop.org][hadoop]] Apache基金会开发的分布式系统基础架构。Hadoop是这个项目的总称下面包含很多子项目。
      - [[file:hdfs.org][hdfs]] Apache Hadoop项目的分布式文件系统，GFS的开源实现但是功能上还是存在一些差别。
      - [[file:hbase.org][hbase]] Apache Hadoop项目的分布式表格系统，BigTable的开源实现但是功能上还是存在一些差别。
+     - [[file:oozie.org][oozie]] Apache Hadoop项目的工作流系统，可以将多个map-reduce作业组合到一个逻辑单元中。支持作业之间的相互依赖，同时允许时间以及数据来触发作业。
    
 ** Programming Language and Design Pattern
    - [[file:./prog-lang.org][prog-lang]] including following languages:     
