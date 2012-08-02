@@ -84,4 +84,4 @@
    - [[file:./note/diary.org][diary]] 记录日常的事情以及自己的想法。提醒一下，其内容可能过于琐碎或者是无聊：）
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
    - [[file:./note/fun.org][fun]] 搞笑的文字等。通常这些文字是不配图的，纯文字。那些需要配图的内容我通常放在了blog里面。
-
+   - [[file:./movie.org][movie]] 自己看过的电影以及里面的一些经典台词和对白。
