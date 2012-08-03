@@ -60,6 +60,9 @@ CLOSED: [2012-07-25 Wed 22:37]
     CLOSED: [2012-08-03 Fri 14:04]
 *** DONE 重新阅读当前分群需求
     CLOSED: [2012-08-03 Fri 16:14]
+*** DONE 询问工资详情
+    CLOSED: [2012-08-03 Fri 18:28]
+
 
 ** daily todo
 *** TODO 和别人交流emacs是如何工作的！
