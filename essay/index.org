@@ -85,3 +85,5 @@
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
    - [[file:./note/fun.org][fun]] 搞笑的文字等。通常这些文字是不配图的，纯文字。那些需要配图的内容我通常放在了blog里面。
    - [[file:note/movie.org][movie]] 自己看过的电影以及里面的一些经典台词和对白。
+   - [[file:./note/pregnancy.org][pregnancy]] 怀孕的一些注意事项包括时间选择，生活习惯，孕前检查以及饮食选择。
+   - [[file:note/health.org][health]] 拥有健康的身体才能够更好地享受生活和工作。
