@@ -38,7 +38,7 @@
    - [[file:swig.org][swig]] C/C++多语言扩展接口生成器，使用起来非常方便(至于生成的代码没有看过效率如何).个人觉得比较适合quick & dirty的方案。
    - [[file:mave.org][maven]] 主要针对Java开发的基于工程对象模型(POM, Project Object Model)构建系统，主要记录了一些使用方面的问题和解决办法。
    - [[file:git.org][git]] 分布式版本控制系统。很多项目都在使用Git进行版本管理包括Linux Kernel, Ruby on Rails, WINE, X.org等。
-   - [[file:ubuntu.org][ubuntu]] 如何更好地使用ubuntu， 之前有过痛苦的经历。http://dirlt.com/blog/?p=1490 主要记录自己使用出现的问题。
+   - [[file:ubuntu.org][ubuntu]] 如何更好地使用ubuntu，[[file:note/struggle-with-ubuntu.org][之前有过痛苦的经历]] 。主要记录自己使用出现的问题。
    - [[file:emacs.org][emacs]] 如何更好地使用Emacs。自己依然只是使用一些简单功能，身边有很多牛人用Emacs那是相当的出神入化。
    - [[file:linux.org][linux]] 主要是介绍Linux下面一些工具使用以及和内核相关的知识。（将原来[[file:./APUE.org][APUE]] 和 [[file:./UNP.org][UNP]] 中的一部分内容放在这里面来了，这样可以保持这两篇内容比较稳定）
    - [[file:fvwm.org][fvwm]] F* Virtual Windows Manager.Linux下面高度可定制化的窗口管理器。
