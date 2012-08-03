@@ -68,6 +68,7 @@ CLOSED: [2012-07-25 Wed 22:37]
 *** TODO 阅读完Core Java I
 *** TODO 整理wife.org
 *** TODO 重新阅读当前分群需求
+*** TODO 似乎gfs里面对于write state状态理解有误
 
 ** read it later
 *** TODO GFS
