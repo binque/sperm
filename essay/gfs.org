@@ -260,6 +260,3 @@ After a file is deleted, GFS does not immediately reclaim the available physical
 *** High Availability
 *** Data Integrity
 *** Diagnostic Tools
-
-
-
