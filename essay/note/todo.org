@@ -64,17 +64,22 @@ CLOSED: [2012-07-25 Wed 22:37]
     CLOSED: [2012-08-03 Fri 18:28]
 *** DONE 似乎gfs里面对于write state状态理解有误
     CLOSED: [2012-08-04 Sat 00:21]
+*** DONE 阅读原来调度器的文档和代码
+    CLOSED: [2012-08-06 Mon 23:30]
+*** DONE 阅读小时任务并且尝试学习优化（高）
+    CLOSED: [2012-08-06 Mon 23:36]
+
 
 ** daily todo
 *** TODO 和别人交流emacs是如何工作的！
 *** TODO 考虑使用fvwm(awesome)
 *** TODO 整理org以及剩余的.emacs部分.主要是学习agenda的管理
 *** TODO 总结一下flex/bison是如何使用的
-*** TODO 阅读小时任务并且尝试学习优化（高）
 *** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
 *** TODO 阅读完Core Java I
-*** TODO 阅读原来调度器的文档和代码
 *** TODO 整理阅读收藏列表
+*** TODO 编写调度器详细设计文档
+
 
 ** read it later
 *** TODO GFS

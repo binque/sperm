@@ -258,5 +258,58 @@ After a file is deleted, GFS does not immediately reclaim the available physical
 
 ** Fault Tolerance And Diagnosis
 *** High Availability
+Among hundreds of servers in a GFS cluster, some are bound to be unavailable at any given time. We keep the overall system highly available with two simple yet effective strategies: fast recovery and replication.（主要使用两点来确保高可用性：快速恢复以及副本机制）
+
+**** Fast Recovery
+   - Both the master and the chunkserver are designed to re-store their state and start in seconds no matter how they terminated. In fact, we do not distinguish between normal and abnormal termination; servers are routinely shut down just by killing the process. （没有区分正常退出和异常推出，master和chunkserver能够在秒级恢复状态）
+   - Clients and other servers experi-ence a minor hiccup as they time out on their outstanding requests, reconnect to the restarted server, and retry. （而对于client来说仅仅有一个很短停顿，超时之后重新连接服务器即可）
+
+**** Chunk Replication
+   - As discussed earlier, each chunk is replicated on multiple chunkservers on different racks. Users can specify different replication levels for different parts of the file namespace. The default is three. The master clones existing replicas as needed to keep each chunk fully replicated as chunkservers go offline or detect corrupted replicas through checksum ver-ification (see Section 5.2). （每个chunk都会在不同的rack的chunkserver上面进行副本。用户也可以指定不同名字空间的副本个数。master也会通过clone现有的chunk来保证所有的chunk副本数目足够，防止某个chunkserver挂掉或者是校验和错误）
+   - Although replication has served us well, we are exploring other forms of cross-server redun-dancy such as parity or erasure codes for our increasing read-only storage requirements. （也在考虑使用一些其他的冗余方式来提高只读存储的需求）
+
+**** Master Replication
+   - The master state is replicated for reliability. Its operation log and checkpoints are replicated on multiple machines.  If its machine or disk fails, monitoring infrastructure outside GFS starts a new master process elsewhere with the replicated operation log. Clients use only the canonical name of the master (e.g. gfs-test), which is a DNS alias that can be changed if the master is relocated to another machine （master的状态做副本主要是为了解决可靠性问题。log以及checkpoint都会备份到很多台机器上面。如果master挂掉或者是磁盘故障的话，那么监控系统就会启动另外一台master进程并且使用log恢复。客户端都是使用DNS来进行master的域名解析的）    
+   - Moreover, “shadow” masters provide read-only access to the file system even when the primary master is down. They are shadows, not mirrors, in that they may lag the primary slightly, typically fractions of a second. （对于shadow master仅仅是提供读操作，not mirror，因为checkpoint以及log都会延迟一段时间）
+   - They enhance read availability for files that are not being actively mutated or applications that do not mind getting slightly stale results. In fact, since file content is read from chunkservers, appli-cations do not observe stale file content. What could be stale within short windows is file metadata, like directory contents or access control information.（使用这种方法适合提供那些不需要修改的文件读可用性，同时应用程序不太介意访问到stale结果。实际上，因为所有的file content都是来自与chunkserver，所以应用程序会访问到stale file content，而会访问到stale metadata，因为这个并没有及时更新）
+   -  It depends on the primary master only for replica location updates resulting from the primary’s decisions to create and delete replicas.（对于shadow master工作过程和master相同，启动之后都会和所有的chunkserver交换信息。但是只能够有primary master来负责更新replica位置比如创建和删除replicas）
+
 *** Data Integrity
+   - Each chunkserver uses checksumming to detect corruption of stored data. We can recover from corruption using other chunk replicas, but it would be impractical to detect corruption by comparing replicas across chunkservers. Moreover, divergent replicas may be legal: the semantics of GFS mutations, in particular atomic record append as discussed earlier, does not guar-antee identical replicas. （通常使用checksum来判断数据是否损坏。虽然我们可以从其他chunk进行恢复，但是却没有办法通过比较判断哪个chunk是存在问题的，因为不同也是可能的好比append会造成二进制上的不同。因此只只能够使用内部独立方式来进行校验）
+   - A chunk is broken up into 64 KB blocks. Each has a corre-sponding 32 bit checksum. Like other metadata, checksums are kept in memory and stored persistently with logging, separate from user data.（每个chunk都会存被切换成为64KB的block，计算成为32bit的校验和。和其他meta信息一样，checksum保存在memory中并且会随着一起logging,但是和用户数据分开） 
+   - If a block does not match the recorded checksum, the chunkserver returns an error to the requestor and reports the mismatch to the master. In response, the requestor will read from other replicas, while the master will clone the chunk from another replica. After a valid new replica is in place, the master instructs the chunkserver that reported the mismatch to delete its replica.（如果在读取的时候发现checksum没有匹配的话，那么就会通知master。而master就会从其他replicas进行clone，完成之后通知chunkserver删除掉不匹配的chunk）
+   - Checksumming has little effect on read performance for several reasons. Since most of our reads span at least a few blocks, we need to read and checksum only a relatively small amount of extra data for verification. Moreover, checksum lookups and comparison on the chunkserver are done without any I/O, and checksum calculation can often be overlapped with I/Os.（对于读来说checksum没有很大影响，因为通常read都会跨越几个block，因此checksum仅仅是很小的部分。同样checksum的查找以及对比都不需要额外IO开销，并且checksum计算的话也可以和IO重叠）
+   - Checksum computation is heavily optimized for writes that append to the end of a chunk (as opposed to writes that overwrite existing data) because they are dominant in our workloads. We just incrementally update the check- sum for the last partial checksum block, and compute new checksums for any brand new checksum blocks filled by the append.  Even if the last partial checksum block is already corrupted and we fail to detect it now, the new checksum value will not match the stored data, and the corruption will be detected as usual when the block is next read.（对u有append来说checksum的计算进行优化，可以仅仅根据前面的checksum很快地进行计算出来，属于增量计算。并且即使最后的checksum已经损坏的话，那么在下次读取的时候还是会检测到的，所以这种增量方法是没有问题的）
+   - In contrast, if a write overwrites an existing range of the chunk, we must read and verify the first and last blocks of the range being overwritten, then perform the write, and finally compute and record the new checksums. If we do not verify the first and last blocks before overwriting them partially, the new checksums may hide corruption that exists in the regions not being overwritten.（而对于write来说，还需要检查前后两个block校验和，而不能够像append一样采用增量方式更新checksum）
+   - During idle periods, chunkservers can scan and verify the contents of inactive chunks. This allows us to detect corrup- tion in chunks that are rarely read. Once the corruption is detected, the master can create a new uncorrupted replica and delete the corrupted replica. This prevents an inactive but corrupted chunk replica from fooling the master into thinking that it has enough valid replicas of a chunk.（在空闲时间内的话，checkserver也会进行所有的chunk的扫描以及校验，一旦发现错误的话那么就会通知master，这样就可以避免一个inactive但是已经损坏的chunk没有汇报给master，而master还要努力维护其副本数）
+
 *** Diagnostic Tools
+   - With-out logs, it is hard to understand transient, non-repeatable interactions between machines.（没有logs的话，就很难理解那些各个机器之间短暂，不可重复的交互）
+   - GFS servers generate di-agnostic logs that record many significant events (such as chunkservers going up and down) and all RPC requests and replies. These diagnostic logs can be freely deleted without affecting the correctness of the system. However, we try to keep these logs around as far as space permits.（log里面包括很多重要事情比如chunkserver的上下线，所有的RPC交互）
+   - The RPC logs include the exact requests and responses sent on the wire, except for the file data being read or writ-ten. By matching requests with replies and collating RPC records on different machines, we can reconstruct the en-tire interaction history to diagnose a problem. The logs also serve as traces for load testing and performance analysis.（RPC里面几乎包含了所有的字段除去数据字段，通过匹配这些RPC交互记录可以重新构建整个交互过程来进行分析，同时可以用于负载测试以及性能分析）
+   - The performance impact of logging is minimal (and far outweighed by the benefits) because these logs are written sequentially and asynchronously. The most recent events are also kept in memory and available for continuous online monitoring.（对于log开销非常小，因为写log都是顺序并且是异步的。大部分最近事件都是保存在内存，非常容易持续监控）
+     
+** Measurements
+*** Micro-benchmarks
+consist of
+   - 1 master
+   - 2 master replicas
+   - 16 chunkservers
+   - 16 clients
+主要用来测试，通常chunkserver和client可以达到上百个。
+
+All the machines are configured with dual 1.4 GHz PIII processors, 2 GB of memory, two 80 GB 5400 rpm disks, and a 100 Mbps full-duplex Ethernet connection to an HP 2524 switch. All 19 GFS server machines are connected to one switch, and all 16 client machines to the other. The two switches are connected with a 1 Gbps link.（配置相当一般，局域网内部使用百兆交换机互联19个server，16个client使用另外一个百兆互联，之间通过千兆线路互联）
+
+TODO（dirlt）：
+
+*** Real World Clusters
+TODO（dirlt）：
+
+*** Workload Breakdown
+TODO（dirlt）：
+
+** Experiences
+** Related Work
+** Conclusions
+
+
