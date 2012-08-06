@@ -345,3 +345,6 @@ NOTE(dirlt):将session这类信息不放在磁盘上面，而全部由client自�
    - distributed consensus among a few replicas for fault tolerance, consistent client-side caching to re-duce server load while retaining simple semantics, timely notification of updates, and a familiar file system inter-face.
    - We use caching, protocol-conversion servers, and simple load adaptation to allow it scale to tens of thou-sands of client processes per Chubby instance. We ex-pect to scale it further via proxies and partitioning. TODO(dirlt):I still confused with protocol-conversion server?
    - Chubby has become Google's primary internal name service; it is a common rendezvous mechanism for sys-tems such as MapReduce ; the storage systems GFS and Bigtable use Chubby to elect a primary from redun-dant replicas; and it is a standard repository for files that require high availability, such as access control lists.(在MapReduce上面作为汇集点机制使用，在GFS以及BigTable上面的话用来作为选主机制)
+
+** Q&A
+TODO(dirlt):

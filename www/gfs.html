@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="gfs"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-06 12:44:44 CST"/>
+<meta name="generated" content="2012-08-06 15:14:11 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -136,6 +136,7 @@
 <li><a href="#sec-1-5-4">1.5.4 Garbage Collection</a>
 <ul>
 <li><a href="#sec-1-5-4-1">1.5.4.1 Mechanism</a></li>
+<li><a href="#sec-1-5-4-2">1.5.4.2 Discussion</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-5-5">1.5.5 Stale Replica Detection</a></li>
@@ -148,6 +149,17 @@
 <li><a href="#sec-1-6-3">1.6.3 Diagnostic Tools</a></li>
 </ul>
 </li>
+<li><a href="#sec-1-7">1.7 Measurements</a>
+<ul>
+<li><a href="#sec-1-7-1">1.7.1 Micro-benchmarks</a></li>
+<li><a href="#sec-1-7-2">1.7.2 Real World Clutsers</a></li>
+<li><a href="#sec-1-7-3">1.7.3 Workload Breakdown</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-8">1.8 Experiences</a></li>
+<li><a href="#sec-1-9">1.9 Related Work</a></li>
+<li><a href="#sec-1-10">1.10 Conclusions</a></li>
+<li><a href="#sec-1-11">1.11 Q&amp;A</a></li>
 </ul>
 </li>
 </ul>
@@ -171,9 +183,6 @@
 </ul>
 
 
-<p>
-TODO(dirlt):translate them.!!!
-</p>
 
 </div>
 
@@ -208,9 +217,9 @@ TODO(dirlt):translate them.!!!
 <ul>
 <li>First, component failures are the norm rather than the exception.  constant monitoring, error detection, fault tolerance, and automatic recovery must be integral to the system.
 </li>
-<li>Second, files are huge by traditional standards. Multi-GB files are common. Each file typically contains many applica-tion objects such as web documents. When we are regularly working with fast growing data sets of many TBs comprising billions of objects, it is unwieldy to manage billions of ap-proximately KB-sized files even when the file system could support it.
+<li>Second, files are huge by traditional standards. Multi-GB files are common. Each file typically contains many applica-tion objects such as web documents. When we are regularly working with fast growing data sets of many TBs comprising billions of objects, it is unwieldy to manage billions of ap-proximately KB-sized files even when the file system could support it.（主要是针对大文件而非小文件的存储）
 </li>
-<li>Third, most files are mutated by appending new data rather than overwriting existing data. Random writes within a file are practically non-existent. Once written, the files are only read, and often only sequentially.Given this access pattern on huge files, appending becomes the fo-cus of performance optimization and atomicity guarantees, while caching data blocks in the client loses its appeal.
+<li>Third, most files are mutated by appending new data rather than overwriting existing data. Random writes within a file are practically non-existent. Once written, the files are only read, and often only sequentially.Given this access pattern on huge files, appending becomes the fo-cus of performance optimization and atomicity guarantees, while caching data blocks in the client loses its appeal.（关注append数据而并非overwrite数据）
 </li>
 <li>Fourth, co-designing the applications and the file system API benefits the overall system by increasing our flexibility.
 <ul>
@@ -224,12 +233,11 @@ TODO(dirlt):translate them.!!!
 </ul>
 
 </li>
-<li>Multiple GFS clusters are currently deployed for different purposes. The largest ones have over 1000 storage nodes, over 300 TB of diskstorage, and are heavily accessed by hundreds of clients on distinct machines on a continuous
+<li>Multiple GFS clusters are currently deployed for different purposes. The largest ones have over 1000 storage nodes, over 300 TB of diskstorage, and are heavily accessed by hundreds of clients on distinct machines on a continuous basis.（最大集群有1K存储节点，提供了300TB的存储，被百个client共同访问）
 </li>
 </ul>
 
-<p>basis.
-</p>
+
 </div>
 
 </div>
@@ -256,7 +264,7 @@ TODO(dirlt):translate them.!!!
 </li>
 <li>The system must efficiently implement well-defined se-mantics for multiple clients that concurrently append to the same file. Our files are often used as producer-consumer queues or for many-way merging. Hundreds of producers, running one per machine, will concur-rently append to a file. Atomicity with minimal syn-chronization overhead is essential. The file may be read later, or a consumer may be reading through the file simultaneously.
 </li>
-<li>High sustained bandwidth is more important than low latency. Most of our target applications place a pre-mium on processing data in bulkat a high rate, while few have stringent response time requirements for an individual read or write.
+<li>High sustained bandwidth is more important than low latency. Most of our target applications place a pre-mium on processing data in bulkat a high rate, while few have stringent response time requirements for an individual read or write.（更加注重吞吐而非延迟）
 </li>
 </ul>
 
@@ -309,7 +317,7 @@ TODO(dirlt):translate them.!!!
 <ul>
 <li>A GFS cluster consists of a single masterand multiple chunkservers and is accessed by multiple clients.
 </li>
-<li>Files are divided into fixed-size chunks. Each chunk is identified by an immutable and globally unique 64 bit chunk handle assigned by the master at the time of chunk creation.
+<li>Files are divided into fixed-size chunks. Each chunk is identified by an immutable and globally unique 64 bit chunk handle assigned by the master at the time of chunk creation.（对于每个chunk使用unique 64bit数字表示）
 </li>
 <li>Chunkservers store chunks on local disks as Linux files and read or write chunk data specified by a chunk handle and byte range.   
 </li>
@@ -373,15 +381,14 @@ TODO(dirlt):translate them.!!!
 <ul>
 <li>A small file consists of a small number of chunks, perhaps just one. The chunkservers storing those chunks may become hot spots if many clients are accessing the same file. In practice, hot spots have not been a major issue because our applications mostly read large multi-chunkfiles sequentially.
 </li>
-<li>We fixed this problem by storing such executables with a higher replication factor and by making the batch-queue system stagger application start times. A potential long-term solution is to allow clients to read data from other
+<li>We fixed this problem by storing such executables with a higher replication factor and by making the batch-queue system stagger application start times. A potential long-term solution is to allow clients to read data from other clients in such situations.(针对上面这个热点问题，问题提到可以通过提高replication因子来散布在更多的chunkserver上，并且通过让程序启动时间交错来缓解这个问题。但是长远的解决办法应该是允许P2P的方式从其他client上读取)
 </li>
 </ul>
 
 </li>
 </ul>
 
-<p>clients in such situations.(针对上面这个热点问题，问题提到可以通过提高replication因子来散布在更多的chunkserver上，并且通过让程序启动时间交错来缓解这个问题。但是长远的解决办法应该是允许P2P的方式从其他client上读取)
-</p>
+
 </div>
 
 </div>
@@ -539,7 +546,6 @@ NOTE（dirlt）@Sat Aug  4 00:18:03 2012：
 那么下一次使用primary last offset写就会出现空洞(可以被GFS识别)造成inconsistent. 对于append来说GFS保证至少原子提交一次。(at least once atomically）
 
 
-
 <hr/>
 
 <ul>
@@ -690,6 +696,9 @@ NOTE（dirlt）@Sat Aug  4 00:18:03 2012：
 </ul>
 
 
+<p>
+<b>NOTE（dirlt）：append相对于write来说处理非常简单，因为不会存在overwrite的问题。每次失败的话，要不就把写失败的地方重新覆盖掉（正常情况），要不就会追加造成重复记录和padding。对于重复记录可以通过判重过滤，对于padding可以通过record本身校验判断出来）。而对于write来说就没有这么简单了，write失败的话只有放弃整个chunk块</b>
+</p>
 </div>
 
 </div>
@@ -863,8 +872,41 @@ The master re-replicates a chunk as soon as the number of available replicas fal
 <h5 id="sec-1-5-4-1"><span class="section-number-5">1.5.4.1</span> Mechanism</h5>
 <div class="outline-text-5" id="text-1-5-4-1">
 
+<ul>
+<li>When a file is deleted by the application, the master logs the deletion immediately just like other changes. However instead of reclaiming resources immediately, the file is just renamed to a hidden name that includes the deletion times-tamp. (会在内部记录日志但是并不是立即删除而是直接rename。这个rename操作仅仅作用在namespace上面。rename之后的文件名信息包含timestamp，这样可以用来定期回收） During the master’s regular scan of the file system namespace, it removes any such hidden files if they have ex-isted for more than three days (the interval is configurable)
+</li>
+<li>Until then, the file can still be read under the new, special name and can be undeleted by renaming it back to normal. When the hidden file is removed from the namespace, its in-memory metadata is erased. This effectively severs its links to all its chunks.（在没有完全删除前的话，还可以直接将起rename回来进行都写。如果一旦删除之后，那么meta信息就会从memory中删除，但是对应的chunk并不删除，这些chunk成为orphanded chunks）
+</li>
+<li>In a similar regular scan of the chunk namespace, the master identifies orphaned chunks (i.e., those not reachable from any file) and erases the metadata for those chunks. In a HeartBeat message regularly exchanged with the master, each chunkserver reports a subset of the chunks it has, and the master replies with the identity of all chunks that are no longer present in the master’s metadata. The chunkserver is free to delete its replicas of such chunks.（对于具体删除chunk而言的话，如果文件从metadata里面删除的话，那么chunk就变成孤儿chunk。在heartbeat信息中，chunkserver会告诉master自己哪些chunk。master会回复哪些chunk是orphaned的，这样就可以直接删除掉） <b>NOTE（dirlt）：chunkserver应该是存有一个数据库的，每次汇报自己持有的全量chunk。如果chunk过多的话，那么可以考虑每次只是传输部分chunk</b>
+</li>
+</ul>
 
 
+</div>
+
+</div>
+
+<div id="outline-container-1-5-4-2" class="outline-5">
+<h5 id="sec-1-5-4-2"><span class="section-number-5">1.5.4.2</span> Discussion</h5>
+<div class="outline-text-5" id="text-1-5-4-2">
+
+<p>The garbage collection approach to storage reclamation offers several advantages over eager deletion.（GC相对于与eager deletion来说有下面这些好处）：
+</p><ul>
+<li>First, it is simple and reliable in a large-scale distributed system where component failures are common. Chunk creation may suc-ceed on some chunkservers but not others, leaving replicas that the master does not know exist. Replica deletion mes-sages may be lost, and the master has to remember to resend them across failures, both its own and the chunkserver’s.（对于分布式系统来说需要考虑容错问题。对于creation来说可能会造成一些chunk碎片，同样在delete时候也可能因为消息丢失造成chunk碎片，对于master来说很难保证其一致性，而GC是解决这个问题的一个好办法）
+</li>
+<li>Second, it merges storage reclamation into the regular background activities of the master, such as the regular scans of names-paces and handshakes with chunkservers. Thus, it is done in batches and the cost is amortized. Moreover, it is done only when the master is relatively free. The master can re-spond more promptly to client requests that demand timely attention. （GC能够将空间回收这件事情merge起来作为后台任务运行。能够通过batch方式完成并且将代价平摊下来提高效率。另外就是这个后台活动可以当master相对空闲的时候触发）
+</li>
+<li>Third, the delay in reclaiming storage provides a safety net against accidental, irreversible deletion.（防止一些误操作）
+</li>
+</ul>
+
+
+<p>
+In our experience, the main disadvantage is that the delay sometimes hinders user effort to fine tune usage when stor-age is tight. Applications that repeatedly create and delete temporary files may not be able to reuse the storage right away.（主要缺点就是当磁盘空间比较紧缺的时候，这种延迟会阻碍用户进行调整。如果应用程序频繁地创建和删除文件的话，并不能够立刻重用空间）。 We address these issues by expediting storage recla-mation if a deleted file is explicitly deleted again. We also allow users to apply different replication and reclamation policies to different parts of the namespace.（解决这个问题的方法就是在API允许指定强制删除标记，同时为了简化可以为不同的namespace指定默认的删除策略）
+</p>
+<p>
+<b>NOTE(dirlt):似乎这里有点启发，就是对于多步骤这类事务来说，一种可以代替的方案就是让一个点做原子操作，然后通过定期检查来达到最终一致性。（可能描述得不是很好）</b>
+</p>
 </div>
 </div>
 
@@ -873,6 +915,19 @@ The master re-replicates a chunk as soon as the number of available replicas fal
 <div id="outline-container-1-5-5" class="outline-4">
 <h4 id="sec-1-5-5"><span class="section-number-4">1.5.5</span> Stale Replica Detection</h4>
 <div class="outline-text-4" id="text-1-5-5">
+
+<ul>
+<li>Chunk replicas may become stale if a chunkserver fails and misses mutations to the chunk while it is down. For each chunk, the master maintains a chunk version number to distinguish between up-to-date and stale replicas.（如果在对某个chunk进行修改时候，这个chunkserver down的话，那么这个chuk就变成stale状态。master通过对于每个chunk赋予一个chunk version number来区分OK状态以及stale状态）。
+</li>
+<li>Whenever the master grants a new lease on a chunk, it increases the chunk version number and informs the up-to-date replicas. The master and these replicas all record the new version number in their persistent state. This occurs before any client is notified and therefore before it can start writing to the chunk. （在master准备grant一个lease的时候，会增加这个chunk的version number并且通知到所有的replicas上面，所有的replicas都会记录这个chunk version number，这个工作在client被通知之前完成）
+</li>
+<li>If another replica is currently unavail-able, its chunk version number will not be advanced. The master will detect that this chunkserver has a stale replica when the chunkserver restarts and reports its set of chunks and their associated version numbers.（如果某个replica是不可用的话，那么其对应的chunk version number也就没有改变，自然&lt;master所持有的chunk version number，这样在汇报chunk的时候会可以发现stale chunk）
+</li>
+<li>The master removes stale replicas in its regular garbage collection. Before that, it effectively considers a stale replica not to exist at all when it replies to client requests for chunk information.（对于master回收stale chunk也是通过GC完成的。但是在这之前master认为不存在任何stale replicas。这也就意味着，client可能会读取到stale的结果）
+</li>
+<li>As another safeguard, the master includes the chunk version number when it informs clients which chunkserver holds a lease on a chunk or when it instructs a chunkserver to read the chunk from another chunkserver in a cloning operation. The client or the chunkserver verifies the version number when it performs the operation so that it is always accessing up-to-date data.（在通知client或者是告诉chunkserver进行clone操作的话，master会带上chunk version，这样操作的时候就可以进行验证确保读取到最新的数据。但是其实client本身还是有location cache，所以还是有读取到old-data的可能性的）
+</li>
+</ul>
 
 
 </div>
@@ -907,14 +962,81 @@ The master re-replicates a chunk as soon as the number of available replicas fal
 <h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> Diagnostic Tools</h4>
 <div class="outline-text-4" id="text-1-6-3">
 
+
 </div>
 </div>
+
+</div>
+
+<div id="outline-container-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> Measurements</h3>
+<div class="outline-text-3" id="text-1-7">
+
+
+</div>
+
+<div id="outline-container-1-7-1" class="outline-4">
+<h4 id="sec-1-7-1"><span class="section-number-4">1.7.1</span> Micro-benchmarks</h4>
+<div class="outline-text-4" id="text-1-7-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-7-2" class="outline-4">
+<h4 id="sec-1-7-2"><span class="section-number-4">1.7.2</span> Real World Clutsers</h4>
+<div class="outline-text-4" id="text-1-7-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-7-3" class="outline-4">
+<h4 id="sec-1-7-3"><span class="section-number-4">1.7.3</span> Workload Breakdown</h4>
+<div class="outline-text-4" id="text-1-7-3">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> Experiences</h3>
+<div class="outline-text-3" id="text-1-8">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-9" class="outline-3">
+<h3 id="sec-1-9"><span class="section-number-3">1.9</span> Related Work</h3>
+<div class="outline-text-3" id="text-1-9">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-10" class="outline-3">
+<h3 id="sec-1-10"><span class="section-number-3">1.10</span> Conclusions</h3>
+<div class="outline-text-3" id="text-1-10">
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-11" class="outline-3">
+<h3 id="sec-1-11"><span class="section-number-3">1.11</span> Q&amp;A</h3>
+<div class="outline-text-3" id="text-1-11">
+
+<p>TODO（dirlt）：
+</p></div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-06 12:44:44 CST</p>
+<p class="date">Date: 2012-08-06 15:14:11 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
