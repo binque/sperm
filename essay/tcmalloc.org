@@ -10,6 +10,8 @@
    - tcmalloc内存分配器 http://goog-perftools.sourceforge.net/doc/tcmalloc.html
    - tcmalloc地址 http://google-perftools.googlecode.com/files/google-perftools-1.8.3.tar.gz
 
+*如果你对使用tcmalloc有什么问题的话，请给我发邮件。我会尽量给你答复，对于常见的问题也会整理到FAQ上面。*
+
 jemalloc论文上面谈到了很多关于内存分配器方面的基本概念与问题。
 性能指标主要体现在分配时间以及平均和高峰内存使用大小上面。但是两个指标很难单独测量，所以现在比较权威的测量方式还是使用benchmark然后看看运行时间以及内存使用量。内存碎片分为内部碎片和外部碎片。
 内部碎片通常都是因为分配的话会进行round之后而没有使用的部分，而外部碎片指已经回收但是因为地址不连续等原因没有办法被应用程序使用的部分。

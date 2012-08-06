@@ -62,7 +62,8 @@ CLOSED: [2012-07-25 Wed 22:37]
     CLOSED: [2012-08-03 Fri 16:14]
 *** DONE 询问工资详情
     CLOSED: [2012-08-03 Fri 18:28]
-
+*** DONE 似乎gfs里面对于write state状态理解有误
+    CLOSED: [2012-08-06 Mon 12:41]
 
 ** daily todo
 *** TODO 和别人交流emacs是如何工作的！
@@ -73,8 +74,8 @@ CLOSED: [2012-07-25 Wed 22:37]
 *** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
     - http://blog.nosqlfan.com/html/3180.html Riak
 *** TODO 阅读完Core Java I
-*** TODO 似乎gfs里面对于write state状态理解有误
 *** TODO 阅读原来调度器的文档和代码
+*** TODO 整理阅读收藏列表
 
 ** read it later
 *** TODO GFS
