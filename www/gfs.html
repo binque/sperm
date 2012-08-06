@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="gfs"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-03 13:50:39 CST"/>
+<meta name="generated" content="2012-08-06 12:44:44 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -126,6 +126,26 @@
 <li><a href="#sec-1-4-2">1.4.2 Data Flow</a></li>
 <li><a href="#sec-1-4-3">1.4.3 Atomic Record Appends</a></li>
 <li><a href="#sec-1-4-4">1.4.4 Snapshots</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-5">1.5 Master Operation</a>
+<ul>
+<li><a href="#sec-1-5-1">1.5.1 Namespace Management and Locking</a></li>
+<li><a href="#sec-1-5-2">1.5.2 Replica Placement</a></li>
+<li><a href="#sec-1-5-3">1.5.3 Creation, Re-replication, Rebalancing</a></li>
+<li><a href="#sec-1-5-4">1.5.4 Garbage Collection</a>
+<ul>
+<li><a href="#sec-1-5-4-1">1.5.4.1 Mechanism</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-5-5">1.5.5 Stale Replica Detection</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-6">1.6 Fault Tolerance And Diagnosis</a>
+<ul>
+<li><a href="#sec-1-6-1">1.6.1 High Availability</a></li>
+<li><a href="#sec-1-6-2">1.6.2 Data Integrity</a></li>
+<li><a href="#sec-1-6-3">1.6.3 Diagnostic Tools</a></li>
 </ul>
 </li>
 </ul>
@@ -484,6 +504,20 @@ TODO(dirlt):translate them.!!!
 而对于append来说，append A和append B操作，同时发起的话，最终结果不管顺序如何，肯定Ax,Ay以及Bx,By写的内容都会完整保留下来。
 但是对于Ay,Ax可能并不连续，但是没有问题，我们可以在应用层上来区分。GFS也会保证所有的replicas结果相同consistent.这种情况是defined的。
 </p>
+
+<hr/>
+
+<p>
+NOTE（dirlt）@Sat Aug  4 00:18:03 2012：
+</p>
+<p>
+这里对于defined理解是存在问题的。defined意思应该是，数据写入是一个完整地（A region is defined after a file data mutation if it is consistent and clients will see what the mutation writes in its entirety.）
+对于serial write来说，每次写入肯定都是完整的，而对于我concurrent write来说的话，因为write data可能会超过一个chunk所以不一定是完整写入的。对于record append来说，
+因为大小限制在1/4 max chunksize，并且每次都只是写一个chunk，因此数据写入也必然是完整的。
+</p>
+
+<hr/>
+
 <p>
 所以总结GFS一致性模型就是 
 </p><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
@@ -502,11 +536,9 @@ TODO(dirlt):translate them.!!!
 
 对于Append中出现inconsistent情况(其实也应该归于failure部分)是因为append部分replics失败。但是对于append部分replicas失败没有关系，
 我们继续从primary chunk的offset开始提交(其他replicas也从这个offset开始提交).因为首先写的是primary.所以如果其他replicas没有写成功的话，
-那么下一次使用primary last offset写就会出现空洞(可以被GFS识别)造成inconsistent. 对于append来说GFS保证至少原子提交一次。(at least once atomically)
+那么下一次使用primary last offset写就会出现空洞(可以被GFS识别)造成inconsistent. 对于append来说GFS保证至少原子提交一次。(at least once atomically）
 
-<p>
-TODO（dirlt）：似乎这里理解有点错误。
-</p>
+
 
 <hr/>
 
@@ -666,6 +698,215 @@ TODO（dirlt）：似乎这里理解有点错误。
 <h4 id="sec-1-4-4"><span class="section-number-4">1.4.4</span> Snapshots</h4>
 <div class="outline-text-4" id="text-1-4-4">
 
+<ul>
+<li>Like AFS , we use standard copy-on-write techniques to implement snapshots. When the master receives a snapshot request, it first revokes any outstanding leases on the chunks in the files it is about to snapshot. This ensures that any subsequent writes to these chunks will require an interaction with the master to find the lease holder. This will give the master an opportunity to create a new copy of the chunk first.（和AFS类似采用COW技术来实现snapshot。master将那些需要进行snapshot的文件的chunk lease全部回收。这样下次client需要写这个chunk的话，那么需要和master交互，而master就可以实现COW了。）
+</li>
+<li>After the leases have been revoked or have expired, the master logs the operation to disk. It then applies this log record to its in-memory state by duplicating the metadata for the source file or directory tree. The newly created snap-shot files point to the same chunks as the source files. （回收lease之后，master将进行snapshopt操作记录到磁盘上面。而在内存里面的话会duplicate一份这个tree的metadata信息。）
+</li>
+<li>The first time a client wants to write to a chunk C after the snapshot operation, it sends a request to the master to find the current lease holder. The master notices that the reference count for chunk C is greater than one. It defers replying to the client request and instead picks a new chunk handle C’. It then asks each chunkserver that has a current replica of C to create a new chunk called C’.（client如果需要写chunk X的话，因为lease已经被回收了所以必须要和master进行交互。master发现chunk X的refcount&gt;1的话，那么就会生成一份新的chunk X’）
+</li>
+<li>By creating the new chunk on the same chunkservers as the original, we ensure that the data can be copied locally, not over the net- work (our disks are about three times as fast as our 100 Mb Ethernet links). From this point, request handling is no dif-ferent from that for any chunk: the master grants one of the replicas a lease on the new chunk C’ and replies to the client, which can write the chunk normally, not knowing that it has just been created from an existing chunk. （对于生成的X‘，master会注意locality。尽量让之前相同的chunkserver产生新的X‘。这样对X’就有相应的replicas了。为其中一个replica指定为primary返回给client）
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> Master Operation</h3>
+<div class="outline-text-3" id="text-1-5">
+
+<p>The master executes all namespace operations. In addi-tion, it manages chunk replicas throughout the system: it makes placement decisions, creates new chunks and hence replicas, and coordinates various system-wide activities to keep chunks fully replicated, to balance load across all the chunkservers, and to reclaim unused storage. We now dis-cuss each of these topics.（负责namespace操作以及chunk replicas的管理，包括如何放置chunk，如何创建chunk以及对应的replicas，确保chunk可以fully replicated，对chunk进行load balance，回收没有使用的空间等）
+</p>
+
+</div>
+
+<div id="outline-container-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> Namespace Management and Locking</h4>
+<div class="outline-text-4" id="text-1-5-1">
+
+<ul>
+<li>Many master operations can take a long time: for exam-ple, a snapshot operation has to revoke chunkserver leases on all chunks covered by the snapshot. We do not want to delay other master operations while they are running. Therefore, we allow multiple operations to be active and use locks over regions of the namespace to ensure proper serialization.（支持多个operations同时发起，并且在名字空间上面使用lock来保证串行操作）
+</li>
+<li>Unlike many traditional file systems, GFS does not have a per-directory data structure that lists all the files in that directory. Nor does it support aliases for the same file or directory (i.e, hard or symbolic links in Unix terms). GFS logically represents its namespace as a lookup table mapping full pathnames to metadata. With prefix compression, this table can be efficiently represented in memory. Each node in the namespace tree (either an absolute file name or an absolute directory name) has an associated read-write lock.（GFS并没有使用类似与Unix文件系统方式，好比directory内容下面有所有的文件名称，也不支持很多Unix文件特性比如alias或者是链接。GFS相反地使用全路径名来进行查找。全路径名可以使用prefix compression来确保可以有效使用内存。对于每一个文件或者是目录上面都会有一个相关的读写锁）
+</li>
+<li>Typically, if it involves <i>d1/d2</i>&hellip;/dn/leaf, it will acquire read-locks on the directory names <i>d1, /d1/d2, &hellip;, /d1/d2</i>&hellip;/dn, and either a read lock or a write lock on the full pathname <i>d1/d2</i>&hellip;/dn/leaf. （对于前面这种路径的话，首先会取得dirname部分的所有读锁，然后根据需要得到这个文件的读锁或者写锁）
+</li>
+<li>File creation does not require a write lock on the parent directory because there is no “directory”, or inode-like, data structure to be protected from modification. The read lock on the name is sufficient to protect the parent directory from deletion.（这里需要注意的就是，因为不是类似于Unix这样的结构，因此对于文件的读写操作其实对于directory不需要加上写锁而至需要读锁，存在读锁的原因就是防止这个directory被删除掉）
+</li>
+<li>Since the namespace can have many nodes, read-write lock objects are allocated lazily and deleted once they are not in use. Also, locks are acquired in a consistent total order to prevent deadlock: they are first ordered by level in the namespace tree and lexicographically within the same level.（因为namespace里面可能会存在很多节点，这些节点都是使用lazy allocation方式分配锁的，并且在不使用之后就会被删除掉。为了防止死锁的问题，如果需要针对多个文件加锁的话，首先按照level排序，而在同一个level里面的话按照字符顺序排序。）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-2" class="outline-4">
+<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> Replica Placement</h4>
+<div class="outline-text-4" id="text-1-5-2">
+
+<ul>
+<li>A GFS cluster is highly distributed at more levels than one. It typically has hundreds of chunkservers spread across many machine racks. These chunkservers in turn may be accessed from hundreds of clients from the same or different racks. Communication between two machines on different racks may cross one or more network switches. Addition-ally, bandwidth into or out of a rack may be less than the aggregate bandwidth of all the machines within the rack.（对于GFS集群的话分布的level肯定会超过1层并且分布在很多的racks上面，而这些chunkserver也会被不同的rack上面的client所访问。对于rack之间来说可能需要经过很多网络交换机，而交换机带宽可能远远小于rack上面机器带宽。因此充分利用locality提高带宽利用率是非常重要的）
+</li>
+<li>The chunk replica placement policy serves two purposes: maximize data reliability and availability, and maximize net-work bandwidth utilization. For both, it is not enough to spread replicas across machines, which only guards against disk or machine failures and fully utilizes each machine’s net-work bandwidth. We must also spread chunk replicas across racks. This ensures that some replicas of a chunk will sur-vive and remain available even if an entire rack is damaged or offline (for example, due to failure of a shared resource like a network switch or power circuit). It also means that traffic, especially reads, for a chunk can exploit the aggre- gate bandwidth of multiple racks. On the other hand, write traffic has to flow through multiple racks, a tradeoff we make willingly.（对于这个问题存在一个折中，就是可用性可靠性，和带宽利用率。我们不仅仅需要让replicas跨机器来防止磁盘或者是机器的failure，并且需要让replicas能够在不同的rack上面这样可以防止整个rack offline情况出现造成可用性问题。让replicas分布在不同的rack上面，可以有效地提高来自不同rack的client read带宽利用率，但是同时write也需要将数据replicated到不同的rack上面。
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-3" class="outline-4">
+<h4 id="sec-1-5-3"><span class="section-number-4">1.5.3</span> Creation, Re-replication, Rebalancing</h4>
+<div class="outline-text-4" id="text-1-5-3">
+
+<p>Chunk replicas are created for three reasons: chunk cre-ation, re-replication, and rebalancing.（chunk replicas被创建有三个时机：
+</p><ul>
+<li>creation
+</li>
+<li>re-replication
+</li>
+<li>rebalancing
+</li>
+</ul>
+
+<p>下面就针对三个方面单独讨论
+</p>
+
+<hr/>
+
+<p>
+对于creation这个情况来说，需要考虑下面三个条件：
+</p><ul>
+<li>(1) We want to place new replicas on chunkservers with below-average disk space utilization. Over time this will equalize disk utilization across chunkservers. （考虑各个chunkserver上面的磁盘利用率情况）
+</li>
+<li>(2) We want to limit the number of “recent” creations on each chunkserver. Although creation itself is cheap, it reliably predicts immi-nent heavy write traffic because chunks are created when de-manded by writes, and in our append-once-read-many work-load they typically become practically read-only once they have been completely written. TODO（dirlt）：后面这个部分不是很理解。（考虑不要让一个chunkserver写的次数过于频繁，一方面这样会带来过大压力，另外一方面在read时候也会造成热点）
+</li>
+<li>(3) As discussed above, we want to spread replicas of a chunk across racks.（考虑需要跨rack）
+</li>
+</ul>
+
+
+
+<hr/>
+
+<p>
+The master re-replicates a chunk as soon as the number of available replicas falls below a user-specified goal. This could happen for various reasons: a chunkserver becomes unavailable, it reports that its replica may be corrupted, one of its disks is disabled because of errors, or the replication goal is increased.（一旦低于用户指定的replicas个数之后的话，那么就会出发re-replicates逻辑，通常是有下面几个原因引起的：
+</p><ul>
+<li>chunkserver变得unavailable
+</li>
+<li>chunkserver汇报自己的一个replica损坏。
+</li>
+<li>chunkserver的一个disk出现错误
+</li>
+<li>用户修改了备份数目。
+</li>
+</ul>
+
+
+<p>
+在处理这个情况时候需要考虑下面几个因素来作为优先级考虑：
+</p><ul>
+<li>One is how far it is from its replication goal. For example, we give higher prior-ity to a chunk that has lost two replicas than to a chunk that has lost only one（丢失了2个replicas优先级肯定高于丢失了一个replica的chunk）
+</li>
+<li>In addition, we prefer to first re-replicate chunks for live files as opposed to chunks that belong to re-cently deleted files （优先考虑那些live的文件而不是需要被删除的文件，因为删除文件仅仅是使用标记删除的方式，超过多少天之后的文件才会彻底删除，因此在彻底删除之前还是需要进行replication）
+</li>
+<li>Finally, to minimize the impact of failures on running applications, we boost the priority of any chunk that is blocking client progress.（为了减少失败带来的影响，优先选择那些当前阻塞了client的chunk。通常client会存在一定的超时时间，如果能够让client尽快地访问到chunk，那么失败几率会更低）
+</li>
+</ul>
+
+
+
+<hr/>
+
+<ul>
+<li>The master picks the highest priority chunk and “clones” it by instructing some chunkserver to copy the chunk data directly from an existing valid replica. （选择好了re-replicate的对象之后就可以开始进行clone了。clone到的地方使用creation的原则。
+</li>
+<li>To keep cloning traffic from overwhelming client traffic, the master limits the numbers of active clone operations both for the cluster and for each chunkserver. （为了防止clone占用太多的流量，会限制整个cluster的clone以及单个chunkserver的clone次数）
+</li>
+<li>Additionally, each chunkserver limits the amount of bandwidth it spends on each clone operation by throttling its read requests to the source chunkserver.（对于目的chunkserver也会通过调节读取源chunkserver次数来限制带宽使用情况）
+</li>
+</ul>
+
+
+
+<hr/>
+
+<ul>
+<li>Finally, the master rebalances replicas periodically: it ex-amines the current replica distribution and moves replicas for better disk space and load balancing. Also through this process, the master gradually fills up a new chunkserver rather than instantly swamps it with new chunks and the heavy write traffic that comes with them.（对于rebalance来说的话，会通过chunk的移动来达到cluster更好的磁盘利用率以及负载均衡。对于master来说也是逐渐地进行迁移而不是一次性地大规模将所有的chunks都进行迁移，因为这样会带来过大的流量负载）
+</li>
+<li>The placement criteria for the new replica are similar to those discussed above. In addition, the master must also choose which ex-isting replica to remove. In general, it prefers to remove those on chunkservers with below-average free space so as to equalize disk space usage.（对于选择destination来说的话和creation原则相同。master在选择那些需要move的replica，通常是选择那些free space比率相对较低的机器，这样可以平衡磁盘使用情况）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-4" class="outline-4">
+<h4 id="sec-1-5-4"><span class="section-number-4">1.5.4</span> Garbage Collection</h4>
+<div class="outline-text-4" id="text-1-5-4">
+
+<p>After a file is deleted, GFS does not immediately reclaim the available physical storage. It does so only lazily during regular garbage collection at both the file and chunk levels.（文件删除仅仅是标记删除，并没有回收其空间，之后GC才会真正地将其删除掉）
+</p>
+
+</div>
+
+<div id="outline-container-1-5-4-1" class="outline-5">
+<h5 id="sec-1-5-4-1"><span class="section-number-5">1.5.4.1</span> Mechanism</h5>
+<div class="outline-text-5" id="text-1-5-4-1">
+
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-5-5" class="outline-4">
+<h4 id="sec-1-5-5"><span class="section-number-4">1.5.5</span> Stale Replica Detection</h4>
+<div class="outline-text-4" id="text-1-5-5">
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> Fault Tolerance And Diagnosis</h3>
+<div class="outline-text-3" id="text-1-6">
+
+
+</div>
+
+<div id="outline-container-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> High Availability</h4>
+<div class="outline-text-4" id="text-1-6-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-6-2" class="outline-4">
+<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> Data Integrity</h4>
+<div class="outline-text-4" id="text-1-6-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-6-3" class="outline-4">
+<h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> Diagnostic Tools</h4>
+<div class="outline-text-4" id="text-1-6-3">
+
 </div>
 </div>
 </div>
@@ -673,7 +914,7 @@ TODO（dirlt）：似乎这里理解有点错误。
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-03 13:50:39 CST</p>
+<p class="date">Date: 2012-08-06 12:44:44 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

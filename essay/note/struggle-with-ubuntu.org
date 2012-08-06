@@ -16,3 +16,6 @@
 
 最后作为忠告，请放弃linux作为desktop.可以先考虑windows,然后考虑mac（个人倾向）。如果你一定要用linux作为desktop并且你是一个china user,请把上面问题解决了，然后在认真地考虑一下是否要这么做。 –end
 
+--------------------
+
+NOTE（dirlt@Sat Aug  4 08:21:40 2012）：当时折腾完了之后[[file:switch-back-to-windows.org][切换回windows了]] 。但是现在开始使用ubuntu了，并且发现其实还是非常好用的，几个问题都基本搞定了，多谢身边同事的指导。how life changes！
