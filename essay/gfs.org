@@ -300,7 +300,25 @@ consist of
 
 All the machines are configured with dual 1.4 GHz PIII processors, 2 GB of memory, two 80 GB 5400 rpm disks, and a 100 Mbps full-duplex Ethernet connection to an HP 2524 switch. All 19 GFS server machines are connected to one switch, and all 16 client machines to the other. The two switches are connected with a 1 Gbps link.（配置相当一般，局域网内部使用百兆交换机互联19个server，16个client使用另外一个百兆互联，之间通过千兆线路互联）
 
-TODO（dirlt）：
+file:./images/gfs-micro-benchmarks.png
+
+*TODO（dirlt）：这里非常好奇理论的network limit是如何估算出来的？*
+
+**** Reads
+   - clients同时从320GB文件集合读取，
+   - 每个client读取4MB，并且重复256次，共计1GB    
+   - 所有chunkserver内存总共32GB，所以估计linux buffer cache占据10%，因为基本上等于cold cache
+   - 对于读来说在达到网卡饱和之前，应该是线性增长的并且斜率network limit相同，但是主要问题还是从同一个chunkserver上面读取。
+
+**** Writes
+   - clients各自写不同的file
+   - 每个file共占大小1GB，每次写1MB
+   - 效率问题write比read更糟糕是因为，write冲突更加严重因为需要写3个replicas。
+
+**** Record Appends
+   - 所有clients追加写一个文件
+   - Performance is lim-ited by the network bandwidth of the chunkservers that store the last chunk of the file, independent of the num-ber of clients. It starts at 6.0 MB/s for one client and drops to 4.8 MB/s for 16 clients, mostly due to congestion and variances in network transfer rates seen by different clients.（主要受限最后一个chunkserver上面的网络带宽）
+   - Our applications tend to produce multiple such files con-currently. In other words, N clients append to M shared files simultaneously where both N and M are in the dozens or hundreds. Therefore, the chunkserver network congestion in our experiment is not a significant issue in practice be-cause a client can make progress on writing one file while the chunkservers for another file are busy.（在实际应用中这不是一个问题，因为通常是多个client追加不同的文件）
 
 *** Real World Clusters
 TODO（dirlt）：
@@ -309,6 +327,11 @@ TODO（dirlt）：
 TODO（dirlt）：
 
 ** Experiences
+   - It started with little support for things like permissions and quotas but now includes rudimentary forms of these. While production sys-tems are well disciplined and controlled, users sometimes are not. More infrastructure is required to keep users from interfering with one another（一开始权限和配额问题支持非常少但是现在也包含了。对于一个生产系统来说一定需要非常好地控制，能够将用户之间的资源进行隔离）
+   - Many of our disks claimed to the Linux driver that they supported a range of IDE protocol versions but in fact re-sponded reliably only to the more recent ones. but in fact re-sponded reliably only to the more recent ones. This would corrupt data silently due to problems in the kernel. This problem motivated our use of checksums to detect data cor-ruption, while concurrently we modified the kernel to handle these protocol mismatches（大部分的磁盘声称支持各种IDE协议但是却对老协议的支持不好。这样会因为kernel造成数据损坏。一方通过checksum及时发现，另外一方面修改磁盘驱动） TODO（dirlt）：这个到底是啥关系？这个只要最新的协议支持好不就行了吗？
+   - Earlier we had some problems with Linux 2.2 kernels due to the cost of fsync(). Its cost is proportional to the size of the file rather than the size of the modified portion. This was a problem for our large operation logs especially before we implemented checkpointing. We worked around this for a time by using synchronous writes and eventually migrated to Linux 2.4.（对于2.2的内核来说fsync开销和文件大小是比例的，这个对于在实现checkpoint之前来说，logs是非常大的所以开销也非常大，当时通过同步写来绕过去的。升级到2.4 kernel就没有这个问题了）
+   - Another Linux problem was a single reader-writer lock which any thread in an address space must hold when it pages in from disk (reader lock) or modifies the address space in an mmap() call (writer lock). （对于任何address从我disk pagein或者是通过mmap来修改内容的话，都会存在一个读写锁。） We saw transient timeouts in our system under light load and looked hard for resource bottlenecks or sporadic hardware failures.（对于当时来说我们观察到在轻负载的情况下面，主线程存在超时问题然后认为是资源瓶颈或者是间歇性的硬件错误。） Even-tually, we found that this single lock blocked the primary network thread from mapping new data into memory while the disk threads were paging in previously mapped data. Since we are mainly limited by the network interface rather than by memory copy bandwidth, we worked around this by replacing mmap() with pread() at the cost of an extra copy.（网络线程在mmap上来这个数据而另外一个磁盘线程也在page in造成超时。因为主要问题是在网络带宽，所以使用pread代替mmap增加一次copy）
+
 ** Related Work
 ** Conclusions
 
