@@ -1,4 +1,19 @@
 * hdfs
-TODO(dirlt):
+#+OPTIONS: H:5
+
+** The Hadoop Distributed File System(2010)
+   - Konstantin Shvachko, Hairong Kuang, Sanjay Radia, Robert Chansler @ Yahoo!
+   - Sunnyvale, California USA
+   - {Shv, Hairong, SRadia, Chansler}@Yahoo-Inc.com
+
+***  INTRODUCTION AND RELATED WORK
+   - Hadoop clus-ters at Yahoo! span 25 000 servers, and store 25 petabytes of application data, with the largest cluster being 3500 servers.(最大的集群有3.5k机器，所有机器共有25k，存储了25PB的数据）
+
+*** ARCHITECTURE
+   - 
+
+
+
+
 
 
