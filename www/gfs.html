@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="gfs"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-07 10:57:17 CST"/>
+<meta name="generated" content="2012-08-07 13:34:21 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -470,11 +470,14 @@
 <ul>
 <li>The master does not keep a persistent record of which chunkservers have a replica of a given chunk. It simply polls chunkservers for that information at startup. The master can keep itself up-to-date thereafter because it controls all chunk placement and monitors chunkserver status with reg-ular HeartBeat messages. This eliminated the problem of keeping the master and chunkservers in sync as chunkservers join and leave the cluster, change names, fail, restart, and so on. In a cluster with hundreds of servers, these events happen all too often. (对于chunkserver加入集群,或者是chunkserver改变名字，宕机重启等事情的话，保持master和chunkserver同步是一件非常麻烦的事情，尤其是这些事情经常发生)
 </li>
-<li>Another way to understand this design decision is to real-ize that a chunkserver has the final word over what chunks it does or does not have on its own disks. There is no point in trying to maintain a consistent view of this information on the master because errors on a chunkserver may cause chunks to vanish spontaneously (e.g., a disk may go bad and be disabled) or an operator may rename a chunkserver.(对于chunkserver而言才是最终决定是否包含chunk的。对于master包含这种一致性view的话没有任何用户，因为对于chunkserver而言的很可能会因为故障导致某些chunk就丢失，或者是op就直接修改chunkserver名字) NOTE(dirlt):其实一致性view还是需要通过chunkserver和master之间交互来决定。对于master来说完全可以作为作为一个cache角色存在，只是保存chunk replacement的一个cache.通过这个cache来减少问题几率。然后通过periodically来更新cache内容。
+<li>Another way to understand this design decision is to real-ize that a chunkserver has the final word over what chunks it does or does not have on its own disks. There is no point in trying to maintain a consistent view of this information on the master because errors on a chunkserver may cause chunks to vanish spontaneously (e.g., a disk may go bad and be disabled) or an operator may rename a chunkserver.(对于chunkserver而言才是最终决定是否包含chunk的。对于master包含这种一致性view的话没有任何用户，因为对于chunkserver而言的很可能会因为故障导致某些chunk就丢失，或者是op就直接修改chunkserver名字) 
 </li>
 </ul>
 
 
+<p>
+<b>NOTE(dirlt):其实一致性view还是需要通过chunkserver和master之间交互来决定。对于master来说完全可以作为作为一个cache角色存在，只是保存chunk replacement的一个cache.通过这个cache来减少问题几率。然后通过periodically来更新cache内容。</b>
+</p>
 </div>
 
 </div>
@@ -673,6 +676,9 @@ NOTE（dirlt）@Sat Aug  4 00:18:03 2012：
 
 <p>
 <img src="./images/gfs-write-control-and-data-flow.png"  alt="./images/gfs-write-control-and-data-flow.png" />
+</p>
+<p>
+<b>NOTE(dirlt): 如果出现inconsistent的状态的话，gfs也是没有办法恢复的，这个需要app自己记录下来</b>
 </p>
 </div>
 
@@ -903,11 +909,14 @@ The master re-replicates a chunk as soon as the number of available replicas fal
 </li>
 <li>Until then, the file can still be read under the new, special name and can be undeleted by renaming it back to normal. When the hidden file is removed from the namespace, its in-memory metadata is erased. This effectively severs its links to all its chunks.（在没有完全删除前的话，还可以直接将起rename回来进行都写。如果一旦删除之后，那么meta信息就会从memory中删除，但是对应的chunk并不删除，这些chunk成为orphanded chunks）
 </li>
-<li>In a similar regular scan of the chunk namespace, the master identifies orphaned chunks (i.e., those not reachable from any file) and erases the metadata for those chunks. In a HeartBeat message regularly exchanged with the master, each chunkserver reports a subset of the chunks it has, and the master replies with the identity of all chunks that are no longer present in the master’s metadata. The chunkserver is free to delete its replicas of such chunks.（对于具体删除chunk而言的话，如果文件从metadata里面删除的话，那么chunk就变成孤儿chunk。在heartbeat信息中，chunkserver会告诉master自己哪些chunk。master会回复哪些chunk是orphaned的，这样就可以直接删除掉） <b>NOTE（dirlt）：chunkserver应该是存有一个数据库的，每次汇报自己持有的全量chunk。如果chunk过多的话，那么可以考虑每次只是传输部分chunk</b>
+<li>In a similar regular scan of the chunk namespace, the master identifies orphaned chunks (i.e., those not reachable from any file) and erases the metadata for those chunks. In a HeartBeat message regularly exchanged with the master, each chunkserver reports a subset of the chunks it has, and the master replies with the identity of all chunks that are no longer present in the master’s metadata. The chunkserver is free to delete its replicas of such chunks.（对于具体删除chunk而言的话，如果文件从metadata里面删除的话，那么chunk就变成孤儿chunk。在heartbeat信息中，chunkserver会告诉master自己哪些chunk。master会回复哪些chunk是orphaned的，这样就可以直接删除掉） 
 </li>
 </ul>
 
 
+<p>
+<b>NOTE（dirlt）：chunkserver应该是存有一个数据库的，每次汇报自己持有的全量chunk。如果chunk过多的话，那么可以考虑每次只是传输部分chunk</b>
+</p>
 </div>
 
 </div>
@@ -956,6 +965,9 @@ In our experience, the main disadvantage is that the delay sometimes hinders use
 </ul>
 
 
+<p>
+<b>NOTE(dirlt):stale检测仅仅是为了防止某个chunkserver宕机的情况。如果某个chunkserver出现宕机的话，那么回在另外一个chunkserver上面留存一份新的chunk。而当这个老的chunkserver恢复过来的话，我们必须识别出老的chunk应该被丢弃。从这个逻辑上看，如果master需要rebalance的话，那么需要revoke这个chunk的lease，这样才可以重新分配一个chunk version number.</b>
+</p>
 </div>
 </div>
 
@@ -1326,7 +1338,6 @@ In another experiment, we killed two chunkservers each with roughly 16,000 chunk
 
 <p><img src="./images/gfs-workload-breakdown-master-ops.png"  alt="./images/gfs-workload-breakdown-master-ops.png" />
 </p>
-
 </div>
 </div>
 </div>
@@ -1374,13 +1385,14 @@ In another experiment, we killed two chunkservers each with roughly 16,000 chunk
 <div class="outline-text-3" id="text-1-11">
 
 
+
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-07 10:57:17 CST</p>
+<p class="date">Date: 2012-08-07 13:34:21 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

@@ -87,7 +87,9 @@ file:./images/gfs-architecture.png
 
 **** Chunk Locations
    - The master does not keep a persistent record of which chunkservers have a replica of a given chunk. It simply polls chunkservers for that information at startup. The master can keep itself up-to-date thereafter because it controls all chunk placement and monitors chunkserver status with reg-ular HeartBeat messages. This eliminated the problem of keeping the master and chunkservers in sync as chunkservers join and leave the cluster, change names, fail, restart, and so on. In a cluster with hundreds of servers, these events happen all too often. (对于chunkserver加入集群,或者是chunkserver改变名字，宕机重启等事情的话，保持master和chunkserver同步是一件非常麻烦的事情，尤其是这些事情经常发生)
-   - Another way to understand this design decision is to real-ize that a chunkserver has the final word over what chunks it does or does not have on its own disks. There is no point in trying to maintain a consistent view of this information on the master because errors on a chunkserver may cause chunks to vanish spontaneously (e.g., a disk may go bad and be disabled) or an operator may rename a chunkserver.(对于chunkserver而言才是最终决定是否包含chunk的。对于master包含这种一致性view的话没有任何用户，因为对于chunkserver而言的很可能会因为故障导致某些chunk就丢失，或者是op就直接修改chunkserver名字) NOTE(dirlt):其实一致性view还是需要通过chunkserver和master之间交互来决定。对于master来说完全可以作为作为一个cache角色存在，只是保存chunk replacement的一个cache.通过这个cache来减少问题几率。然后通过periodically来更新cache内容。
+   - Another way to understand this design decision is to real-ize that a chunkserver has the final word over what chunks it does or does not have on its own disks. There is no point in trying to maintain a consistent view of this information on the master because errors on a chunkserver may cause chunks to vanish spontaneously (e.g., a disk may go bad and be disabled) or an operator may rename a chunkserver.(对于chunkserver而言才是最终决定是否包含chunk的。对于master包含这种一致性view的话没有任何用户，因为对于chunkserver而言的很可能会因为故障导致某些chunk就丢失，或者是op就直接修改chunkserver名字) 
+
+*NOTE(dirlt):其实一致性view还是需要通过chunkserver和master之间交互来决定。对于master来说完全可以作为作为一个cache角色存在，只是保存chunk replacement的一个cache.通过这个cache来减少问题几率。然后通过periodically来更新cache内容。*
 
 **** Operation Log
    - The operation log contains a historical record of critical metadata changes. It is central to GFS. Not only is it the only persistent record of metadata, but it also serves as a logical time line that defines the order of concurrent op-erations. Files and chunks, as well as their versions (see Section 4.5), are all uniquely and eternally identified by the logical times at which they were created.(log记录了对于meta信息关键的修改，一方面可以用来持久化metadata,另外一方面也为并发操作进行排序。file以及chunk分配的version都是按照他们创建的逻辑顺序分配的。TODO(dirlt):file也需要version吗???
@@ -170,6 +172,8 @@ concurrent mutations, but at an offset of GFS's choosing (Section 3.3). (In cont
 
 file:./images/gfs-write-control-and-data-flow.png
 
+*NOTE(dirlt): 如果出现inconsistent的状态的话，gfs也是没有办法恢复的，这个需要app自己记录下来*
+
 *** Data Flow
    - While control flows from the client to the primary and then to all secondaries, data is pushed linearly along a carefully picked chain of chunkservers in a pipelined fashion. Our goals are to fully utilize each
 machine’s network bandwidth, avoid network bottlenecks and high-latency links, and minimize the latency to push through all the data.（各个机器之间data flow是按照pipeline的方式传输的，目的是为了最大化带宽减少延迟）
@@ -251,7 +255,9 @@ After a file is deleted, GFS does not immediately reclaim the available physical
 **** Mechanism
    - When a file is deleted by the application, the master logs the deletion immediately just like other changes. However instead of reclaiming resources immediately, the file is just renamed to a hidden name that includes the deletion times-tamp. (会在内部记录日志但是并不是立即删除而是直接rename。这个rename操作仅仅作用在namespace上面。rename之后的文件名信息包含timestamp，这样可以用来定期回收） During the master’s regular scan of the file system namespace, it removes any such hidden files if they have ex-isted for more than three days (the interval is configurable)
    - Until then, the file can still be read under the new, special name and can be undeleted by renaming it back to normal. When the hidden file is removed from the namespace, its in-memory metadata is erased. This effectively severs its links to all its chunks.（在没有完全删除前的话，还可以直接将起rename回来进行都写。如果一旦删除之后，那么meta信息就会从memory中删除，但是对应的chunk并不删除，这些chunk成为orphanded chunks）
-   - In a similar regular scan of the chunk namespace, the master identifies orphaned chunks (i.e., those not reachable from any file) and erases the metadata for those chunks. In a HeartBeat message regularly exchanged with the master, each chunkserver reports a subset of the chunks it has, and the master replies with the identity of all chunks that are no longer present in the master’s metadata. The chunkserver is free to delete its replicas of such chunks.（对于具体删除chunk而言的话，如果文件从metadata里面删除的话，那么chunk就变成孤儿chunk。在heartbeat信息中，chunkserver会告诉master自己哪些chunk。master会回复哪些chunk是orphaned的，这样就可以直接删除掉） *NOTE（dirlt）：chunkserver应该是存有一个数据库的，每次汇报自己持有的全量chunk。如果chunk过多的话，那么可以考虑每次只是传输部分chunk*
+   - In a similar regular scan of the chunk namespace, the master identifies orphaned chunks (i.e., those not reachable from any file) and erases the metadata for those chunks. In a HeartBeat message regularly exchanged with the master, each chunkserver reports a subset of the chunks it has, and the master replies with the identity of all chunks that are no longer present in the master’s metadata. The chunkserver is free to delete its replicas of such chunks.（对于具体删除chunk而言的话，如果文件从metadata里面删除的话，那么chunk就变成孤儿chunk。在heartbeat信息中，chunkserver会告诉master自己哪些chunk。master会回复哪些chunk是orphaned的，这样就可以直接删除掉） 
+
+*NOTE（dirlt）：chunkserver应该是存有一个数据库的，每次汇报自己持有的全量chunk。如果chunk过多的话，那么可以考虑每次只是传输部分chunk*
 
 **** Discussion
 The garbage collection approach to storage reclamation offers several advantages over eager deletion.（GC相对于与eager deletion来说有下面这些好处）：
@@ -269,6 +275,8 @@ In our experience, the main disadvantage is that the delay sometimes hinders use
    - If another replica is currently unavail-able, its chunk version number will not be advanced. The master will detect that this chunkserver has a stale replica when the chunkserver restarts and reports its set of chunks and their associated version numbers.（如果某个replica是不可用的话，那么其对应的chunk version number也就没有改变，自然<master所持有的chunk version number，这样在汇报chunk的时候会可以发现stale chunk）
    - The master removes stale replicas in its regular garbage collection. Before that, it effectively considers a stale replica not to exist at all when it replies to client requests for chunk information.（对于master回收stale chunk也是通过GC完成的。但是在这之前master认为不存在任何stale replicas。这也就意味着，client可能会读取到stale的结果）
    - As another safeguard, the master includes the chunk version number when it informs clients which chunkserver holds a lease on a chunk or when it instructs a chunkserver to read the chunk from another chunkserver in a cloning operation. The client or the chunkserver verifies the version number when it performs the operation so that it is always accessing up-to-date data.（在通知client或者是告诉chunkserver进行clone操作的话，master会带上chunk version，这样操作的时候就可以进行验证确保读取到最新的数据。但是其实client本身还是有location cache，所以还是有读取到old-data的可能性的）
+
+*NOTE(dirlt):stale检测仅仅是为了防止某个chunkserver宕机的情况。如果某个chunkserver出现宕机的话，那么回在另外一个chunkserver上面留存一份新的chunk。而当这个老的chunkserver恢复过来的话，我们必须识别出老的chunk应该被丢弃。从这个逻辑上看，如果master需要rebalance的话，那么需要revoke这个chunk的lease，这样才可以重新分配一个chunk version number.*
 
 ** Fault Tolerance And Diagnosis
 *** High Availability
@@ -382,7 +390,6 @@ file:./images/gfs-workload-breakdown-bytes.png
 **** Master Workload
 file:./images/gfs-workload-breakdown-master-ops.png
 
-
 ** Experiences
    - It started with little support for things like permissions and quotas but now includes rudimentary forms of these. While production sys-tems are well disciplined and controlled, users sometimes are not. More infrastructure is required to keep users from interfering with one another（一开始权限和配额问题支持非常少但是现在也包含了。对于一个生产系统来说一定需要非常好地控制，能够将用户之间的资源进行隔离）
    - Many of our disks claimed to the Linux driver that they supported a range of IDE protocol versions but in fact re-sponded reliably only to the more recent ones. but in fact re-sponded reliably only to the more recent ones. This would corrupt data silently due to problems in the kernel. This problem motivated our use of checksums to detect data cor-ruption, while concurrently we modified the kernel to handle these protocol mismatches（大部分的磁盘声称支持各种IDE协议但是却对老协议的支持不好。这样会因为kernel造成数据损坏。一方通过checksum及时发现，另外一方面修改磁盘驱动） TODO（dirlt）：这个到底是啥关系？这个只要最新的协议支持好不就行了吗？
@@ -392,4 +399,5 @@ file:./images/gfs-workload-breakdown-master-ops.png
 ** Related Work
 ** Conclusions
 ** Q&A
+
 

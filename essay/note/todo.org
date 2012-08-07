@@ -68,6 +68,8 @@ CLOSED: [2012-07-25 Wed 22:37]
     CLOSED: [2012-08-06 Mon 23:30]
 *** DONE 阅读小时任务并且尝试学习优化（高）
     CLOSED: [2012-08-06 Mon 23:36]
+*** DONE GFS
+    CLOSED: [2012-08-07 Tue 11:00]
 
 
 ** daily todo
@@ -75,14 +77,14 @@ CLOSED: [2012-07-25 Wed 22:37]
 *** TODO 考虑使用fvwm(awesome)
 *** TODO 整理org以及剩余的.emacs部分.主要是学习agenda的管理
 *** TODO 总结一下flex/bison是如何使用的
-*** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
+*** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
+    - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
 *** TODO 阅读完Core Java I
 *** TODO 整理阅读收藏列表
 *** TODO 编写调度器详细设计文档
 
 
 ** read it later
-*** TODO GFS
 *** TODO HDFS
 *** TODO BigTable
 *** TODO MapReduce

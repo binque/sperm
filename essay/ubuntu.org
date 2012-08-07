@@ -8,6 +8,7 @@
 安装：
    - sudo apt-get install ibus
    - sudo apt-get install ibus-sunpinyin
+   - sudo apt-get install xsunpinyin
    - sudo apt-get install python-xlib # 需要在emacs下面调用ibus
 
 *** 切换输入法
@@ -22,6 +23,9 @@ TODO（dirlt）：在Emacs里面需要安装ibus.el以及ibus-agent。但是现�
 *** 自动启动输入法
 另外系统默认是不会自动启动ibus的，可以在System Settings里面的Language Support里面设置Input method为ibus
 这样ibus就可以自动启动了。如果emacs需要使用ibus的话，那么ibus-daemon必须先于emacs启动。可能这样agent才能够工作。
+
+*** google docs不能输入中文
+似乎sunpinyin在google docs下面工作不是很好。使用原来的pinyin就没有问题。what a shame！
 
 ** 浏览器
 安装：
