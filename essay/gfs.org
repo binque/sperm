@@ -276,7 +276,7 @@ Among hundreds of servers in a GFS cluster, some are bound to be unavailable at 
 
 *** Data Integrity
    - Each chunkserver uses checksumming to detect corruption of stored data. We can recover from corruption using other chunk replicas, but it would be impractical to detect corruption by comparing replicas across chunkservers. Moreover, divergent replicas may be legal: the semantics of GFS mutations, in particular atomic record append as discussed earlier, does not guar-antee identical replicas. （通常使用checksum来判断数据是否损坏。虽然我们可以从其他chunk进行恢复，但是却没有办法通过比较判断哪个chunk是存在问题的，因为不同也是可能的好比append会造成二进制上的不同。因此只只能够使用内部独立方式来进行校验）
-   - A chunk is broken up into 64 KB blocks. Each has a corre-sponding 32 bit checksum. Like other metadata, checksums are kept in memory and stored persistently with logging, separate from user data.（每个chunk都会存被切换成为64KB的block，计算成为32bit的校验和。和其他meta信息一样，checksum保存在memory中并且会随着一起logging,但是和用户数据分开） 
+   - A chunk is broken up into 64 KB blocks. Each has a corre-sponding 32 bit checksum. Like other metadata, checksums are kept in memory and stored persistently with logging, separate from user data.（每个chunk都会存被切换成为64KB的block，计算成为32bit的校验和。和其他meta信息一样，checksum保存在memory中并且会随着一起logging,但是和用户数据分开） 注意这个checksum是保存在chunkserver机器上的，包括内存和磁盘，而在master上面是不会保存的。
    - If a block does not match the recorded checksum, the chunkserver returns an error to the requestor and reports the mismatch to the master. In response, the requestor will read from other replicas, while the master will clone the chunk from another replica. After a valid new replica is in place, the master instructs the chunkserver that reported the mismatch to delete its replica.（如果在读取的时候发现checksum没有匹配的话，那么就会通知master。而master就会从其他replicas进行clone，完成之后通知chunkserver删除掉不匹配的chunk）
    - Checksumming has little effect on read performance for several reasons. Since most of our reads span at least a few blocks, we need to read and checksum only a relatively small amount of extra data for verification. Moreover, checksum lookups and comparison on the chunkserver are done without any I/O, and checksum calculation can often be overlapped with I/Os.（对于读来说checksum没有很大影响，因为通常read都会跨越几个block，因此checksum仅仅是很小的部分。同样checksum的查找以及对比都不需要额外IO开销，并且checksum计算的话也可以和IO重叠）
    - Checksum computation is heavily optimized for writes that append to the end of a chunk (as opposed to writes that overwrite existing data) because they are dominant in our workloads. We just incrementally update the check- sum for the last partial checksum block, and compute new checksums for any brand new checksum blocks filled by the append.  Even if the last partial checksum block is already corrupted and we fail to detect it now, the new checksum value will not match the stored data, and the corruption will be detected as usual when the block is next read.（对u有append来说checksum的计算进行优化，可以仅仅根据前面的checksum很快地进行计算出来，属于增量计算。并且即使最后的checksum已经损坏的话，那么在下次读取的时候还是会检测到的，所以这种增量方法是没有问题的）
@@ -321,10 +321,53 @@ file:./images/gfs-micro-benchmarks.png
    - Our applications tend to produce multiple such files con-currently. In other words, N clients append to M shared files simultaneously where both N and M are in the dozens or hundreds. Therefore, the chunkserver network congestion in our experiment is not a significant issue in practice be-cause a client can make progress on writing one file while the chunkservers for another file are busy.（在实际应用中这不是一个问题，因为通常是多个client追加不同的文件）
 
 *** Real World Clusters
-TODO（dirlt）：
+分为两个cluster A，B。其中cluster A主要是用来做实验或者是开发使用的，通常上面任务运行几个小时，读取MB-TB范围的数据，这些任务通常是人工启动的。而cluster B则是用来做为线上使用的，运行时间更长并且读取TB范围级别数据。
+
+file:./images/gfs-real-world-clusters.png
+
+file:./images/gfs-real-world-read-write-rates.png
+
+**** Storage
+**** Metadata
+   - 对于chunkserver来说，meta信息包括
+     - chunk block checksum
+     - check version number
+   - 对于master来说，meta信息包括
+     - filename
+     - chunk location
+     - chunk version
+     - permission
+     - ref counter
+     - 大约每个文件占用了100bytes左右
+   - 不管是chunkserver还是master大约每个node占用50-100MB的内存用来保存metadata，因为recovery time是非常快的
+   - 对于recovery time主要取决因素在与scan chunkserver，这个大约占用30-60s时间。
+
+**** Read and Write Rates
+**** Master Load
+**** Recovery Time
+In one experiment, we killed a single chunkserver in cluster B. The chunkserver had about 15,000 chunks containing 600 GB of data. To limit the im-pact on running applications and provide leeway for schedul-ing decisions, our default parameters limit this cluster to 91 concurrent clonings (40% of the number of chunkservers) where each clone operation is allowed to consume at most 6.25 MB/s (50 Mbps). All chunks were restored in 23.2 min-utes, at an effective replication rate of 440 MB/s.（杀掉一个chunkserver，这个chunkserver占据600GB数据和15K个chunk，为了减少影响并发cloing限制在91个即40%的chunkserver上面，并且操作限制在50Mbps的速率上面，所有回复时间占用22min，440MB/s)
+
+In another experiment, we killed two chunkservers each with roughly 16,000 chunks and 660 GB of data. This double failure reduced 266 chunks to having a single replica. These 266 chunks were cloned at a higher priority, and were all restored to at least 2x replication within 2 minutes, thus putting the cluster in a state where it could tolerate another chunkserver failure without data loss.另外一个实验就是干掉两个chunkserver，导致226个chunk丢失了两个replicas。而这些226 chunk在2min就恢复除了两份。（速率还是相当快的）
 
 *** Workload Breakdown
-TODO（dirlt）：
+这节主要将这个workload拆分来观察其中细节。里面AB对应成了XY。
+
+**** Methodology and Caveats
+   - These results include only client originated requests so that they reflect the workload generated by our applications for the file system as a whole. They do not include inter-server requests to carry out client requests or internal back-ground activities, such as forwarded writes or rebalancing.（下面结果仅仅是反应了client发起的操作，而没有反应系统内部交互的情况）
+   - Statistics on I/O operations are based on information heuristically reconstructed from actual RPC requests logged by GFS servers.For example, GFS client code may break a read into multiple RPCs to increase parallelism, from which we infer the original read. Since our access patterns are highly stylized, we expect any error to be in the noise. Ex-plicit logging by applications might have provided slightly more accurate data, but it is logistically impossible to re-compile and restart thousands of running clients to do so and cumbersome to collect the results from as many ma-chines（所有的IO操作统计都是通过RPC分析来完成的。但是RPC可能会分为多次完成，那么我们能够从中知道最开始发起的RPC。虽然显示地使用日志记录方式会更加准确，但是我们需要重新编译并且重启这些机群基本上不可能的，并且收集这些日志也非常繁琐）
+   - One should be careful not to overly generalize from our workload. Since Google completely controls both GFS and its applications, the applications tend to be tuned for GFS, and conversely GFS is designed for these applications. Such mutual influence may also exist between general applications and file systems, but the effect is likely more pronounced in our case.（不要过于泛化地分析workload，因为google内部使用的话会根据GFS内部设计来进行程序调整。）
+
+**** Chunkserver Workload
+file:./images/gfs-worload-breakdown-ops.png
+
+这里Read出现0K的原因是主要是因为producer-consumer，consumer没有读到数据直接返回0.
+
+file:./images/gfs-workload-breakdown-bytes.png
+
+**** Appends versus Writes
+**** Master Workload
+file:./images/gfs-workload-breakdown-master-ops.png
+
 
 ** Experiences
    - It started with little support for things like permissions and quotas but now includes rudimentary forms of these. While production sys-tems are well disciplined and controlled, users sometimes are not. More infrastructure is required to keep users from interfering with one another（一开始权限和配额问题支持非常少但是现在也包含了。对于一个生产系统来说一定需要非常好地控制，能够将用户之间的资源进行隔离）
@@ -334,5 +377,4 @@ TODO（dirlt）：
 
 ** Related Work
 ** Conclusions
-
-
+** Q&A
