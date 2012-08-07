@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="gfs"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-06 15:14:11 CST"/>
+<meta name="generated" content="2012-08-07 10:57:17 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -144,16 +144,42 @@
 </li>
 <li><a href="#sec-1-6">1.6 Fault Tolerance And Diagnosis</a>
 <ul>
-<li><a href="#sec-1-6-1">1.6.1 High Availability</a></li>
+<li><a href="#sec-1-6-1">1.6.1 High Availability</a>
+<ul>
+<li><a href="#sec-1-6-1-1">1.6.1.1 Fast Recovery</a></li>
+<li><a href="#sec-1-6-1-2">1.6.1.2 Chunk Replication</a></li>
+<li><a href="#sec-1-6-1-3">1.6.1.3 Master Replication</a></li>
+</ul>
+</li>
 <li><a href="#sec-1-6-2">1.6.2 Data Integrity</a></li>
 <li><a href="#sec-1-6-3">1.6.3 Diagnostic Tools</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-7">1.7 Measurements</a>
 <ul>
-<li><a href="#sec-1-7-1">1.7.1 Micro-benchmarks</a></li>
-<li><a href="#sec-1-7-2">1.7.2 Real World Clutsers</a></li>
-<li><a href="#sec-1-7-3">1.7.3 Workload Breakdown</a></li>
+<li><a href="#sec-1-7-1">1.7.1 Micro-benchmarks</a>
+<ul>
+<li><a href="#sec-1-7-1-1">1.7.1.1 Reads</a></li>
+<li><a href="#sec-1-7-1-2">1.7.1.2 Writes</a></li>
+<li><a href="#sec-1-7-1-3">1.7.1.3 Record Appends</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-7-2">1.7.2 Real World Clusters</a>
+<ul>
+<li><a href="#sec-1-7-2-1">1.7.2.1 Storage</a></li>
+<li><a href="#sec-1-7-2-2">1.7.2.2 Metadata</a></li>
+<li><a href="#sec-1-7-2-3">1.7.2.3 Read and Write Rates</a></li>
+<li><a href="#sec-1-7-2-4">1.7.2.4 Master Load</a></li>
+<li><a href="#sec-1-7-2-5">1.7.2.5 Recovery Time</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-7-3">1.7.3 Workload Breakdown</a>
+<ul>
+<li><a href="#sec-1-7-3-1">1.7.3.1 Methodology and Caveats</a></li>
+<li><a href="#sec-1-7-3-2">1.7.3.2 Chunkserver Workload</a></li>
+<li><a href="#sec-1-7-3-3">1.7.3.3 Appends versus Writes</a></li>
+<li><a href="#sec-1-7-3-4">1.7.3.4 Master Workload</a></li>
+</ul></li>
 </ul>
 </li>
 <li><a href="#sec-1-8">1.8 Experiences</a></li>
@@ -946,6 +972,60 @@ In our experience, the main disadvantage is that the delay sometimes hinders use
 <h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> High Availability</h4>
 <div class="outline-text-4" id="text-1-6-1">
 
+<p>Among hundreds of servers in a GFS cluster, some are bound to be unavailable at any given time. We keep the overall system highly available with two simple yet effective strategies: fast recovery and replication.（主要使用两点来确保高可用性：快速恢复以及副本机制）
+</p>
+
+</div>
+
+<div id="outline-container-1-6-1-1" class="outline-5">
+<h5 id="sec-1-6-1-1"><span class="section-number-5">1.6.1.1</span> Fast Recovery</h5>
+<div class="outline-text-5" id="text-1-6-1-1">
+
+<ul>
+<li>Both the master and the chunkserver are designed to re-store their state and start in seconds no matter how they terminated. In fact, we do not distinguish between normal and abnormal termination; servers are routinely shut down just by killing the process. （没有区分正常退出和异常推出，master和chunkserver能够在秒级恢复状态）
+</li>
+<li>Clients and other servers experi-ence a minor hiccup as they time out on their outstanding requests, reconnect to the restarted server, and retry. （而对于client来说仅仅有一个很短停顿，超时之后重新连接服务器即可）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-6-1-2" class="outline-5">
+<h5 id="sec-1-6-1-2"><span class="section-number-5">1.6.1.2</span> Chunk Replication</h5>
+<div class="outline-text-5" id="text-1-6-1-2">
+
+<ul>
+<li>As discussed earlier, each chunk is replicated on multiple chunkservers on different racks. Users can specify different replication levels for different parts of the file namespace. The default is three. The master clones existing replicas as needed to keep each chunk fully replicated as chunkservers go offline or detect corrupted replicas through checksum ver-ification (see Section 5.2). （每个chunk都会在不同的rack的chunkserver上面进行副本。用户也可以指定不同名字空间的副本个数。master也会通过clone现有的chunk来保证所有的chunk副本数目足够，防止某个chunkserver挂掉或者是校验和错误）
+</li>
+<li>Although replication has served us well, we are exploring other forms of cross-server redun-dancy such as parity or erasure codes for our increasing read-only storage requirements. （也在考虑使用一些其他的冗余方式来提高只读存储的需求）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-6-1-3" class="outline-5">
+<h5 id="sec-1-6-1-3"><span class="section-number-5">1.6.1.3</span> Master Replication</h5>
+<div class="outline-text-5" id="text-1-6-1-3">
+
+<ul>
+<li>The master state is replicated for reliability. Its operation log and checkpoints are replicated on multiple machines.  If its machine or disk fails, monitoring infrastructure outside GFS starts a new master process elsewhere with the replicated operation log. Clients use only the canonical name of the master (e.g. gfs-test), which is a DNS alias that can be changed if the master is relocated to another machine （master的状态做副本主要是为了解决可靠性问题。log以及checkpoint都会备份到很多台机器上面。如果master挂掉或者是磁盘故障的话，那么监控系统就会启动另外一台master进程并且使用log恢复。客户端都是使用DNS来进行master的域名解析的）    
+</li>
+<li>Moreover, “shadow” masters provide read-only access to the file system even when the primary master is down. They are shadows, not mirrors, in that they may lag the primary slightly, typically fractions of a second. （对于shadow master仅仅是提供读操作，not mirror，因为checkpoint以及log都会延迟一段时间）
+</li>
+<li>They enhance read availability for files that are not being actively mutated or applications that do not mind getting slightly stale results. In fact, since file content is read from chunkservers, appli-cations do not observe stale file content. What could be stale within short windows is file metadata, like directory contents or access control information.（使用这种方法适合提供那些不需要修改的文件读可用性，同时应用程序不太介意访问到stale结果。实际上，因为所有的file content都是来自与chunkserver，所以应用程序会访问到stale file content，而会访问到stale metadata，因为这个并没有及时更新）
+</li>
+<li>It depends on the primary master only for replica location updates resulting from the primary’s decisions to create and delete replicas.（对于shadow master工作过程和master相同，启动之后都会和所有的chunkserver交换信息。但是只能够有primary master来负责更新replica位置比如创建和删除replicas）
+</li>
+</ul>
+
+
+</div>
 </div>
 
 </div>
@@ -954,6 +1034,24 @@ In our experience, the main disadvantage is that the delay sometimes hinders use
 <h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> Data Integrity</h4>
 <div class="outline-text-4" id="text-1-6-2">
 
+<ul>
+<li>Each chunkserver uses checksumming to detect corruption of stored data. We can recover from corruption using other chunk replicas, but it would be impractical to detect corruption by comparing replicas across chunkservers. Moreover, divergent replicas may be legal: the semantics of GFS mutations, in particular atomic record append as discussed earlier, does not guar-antee identical replicas. （通常使用checksum来判断数据是否损坏。虽然我们可以从其他chunk进行恢复，但是却没有办法通过比较判断哪个chunk是存在问题的，因为不同也是可能的好比append会造成二进制上的不同。因此只只能够使用内部独立方式来进行校验）
+</li>
+<li>A chunk is broken up into 64 KB blocks. Each has a corre-sponding 32 bit checksum. Like other metadata, checksums are kept in memory and stored persistently with logging, separate from user data.（每个chunk都会存被切换成为64KB的block，计算成为32bit的校验和。和其他meta信息一样，checksum保存在memory中并且会随着一起logging,但是和用户数据分开） 注意这个checksum是保存在chunkserver机器上的，包括内存和磁盘，而在master上面是不会保存的。
+</li>
+<li>If a block does not match the recorded checksum, the chunkserver returns an error to the requestor and reports the mismatch to the master. In response, the requestor will read from other replicas, while the master will clone the chunk from another replica. After a valid new replica is in place, the master instructs the chunkserver that reported the mismatch to delete its replica.（如果在读取的时候发现checksum没有匹配的话，那么就会通知master。而master就会从其他replicas进行clone，完成之后通知chunkserver删除掉不匹配的chunk）
+</li>
+<li>Checksumming has little effect on read performance for several reasons. Since most of our reads span at least a few blocks, we need to read and checksum only a relatively small amount of extra data for verification. Moreover, checksum lookups and comparison on the chunkserver are done without any I/O, and checksum calculation can often be overlapped with I/Os.（对于读来说checksum没有很大影响，因为通常read都会跨越几个block，因此checksum仅仅是很小的部分。同样checksum的查找以及对比都不需要额外IO开销，并且checksum计算的话也可以和IO重叠）
+</li>
+<li>Checksum computation is heavily optimized for writes that append to the end of a chunk (as opposed to writes that overwrite existing data) because they are dominant in our workloads. We just incrementally update the check- sum for the last partial checksum block, and compute new checksums for any brand new checksum blocks filled by the append.  Even if the last partial checksum block is already corrupted and we fail to detect it now, the new checksum value will not match the stored data, and the corruption will be detected as usual when the block is next read.（对u有append来说checksum的计算进行优化，可以仅仅根据前面的checksum很快地进行计算出来，属于增量计算。并且即使最后的checksum已经损坏的话，那么在下次读取的时候还是会检测到的，所以这种增量方法是没有问题的）
+</li>
+<li>In contrast, if a write overwrites an existing range of the chunk, we must read and verify the first and last blocks of the range being overwritten, then perform the write, and finally compute and record the new checksums. If we do not verify the first and last blocks before overwriting them partially, the new checksums may hide corruption that exists in the regions not being overwritten.（而对于write来说，还需要检查前后两个block校验和，而不能够像append一样采用增量方式更新checksum）
+</li>
+<li>During idle periods, chunkservers can scan and verify the contents of inactive chunks. This allows us to detect corrup- tion in chunks that are rarely read. Once the corruption is detected, the master can create a new uncorrupted replica and delete the corrupted replica. This prevents an inactive but corrupted chunk replica from fooling the master into thinking that it has enough valid replicas of a chunk.（在空闲时间内的话，checkserver也会进行所有的chunk的扫描以及校验，一旦发现错误的话那么就会通知master，这样就可以避免一个inactive但是已经损坏的chunk没有汇报给master，而master还要努力维护其副本数）
+</li>
+</ul>
+
+
 </div>
 
 </div>
@@ -961,6 +1059,20 @@ In our experience, the main disadvantage is that the delay sometimes hinders use
 <div id="outline-container-1-6-3" class="outline-4">
 <h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> Diagnostic Tools</h4>
 <div class="outline-text-4" id="text-1-6-3">
+
+<ul>
+<li>With-out logs, it is hard to understand transient, non-repeatable interactions between machines.（没有logs的话，就很难理解那些各个机器之间短暂，不可重复的交互）
+<ul>
+<li>GFS servers generate di-agnostic logs that record many significant events (such as chunkservers going up and down) and all RPC requests and replies. These diagnostic logs can be freely deleted without affecting the correctness of the system. However, we try to keep these logs around as far as space permits.（log里面包括很多重要事情比如chunkserver的上下线，所有的RPC交互）
+</li>
+<li>The RPC logs include the exact requests and responses sent on the wire, except for the file data being read or writ-ten. By matching requests with replies and collating RPC records on different machines, we can reconstruct the en-tire interaction history to diagnose a problem. The logs also serve as traces for load testing and performance analysis.（RPC里面几乎包含了所有的字段除去数据字段，通过匹配这些RPC交互记录可以重新构建整个交互过程来进行分析，同时可以用于负载测试以及性能分析）
+</li>
+<li>The performance impact of logging is minimal (and far outweighed by the benefits) because these logs are written sequentially and asynchronously. The most recent events are also kept in memory and available for continuous online monitoring.（对于log开销非常小，因为写log都是顺序并且是异步的。大部分最近事件都是保存在内存，非常容易持续监控）
+</li>
+</ul>
+
+</li>
+</ul>
 
 
 </div>
@@ -979,14 +1091,180 @@ In our experience, the main disadvantage is that the delay sometimes hinders use
 <h4 id="sec-1-7-1"><span class="section-number-4">1.7.1</span> Micro-benchmarks</h4>
 <div class="outline-text-4" id="text-1-7-1">
 
+<p>consist of
+</p><ul>
+<li>1 master
+</li>
+<li>2 master replicas
+</li>
+<li>16 chunkservers
+</li>
+<li>16 clients
+</li>
+</ul>
+
+<p>主要用来测试，通常chunkserver和client可以达到上百个。
+</p>
+<p>
+All the machines are configured with dual 1.4 GHz PIII processors, 2 GB of memory, two 80 GB 5400 rpm disks, and a 100 Mbps full-duplex Ethernet connection to an HP 2524 switch. All 19 GFS server machines are connected to one switch, and all 16 client machines to the other. The two switches are connected with a 1 Gbps link.（配置相当一般，局域网内部使用百兆交换机互联19个server，16个client使用另外一个百兆互联，之间通过千兆线路互联）
+</p>
+<p>
+<img src="./images/gfs-micro-benchmarks.png"  alt="./images/gfs-micro-benchmarks.png" />
+</p>
+<p>
+<b>TODO（dirlt）：这里非常好奇理论的network limit是如何估算出来的？</b>
+</p>
+
+</div>
+
+<div id="outline-container-1-7-1-1" class="outline-5">
+<h5 id="sec-1-7-1-1"><span class="section-number-5">1.7.1.1</span> Reads</h5>
+<div class="outline-text-5" id="text-1-7-1-1">
+
+<ul>
+<li>clients同时从320GB文件集合读取，
+</li>
+<li>每个client读取4MB，并且重复256次，共计1GB    
+</li>
+<li>所有chunkserver内存总共32GB，所以估计linux buffer cache占据10%，因为基本上等于cold cache
+</li>
+<li>对于读来说在达到网卡饱和之前，应该是线性增长的并且斜率network limit相同，但是主要问题还是从同一个chunkserver上面读取。
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-7-1-2" class="outline-5">
+<h5 id="sec-1-7-1-2"><span class="section-number-5">1.7.1.2</span> Writes</h5>
+<div class="outline-text-5" id="text-1-7-1-2">
+
+<ul>
+<li>clients各自写不同的file
+</li>
+<li>每个file共占大小1GB，每次写1MB
+</li>
+<li>效率问题write比read更糟糕是因为，write冲突更加严重因为需要写3个replicas。
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-7-1-3" class="outline-5">
+<h5 id="sec-1-7-1-3"><span class="section-number-5">1.7.1.3</span> Record Appends</h5>
+<div class="outline-text-5" id="text-1-7-1-3">
+
+<ul>
+<li>所有clients追加写一个文件
+</li>
+<li>Performance is lim-ited by the network bandwidth of the chunkservers that store the last chunk of the file, independent of the num-ber of clients. It starts at 6.0 MB/s for one client and drops to 4.8 MB/s for 16 clients, mostly due to congestion and variances in network transfer rates seen by different clients.（主要受限最后一个chunkserver上面的网络带宽）
+</li>
+<li>Our applications tend to produce multiple such files con-currently. In other words, N clients append to M shared files simultaneously where both N and M are in the dozens or hundreds. Therefore, the chunkserver network congestion in our experiment is not a significant issue in practice be-cause a client can make progress on writing one file while the chunkservers for another file are busy.（在实际应用中这不是一个问题，因为通常是多个client追加不同的文件）
+</li>
+</ul>
+
+
+</div>
 </div>
 
 </div>
 
 <div id="outline-container-1-7-2" class="outline-4">
-<h4 id="sec-1-7-2"><span class="section-number-4">1.7.2</span> Real World Clutsers</h4>
+<h4 id="sec-1-7-2"><span class="section-number-4">1.7.2</span> Real World Clusters</h4>
 <div class="outline-text-4" id="text-1-7-2">
 
+<p>分为两个cluster A，B。其中cluster A主要是用来做实验或者是开发使用的，通常上面任务运行几个小时，读取MB-TB范围的数据，这些任务通常是人工启动的。而cluster B则是用来做为线上使用的，运行时间更长并且读取TB范围级别数据。
+</p>
+<p>
+<img src="./images/gfs-real-world-clusters.png"  alt="./images/gfs-real-world-clusters.png" />
+</p>
+<p>
+<img src="./images/gfs-real-world-read-write-rates.png"  alt="./images/gfs-real-world-read-write-rates.png" />
+</p>
+
+</div>
+
+<div id="outline-container-1-7-2-1" class="outline-5">
+<h5 id="sec-1-7-2-1"><span class="section-number-5">1.7.2.1</span> Storage</h5>
+<div class="outline-text-5" id="text-1-7-2-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-7-2-2" class="outline-5">
+<h5 id="sec-1-7-2-2"><span class="section-number-5">1.7.2.2</span> Metadata</h5>
+<div class="outline-text-5" id="text-1-7-2-2">
+
+<ul>
+<li>对于chunkserver来说，meta信息包括
+<ul>
+<li>chunk block checksum
+</li>
+<li>check version number
+</li>
+</ul>
+
+</li>
+<li>对于master来说，meta信息包括
+<ul>
+<li>filename
+</li>
+<li>chunk location
+</li>
+<li>chunk version
+</li>
+<li>permission
+</li>
+<li>ref counter
+</li>
+<li>大约每个文件占用了100bytes左右
+</li>
+</ul>
+
+</li>
+<li>不管是chunkserver还是master大约每个node占用50-100MB的内存用来保存metadata，因为recovery time是非常快的
+</li>
+<li>对于recovery time主要取决因素在与scan chunkserver，这个大约占用30-60s时间。
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-7-2-3" class="outline-5">
+<h5 id="sec-1-7-2-3"><span class="section-number-5">1.7.2.3</span> Read and Write Rates</h5>
+<div class="outline-text-5" id="text-1-7-2-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-7-2-4" class="outline-5">
+<h5 id="sec-1-7-2-4"><span class="section-number-5">1.7.2.4</span> Master Load</h5>
+<div class="outline-text-5" id="text-1-7-2-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-7-2-5" class="outline-5">
+<h5 id="sec-1-7-2-5"><span class="section-number-5">1.7.2.5</span> Recovery Time</h5>
+<div class="outline-text-5" id="text-1-7-2-5">
+
+<p>In one experiment, we killed a single chunkserver in cluster B. The chunkserver had about 15,000 chunks containing 600 GB of data. To limit the im-pact on running applications and provide leeway for schedul-ing decisions, our default parameters limit this cluster to 91 concurrent clonings (40% of the number of chunkservers) where each clone operation is allowed to consume at most 6.25 MB/s (50 Mbps). All chunks were restored in 23.2 min-utes, at an effective replication rate of 440 MB/s.（杀掉一个chunkserver，这个chunkserver占据600GB数据和15K个chunk，为了减少影响并发cloing限制在91个即40%的chunkserver上面，并且操作限制在50Mbps的速率上面，所有回复时间占用22min，440MB/s)
+</p>
+<p>
+In another experiment, we killed two chunkservers each with roughly 16,000 chunks and 660 GB of data. This double failure reduced 266 chunks to having a single replica. These 266 chunks were cloned at a higher priority, and were all restored to at least 2x replication within 2 minutes, thus putting the cluster in a state where it could tolerate another chunkserver failure without data loss.另外一个实验就是干掉两个chunkserver，导致226个chunk丢失了两个replicas。而这些226 chunk在2min就恢复除了两份。（速率还是相当快的）
+</p>
+</div>
 </div>
 
 </div>
@@ -995,6 +1273,61 @@ In our experience, the main disadvantage is that the delay sometimes hinders use
 <h4 id="sec-1-7-3"><span class="section-number-4">1.7.3</span> Workload Breakdown</h4>
 <div class="outline-text-4" id="text-1-7-3">
 
+<p>这节主要将这个workload拆分来观察其中细节。里面AB对应成了XY。
+</p>
+
+</div>
+
+<div id="outline-container-1-7-3-1" class="outline-5">
+<h5 id="sec-1-7-3-1"><span class="section-number-5">1.7.3.1</span> Methodology and Caveats</h5>
+<div class="outline-text-5" id="text-1-7-3-1">
+
+<ul>
+<li>These results include only client originated requests so that they reflect the workload generated by our applications for the file system as a whole. They do not include inter-server requests to carry out client requests or internal back-ground activities, such as forwarded writes or rebalancing.（下面结果仅仅是反应了client发起的操作，而没有反应系统内部交互的情况）
+</li>
+<li>Statistics on I/O operations are based on information heuristically reconstructed from actual RPC requests logged by GFS servers.For example, GFS client code may break a read into multiple RPCs to increase parallelism, from which we infer the original read. Since our access patterns are highly stylized, we expect any error to be in the noise. Ex-plicit logging by applications might have provided slightly more accurate data, but it is logistically impossible to re-compile and restart thousands of running clients to do so and cumbersome to collect the results from as many ma-chines（所有的IO操作统计都是通过RPC分析来完成的。但是RPC可能会分为多次完成，那么我们能够从中知道最开始发起的RPC。虽然显示地使用日志记录方式会更加准确，但是我们需要重新编译并且重启这些机群基本上不可能的，并且收集这些日志也非常繁琐）
+</li>
+<li>One should be careful not to overly generalize from our workload. Since Google completely controls both GFS and its applications, the applications tend to be tuned for GFS, and conversely GFS is designed for these applications. Such mutual influence may also exist between general applications and file systems, but the effect is likely more pronounced in our case.（不要过于泛化地分析workload，因为google内部使用的话会根据GFS内部设计来进行程序调整。）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-7-3-2" class="outline-5">
+<h5 id="sec-1-7-3-2"><span class="section-number-5">1.7.3.2</span> Chunkserver Workload</h5>
+<div class="outline-text-5" id="text-1-7-3-2">
+
+<p><img src="./images/gfs-worload-breakdown-ops.png"  alt="./images/gfs-worload-breakdown-ops.png" />
+</p>
+<p>
+这里Read出现0K的原因是主要是因为producer-consumer，consumer没有读到数据直接返回0.
+</p>
+<p>
+<img src="./images/gfs-workload-breakdown-bytes.png"  alt="./images/gfs-workload-breakdown-bytes.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-7-3-3" class="outline-5">
+<h5 id="sec-1-7-3-3"><span class="section-number-5">1.7.3.3</span> Appends versus Writes</h5>
+<div class="outline-text-5" id="text-1-7-3-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-7-3-4" class="outline-5">
+<h5 id="sec-1-7-3-4"><span class="section-number-5">1.7.3.4</span> Master Workload</h5>
+<div class="outline-text-5" id="text-1-7-3-4">
+
+<p><img src="./images/gfs-workload-breakdown-master-ops.png"  alt="./images/gfs-workload-breakdown-master-ops.png" />
+</p>
+
+</div>
 </div>
 </div>
 
@@ -1003,6 +1336,18 @@ In our experience, the main disadvantage is that the delay sometimes hinders use
 <div id="outline-container-1-8" class="outline-3">
 <h3 id="sec-1-8"><span class="section-number-3">1.8</span> Experiences</h3>
 <div class="outline-text-3" id="text-1-8">
+
+<ul>
+<li>It started with little support for things like permissions and quotas but now includes rudimentary forms of these. While production sys-tems are well disciplined and controlled, users sometimes are not. More infrastructure is required to keep users from interfering with one another（一开始权限和配额问题支持非常少但是现在也包含了。对于一个生产系统来说一定需要非常好地控制，能够将用户之间的资源进行隔离）
+</li>
+<li>Many of our disks claimed to the Linux driver that they supported a range of IDE protocol versions but in fact re-sponded reliably only to the more recent ones. but in fact re-sponded reliably only to the more recent ones. This would corrupt data silently due to problems in the kernel. This problem motivated our use of checksums to detect data cor-ruption, while concurrently we modified the kernel to handle these protocol mismatches（大部分的磁盘声称支持各种IDE协议但是却对老协议的支持不好。这样会因为kernel造成数据损坏。一方通过checksum及时发现，另外一方面修改磁盘驱动） TODO（dirlt）：这个到底是啥关系？这个只要最新的协议支持好不就行了吗？
+</li>
+<li>Earlier we had some problems with Linux 2.2 kernels due to the cost of fsync(). Its cost is proportional to the size of the file rather than the size of the modified portion. This was a problem for our large operation logs especially before we implemented checkpointing. We worked around this for a time by using synchronous writes and eventually migrated to Linux 2.4.（对于2.2的内核来说fsync开销和文件大小是比例的，这个对于在实现checkpoint之前来说，logs是非常大的所以开销也非常大，当时通过同步写来绕过去的。升级到2.4 kernel就没有这个问题了）
+</li>
+<li>Another Linux problem was a single reader-writer lock which any thread in an address space must hold when it pages in from disk (reader lock) or modifies the address space in an mmap() call (writer lock). （对于任何address从我disk pagein或者是通过mmap来修改内容的话，都会存在一个读写锁。） We saw transient timeouts in our system under light load and looked hard for resource bottlenecks or sporadic hardware failures.（对于当时来说我们观察到在轻负载的情况下面，主线程存在超时问题然后认为是资源瓶颈或者是间歇性的硬件错误。） Even-tually, we found that this single lock blocked the primary network thread from mapping new data into memory while the disk threads were paging in previously mapped data. Since we are mainly limited by the network interface rather than by memory copy bandwidth, we worked around this by replacing mmap() with pread() at the cost of an extra copy.（网络线程在mmap上来这个数据而另外一个磁盘线程也在page in造成超时。因为主要问题是在网络带宽，所以使用pread代替mmap增加一次copy）
+</li>
+</ul>
+
 
 </div>
 
@@ -1020,7 +1365,6 @@ In our experience, the main disadvantage is that the delay sometimes hinders use
 <h3 id="sec-1-10"><span class="section-number-3">1.10</span> Conclusions</h3>
 <div class="outline-text-3" id="text-1-10">
 
-
 </div>
 
 </div>
@@ -1029,14 +1373,14 @@ In our experience, the main disadvantage is that the delay sometimes hinders use
 <h3 id="sec-1-11"><span class="section-number-3">1.11</span> Q&amp;A</h3>
 <div class="outline-text-3" id="text-1-11">
 
-<p>TODO（dirlt）：
-</p></div>
+
+</div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-06 15:14:11 CST</p>
+<p class="date">Date: 2012-08-07 10:57:17 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
