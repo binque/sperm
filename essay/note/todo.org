@@ -70,6 +70,12 @@ CLOSED: [2012-07-25 Wed 22:37]
     CLOSED: [2012-08-06 Mon 23:36]
 *** DONE GFS
     CLOSED: [2012-08-07 Tue 11:00]
+*** DONE 整理gfs的疑问
+    CLOSED: [2012-08-08 Wed 13:01]
+*** DONE 编写调度器详细设计文档
+    CLOSED: [2012-08-08 Wed 15:18]
+*** DONE HDFS
+    CLOSED: [2012-08-08 Wed 20:34]
 
 
 ** daily todo
@@ -80,15 +86,13 @@ CLOSED: [2012-07-25 Wed 22:37]
 *** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
 *** TODO 阅读完Core Java I
-*** TODO 整理阅读收藏列表
-*** TODO 编写调度器详细设计文档
+*** TODO 整理阅读收藏列表以及浏览器列表
 
 ** read it later
-*** TODO HDFS
 *** TODO BigTable
 *** TODO MapReduce
 *** TODO Kafka
 *** TODO The anatomy of google
 *** TODO RSS redplanet
 *** TODO RSS system we make
-*** TODO paper planes
+*** TODO RSS paper planes

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="gfs"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-07 23:08:35 CST"/>
+<meta name="generated" content="2012-08-08 18:41:39 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -185,7 +185,12 @@
 <li><a href="#sec-1-8">1.8 Experiences</a></li>
 <li><a href="#sec-1-9">1.9 Related Work</a></li>
 <li><a href="#sec-1-10">1.10 Conclusions</a></li>
-<li><a href="#sec-1-11">1.11 Q&amp;A</a></li>
+<li><a href="#sec-1-11">1.11 Q&amp;A</a>
+<ul>
+<li><a href="#sec-1-11-1">1.11.1 gfs所有的副本是否都一样？</a></li>
+<li><a href="#sec-1-11-2">1.11.2 gfs不保证所有副本一样对于bigtable实现有什么影响吗？</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -1385,14 +1390,44 @@ In another experiment, we killed two chunkservers each with roughly 16,000 chunk
 <div class="outline-text-3" id="text-1-11">
 
 
+</div>
 
+<div id="outline-container-1-11-1" class="outline-4">
+<h4 id="sec-1-11-1"><span class="section-number-4">1.11.1</span> gfs所有的副本是否都一样？</h4>
+<div class="outline-text-4" id="text-1-11-1">
+
+<p>不是。但是gfs保证，如果写成功的话（write/append），那么写的部分在各个副本上面内容是相同的。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-11-2" class="outline-4">
+<h4 id="sec-1-11-2"><span class="section-number-4">1.11.2</span> gfs不保证所有副本一样对于bigtable实现有什么影响吗？</h4>
+<div class="outline-text-4" id="text-1-11-2">
+
+<p>这个bigtable单机实现可以参考leveldb。leveldb的写只有追加写，并且写一个SSTable的过程是这样的：
+</p><ul>
+<li>写block，如果写成功的话将offset记录下来
+</li>
+<li>最后将offset放在文件末尾
+</li>
+</ul>
+
+<p>这样读的时候，只需要首先读取文件末尾，得到每个block的offset。因为这些都是写成功的，所以确保随机读数据是正确的。
+</p>
+<p>
+这点给我们一个启发就是，如果我们裸用gfs的话，也可以使用这种方法。将成功写入的点记录下来，然后只是读取这些成功的记录。
+这个对于append来说是OK的，但是对于write来说就不太好处理了。这也是leveldb实现没有使用random write的比较重要的原因吧。
+</p>
+</div>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-07 23:08:35 CST</p>
+<p class="date">Date: 2012-08-08 18:41:39 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
