@@ -42,6 +42,7 @@
    - [[file:emacs.org][emacs]] 如何更好地使用Emacs。自己依然只是使用一些简单功能，身边有很多牛人用Emacs那是相当的出神入化。
    - [[file:linux.org][linux]] 主要是介绍Linux下面一些工具使用以及和内核相关的知识。（将原来[[file:./APUE.org][APUE]] 和 [[file:./UNP.org][UNP]] 中的一部分内容放在这里面来了，这样可以保持这两篇内容比较稳定）
    - [[file:fvwm.org][fvwm]] F* Virtual Windows Manager.Linux下面高度可定制化的窗口管理器。
+   - [[file:./mac.org][mac]] 如何更好地使用mac。以前使用windows，后来转向ubuntu，再后来买了个air，熟悉mac又需要一段时间了。
 
 ** Network Programming
    - [[file:unp.org][unp]] Unix网络编程(Unix Network Programming),W. Richard Stevens的又一神作。笔记里面只是对于TCP原理有比较详细讨论，这部分笔记也包含了TCP Illustrated v1里面和TCP相关的章节内容。对于编程方面也着重TCP socket使用，毕竟在大部分应用场景下面我们选用TCP模型更多，并且TCP里面有很多非常琐碎的知识。

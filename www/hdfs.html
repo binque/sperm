@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>hdfs</title>
-<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hdfs"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-02 13:24:26 CST"/>
+<meta name="generated" content="2012-08-08 09:37:07 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -98,7 +98,26 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 hdfs</a></li>
+<li><a href="#sec-1">1 hdfs</a>
+<ul>
+<li><a href="#sec-1-1">1.1 The Hadoop Distributed File System(2010)</a>
+<ul>
+<li><a href="#sec-1-1-1">1.1.1 INTRODUCTION AND RELATED WORK</a></li>
+<li><a href="#sec-1-1-2">1.1.2 ARCHITECTURE</a>
+<ul>
+<li><a href="#sec-1-1-2-1">1.1.2.1 NameNode</a></li>
+<li><a href="#sec-1-1-2-2">1.1.2.2 DataNode</a></li>
+<li><a href="#sec-1-1-2-3">1.1.2.3 HDFS Client</a></li>
+<li><a href="#sec-1-1-2-4">1.1.2.4 Image and Journal</a></li>
+<li><a href="#sec-1-1-2-5">1.1.2.5 CheckpointNode</a></li>
+<li><a href="#sec-1-1-2-6">1.1.2.6 BackupNode</a></li>
+<li><a href="#sec-1-1-2-7">1.1.2.7 Upgrades, File Sytsems Snapshots</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -107,15 +126,223 @@
 <h2 id="sec-1"><span class="section-number-2">1</span> hdfs</h2>
 <div class="outline-text-2" id="text-1">
 
-<p>TODO(dirlt):
-</p>
 
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> The Hadoop Distributed File System(2010)</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<ul>
+<li>Konstantin Shvachko, Hairong Kuang, Sanjay Radia, Robert Chansler @ Yahoo!
+</li>
+<li>Sunnyvale, California USA
+</li>
+<li>{Shv, Hairong, SRadia, Chansler}@Yahoo-Inc.com
+</li>
+</ul>
+
+
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> INTRODUCTION AND RELATED WORK</h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+<ul>
+<li>Hadoop clus-ters at Yahoo! span 25 000 servers, and store 25 petabytes of application data, with the largest cluster being 3500 servers.(最大的集群有3.5k机器，所有机器共有25k，存储了25PB的数据）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> ARCHITECTURE</h4>
+<div class="outline-text-4" id="text-1-1-2">
+
+
+</div>
+
+<div id="outline-container-1-1-2-1" class="outline-5">
+<h5 id="sec-1-1-2-1"><span class="section-number-5">1.1.2.1</span> NameNode</h5>
+<div class="outline-text-5" id="text-1-1-2-1">
+
+<ul>
+<li>The file content is split into large blocks (typically 128 megabytes, but user selectable file-by-file) and each block of the file is inde-pendently replicated at multiple DataNodes (typically three, but user selectable file-by-file). （文件内容会切块默认是128MB但是对于每个文件可选，另外副本数目对于每个文件也是可选的默认是3）
+</li>
+<li>HDFS keeps the entire namespace in RAM. The inode data and the list of blocks belonging to each file comprise the meta-data of the name system called the image. The persistent record of the image stored in the local host’s native files system is called a checkpoint. The NameNode also stores the modifica-tion log of the image called the journal in the local host’s na-tive file system.（对于namenode内容称为image，分为checkpoint和journal两个部分）。
+</li>
+<li>For improved durability, redundant copies of the checkpoint and journal can be made at other servers. Dur-ing restarts the NameNode restores the namespace by reading the namespace and replaying the journal.（对于这个image在远程上面也会进行备份来提高可用性）
+</li>
+<li>The locations of block replicas may change over time and are not part of the persistent checkpoint.（这个和gfs相同都是通过chunkserver启动之后汇报chunk来完成的）
+</li>
+</ul>
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2-2" class="outline-5">
+<h5 id="sec-1-1-2-2"><span class="section-number-5">1.1.2.2</span> DataNode</h5>
+<div class="outline-text-5" id="text-1-1-2-2">
+
+<ul>
+<li>Each block replica on a DataNode is represented by two files in the local host’s native file system. The first file contains the data itself and the second file is block’s metadata including checksums for the block data and the block’s generation stamp.（block存储上包含两个文件，一个是数据文件，另外一个就是checksum文件，并且包含block generation stamp。这个stamp可能就是用来标记old chunk的，类似于gfs里面的chunk version number）
+</li>
+<li>During startup each DataNode connects to the NameNode and performs a handshake. The purpose of the handshake is to verify the namespace ID and the software version of the DataNode. If either does not match that of the NameNode the DataNode automatically shuts down.（datanode启动的时候会和namenode交互，交换namespace id和software version id,如果两者不匹配的话，那么datanode就会shutdown。这个是为了处理兼容性问题，这个在从cdh3升级到cdh4时候需要考虑。兼容性问题猜想会涉及到RPC以及存储格式处理上）
+</li>
+<li>The namespace ID is assigned to the file system instance when it is formatted. The namespace ID is persistently stored on all nodes of the cluster（格式化的时候就会分配namespace id） NOTE（dirlt）：新增的chunkserver应该也会分配到这个namespace id。这个namespace id可以首先分配在namenode以及已知的datanode上面  A DataNode that is newly initialized and without any namespace ID is permitted to join the cluster and receive the cluster’s namespace ID.
+</li>
+<li>After the handshake the DataNode registers with the NameNode. DataNodes persistently store their unique storage IDs. The storage ID is an internal identifier of the DataNode, which makes it recognizable even if it is restarted with a differ-ent IP address or port. The storage ID is assigned to the DataNode when it registers with the NameNode for the first time and never changes after that.（对于每个新注册的datanode都会被namenode分配一个唯一的id，这个id和ip以及port都对应上了，并且以后不会改变。
+</li>
+<li>A DataNode identifies block replicas in its possession to the NameNode by sending a block report. A block report contains the block id, the generation stamp and the length for each block replica the server hosts. The first block report is sent immedi-ately after the DataNode registration. Subsequent block reports are sent every hour and provide the NameNode with an up-to-date view of where block replicas are located on the cluster.（datanode会进行block report给namenode，包括所有block的id，generation stamp，以及长度信息。第一次的block report是在启动时候，后面小时级别进行report） TODO（dirlt）：这里不太理解为啥需要汇报length，是不是每个文件长度不同？难道利用二分查找offset对应的文件？ NOTE（dirlt）；每个文件还是需要知道长度的，这样就可以知道往这个chunk上还能写多少个字节达到一个max chuk size，然后再写下一个块
+</li>
+<li>During normal operation DataNodes send heartbeats to the NameNode to confirm that the DataNode is operating and the block replicas it hosts are available. The default heartbeat in-terval is three seconds. If the NameNode does not receive a heartbeat from a DataNode in ten minutes the NameNode con-siders the DataNode to be out of service and the block replicas hosted by that DataNode to be unavailable. The NameNode then schedules creation of new replicas of those blocks on other DataNodes.（namenode和datanode之间每隔3s会有一次heartheat检测datanode是否存活，如果10min没有任何回复的话，那么认为datanode挂掉。namenode可能需要重新扫描所有在这个datandoe上面block然后做re-replication
+</li>
+<li>Heartbeats from a DataNode also carry information about total storage capacity, fraction of storage in use, and the num-ber of data transfers currently in progress. These statistics are used for the NameNode’s space allocation and load balancing decisions.（heartbeat信息包含这个datanode上面存储容量，以及磁盘使用百分比，以及这个datanode上面和client有多少数据量交互，这些指标都会用来当作namenode进行空间分配以及负载均衡的选择）
+</li>
+<li>The NameNode does not directly call DataNodes. It uses replies to heartbeats to send instructions to the DataNodes. The instructions include commands to:（namenode并不会直接datanode信息的，而是在heartbeat后面直接piggyback回去的，包括下面这些信息。对于这些信息没有考虑返回，但是并不是很大的问题）
+<ul>
+<li>replicate blocks to other nodes;
+</li>
+<li>remove local block replicas;
+</li>
+<li>re-register or to shut down the node;
+</li>
+<li>send an immediate block report.
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2-3" class="outline-5">
+<h5 id="sec-1-1-2-3"><span class="section-number-5">1.1.2.3</span> HDFS Client</h5>
+<div class="outline-text-5" id="text-1-1-2-3">
+
+<ul>
+<li>When an application reads a file, the HDFS client first asks the NameNode for the list of DataNodes that host replicas of the blocks of the file. It then contacts a DataNode directly and requests the transfer of the desired block. （选择任意一个datanode进行交互）
+</li>
+<li>When a client writes, it first asks the NameNode to choose DataNodes to host repli-cas of the first block of the file. The client organizes a pipeline from node-to-node and sends the data. When the first block is filled, the client requests new DataNodes to be chosen to host replicas of the next block. （按照pipeline的方式写入到各个机器上面，不过从交互图上面来看的话，似乎是datanode直接告诉namenode over，而不是由client发起的。另外client似乎也没有得到ACK的消息）
+</li>
+</ul>
+
+
+<p>
+<img src="./images/hdfs-data-flow.png"  alt="./images/hdfs-data-flow.png" />
+</p>
+<ul>
+<li>Unlike conventional file systems, HDFS provides an API that exposes the locations of a file blocks. This allows applica-tions like the MapReduce framework to schedule a task to where the data are located, thus improving the read perform-ance. （提供API能够知道每个文件block的分布位置，这样在mapreduce时候可以尽可能地locally来访问文件）
+</li>
+<li>It also allows an application to set the replication factor of a file. By default a file’s replication factor is three. For criti-cal files or files which are accessed very often, having a higher replication factor improves their tolerance against faults and increase their read bandwidth.（通过增加副本数量的话可以用来提高错误容忍并且提高读带宽，但是同时也会增加写带宽）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2-4" class="outline-5">
+<h5 id="sec-1-1-2-4"><span class="section-number-5">1.1.2.4</span> Image and Journal</h5>
+<div class="outline-text-5" id="text-1-1-2-4">
+
+<ul>
+<li>During startup the NameNode ini-tializes the namespace image from the checkpoint, and then replays changes from the journal until the image is up-to-date with the last state of the file system. A new checkpoint and empty journal are written back to the storage directories before the NameNode starts serving clients.（namenode启动的时候会读取checkpoint信息并且回放journal内容，之后会生成新的checkpoint然后才开始serve client）
+</li>
+<li>If either the checkpoint or the journal is missing, or be-comes corrupt, the namespace information will be lost partly or entirely. In order to preserve this critical information HDFS can be configured to store the checkpoint and journal in multiple storage directories. Recommended practice is to place the di-rectories on different volumes, and for one storage directory to be on a remote NFS server.  The first choice prevents loss from single volume failures, and the second choice protects against failure of the entire node. If the NameNode encounters an error writing the journal to one of the storage directories it automati-cally excludes that directory from the list of storage directories. The NameNode automatically shuts itself down if no storage directory is available.（如果checkpoint或者journal如果丢失的话，那么会namespace会信息丢失。namespace信息还是非常关键的。为了防止这个问题，可以让image信息在1）不同的目录下面备份 2）写到remote server。如果写一个目录失败的话，那么这个目录就直接丢弃下次不写，对于机器也应该是这样的。如果namenode没有任何地方可以记录的话，那么直接shutdown self。）
+</li>
+<li>The NameNode is a multithreaded system and processes requests simultaneously from multiple clients. Saving a trans-action to disk becomes a bottleneck since all other threads need to wait until the synchronous flush-and-sync procedure initi-ated by one of them is complete. In order to optimize this process the NameNode batches multiple transactions initiated by different clients. When one of the NameNode’s threads ini-tiates a flush-and-sync operation, all transactions batched at that time are committed together. Remaining threads only need to check that their transactions have been saved and do not need to initiate a flush-and-sync operation.（如果多个client同时写的话，每个线程都进行flush-sync操作会阻塞其他线程。可以将这些操作全部batch起来然后提交。这个提交之需要其中一个线程发起即可，完成之后其他线程之需要检查已经提交了那么就不需要sync了。这个倒是可以减少disk io）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2-5" class="outline-5">
+<h5 id="sec-1-1-2-5"><span class="section-number-5">1.1.2.5</span> CheckpointNode</h5>
+<div class="outline-text-5" id="text-1-1-2-5">
+
+<ul>
+<li>The NameNode in HDFS, in addition to its primary role serving client requests, can alternatively execute either of two other roles, either a CheckpointNode or a BackupNode. The role is specified at the node startup.（checkpoint node和backup node是namenode一种，可以在启动的时候直接指定角色）
+</li>
+<li>The CheckpointNode periodically combines the existing checkpoint and journal to create a new checkpoint and an empty journal.（checkpoint node做的事情就是合并chkp以及journal） 
+</li>
+<li>The CheckpointNode usually runs on a different host from the NameNode since it has the same memory re-quirements as the NameNode. （对于checkpoint node来说通常也会host在另外一机器上面因为和namenode占用了相同内存大小。我理解这个checkpointnode并没有服务，而仅仅是为了做checkpoint。在合并chkp需要在内存里面进行merge以及update等操作，所以也是相当占用内存的）
+</li>
+<li>It downloads the current check-point and journal files from the NameNode, merges them lo-cally, and returns the new checkpoint back to the NameNode（实现上比较奇怪，是从namenode download下chkp和journal来进行合并的，然后将chkp传回给namenode）
+</li>
+<li>For a large cluster, it takes an hour to process a week-long journal. Good practice is to create a daily checkpoint.（对于大型clutser来说恢复周级别的journal需要小时，所以每天做一次chkp还是比较合理的）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2-6" class="outline-5">
+<h5 id="sec-1-1-2-6"><span class="section-number-5">1.1.2.6</span> BackupNode</h5>
+<div class="outline-text-5" id="text-1-1-2-6">
+
+<ul>
+<li>A recently introduced feature of HDFS is the BackupNode. Like a CheckpointNode, the BackupNode is capable of creating periodic checkpoints, but in addition it maintains an in-memory, up-to-date image of the file system namespace that is always synchronized with the state of the NameNode.（backupnode和chkpnode一样会进行checkpoint，但是backupnode和namenode保持的是一致的数据，因为不需要像chkp node一样进行download）
+</li>
+<li>The BackupNode can be viewed as a read-only NameNode. It contains all file system metadata information except for block locations. It can perform all operations of the regular NameNode that do not involve modification of the namespace or knowledge of block locations.（backup node可以作为一个readonly的name node,但是里面缺少所有的block locations信息。所以如果namenode挂掉的话，backupnode还是需要所有的datanode进行block report)
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2-7" class="outline-5">
+<h5 id="sec-1-1-2-7"><span class="section-number-5">1.1.2.7</span> Upgrades, File Sytsems Snapshots</h5>
+<div class="outline-text-5" id="text-1-1-2-7">
+
+<ul>
+<li>During software upgrades the possibility of corrupting the system due to software bugs or human mistakes increases. The purpose of creating snapshots in HDFS is to minimize potential damage to the data stored in the system during upgrades.（创建snapshot的原因就是为了减少系统升级带来的风险）
+</li>
+<li>The snapshot (only one can exist) is created at the cluster administrator’s option whenever the system is started.（注意snapshot只能够存在一份，从过程上来看的话，snapshot时间非常长，而不像gfs一样轻量）
+<ul>
+<li>If a snapshot is requested, the NameNode first reads the checkpoint and journal files and merges them in memory. Then it writes the new checkpoint and the empty journal to a new location, so that the old checkpoint and journal remain unchanged. （首先会做一个新的checkpoint，这样老的checkpoint以及journal就没有变化）
+</li>
+<li>During handshake the NameNode instructs DataNodes whether to create a local snapshot. The local snapshot on the DataNode cannot be created by replicating the data files direc-tories as this will require doubling the storage capacity of every DataNode on the cluster. Instead each DataNode creates a copy of the storage directory and hard links existing block files into it. When the DataNode removes a block it removes only the hard link, and block modifications during appends use the copy-on-write technique. Thus old block replicas remain un-touched in their old directories.（在heartbeat时候通知datanode进行snapshot。对于snapshot来说实现并不是重新copy所有的chunk，这样会造成空间翻倍，是在新的目录下面做硬链接，链接到原来老的目录下面文件。这样如果之后有写操作的话使用COW）
+</li>
+</ul>
+
+</li>
+<li>The cluster administrator can choose to roll back HDFS to the snapshot state when restarting the system. The NameNode recovers the checkpoint saved when the snapshot was created. DataNodes restore the previously renamed directories and initi-ate a background process to delete block replicas created after the snapshot was made. Having chosen to roll back, there is no provision to roll forward. The cluster administrator can recover the storage occupied by the snapshot by commanding the sys-tem to abandon the snapshot, thus finalizing the software up-grade.（如果想进行回滚的话，那么namenode就会使用原来老的checkpoint并且将之后写的chunk全部删除。所以一旦回滚之后的话，就没有办法roll forward了。当然也可以直接放弃snapshot）
+</li>
+<li>System evolution may lead to a change in the format of the NameNode’s checkpoint and journal files, or in the data repre-sentation of block replica files on DataNodes. The layout ver-sion identifies the data representation formats, and is persis-tently stored in the NameNode’s and the DataNodes’ storage directories. During startup each node compares the layout ver-sion of the current software with the version stored in its stor-age directories and automatically converts data from older for-mats to the newer ones. The conversion requires the mandatory creation of a snapshot when the system restarts with the new software layout version.（系统的升级可能会导致格式上不识别，因为namenode以及datanode的存储目录来说都会带上layout version。这样如果namenode以及datanode升级之后的话，会自动地进行数据转换。但是这种转换要求系统重启时候创建一个snapshot）
+</li>
+</ul>
+
+
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-02 13:24:26 CST</p>
+<p class="date">Date: 2012-08-08 09:37:07 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
