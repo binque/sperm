@@ -37,3 +37,10 @@ hbase支持increment http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/cli
    - 买首饰
    - 泡温泉
 
+
+** tp
+(02:21:45 PM) 唐鹏: 7200379980111771023
+(02:22:54 PM) dirtysalt: 什么支行
+(02:23:01 PM) dirtysalt: 我记得是罗湖
+(02:23:15 PM) 唐鹏: 建设银行 罗湖商业城支行
+

@@ -399,5 +399,15 @@ file:./images/gfs-workload-breakdown-master-ops.png
 ** Related Work
 ** Conclusions
 ** Q&A
+*** gfs所有的副本是否都一样？
+不是。但是gfs保证，如果写成功的话（write/append），那么写的部分在各个副本上面内容是相同的。
 
+*** gfs不保证所有副本一样对于bigtable实现有什么影响吗？
+这个bigtable单机实现可以参考leveldb。leveldb的写只有追加写，并且写一个SSTable的过程是这样的：
+   - 写block，如果写成功的话将offset记录下来
+   - 最后将offset放在文件末尾
+这样读的时候，只需要首先读取文件末尾，得到每个block的offset。因为这些都是写成功的，所以确保随机读数据是正确的。
+
+这点给我们一个启发就是，如果我们裸用gfs的话，也可以使用这种方法。将成功写入的点记录下来，然后只是读取这些成功的记录。
+这个对于append来说是OK的，但是对于write来说就不太好处理了。这也是leveldb实现没有使用random write的比较重要的原因吧。
 
