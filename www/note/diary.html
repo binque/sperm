@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="diary"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-08 18:41:41 CST"/>
+<meta name="generated" content="2012-08-09 13:52:12 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -113,9 +113,8 @@
 </li>
 <li><a href="#sec-1-3">1.3 2012-7-30</a>
 <ul>
-<li><a href="#sec-1-3-1">1.3.1 参观天津机房</a></li>
-<li><a href="#sec-1-3-2">1.3.2 firemacs配置</a></li>
-<li><a href="#sec-1-3-3">1.3.3 wget断点续传</a></li>
+<li><a href="#sec-1-3-1">1.3.1 firemacs配置</a></li>
+<li><a href="#sec-1-3-2">1.3.2 wget断点续传</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-4">1.4 2012-7-31</a>
@@ -126,18 +125,22 @@
 </li>
 <li><a href="#sec-1-5">1.5 2012-8-2</a>
 <ul>
-<li><a href="#sec-1-5-1">1.5.1 身体状况</a></li>
-<li><a href="#sec-1-5-2">1.5.2 关于信息整理</a></li>
+<li><a href="#sec-1-5-1">1.5.1 关于信息整理</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-6">1.6 2012-8-3</a>
 <ul>
 <li><a href="#sec-1-6-1">1.6.1 compaq直接掉电</a></li>
-<li><a href="#sec-1-6-2">1.6.2 搜索其他时区时间</a></li>
-<li><a href="#sec-1-6-3">1.6.3 关于关税问题</a></li>
-<li><a href="#sec-1-6-4">1.6.4 购买macbook air</a></li>
 </ul>
 </li>
+<li><a href="#sec-1-7">1.7 2012-8-7</a>
+<ul>
+<li><a href="#sec-1-7-1">1.7.1 搜索其他时区时间</a></li>
+<li><a href="#sec-1-7-2">1.7.2 关于关税问题</a></li>
+<li><a href="#sec-1-7-3">1.7.3 购买macbook air</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-8">1.8 2012-8-9</a></li>
 </ul>
 </li>
 </ul>
@@ -242,59 +245,8 @@
 </div>
 
 <div id="outline-container-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> 参观天津机房</h4>
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> firemacs配置</h4>
 <div class="outline-text-4" id="text-1-3-1">
-
-<p>今天和同事去看了一下天津华苑的机房，在梓苑路上面。通常机房是有一些通信运营商来建立数据中心的，比如联通移动电信这些公司，当然也不排除一些
-很大的互联网公司比如facebook以及google等，自己建立数据中心。建立数据中心大致需要：
-</p><ul>
-<li>地皮
-</li>
-<li>传输设施
-</li>
-<li>电源供应
-</li>
-<li>空调设施
-</li>
-<li>机柜
-</li>
-</ul>
-
-<p>等。今天看的是联通建设的数据中心。但是这样的数据中心通常只是考虑单个地域的数据中心建设，为了更好的提供服务，所以需要有单独的IDC管理团队。
-IDC（internet data center）管理团队做的事情大致包括下面这些事情：
-</p><ul>
-<li>从各个数据中心购买机柜
-</li>
-<li>提供一些额外的跨地域服务
-</li>
-<li>可以让团队帮忙去管理机器比如重启机器等
-</li>
-</ul>
-
-<p>说白了IDC管理团队就是中介，但是这个中介做了一些资源搭配以及方案设计，方便客户更好地使用，我们通常是从IDC管理团队购买服务。对于那些巨头公司来说的话，通常也有自己的IDC管理团队。
-百度在中国没有权力自己建立数据中心，但是他们也有自己的IDC管理团队，他们绕过其他IDC管理团队直接从数据中心购买资源。从而对于我们普通客户来说，要做的事情大致就是：
-</p><ul>
-<li>选择IDC管理团队比如世纪互联
-</li>
-<li>自己购买机器以及交换机等设备
-</li>
-<li>和IDC管理团队定价
-</li>
-</ul>
-
-<p>今天看到的一个机柜有42U，所谓xU就是说一个服务器占用的厚度（通常长度和宽度都是相同的）。如果一个服务器占用4U的话，那么意味着一个机柜最多也就
-占用10台服务器。另外限制机柜hold服务器数目因素就是电流大小，9A/12A这样。就我这次观察看到的情况来说，一个机柜里面大约放置了7-10台服务器（每个大约占据2U），
-所以猜想限制这些服务器因素应该是电流大小，这大概也是做低功耗的意义吧。每个服务器层面都有两个插座（主备），接到一楼的电源。空调是从下向上吹冷气的，
-大约需要维持在20-25度左右，空气湿度在50-60%左右。每个小机房大约有20个机柜吧，最后通过一个交换机链接起来。对于现在普通的交换机来说，带宽也就是在1Gbps上，
-和服务器的网卡带宽相似。如果服务器需要提供内网和外网地址的话，需要提供两块网卡绑定IP。
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> firemacs配置</h4>
-<div class="outline-text-4" id="text-1-3-2">
 
 <p>原来firemacs的配置放在了pref.js里面（可以通过about:config察看到），所以应该是可以进行同步的。
 但是有个问题就是，这个配置必须等待firefox正常关闭之后才会生效，否则只是存在于Cache里面，这点非常重要。
@@ -308,9 +260,9 @@ NOTE（dirlt）：似乎配置文件并没有进行同步。看来还必须自�
 
 </div>
 
-<div id="outline-container-1-3-3" class="outline-4">
-<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> wget断点续传</h4>
-<div class="outline-text-4" id="text-1-3-3">
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> wget断点续传</h4>
+<div class="outline-text-4" id="text-1-3-2">
 
 <p>使用wget -c就可以使用断点续传功能，但是这个似乎需要服务器端的支持。服务器需要支持从某一个offset读取文件。
 </p>
@@ -374,18 +326,8 @@ NOTE（dirlt）：似乎配置文件并没有进行同步。看来还必须自�
 </div>
 
 <div id="outline-container-1-5-1" class="outline-4">
-<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> 身体状况</h4>
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> 关于信息整理</h4>
 <div class="outline-text-4" id="text-1-5-1">
-
-<p>今天早上跑了一下步，感觉身体好多了。晚上回去早点休息，早上早起锻炼一下确实会精神好很多。坚持！
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-1-5-2" class="outline-4">
-<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> 关于信息整理</h4>
-<div class="outline-text-4" id="text-1-5-2">
 
 <p>关于信息整理的话，最近又有一些想法。
 </p>
@@ -444,12 +386,20 @@ NOTE（dirlt）：这里界限还不是很明确。其实还是看个人爱好�
 ubuntu，如果购买air的话那么又要使用osx（其实切换代价还好吧，多接触这些优秀系统似乎也不是坏事）。
 </p>
 </div>
+</div>
 
 </div>
 
-<div id="outline-container-1-6-2" class="outline-4">
-<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> 搜索其他时区时间</h4>
-<div class="outline-text-4" id="text-1-6-2">
+<div id="outline-container-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> 2012-8-7</h3>
+<div class="outline-text-3" id="text-1-7">
+
+
+</div>
+
+<div id="outline-container-1-7-1" class="outline-4">
+<h4 id="sec-1-7-1"><span class="section-number-4">1.7.1</span> 搜索其他时区时间</h4>
+<div class="outline-text-4" id="text-1-7-1">
 
 <p>直接在google.com里面搜索即可，比如想知道加州时间的话搜索“CA time”即可.wonderful:)
 </p>
@@ -457,9 +407,9 @@ ubuntu，如果购买air的话那么又要使用osx（其实切换代价还好�
 
 </div>
 
-<div id="outline-container-1-6-3" class="outline-4">
-<h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> 关于关税问题</h4>
-<div class="outline-text-4" id="text-1-6-3">
+<div id="outline-container-1-7-2" class="outline-4">
+<h4 id="sec-1-7-2"><span class="section-number-4">1.7.2</span> 关于关税问题</h4>
+<div class="outline-text-4" id="text-1-7-2">
 
 <p>这几天想入手一个macbook air，看好了配置是
 </p><ul>
@@ -485,9 +435,9 @@ ubuntu，如果购买air的话那么又要使用osx（其实切换代价还好�
 
 </div>
 
-<div id="outline-container-1-6-4" class="outline-4">
-<h4 id="sec-1-6-4"><span class="section-number-4">1.6.4</span> 购买macbook air</h4>
-<div class="outline-text-4" id="text-1-6-4">
+<div id="outline-container-1-7-3" class="outline-4">
+<h4 id="sec-1-7-3"><span class="section-number-4">1.7.3</span> 购买macbook air</h4>
+<div class="outline-text-4" id="text-1-7-3">
 
 <p>终于决定从HK买air了，多亏了tp同学帮忙。i7处理器，8G内存，128Gssd，折合人民币大概在8600.（看了一下在mainland买同样配置在9800左右，囧）
 因为更换了配置，所以大概需要等个1-2周才能够送到他住的地方（应该是我的生日8.15他才能收到），然后他坐车到深圳在那边用顺丰给我快递过来。辛苦了。
@@ -495,15 +445,22 @@ ubuntu，如果购买air的话那么又要使用osx（其实切换代价还好�
 <p>
 给他的香港账户汇款是个问题，他的账户是恒生银行的，不知道招行或者是交行都啥办法汇款？如果没有的话有什么比较方便的途经可以汇款吗？
 </p>
+</div>
+</div>
 
 </div>
+
+<div id="outline-container-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> 2012-8-9</h3>
+<div class="outline-text-3" id="text-1-8">
+
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-08 18:41:41 CST</p>
+<p class="date">Date: 2012-08-09 13:52:12 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

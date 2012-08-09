@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="todo"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-08 20:35:08 CST"/>
+<meta name="generated" content="2012-08-09 20:10:53 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -154,17 +154,23 @@
 <li><a href="#sec-1-4-5">1.4.5 了解几种DB Riak,CouchDB,CouchBase,MemSQL</a></li>
 <li><a href="#sec-1-4-6">1.4.6 阅读完Core Java I</a></li>
 <li><a href="#sec-1-4-7">1.4.7 整理阅读收藏列表以及浏览器列表</a></li>
+<li><a href="#sec-1-4-8">1.4.8 Job Scheduling for Multi-User MapReduce Clusters</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-5">1.5 read it later</a>
 <ul>
 <li><a href="#sec-1-5-1">1.5.1 BigTable</a></li>
 <li><a href="#sec-1-5-2">1.5.2 MapReduce</a></li>
-<li><a href="#sec-1-5-3">1.5.3 Kafka</a></li>
-<li><a href="#sec-1-5-4">1.5.4 The anatomy of google</a></li>
-<li><a href="#sec-1-5-5">1.5.5 RSS redplanet</a></li>
-<li><a href="#sec-1-5-6">1.5.6 RSS system we make</a></li>
-<li><a href="#sec-1-5-7">1.5.7 RSS paper planes</a></li>
+<li><a href="#sec-1-5-3">1.5.3 YARN</a></li>
+<li><a href="#sec-1-5-4">1.5.4 mapreduce里面如何做join</a></li>
+<li><a href="#sec-1-5-5">1.5.5 pregel</a></li>
+<li><a href="#sec-1-5-6">1.5.6 Percolator</a></li>
+<li><a href="#sec-1-5-7">1.5.7 dremel</a></li>
+<li><a href="#sec-1-5-8">1.5.8 kafka</a></li>
+<li><a href="#sec-1-5-9">1.5.9 The anatomy of google</a></li>
+<li><a href="#sec-1-5-10">1.5.10 RSS redplanet</a></li>
+<li><a href="#sec-1-5-11">1.5.11 RSS system we make</a></li>
+<li><a href="#sec-1-5-12">1.5.12 RSS paper planes</a></li>
 </ul>
 </li>
 </ul>
@@ -621,6 +627,19 @@
 <h4 id="sec-1-4-7"><span class="section-number-4">1.4.7</span> <span class="todo TODO"> TODO</span> 整理阅读收藏列表以及浏览器列表</h4>
 <div class="outline-text-4" id="text-1-4-7">
 
+</div>
+
+</div>
+
+<div id="outline-container-1-4-8" class="outline-4">
+<h4 id="sec-1-4-8"><span class="section-number-4">1.4.8</span> <span class="todo TODO"> TODO</span> Job Scheduling for Multi-User MapReduce Clusters</h4>
+<div class="outline-text-4" id="text-1-4-8">
+
+<ul>
+<li><a href="http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html">http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html</a>
+</li>
+</ul>
+
 
 </div>
 </div>
@@ -651,7 +670,7 @@
 </div>
 
 <div id="outline-container-1-5-3" class="outline-4">
-<h4 id="sec-1-5-3"><span class="section-number-4">1.5.3</span> <span class="todo TODO"> TODO</span> Kafka</h4>
+<h4 id="sec-1-5-3"><span class="section-number-4">1.5.3</span> <span class="todo TODO"> TODO</span> YARN</h4>
 <div class="outline-text-4" id="text-1-5-3">
 
 </div>
@@ -659,7 +678,7 @@
 </div>
 
 <div id="outline-container-1-5-4" class="outline-4">
-<h4 id="sec-1-5-4"><span class="section-number-4">1.5.4</span> <span class="todo TODO"> TODO</span> The anatomy of google</h4>
+<h4 id="sec-1-5-4"><span class="section-number-4">1.5.4</span> <span class="todo TODO"> TODO</span> mapreduce里面如何做join</h4>
 <div class="outline-text-4" id="text-1-5-4">
 
 </div>
@@ -667,7 +686,7 @@
 </div>
 
 <div id="outline-container-1-5-5" class="outline-4">
-<h4 id="sec-1-5-5"><span class="section-number-4">1.5.5</span> <span class="todo TODO"> TODO</span> RSS redplanet</h4>
+<h4 id="sec-1-5-5"><span class="section-number-4">1.5.5</span> <span class="todo TODO"> TODO</span> pregel</h4>
 <div class="outline-text-4" id="text-1-5-5">
 
 </div>
@@ -675,7 +694,7 @@
 </div>
 
 <div id="outline-container-1-5-6" class="outline-4">
-<h4 id="sec-1-5-6"><span class="section-number-4">1.5.6</span> <span class="todo TODO"> TODO</span> RSS system we make</h4>
+<h4 id="sec-1-5-6"><span class="section-number-4">1.5.6</span> <span class="todo TODO"> TODO</span> Percolator</h4>
 <div class="outline-text-4" id="text-1-5-6">
 
 </div>
@@ -683,8 +702,48 @@
 </div>
 
 <div id="outline-container-1-5-7" class="outline-4">
-<h4 id="sec-1-5-7"><span class="section-number-4">1.5.7</span> <span class="todo TODO"> TODO</span> RSS paper planes</h4>
+<h4 id="sec-1-5-7"><span class="section-number-4">1.5.7</span> <span class="todo TODO"> TODO</span> dremel</h4>
 <div class="outline-text-4" id="text-1-5-7">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-8" class="outline-4">
+<h4 id="sec-1-5-8"><span class="section-number-4">1.5.8</span> <span class="todo TODO"> TODO</span> kafka</h4>
+<div class="outline-text-4" id="text-1-5-8">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-9" class="outline-4">
+<h4 id="sec-1-5-9"><span class="section-number-4">1.5.9</span> <span class="todo TODO"> TODO</span> The anatomy of google</h4>
+<div class="outline-text-4" id="text-1-5-9">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-10" class="outline-4">
+<h4 id="sec-1-5-10"><span class="section-number-4">1.5.10</span> <span class="todo TODO"> TODO</span> RSS redplanet</h4>
+<div class="outline-text-4" id="text-1-5-10">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-11" class="outline-4">
+<h4 id="sec-1-5-11"><span class="section-number-4">1.5.11</span> <span class="todo TODO"> TODO</span> RSS system we make</h4>
+<div class="outline-text-4" id="text-1-5-11">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-12" class="outline-4">
+<h4 id="sec-1-5-12"><span class="section-number-4">1.5.12</span> <span class="todo TODO"> TODO</span> RSS paper planes</h4>
+<div class="outline-text-4" id="text-1-5-12">
 
 </div>
 </div>
@@ -693,7 +752,7 @@
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-08 20:35:08 CST</p>
+<p class="date">Date: 2012-08-09 20:10:53 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

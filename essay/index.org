@@ -66,10 +66,14 @@
 ** Distributed System
    - [[file:streambase.org][streambase]] 在实现baidu in-house的分布式实时流式计算系统之前，调研的商用流式计算系统。没有办法获得源代码只能够从文档中猜测其内部实现以及参考其提供的功能与接口。
    - [[file:chubby.org][chubby]] google为松耦合分布式系统开发的锁服务，但是在现实中还可以作为名字服务来使用。
-   - [[file:gfs.org][gfs]] google分布式基础架构三驾马车之一，分布式文件系统。
+   - [[file:gfs.org][gfs]] google分布式基础架构的分布式文件系统。
+   - [[file:./mapreduce.org][mapreduce]] google分布式基础架构的分布式计算系统。
+   - [[file:./bigtable.org][bigtable]] google分布式基础架构的分布式表格系统。
    - [[file:hadoop.org][hadoop]] Apache基金会开发的分布式系统基础架构。Hadoop是这个项目的总称下面包含很多子项目。
-     - [[file:hdfs.org][hdfs]] Apache Hadoop项目的分布式文件系统，GFS的开源实现但是功能上还是存在一些差别。
-     - [[file:hbase.org][hbase]] Apache Hadoop项目的分布式表格系统，BigTable的开源实现但是功能上还是存在一些差别。
+     - [[file:hdfs.org][hdfs]] Apache Hadoop项目的分布式文件系统，GFS的开源实现。
+     - [[file:hbase.org][hbase]] Apache Hadoop项目的分布式表格系统，BigTable的开源实现。
+     - [[file:./mapred.org][mapred]] Apache Hadoop项目的分布式计算系统，MapReduce的开源实现。
+     - [[file:./zookeeper.org][zookeeper]] Apache Hadoop项目的分布式锁服务，Chubby的开源实现。
      - [[file:oozie.org][oozie]] Apache Hadoop项目的工作流系统，可以将多个map-reduce作业组合到一个逻辑单元中。支持作业之间的相互依赖，同时允许时间以及数据来触发作业。
    
 ** Programming Language and Design Pattern
@@ -86,6 +90,7 @@
      - [[file:note/struggle-with-ubuntu.org][折腾Ubuntu]]
      - [[file:note/switch-back-to-windows.org][切换回windows]]
      - [[file:note/purchase-compaq-notebook.org][购买compqa笔记本]]
+     - [[file:./note/visit-tj-data-center.org][参观天津机房]]
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
    - [[file:./note/fun.org][fun]] 搞笑的文字等。通常这些文字是不配图的，纯文字。那些需要配图的内容我通常放在了blog里面。
    - [[file:note/movie.org][movie]] 自己看过的电影以及里面的一些经典台词和对白。
