@@ -137,6 +137,18 @@
 (ac-config-default)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
 (global-auto-complete-mode 1)
+(setq ac-modes
+      (append ac-modes '(org-mode 
+                         objc-mode 
+                         sql-mode
+                         c++-mode
+                         java-mode
+                         python-mode
+                         change-log-mode 
+                         text-mode
+                         makefile-mode
+                         autoconf-mode)))
+
 
 ;;; yacc-mode.
 (require 'yacc-mode)
@@ -297,9 +309,9 @@
 
 ;;; org-mode. I have to include it because I've changed the code.
 ;; sudo apt-get install org-mode
-;; BEGIN_VERSE TODO(dirlt):?
+;; BEGIN_VERSE 下面两种都是引用原文格式
 ;; BEGIN_QUOTE
-;; BEGIN_CENTER
+;; BEGIN_CENTER 引用文字居中
 ;; C-C C-e t // 插入export模版
 ;; C-c C-n //下一个标题
 ;; C-c C-p //上一个标题
@@ -310,6 +322,10 @@
 ;; C-c C-l //查看连接
 ;; C-cxa // 日程安排 org-agenda
 ;; C-c C-e // export.
+;; C-c C-c // 在脚注的标记与内容之间进行切换
+;; #+CAPTION: 表格标题，可以用在图片或者是表格上面
+;; S-M-RET 在同级下面创建一个TODO项目
+;; S-up/down 修改项目的优先级
 (require 'org-install)
 (require 'org-publish)
 (define-key global-map "\C-ca" 'org-agenda)
@@ -371,6 +387,6 @@
 ;; use yas/completing-prompt when ONLY when `M-x yas/insert-snippet'
 ;; thanks to capitaomorte for providing the trick.
 (defadvice yas/insert-snippet (around use-completing-prompt activate)
-     "Use `yas/completing-prompt' for `yas/prompt-functions' but only here..."
-       (let ((yas/prompt-functions '(yas/completing-prompt)))
-             ad-do-it))
+  "Use `yas/completing-prompt' for `yas/prompt-functions' but only here..."
+  (let ((yas/prompt-functions '(yas/completing-prompt)))
+    ad-do-it))
