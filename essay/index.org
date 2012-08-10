@@ -43,6 +43,7 @@
    - [[file:linux.org][linux]] 主要是介绍Linux下面一些工具使用以及和内核相关的知识。（将原来[[file:./APUE.org][APUE]] 和 [[file:./UNP.org][UNP]] 中的一部分内容放在这里面来了，这样可以保持这两篇内容比较稳定）
    - [[file:fvwm.org][fvwm]] F* Virtual Windows Manager.Linux下面高度可定制化的窗口管理器。
    - [[file:./mac.org][mac]] 如何更好地使用mac。以前使用windows，后来转向ubuntu，再后来买了个air，熟悉mac又需要一段时间了。
+   - [[file:./license.org][license]] 一些常见的开源协议。不知道自己以后是否可以用得上：）
 
 ** Network Programming
    - [[file:unp.org][unp]] Unix网络编程(Unix Network Programming),W. Richard Stevens的又一神作。笔记里面只是对于TCP原理有比较详细讨论，这部分笔记也包含了TCP Illustrated v1里面和TCP相关的章节内容。对于编程方面也着重TCP socket使用，毕竟在大部分应用场景下面我们选用TCP模型更多，并且TCP里面有很多非常琐碎的知识。
@@ -91,8 +92,15 @@
      - [[file:note/switch-back-to-windows.org][切换回windows]]
      - [[file:note/purchase-compaq-notebook.org][购买compqa笔记本]]
      - [[file:./note/visit-tj-data-center.org][参观天津机房]]
+     - [[file:./note/baidu-bit-shanghai-route.org][百度BIT上海行程]]
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
-   - [[file:./note/fun.org][fun]] 搞笑的文字等。通常这些文字是不配图的，纯文字。那些需要配图的内容我通常放在了blog里面。
+   - [[file:./note/fun.org][fun]] 搞笑的文字等。
    - [[file:note/movie.org][movie]] 自己看过的电影以及里面的一些经典台词和对白。
    - [[file:./note/pregnancy.org][pregnancy]] 怀孕的一些注意事项包括时间选择，生活习惯，孕前检查以及饮食选择。
    - [[file:note/health.org][health]] 拥有健康的身体才能够更好地享受生活和工作。
+   - [[file:./note/recipe.org][recipe]] 菜谱。是谁说的，活着就是为了更好的吃：）
+   - [[file:./note/book.org][book]] 自己看过的一些书，可能不太好分类所以全部放在这里了。
+   - [[file:note/house.org][house]] 住房问题。在天朝这是一个大问题。
+   - [[file:note/to-death.org][to-death]] 给离去的亲人们。
+   - [[file:note/naruto.org][naruto]] 火影忍者，你懂的。
+

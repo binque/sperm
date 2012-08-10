@@ -93,6 +93,8 @@ CLOSED: [2012-07-25 Wed 22:37]
     - http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html
 
 
+*** TODO 整理blog
+
 ** read it later
 *** TODO BigTable
 *** TODO YARN
