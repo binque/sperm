@@ -77,6 +77,7 @@ PATH=$HOME/utils/oozie-2.3.2-cdh3u3/bin:$PATH
 export PATH
 export MANPATH
 
+export M2_REPO=$HOME/.m2/repository/
 export LC_ALL=zh_CN.UTF8
 export LANG=zn_CN.UTF8
 alias ed="emacs"
