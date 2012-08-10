@@ -1,0 +1,106 @@
+* algorithm
+** glibc strlen实现分析
+参考链接 http://www.kuqin.com/language/20071113/2308.html. 这里和链接有点不太一样的就是，这个版本glibc实现考虑了非ASCII字符。
+
+#+BEGIN_SRC C++
+size_t strlen(str)
+const char *str;
+{
+  const char *char_ptr;
+  const unsigned long int *longword_ptr;
+  unsigned long int longword, himagic, lomagic;
+  
+  // 首先是需要对齐到unsigned long int这个长度.
+  // 之后就是每个unsigned long int来进行判断.
+  // 这样可以加快速度
+  
+  /* Handle the first few characters by reading one character at a time.
+   * Do this until CHAR_PTR is aligned on a longword boundary.  */
+  for (char_ptr = str; ((unsigned long int) char_ptr
+                        & (sizeof(longword) - 1)) != 0; ++char_ptr)
+    if (*char_ptr == '\0')
+      return char_ptr - str;
+
+  /* All these elucidatory comments refer to 4-byte longwords,
+   * but the theory applies equally well to 8-byte longwords.  */
+
+  longword_ptr = (unsigned long int *) char_ptr;
+
+  // 为了简化处理的话，我们可以认为sizeof(longword)==8，这样
+  // himagic = 0x8080808080808080L
+  // lomagic = 0x0101010101010101L
+  
+  /* Bits 31, 24, 16, and 8 of this number are zero.  Call these bits
+   * the "holes."  Note that there is a hole just to the left of
+   * each byte, with an extra at the end:
+   *
+   * bits:  01111110 11111110 11111110 11111111
+   * bytes: AAAAAAAA BBBBBBBB CCCCCCCC DDDDDDDD
+   *
+   * The 1-bits make sure that carries propagate to the next 0-bit.
+   * The 0-bits provide holes for carries to fall into.  */
+  himagic = 0x80808080L;
+  lomagic = 0x01010101L;
+  if (sizeof(longword) > 4) {
+    /* 64-bit version of the magic.  */
+    /* Do the shift in two steps to avoid a warning if long has 32 bits.  */
+    himagic = ((himagic << 16) << 16) | himagic;
+    lomagic = ((lomagic << 16) << 16) | lomagic;
+  }
+  if (sizeof(longword) > 8)
+    abort();
+
+  /* Instead of the traditional loop which tests each character,
+   * we will test a longword at a time.  The tricky part is testing
+   * if *any of the four* bytes in the longword in question are zero.  */
+  for (;;) {
+    longword = *longword_ptr++;
+    
+    // 这里原理非常简单,假设在unsigned long int里面存在一个0的话
+    // 那么0-lomagic的话会造成高位为1.如果!=0的话那么至少>=1就不会造成对应字节高字节为1了.
+    // 当然这里还有一种情况就是这个不是一个ASCII字符.
+    // 使用& ~longword来判断的话,如果高位就为1的话那么就会置为0,这样就排除了非ASCII情况.
+    // 然后& himagic的话,来判断是否有高位为1.如果有的话说明这几个字节里面存在0.
+    // 如果存在0的话那么就只是针对这8个字节进行枚举
+    
+    if (((longword - lomagic) & ~longword & himagic) != 0) {
+      /* Which of the bytes was the zero?  If none of them were, it was
+       * a misfire; continue the search.  */
+
+      const char *cp = (const char *) (longword_ptr - 1);
+
+      if (cp[0] == 0)
+        return cp - str;
+      if (cp[1] == 0)
+        return cp - str + 1;
+      if (cp[2] == 0)
+        return cp - str + 2;
+      if (cp[3] == 0)
+        return cp - str + 3;
+      if (sizeof(longword) > 4) {
+        if (cp[4] == 0)
+          return cp - str + 4;
+        if (cp[5] == 0)
+          return cp - str + 5;
+        if (cp[6] == 0)
+          return cp - str + 6;
+        if (cp[7] == 0)
+          return cp - str + 7;
+      }
+    }
+  }
+}
+#+END_SRC
+
+
+** 一致性hash(Consistent hashing)
+   - http://en.wikipedia.org/wiki/Consistent_hash
+   - http://www.tomkleinpeter.com/2008/03/17/programmers-toolbox-part-3-consistent-hashing/
+   - http://cn.last.fm/user/RJ/journal/2007/04/10/rz_libketama_-_a_consistent_hashing_algo_for_memcache_clients
+   - http://www.martinbroadhurst.com/Consistent-Hash-Ring.html
+   - http://www.lexemetech.com/2007/11/consistent-hashing.html
+The basic idea behind the consistent hashing algorithm is to hash both objects and caches using the same hash function.The reason to do this is to map the cache to an interval, which will contain a number of object hashes. If the cache is removed then its interval is taken over by a cache with an adjacent interval. All the other caches remain unchanged.
+
+一致性hash基本思想就是将所有对象都使用同样的hash函数进行hash(包括要被分布的对象，以及分布到的位置）。如果某个分布位置被移除的话，那么原本在这个位置上的对象就会分布在临近的分布位置上，而其他的对象却不用移动自己的位置。如果分布位置之间interval间隔过大的话那么可以制作virtual node来使得interval映射足够小，而这些virtual node映射到同一个node节点上面。实际上上述文章中也进行实验证明interval小的话那么standard deviations也变小了，每个node均摊的object基本均匀了：）。
+
+** 

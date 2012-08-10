@@ -106,3 +106,733 @@ Increasingly, financial auditors are using Benford’s Law to detect possible fr
 我想告诉大家，软件质量必须从头抓起，为了抢先推出产品而粗糙编写的程序代码等到临出门时再来改进就来不及了，根本无可救药。程序员赶工期而让质检(quality assurance,QA)人员收拾残局的做法无异于饮鸩止渴。记住，慢功出细活。想要编写出无懈可击的高水平软件，就必须在深思熟虑的基础上循序渐进。这条路可能很难走，但是他却是唯一的正确的道路。那些持其他观点的人不时有自己的小算盘，就是想看你的笑话。
 
 作为软件开发人员，必须了解一件事情：你参加开发的每个软件项目都可能是“紧急情况”，至少是那些项目经理们都喜欢这么讲。这不过是软件开发行业里的“狼来了”的故事，经理们之所以喜欢这么讲，目的就是为了催促你更快些出程序。销售人员的另一桩“罪行”是在软件的功能方面夸大其词。为了让自己的产品能够从竞争者当中脱颖而出，销售人员经常会在顾客介绍软件功能的时候信口开河。然后他们会跑到你的办公室中宣部这个消息，可六个拟开发这些新功能的时间仅仅只有三天。作为软件开发人员，想要在这种情况下保护自己，可以在项目开始之处把各项需求罗列出来并且让公司销售部门的领导签字认可。这样当某个销售人员跑到你的办公室并试图迫使你就范的时候，就可以把这份由他们头儿签字的文件摔在他脸上，让他滚蛋。
+** Unix程序设计艺术
+--------------------
+*McIlroy*
+
+   - make each program do one thing well.to do a new job,build a fresh rather than complicate the old programs by adding new features.每个程序只需要做一件事情但是应该做好，尽可能的重新构造新的程序而不再原来的程序里面添加新功能
+   - expect the output of every program to become the input to another.as yet unknown,program.Don’t clutter output with extraneous information.Avoid stringently columnar of binary input formats.Don’t insist on interactive input.宽输入严输出，并且不要使用交互行为
+   - Design and build software,even operating systems,to be tried early,ideally within weeks.Don’t hesitate to throw away the clumsy parts and rebuild them(well,i can’t do this at least right now)尽可能早的开始设计和动手编写
+   - Use tools in preference to unskilled help to lighten a programming task,even if your have to detour to build the tools and expect to throw some of them out after you have finished using them.学习使用一些工具即使这个项目完成之后你也不需要它了
+   - this is the unix philosophy:write program that do one thing and do it well,write programs to work together.write programs to handle the text streams,because that is universal interface. 每个程序只做一件事情但是做好，并且只是处理text，因为纯文本才是通于的界面
+
+--------------------
+*Rob Pike*
+
+   - you can’t tell where a program is going the spend its time.Bottlenecks occus in surprising places,so don’t try to second guess and put in a speed hack until you’ve proven that’s where the bottlenecks is.先测量程序找出瓶颈然后再考虑优化
+   - measure.don’t tune for speed until you’ve measured,and even then don’t unless one part of the code overwhelms the rest 优化之前进行测量
+   - fancy algorithms are slow when n is small,and n is usually small.fancy algorithms have big constants.until you know that n is frequently going to be big.don’t get fancy(even if n does get big,use the rule 2 first)尽管时间复杂度是一个好东西，但是永远别忘了常数因子。
+   - fancy algorithms are buggier than simple ones,and they’re much harder to implement.use simple algorithm as well as simple data structures.复杂的算法总是更容易出bug，所以尽可能在数据结构和算法设计上都简单一些
+   - data dominates.if you’ve chosen the right data structures and organized things well,the algorithms will almost be self-evident.data structures,not algorithms,are central to programming使用数据驱动而不是代码驱动，这样算法能够自表示
+   - there is no rule 6 前面5条就是全部
+
+--------------------
+*17 rules from eric raymond in the the art of unix programming*
+   - rule of modularity:write simple parts connected by clean interfaces 模块接口
+   - rule of clarity:clarity is better than cleveness 清晰
+   - ruls of composition:design programs to be connected to the other programs 程序之间接口
+   - rule of separation:separate policy from mechnasim;separate interfaces from engines 分离
+   - rule of simplicity:design for simplicity;add complexity only where you must 简单
+   - rule of parsimony:write a big program only when it’s clear by demonstration that nothing else will do 节省
+   - rule transparency:design for visibility to make inspection and debugging easier 透明
+   - rule of robustness:robustness is the child of transparency and simplicity 健壮
+   - rule of representation:fold knowledge into data so program logic can be stupid and robust 数据驱动
+   - rule of least surprise:in the interface design,always do the least surprising thing 别让人吃惊
+   - rule of silence:when a program has nothing surprising to say,ut should say nothing 该沉默时就沉默
+   - rule of repair:when you must fail,fail noisily and as soon as possible 自修复
+   - rule of economy:programmer time is expensive;conserver it in preference to machine time 人的时间比机器时间宝贵
+   - rulf of generation:avoid hand-hacking;write programs to write programs when you can(well,i think it’s right,there is many useful programs in unix generating programs for you like yacc(bison),lex(flex),twig,texinfo,ect) 让机器帮助你写程序
+   - rule of optimization:prototype before polishing.get it working before you optimize it 优化的准则
+   - rule of diversity:distrust all claims for “one true way” 多样
+   - rulf of extensibility:design for the future,because it will be here sooner than you think. 扩展
+
+--------------------
+Unix programmers tend to be good at writing references,and most Unix documentation has the flavor of a reference or aide memoire for someone who thinks like the document-writer but is not yet an expert at his or her software.The results often look much more cryptic and sparse than they actuallt are.Read every word carefully,because whatever you want to know will probably be there,or deducible from what’s there.Read every word carefully,because you will seldom be told anything twice. 
+
+Unix程序员大都是这些手册的编写者，因此对于入门或者是刚刚使用这个软件的人，你需要仔细读每一句，因为如果不仔细阅读的话后面就不会再提到了:-)
+
+--------------------
+*Best Pactices For Writing Unix Documentation*
+   - When your write documentation for people within the Unix curlture,don’t dumb it down.If you write as if for idiots,you will be written off as an idiot yourself.Dumbing documnetation down is very different from makeing it accessible.The former is lazy and moits important things,where as the latter requires careful thought and ruthless editing
+   - Don’t think for a moment that volume will be mistaken for quality.And especially,never ever omit
+functional details because you frear they might be confusing,nor warnings about problems because you don’t wnat to look bad.It’s unanticipated problems that will cost you credibility and users,not the prblems you wew honest about. 一点就是永远不要把文档写成给idiot看的，易懂和这种事由很大分别的. 二点就是需要将所有的功能全部写清楚，即使这样看上去不好，但是这是你的honesty，而且能够让用户能清楚地了解现在软件所能够提供的功能
+   - Good Documentation is usually the most visible sign of what separates a solid contribution from a quick and dirty hack.If you have the time and care necessary to produce it,you will find you’are already 85% of the way to having your patch accepted by most developers. 对于文档的态度，好的文档立刻就和差的东西区分开来，所以如果一旦编写了好的文档，那么85%的成功已经到手了:-)
+
+--------------------
+release early,release often.a rapid release tempo means quick and effective feedback,when each increamental release is small,changing course in repsonse to read-world feedback is eaiser 
+
+尽可能的缩短发布的时间并且尽可能的迅速反馈:-)
+
+--------------------
+*Unix Interface Design Patterns* Unix接口的设计模式(这个东西教会我很多:-)，重点推荐)
+   - The Filter Pattern 这种过滤器模式，Text->Filter->Text，格式需要尽量的统一，采用标准输入和输出
+   - The Cantrip Pattern没有任何输入输出的，但是有一定的特定动作执行
+   - The Source Pattern这是模式没有任何输入，只存在输出的模式
+   - The Sink Pattern这种模式是制进行输出的或者是不需要输入文件的模式
+   - The Compiler Pattern从命令行中指定配置的参数，然后从文件中输入向文件输出，这里面指通过命令行进行一些选项的开关是至关重要的
+   - The ed Pattern这种事一种交互式的操作，输入一个键值能执行特定的操作并且返回特定的执行信息
+   - The Rogue Pattern 这也是一种交互式的的操作，输入一个键值但是能从Character Cell界面上看到对应的效果。这种比GUI好的方式在如果只是传送Character Cell数据更小
+   - The ‘Separated Engine and Interface’ Pattern分离的引擎和界面，但是对于下面还有更细的划分，
+     - Configurator/Actor Pair存在一个编写配置程序和执行这个配置的程序，将interface的内容写在config文件在中然后执行
+     - Spooler/Darmon Pair类似于消费者和生产者模型，对于批量式是很有用的
+     - Driver/Engine Pair这种可以通过提供多种UI方式的Driver来操作Driver，是一种非常理想的方式,GIMP实现的方式
+     - Client/Server Pair这种模式就不说了CS模式
+   - CLI Server这个没有看懂，书上面说是针对于POP,IMAP协议
+   - Language-Based Interface Pairl这种模式也是非常通用的而且超强大，需要图利编写一门交互式的语言，最好还是选用Scheme，现在又一些实现比如GNU的guile或者是Emacs中那样使用Elisp
+
+--------------------
+polyvalent program pattern这个是针对一个程序提供多种开发方式,理想的方式是
+   - Xuers -> graphical user inteface -> service library
+   - termial users -> command line interface -> service library
+   - scripts -> scipting interface -> service library
+最终都是通过service library来提供原始的服务
+
+--------------------
+spend your time on design quality,not the low-level details,and automate away everything you can-including the detail work of runtime debugging. 这也是我追求的目标，追求的应该是设计质量。我不管我是不是软工还是高工，是架构师还是代码工，我所需要关心的是设计，小到模块大到整体设计
+
+--------------------
+Reinventing the wheel is bad not only because is wastes time,but because reinvernted wheels are often square.There is an almost iresstible temptation to economize on reinvention time by taking a shortcut to a crude and poorly-thought-out version,which in the long run often turns out to be false economy. 
+
+在这章里面eric举了一个j.random.newbie的新手的例子，说明一个程序员为什么喜欢reinvent the wheel。而且在公司开发的背后程序员造轮子的原因也是可以理解的，但是这并不表明早轮子就可以接受。reuse并不是意味着差代码只能被修改而不能重写因为我们需要重用。重用的关键在于transparency。这就是open source关键所在。open source you can get the source code你能够去修改source code来满足你的要求，如果你没有这种打算都能够让source code run起来，能够做一些适合自己的修改，这也就是重用的关键
+
+--------------------
+read before you write,develop the habit of reading code.There are seldom any completely new problems,so it’s almose always possible to discover code that’s close enough to what you need to be a good starting point.Even when your problem is genuinely novel,it’s likely to be genetically related to a problem someone else has solved before,so the solution you need to develop is likely to be related to some existing one as well.
+
+我们一般不回遇到很多全新的问题，很多问题别人已经解决了，关键问题就是如何整合这些方案，reading source code就是最好的办法，即使是一个新手，你也能够从源代码中看到别人是如何定义这个问题的。恩，现在觉得清晰的定义好问题时非常重要的，看看别人的代码就知道别人是怎么定义问题，怎么在解决这些问题
+
+--------------------
+
+Tradeoffs between interface and implementation complexity. 这里提到了两种复杂性的哲学，一种是MIT Philosophy,另外一种是New Jersey Philosophy. 第一种哲学的强调尽量的让接口简单,而第二种哲学强调尽量让内部实现简单. 典型的例子就是关于Sys V和BSD 的信号处理机制, Sys V强调的就是New Jersey的风格，就是一个信号函数需要不断的更新，这样实现看上去很难看，但是内部实现就稍微简单一些，BSD强调的就是MIT风格，对于信号函数的 注册只是用一个接口实现，是用起来很舒服. 但是还是Eric Raymond说的对，We can’t offer one-size-fits-all answer.The important thing is to develop the habit of thinking carefully about this issue on each and every on of your designs. Complexity is a cost you must budget very carefully.
+
+--------------------
+
+书里面提到的complexity包括三种essential complexity,accidental complexity,and optional complexity.
+   - 对于第一种complexity肯定是不能够回避的，这个就是关键的问题。就像是书里面提到的，对于编写一个飞机航线的程序不可能只用10行搞定，这个复杂度是不可避免的
+   - 对于accidental complexity是因为没有找到好的设计，就像是在做的这个项目直到快完工时才发现一种更好的解决方案。accidental complexity happens because someone didn’t find the simplest way to implement a specified set of features.Accidental Complexity can be eliminated by good design,or good redesign
+   - 对于optional complexity是因为需要加一些亮丽的特性，这个问题可以通过降低objective来解决 optional complexity on the other hand,is tied to some desiable feature.Optional Complexity can be eliminated only by changing the projects’ objectives
+最后总结就是很经典的话，如何区分accidental和optional complexity关系到设计的结果，对于objectives的选择关系到程序的简洁并且关系到负责这个项目的人是否聪明
+
+--------------------
+
+All tend to evolve in accordance with the Law of Software Envelopment,aka Zawinski’s Law:”Every program,attempts to expand until it can read mail.Those programs which cannnot so expand are replaced to by ones which can” To the extend Zawinskis’s Law is correct,it suguests that some things wnat to be small and some want to be large,but the middile ground is unstable.对于一个软件要不就非常大，要不就非常小。
+
+--------------------
+
+关于框架Framework. There is a hidden dual of the Unix gospel of small sharp tools,a background so implicit that many Unix practitioners don’t notice it,any more than fish notice the water they swim in.This is the presence of FRAMEWORK!!!!! Small Sharp tools in the Unix style have trouble sharing data,unless they live indisde a framework,that makes communication amony they easy.Emacs is such a framwork,and unified management of shared context is what the optional complexity of emacs is buying. In old-school Unix,the only framework was pipelines,redirection and the shell,the integration was done with scripts,and the shared context was (essentially) the file system itself.But that was no the end of evolution.Emacs Unifies the file system with a world of text buffers and helper subprocesses,largely leaving the shell framework behind.Modern desktop environments provide a communication framework for GUIs,also leaving the shell framework behind.Each framework has strengths and weaknesses of its own.Frameworks become homes to ecologies of tools-the shell to shellscripts,emacs to lisp codes,and desktop envieoments to flocks of GUIs.
+
+上面的内容说到了框架出现的原因，框架的出现就是为了整合好各种工具，让他们有一个统一的平台发挥好他们的作用EMACS是一个framework,里面 的各种工具是lisp 编写的，Shell是一个frameworks，里面工具是各种shellscripts对于桌面系统也是一个framework,里面各种工具是 GUIs的程序.对于一个框架都提供shared data context这是我的理解，就是要提供一个平台能够同享数据。我在这里想到的也就是后面Eric所提到的，在framework里面永远不要嵌入 policy而应该仅仅提供mechanism这样每个工具才能更好的发挥自己的空间.原来framework这么也是这么需要的
+
+--------------------
+
+There is a lesson here for amibitious system architects:the most dangerous enemy of a better solution is an existing codebase that’s just good enough.
+
+作者讨论到Plan 9这个强大的操作系统，但是之后分析为什么没有成功，这里面有一些原因值得学习。一些人可能会说缺少正确的市场策略，还有详细的文档，并且费用和license都是不明确的。但是作者认为既然Plan 9是Unix纯正的后裔，这些都不是什么问题，因为Unix也是一样从AT&T labs发展出来的，而且之前也没有更多的文档和市场策略。作者认虽然Unix有这样和那样的不适，但是现在Unix工作良好，所以Plan 9可以说是没有任何机会的(这就是原文的exsiting codebase)
+
+--------------------
+
+We can turn aisde from this:we can remain a priesthood appealing to a select minority of the best and brightes,a geek meritocracy focused on out historical role as the keepers of the software infrastructure and the networks.But if we do this,we will very likely go into decline and eventually lose the dynamism that has sustained us through decades.Some one else will serve the people,somene else will put themselves where the power and the money are,and own the future if 92% of all software.The odds are,whether that someone else is M$ or not, that they will do t using practices and software we don’t much like
+
+果然是作者的真知灼见，他认为Unix中存在的问题就是精英文化。这是作者在Mactonish Developer conference2000上发现的。Mac的开发者都是围绕用户体验而开发的，但是Unix开发者尽量考虑的是infrastructure。两种文化都相互认为对方是mal-design。但是作者认为为了争取那92%的non-technical users，Unix culture需要关注要用户的体验了，更进一步的说，是要去吸收和接受其他community的设计方案。这才是以后Unix文法的发展方向
+
+--------------------
+
+规范只是一个DNA，我们允许在DNA上面进行扩展，但是关键部分还是需要坚持规范。
+
+THE IETF traidition reinforced this by teaching us to think of code as secondary to standards.Standards are what enbale programmers to cooperate,they knit our techonologies into wholes that are more than the sum of the parts.
+
+In X,the specification has always ruled.Sometimes specs have bugs that need to be fixed too,but code is ussually buggier than code.Haveing a well-considered specification driving development allows for litte argument above bug vs.feature;a system which incorrectly implements the specification is broken ans should be fixed.I suspect this is so ingrained into most of us that we lose sight of its power.
+
+the (re)invention of open source has has a significant impact on the standards process as well.Though it’s not formally a requirement,the IETF has since around 1997 grown increasingly resistant to standard-tracking RFCS that don’t have at least on open-source reference implementation.In the future,it seems likely that conformance to any given standard will increasingly be measured by conformace to (or outright use of) open-source implementations that have been blessed by standards’ authors. The flip side of this is that oftern the best way to make somthing a standard s to distribute a high-qualify open-source implementation of it
+
+** 梦断代码
+20世纪90年代科技行业的兴盛,给我们带来了”互联网时间”的概念。该短语含义的理解见仁见智，但多指”快速”之意。数字时代的新时间机制下，一切皆有可能发生，技术生产，公司创立，创造财富，而且速度惊人。这意味着你没有时间做到尽善尽美，无须担心因为别人也一样
+
+和摩天大楼，水坝等等永久性建筑一样，桥梁体现了人类对于物理世界的技术的把握。在过去半个世纪里面，软件成为构建这个世界的虽不可见却深入渗透的人造物。“人类文明运行于软件之上”，广为应用的计算机语言C++发明人说。这里我觉得软件似乎更加反映人类的逻辑，人类所有的软件都是人类的逻辑的结晶。人类的逻辑没有办法考虑周全，所以软件也永远没有完美，也不可能完美:-(
+
+让托伊害怕的并非44号缺陷本身，而是无法确定需要多长时间才能修正缺陷。依此类推，历数chandler中类似的不可知因素，加起来就变成了开发经理的噩梦。日程中的黑洞充满了不确定甚至是不可知的因素的时间陷阱
+
+在2002年10月chandler首次官方声明之后的9个月里面，他们经历了布鲁克斯在人月神话描画的种种困境。尽管他们采用了诸如邮件列表，blog，缺陷追踪，原代码控制等工具，但和他人保持一致仍然极其困难。每次延误，总让人想要雇用更多人力，但是新增的人力似乎根本无法助于推动进度. 在大型团队中，保持一致性是最难办的事情，组织是关键
+
+在第一篇帖子上，他反思了为什么Chandler的进度如此慢如龟行。麦克比较了他在OSAF和Netscape的工作经历，把部分原因归咎于OSAF更为民主化，缺少等级式结构–无论是在大教堂还是集市都认为，等级式结构是将顽固的程序员组织起来的有效手段。这里也说了组织的办法就是永远不要将结构平坦化，因为那样不利于组织:-)
+
+linus说“在科学领域里面，人们互相察看引用各自的成果，整个系统建立与这个基础上面。而在魔法界则有人暗藏秘技，也不会让别人真正理解乃至使用。传统软件就像是魔法。历史上魔法最终消亡了。历史将在软件开发中重演。当问题趋于严重的时候，就不能够允许个人或者是个别公司抱有秘密。应当让所有人分享知识
+
+那么多激情洋溢的鼓吹者为我们描绘出数字化进步的美妙图景，可他们对程序员努力把脆弱代码锻造成型的痛苦记录却只字不提。那记录有一个接一个的灾难组成，在计算机领域的历史时间线上，留下累累弹坑. 今天任何打算开创一个大型软件开发醒目的人都得与这种嫉妒令人气馁的历史包袱相抗争。他让胸怀大志的新来者遭受重创，好像在对他们说，你凭什么认为自己与他们与众不同？然而，在各种软件项目中，不论大小，不论公司，不论新旧，都可以看到类似的悲惨故事。撇开具体细节不谈，模式令人郁闷的一致:标靶移来移去，目的忽上忽下。计划不切实际，期限一拖再拖。预算膨胀超支。绝望至极，混乱不堪:-(. 回到IT产业喜用的关于作软件和建桥梁之间的类比，1995年那份报告认为，软件的问题不只于中途纠正和后期设计更改有关，这些情况都是桥梁建筑师所不能够人受的；他还存在无法从失败中吸取教训的问题“如果桥塌了，就要做调查，写报告说明失败的原因。而在计算机产业中，失败案例总是被掩盖，被忽视而且被认为是合理的。结果，我们不断重复同样的错误”我们总是告诉自己我们和他们不一样，不再会犯这个错误，但是….
+
+选项太多，往往导致软件项目在选择编程语言是随性所谓-根据个人品味，习惯或者是心血来潮
+
+这些例程代码库通常都是孤岛一群。标准化工作往往是略过这个领域，软件业界有太多势不两立的标准了，举目之处，四顾皆是。计算机系统中每一点差异-你用什么中央处理芯片?什么操作系统的那个版本?什么编程语言?什么数据格式?如此等等-都能够惊醒乐高之梦。如多部软件工程著作的作者罗伯特格拉斯所言，程序员们很早以前就解决了小复用问题，通过构建自程序库来为自己减负。但是一直悬而未决的是大复用问题-创造并且使用真正有用的软件可服复用组件。”无关乎志向，亦无关乎技能。只是因为难题源自软件的多样性，根深蒂固并且难以解决
+
+大多数程序员喜欢写程序，甚至胜过沐浴和饮食。他们中的大多数宁肯写代码，也不愿意详细察看文档或者是目录，或者是去找其他笨蛋程序员写的蠢代码。在同等条件下，程序员会选择从头设计构建，而不是重复利用。有时候软件开发者深受”此处尚未创造”综合症的折磨，偏信于自己的技术和所在的研究机构的力量，以至于不相信他人创造的东西。有时他们不肯花时间研究其他人的工作，甚至不肯瞥一眼别人的东西是否符合自己的需求。对于典型的程序员，即使要花2分27秒去找一样的东西，他们就会认为这个东西不存在，就会去重新创造它:-)
+
+除非是自己写的代码，否则很难确定一段代码是否真的有用
+
+如果说以代码行数计算不太可靠，那么衡量软件生产力的其他通用的方法也同样不可靠。你可以更新程序特性或者是功能点，但是他们很难被整齐划分成为难度或者是尺寸相似的单元，只能以对每一个特性完成时间主观预测告终。
+
+温格伯指出，要点是”非正式机制总是存在，而且如果没真正理解就改变它是很危险的，要避免扰乱原本运行顺畅而且你无法以同等代价替换的系统”。与此同时，程序员已经发明了自己的非正式沟通机制，他们发明了一系列技术好让彼此保持联系，他们通过各种新的团队协同工具拓展了软件领域
+
+在软件管理中，协作不是马后炮，也不是无足轻重的事情：它是工作的核心，决定采用何种工具和方法有可能成就或者是毁掉项目，但是同时管理这些工具容易诱使项目偏离正轨:-(
+
+通常由程序员负责猜测程序该如何应对用户输入和机器状态上千种可能的组合，但是他们却不擅于站在用户的立场考虑问题，想出合理之策。他们花费大量时间纠缠于数字化细节，他们被调教得按照自己做出的系统一般运作。他们视之为理所当然的概念，对于非程序员而言纯然是怪异之举。他们多半不了解用户的想法(程序员常依赖一种称为妈妈测试的手段，以对计算机一无所知的父母家乡用例，有时候甚至请这类用户亲自体验)
+
+有时候在想为什么OSAF会发布这个Chandler 0.2版本，甚至组内的成员都没有完全的信心去让用户去实验这个版本。但是事实上这个是对的，时间驱动开发的Chandler很明显需要给出一个时间底线来让自己彻底反省和进行设计。当Chandler 0.2版本发布之后，就可以看到每个人都觉得Chandler走错了方向，迫使组内成员进行自我的反省。OK，即使一个项目没有完全写好，但是给出一个deadline并且严格执行它，这样如果在deadline没有发出一个良好版本的话，那么全组成员都会感觉荣誉的丢失并且自我审视一次，迫使在接下来的时间内做得更好:-)
+
+半格点是比树更松散的结构，仍有层次结构，但是允许子集进行重叠。为什么建筑设计和规划社区总是“树状结构”呢？亚历山大认为半格点更为复杂和难以描述，而且我们不可避免地倾向于用更易于把握的树状结构。但是这种“每个思维简单的人都患有将同名物体放在同一个篮子的狂躁症”却在城市设计中导致了人为的约束和隔离。“采用树状结构就是以人性和鲜活城市的丰富性为代价，去换取概念上的简明性，这只是便于设计师规划师，行政官和建设者。每当城市被撕开一块，用树 状结构代替了原来的半结点城市就向着分裂又迈进了一步”。这是包括建筑师以及每一个软件工程师所需要注意的问题，我们以简明的概念换取软件的简单性没有错，但是我们需要考虑到用户使用的感受:-(。
+
+匈牙利命名法写出的一个句子:-) prepBut nI vrbLike adjHungarian!qWhat’s artThe adjBig nProblem?
+
+作为设计师，我们都需要更多用于来展示自己设计了了不起的东西。初次成功的人特别是年轻时就取得成功究竟是靠运还是靠本事？两者都有一点。如果你能够做到另外一件了不起的事情，那么就能够让世界看到你的实力:-)
+
+Mozilla开发者么决定全部重写浏览器”布局引擎”，在屏幕上画出网页的代码。这一决定的结果是让项目花了好多年时间，外界对此颇有微词。但是那是一个关键性的决定，即便是一个错误的决定。然后设计出可运转的工程进展计划。
+
+如何在项目漫长生命周期的起起落落中鼓舞程序员和他们的经历是一门神秘的艺术
+
+要留心，如果当前计划涉及一年之后，又可能这个项目会失败
+
+方法论的真正目的是卖书而不是解决问题。方法论的关键问题在于，那类发明方法论的聪明人实施方法论时就会有用，但是如果让那些只是知道听令行事的笨蛋来实施，即不管用了
+
+约束是朋友，是打造伟大产品的关键。约束产生创意，如果有人说给你全世界的财富，让你任何想做的东西，那么这个东西多半永远发布不了。给我一个月的时间就好:-)
+
+罗森伯格法则：软件好做如果你只是想完成旧任务。一旦完成新的任务软件就不好做。由于软件不好做，所以只有完成新任务的软件才是值得去做的:-)
+
+抽象并未真的想人们打算的那样简化我们的生活，漏洞抽象法则意味着，无论何时有人拿出一套本能够提升我们效率的所见即所得代码生成工具，你总会听到许多人说”先学会学怎么手工操作，再用所见即所得工具节省时间”。所有抽象节省了工作的时间，却没有节省学习的时间。总而言之，尽管我们拥有了越来越高级的编程工具和抽象，但要成为编程高手越来越难
+
+软件领域感觉特别像《土拨鼠日》，想法总是雷同没完没了。因为我们相信只有想象中的计算框架是可行之路。虽然硬件一直在加速，但是软件却毫无改进，这是计算机科学的奇耻大辱。但是程序员们却自满起来，接受了不能够令人满意的现状还视其为恒久不变之事
+
+软件的大问题在于，程序员起步于小程序，并且在小程序上学习原则和实践经验。但是当程序膨胀到今天的项目一般体量的时候，他们发现所有的经验都没有用了
+
+我们对象成为作家和诗人的学生的要求，比对那些想成为软件开发者的人要求多：他们跟随导师，他们得在讨论班上展示自己的作品并且接受他人的批评，他们反复推敲，不断精炼。我想我们应该感到羞愧，我们拿得出手的所谓计算机教育简直就是一出闹剧
+
+艺术是由人类智慧所作之物，相对于源自天然或者本能的行为而言。假设要在人造物和自然物之间划分界限，那么任何与计算机相关之事都会毫无疑问地落在艺术这边
+
+2004年，windows2000的某个版本的部分原代码泄漏到了互联网上。兴奋的程序员们精读了全部文本。他们惊奇地发现，微软程序员们在代码中骂自己，骂工具，骂同事，骂产品的:-)
+
+要在大型项目中保持高效，你得效忠于他。你要将它印在脑海中，我在做大型项目的时候常常睡觉也梦到代码
+
+如果设计师知道编程的话，那么就会固步自封。一旦知道怎么编程，那么你就会想做那样的东西太难了
+
+SWAG(silly wild-ass guess)盲估就是估计任务的耗时，就是要求开发者在Bugzilla填写任务完成的预计时间，不过不同的是要求任务更细。一旦任务更细粒度更小估计时间就越容易了
+
+Richard Stallam喜欢说”如果有人问我这个事情什么时候结束，我总是回答只要你来帮忙，就会完成得快一些”
+
+老程序很少拥有新潮的图形界面或者是风行一时的特性。但是它有一种不可低估的优势，以工作为取向。适当使用的程序就像是精心打理得旧花园，或者是轻柔弹奏的老吉他，其粗糙边缘已经锉去，缺陷已被发现和修正，人皆知其表现物有所值
+
+软件本质困难，乃是强加于技术进步的人类自由意志和不确定性的通行费
+
+由于重复周期和无限期的延误，变成工作总是让人想到薛西弗斯的劳役没完没了地推石头上山，典型的无用功。我在研究过程中访问和认识的多数程序员始终如一，而且有时毫无由来地对工作持有乐观态度。如果他们是薛西弗斯的话，也会是快乐的薛西弗斯
+
+** 高质量程序设计艺术
+现实中的软件质量能够从4个方面观察
+   1. 使用质量，比如使用的体验
+   2. 外部质量，外部进行测试所体现的质量
+   3. 内部质量，就是单纯对于单个部件进行评估
+   4. 过程质量。关注过程而不是产品本身有可能是值得的，而且有时候还是不可或缺的。想象一下如果需要制造一个航空母舰，海军绝对不可能知识通过检查完工的航空母舰就确定它是否符合需求，海军需要做的是检查与航母的建造过程相关的过程元素，这可能包括设计师的资质证明，焊点的X光板以及所有的组装好的部件的验收测试结果。但是千万不要把这个过程走向了极端，不管我们就会过分关注过程质量
+
+对于软件质量能够从几个方面进行反应，下面就是软件质量具体的体现方面，这些内容都是相互影响的，在软件设计中我们需要做适当的权衡：
+    1. 功能性
+     -  相配度，软件功能和用户是否相配
+     -  准确性，计算结果的准确性
+     -  互操作性，和其他软件的互操作性
+     -  安全性，软件数据的安全保障
+    2. 可靠性
+     -  成熟，软件不容易出故障
+     -  容错，软件出现错误情况下依然能够继续工作
+     -  可恢复性，恢复数据并且继续执行
+    3. 可用性
+     -  易懂，用户能够非常容易快速使用
+     -  可掌握性，掌握它需要付出的努力少
+     -  可操作性，操作这个软件需要的精力少
+     -  吸引力，用户愿意使用这个软件
+    4. 效率
+     -  时间和空间的权衡
+     -  资源的使用，对于CPU，内存还有磁盘，网络这些使用需要越少越好
+    5. 可维护性
+     -  可分析性，找到修正和改进地方的难易程度
+     -  可变性，完成一个修改的难易程度
+     -  稳定性，修改之后出现问题的程度
+     -  易测性，是否能够验证修改的结果
+    6. 可移植性
+     -  适应性，软件代码在不同环境中运行的能力
+     -  可安装型，软件在各种环境中安装可行性
+     -  共存，软件在拥挤的环境中表现如何
+     -  可替代性，软件某个部分是否能够通过其他部分来代替 
+
+可以看到使用底层并行原语一定需要提高警惕。这种代码中的错误可能会导致通过测试很难发现，诊断和调试。使用形式化方法来对代码进行推理可能是一个很吸引人的建议，但是事实上，这种推理作为确保代码正确性的唯一选择，对于所有缺少数学方面训练的人来说极其困难。因此，请试着将这些代码替换为更好用的高级代码单元或者是基于耦合度较低的单元来设计系统-通过管道通信的进程或者是黑板是松耦合并行系统两个例子:-)
+
+在（按照“不造成其他伤害”的方式）清理自己的状态之后将错误向上传递是很明智的献策略，因为这允许系统的另一个对状况了解更全面的部分更高效的处理错误:-)
+
+能够以资源泄露方式泄露的元素包括：文件句柄，TCP/IP连接，Windows GDI对象，JDBC或ODBC连接和程序许可
+
+可变大小容器并不是万金油。在嵌入式与安全性关键的系统中，通常更倾向于使用固定大小的数组，以保持软件的确定性。在此类应用领域中，使用固定大小的数组可以避免动态内存管理是伴随的内存区域与分配时间可变性。
+
+在规范化的非冗余数据格式与其更高效并且有时间复杂度耕地的等效数据格式之间作取舍是非常棘手的，数据库设计人员在工作时整天都要应付这种问题。(ok，如果以后做数据库的话，那么需要花一些时间好好考虑数据的规范化，如何组织数据)
+
+评估现有安全措施并且规划新的安全措施时，正确的方法就是进行安全专家们所说的风险分析(risk analysis):确定你想要保护什么，以及这些被保护的对象对你的重要性(你的资产以及它们的价值)，找出你的资产所面临的风险，并且对降低这些风险的各种方法进行评估。
+
+在查找代码的漏洞时候，忽略可以被攻击者任意修改和部署的代码，而将精力集中在可能会导致安全问题的代码上面
+
+时间是大自然用来防止所有事情同时发生的手段
+
+如果延迟响应会造成降级运行那么就是软实时系统，如果延迟响应会造成运行的错误就是硬实时响应
+
+从项目管理的角度，你需要试着估计项目的性能风险，并且给项目的关键用例设定精确的量化目标(比如静态页面必须在50us内传输完毕).在建模阶段为系统的体系结构评估各种设计方案是很有益处的:-)
+
+程序被装载到系统之后,任意时刻都是在下面3种状态下面运行
+   1. 直接执行代码.这执行代码所消耗的时间是user time,进程在用户的上下文中执行
+   2. 内核为该程序直接执行代码。这个部分所消耗时间是sys time
+   3. 等待某个外部操作结束。一般是读写某个慢速外设，可能是磁盘，打印机或者是网络，这部分是idle time。
+real time=user time+sys time+idle time. 所以可以分析出下面3种情况:
+   1. real time>>user time+sys time.这就表明受限于I/O，诊断工具就是使用一些磁盘，网络虚拟内存统计工具或者是系统调用跟踪。可以考虑进行高速缓存或者是做更好的IO工作
+   2. sys time>user time，那么表明受限于内核。那么改进内核或者是采用高速缓存或者是好的CPU
+   3. user time=real time.那么表明受限于计算，如果需要改进的话那么只有采用更好的算法了或者是好的CPU
+书里面介绍了如果进行剖析的工具，现在还不是用的上，但是知道问题在哪里了这样分析就会更有针对性:-).书中对于这部分还是介绍的很详细的
+
+系统颠簸主要和程序访问局部性相关，解决系统颠簸的问题
+   1. 减少系统的内存使用
+   2. 使用配有大量物理内存的系统
+   3. 改善系统的访问局部性，采用更大的高速缓存
+
+有些系统一旦程序的内存影响开始增长就永远不会收缩，所有被释放的内存块只能在特定的程序实例中重用
+
+使用数据的映射比如mmap这样的函数，那么进程可以将其虚拟内存的一部分安排给这个特定文件的磁盘缓冲区。因此访问映射后内存块的结果是内核将文件的相应部分直接读入这个内存块中无需数据复制到内核的常规磁盘缓冲区或者反之，也就避免了相应的开销
+
+可移植性分为:
+    1. 操作系统.
+     -  可选的程序,gcc,awk,sed,install,ln,ranlib
+     -  库的存在curses,dbm,mp
+     -  特性库函数的支持alloca,getpgr,mmap,strcol
+     -  某些头文件的存在signal.h,dirent.h
+      e. 某些结构如何定义的st_dev,st_blocks
+      f. 各种类型的支持size_t,pid_t
+      g. C编译器的支持，比如const,inline,##,long long
+      h. 操作系统服务，如对X窗口的支持等
+    2. 处理器体系结构
+     -  数据的大小和长度
+     -  数据存储的方式big endian或者是little endian
+     -  特定的汇编指令
+    3. 编译器与语言特性
+     -  编译器错误
+     -  非标准的扩展
+     -  新语言的特性
+     -  二进制兼容性
+    4. 图形界面用户环境(这个部分从来就没有统一过,跨平台的开发工具有)
+     -  Java
+     -  Tcl/Tk
+     -  Qt
+     -  GTK
+     -  wxWindows
+    5. 区域(这个没有看)
+    6. 硬件设备与平台 
+
+尽管代码与物质的制品不同，不去管它也不会老化，但是程序还是因为一些原因被修改。可能是为了改正现有的错误而作的修正，可能是因为适应新的环境，也可能是为了满足新的需求而作的改进。包括增强系统功能的渐进行为(progressive activity)为了对系统演变所产生的负面影响进行校正的反回归行为(antiregressive activity).包括可分析性(analyzablity),可变性(changeability),稳定性(stability),可测性 (testability). 所以嘛，代码总是需要改的，以前我曾想过这个问题，软件不会老化，那么为什么需要去维护呢?人们买了一台机器之后如果发现这个机器不合用了，他们会去重新买另外一个机器，而不会要求机器开发者去重新修正。可能人们对于软件开发的灵活性和软件本身给予了太高的希望把
+
+在调试器不合用的情况下面使用日志语句是有帮助的。有一些应用比如嵌入式一旦部署就无法调试，但是增加日志记录功能是即使在资源受限的嵌入式系统中也是可行的。而有一些其它应用比如GUI界面的应用，后台程序，控制台游戏还有网络交互都是难以作交互式调试的，更多的对于语言如C++的宏或者是template调试都存在困难，这时候使用日志….
+
+** 人月神话([The Mythical Man-Month)
+作者讲的是为什么有这么多软件业项目像是陷入了焦油坑一样，越想摆脱越被束缚，这个关系到这个职业的乐趣的苦恼. 职业的乐趣
+   - 首先这种快乐是创造一种新事物的纯粹的快乐
+   - 这种快乐来自于开发对其它人有用的东西
+   - 快乐来自于整个过程体现的强大魅力，部件耦合在一起
+   - 这种快乐是学习的快乐
+   - 这种快乐来自于在易于驾驭的介质上工作
+职业的苦恼
+   - 苦恼来自于对完美的追求
+   - 苦恼来自由他人来设定目标，供给资源，提供信息
+   - 概念性设计有趣但是寻找琐碎的bug确实一项重复性的劳动
+   - 当花去大量的时间之后发现编写的东西过时
+
+简化的brooks法则就是:往进度落后的项目中增加人手只会使得项目进度更加落后(Adding manpower to a late of software project makes it later)，至于为什么作者在这章有分析。里面有一些计算我看不懂，感觉是不是计算错了，但是整体的思想很简单就是增加的人手一方面需要进行一段时间的培训，另外一方面人手的增加会带来沟通的困难. 人数和时间的互换仅仅适用于下面的情况:某个人物可以分解给参与人员，并且他们之间不需要任何相互的交流
+
+为什么缺乏合理的进度安排如此普遍
+   - 我们对于估算技术缺乏有效的研究
+   - 估算技术假设人和月可以进行交换
+   - 对于自己的估算缺乏信息，软件经理通常不会持续估算这项工作
+   - 对进度缺少跟踪和监督
+   - 当意识到进度的延缓下意识反应就是增加人力
+
+软件进度安排经验法则
+   - 1/3计划
+   - 1/6编码
+   - 1/4单元测试和构建测试
+   - 1/4系统测试
+需要特别指出不为系统测试安排足够的时间简直就是一场灾难，因为延迟发生在项目快完成的时候，直到接近项目发布的日期才发现进度上面有问题。
+
+外科手术队伍属于那种一流人才组成的小型精干的队伍，是很多年轻的软件经理所希望带领的团队，但是问题是外科手术队伍相对开发一个大型系统的话太慢了。你不希望看到一个精干的产品仅仅是几年前人们所希望的产品。为此Mills提出了一个团队的组织方式，具体还是看书，关键是要有一个首席的设计师来决定一些矛盾很多并且关键的事情
+
+与之对应的是法国城市兰斯(reims)在建筑风格上的一致性和上面所提到的大教堂形成了鲜明的对比。设计的一致性和那些独到之处一样，同样让人们赞叹和喜悦，如同旅游指南所述，风格的一致和完整性来自8位拥有自我约束和牺牲精神的建筑师们，他们每一个人牺牲了自己的一些创意，以获得纯粹的设计。同样这不仅显示了上帝的荣耀，同时也体现了他拯救那些沉醉在自我骄傲中人们的力量
+
+我当然不认为只有结构师才会有好的创意。新的概念经常来自于实现人员或者是用户，然而我一直试图表达并且我的所有经验让我确信，系统的概念完整性决定了其使用的难易程度。不能与系统基本概念进行整合的良好想法和特色，最好放在一边不予与考虑。如果出现了很多非常重要但是不兼容的构思，就应该抛弃原来的设计，对不同基本概念进行合并，在合并后的系统上重新开始
+
+我观察到外部的体系结构规定实际上是增强而不是限制小组的创造性。一旦他们将注意力集中在没有人解决过的问题上，创意就开始奔涌而出。在毫无限制的实现小组中进行结构上的决策，会出现大量的争议和想法，但是但是对于具体实现的关注放而会比较少
+
+想要成功，结构师必须注意
+   - 牢记是开发人员承担创造性和发明性的实现责任，所以结构师只能够建议而不能够支配
+   - 时刻准备为所制定的说明建议一种实现方法，同时准备接受其它任何可能到达目标的办法
+   - 对上述的建议保持低调和不公开
+   - 准备放弃坚持所做的改进建议
+
+这里第二个系统是相对于第一个系统而言的，在设计第一个系统时，工程师总是小心翼翼地在预算和功能之间进行合理的定夺，不加入一些花哨和毫无用的用途的功能，以期待在设计第二个系统时再加入。但是在设计第二个系统，这个系统成为了创造力宣泄的出口，各种庞大的无用的功能够加入。我对Stretch系统的印象是，从某种角度而言它是一个产品线的终结。如同早期的计算机程序一样非常富有创造性，设计非常复杂但是却异常地高效。不知道为什么，同时也感觉到，它粗糙浪费缺乏优雅，并且让人觉得必定存在更好的方法可以代替它(编写很多程序的时候我也有这种想法，总感觉必定有种更一致和优雅的设计）
+
+由于规模是软件系统产品用户成本中如此大的一个组成部分，开发人员必须设置规模的目标，控制规模，考虑减小规模的方法，就像是硬件程序员会设立元器件数量目标，控制元器件的数量想出减少零件的办法。同任何开销一样，规模本身不是坏事，但是不必要的规模是不可取的
+
+由于缺乏空间而绞尽脑汁的编程人员，常常能够从自己的代码中挣脱出来，回顾和分析实际情况，仔细考虑程序数据最终获得非常好的结果。实际上，数据的表现形式是编程的根本
+
+系统软件开发是减少混乱度的过程，所以它本身是出于亚稳态的。软件维护是提高混乱度的过程，即使是最熟练的软件维护工作，也只是放缓了系统退化到非稳态的进程
+
+工欲善其事必先利其器，但是个性化的工具会使得交流和沟通困难，那么项目经理必须考虑，计划和组织的工具到底有哪些呢？首先项目的关键问题是沟通，个性化的工具妨碍而不是促进沟通。其次当机器和工作语言发生变化，技术也会随之变化，所以所有工具的生命周期都是很短的。最后毫无疑问，开发和维护公共的通用编程工具的效率更高(在这里就必须赞叹GNU的伟大了，所有的GNU/Linux上面的工具基本上都是清一色的，极大的方便了社区的开发，gcc,gdb,diff,patch,awk,sed,grep,sort,uniq,这些都是标准的工具了，在世界范围内提供了通用编程工具)
+
+一天一天的进度落后是难以识别，不容易防范并且难以弥补。昨天某个关键人员生病了，无法召开某个会议。今天由于雷击打坏了大厦的供电变压器所有机器无法启动。明天因为工厂磁盘供货延迟了一周，磁盘例行的测试无法进行。这个列表可以不断延长，每件事情都使得某项活动延迟一天或者是半天，但是整体进度开始落后了，尽管每次只有一点点。
+
+里程碑边界明显没有歧义，比它容易被老板核实更加重要。如果里程碑定义的非常明确无法自欺欺人的话，那么很少有人会弄虚作假。但是如果里程碑很模糊，那么老板就会常常得到一份与实际情况不符的报告。毕竟没有人愿意承受坏消息。这种做法只是为了起到缓和的作用，并没有任何蓄意的欺骗。好的里程碑对团队来说实际上是一项服务，可以用来向项目经理提出合理要求的一项服务。而模糊的里程碑式难以处理的负担。如果我们看到的，我们必须关注每一天的滞后，它们是大灾祸的基本组成元素
+
+为了能够得到实际的进度报告，老板可以采取两种方式一种是减少角色的冲突，另外一种就是突击进行项目的进度的检查。这里记下第一种方法。首先老板必须区别行动信息和状态信息。他必须规范自己，不对项目经理可以解决的问题作出反应，并且决不在检查状态报告的时候做安排。否则信息肯定会被压制不公开。当项目经理了解到老板受到状态报告受不会惊慌，或者不会越俎代疱，他就会逐渐提交真是的结果。
+
+现实中，流程图被鼓吹的程度远远大于它们的实际作用。我从来没有看到过一个有经验程序员在开始编写程序之前，会例行公事的编制详尽的流程图。
+
+所有软件活动包括根本任务-打造构成抽象软件实体的复杂概念结构，次要任务-使用编程语言表达这些抽象实体，在时间和空间限制内将它们映射成为机器语言. 我认为软件开发中最困难的部分是规格说明，设计和测试这些概念的结构，而不是对概念进行表达和对实现逼真程度进行验证。从4个内在特性可以反映出来：复杂性，一致性，可变性和不可见性。
+   - 复杂性。数字计算机本身就比人类构造的大多数东西复杂，计算机拥有大量的状态，使得构思描述和测试非常困难。而软件系统的状态又比计算机的状态多了几个数量级。并且软件实体是以非线性递增家户的，所以软件复杂度..
+   - 一致性。开发最新的软件需要遵循各种接口，并且需要在一定程度上保持向后兼容
+   - 可变性。对于机器，汽车等物体人们造出来就不会也不能够在进行修改，但是软件不一样，人们总是希望去修改软件，因此软件也被迫去被修改满足不同的需求。简而言之，软件产品扎根于文化的母体中，如各种应用，自然以及社会规律，计算机硬件等。后者持续不断地变化着，这些变化无情地强迫着软件也随之变化
+   - 不可见性。软件不可见也无法可视化，客观存在不具有空间的形体特征，剥夺了一些具有强大功能的概念工具的构造创意，限制了个人的设计过程也严重阻碍了思路相互之间的交流
+
+在所有被误导的科学探索中，最悲惨的莫过于对一种能够将一般金属变成金子的物质，即点金石的研究。这个由统治者不断地投入金钱，被一代代的研究者不懈追求的，炼金术中至高无上的法宝，是一种从理想化理想和普遍假设中-以为事情会像我们所认为的那样-提取出的精华。它是人类纯粹信仰的体现，人们花了大量的时间和精力来认可和接受这种无法解决的问题。即使被证明是不存在，那种寻找出路和希望能一劳永逸的愿望依然十分强烈。而沃恩重的绝大多数总是很同情这些明知不可为而为之的人的勇气，因此它们总是能够延续。所以，将圆形变成方形的论文被发表，恢复脱发的洗液被研制和出售，提高软件生产率的方法被提出并成功地推销。我们太过于倾向于遵循我们自己的乐观主义(或是发掘我们出资人的乐观主义)。我们太喜欢忽视真理的声音，而去听从万灵药贩卖者的诱惑。
+
+** 程序员修炼之道
+注重实效的程序员的特征
+   - 早期的采纳者和快速的改编者。你具有技术上和技巧上的直觉，你喜爱试验各种事物，给你一样新东西你能够很快地掌握它，并把它与你的知识的其余部分结合在一起。你的自信出自于你的经验（有待磨练）
+   - 好奇。你是收集小知识的林鼠(pack rat)。每一条小知识都可能会影响今后几年的某项决策。(ok,开始的时候你的问题可能是很简单的，比如你听说过BeOS吗？符号连接是怎么实现的。不要停留在表面，有时间去更深入的了解他们，这样才会有更多的进度:-))
+   - 批判的思考者。你不会不首先抓住事实而照搬别人的说法。
+   - 有现实感。你会设法理解你面临每个问题的内在本质。这样的现实主义给了你良好的感知能力：事情有多困难，需要多长时间？让你在自己了解某个过程会有困难，或是要用一点时间才能完成能够给予你坚持不懈的努力
+   - 多才多艺。你尽力熟悉广泛的技术和环境并且努力工作，与各种新发展并肩前行。尽管你现在也许只要求你能为某方面的专才，你却总是能够专向您的领域和挑战
+
+我们采集的是石头，但是必须时刻展望未来的大教堂。(即使对于不是处于高层的开发者，我们也必须时刻展望着你所处的整体，因为这样不仅有动力，而且能够让你在一些问题上面做出更好的判断)
+
+持续做一些小改进，几年之后你会惊奇地发现你的经验得到了怎么样的发展，你的技能得到了怎样的提升
+
+名称的内涵(在这里我所想到的就是，对于一个项目，我们必须对于一些关键概念作一些名称的定义，比如什么叫做用户处理请求单元，什么叫最小申请时间等这些更具开发的项目不同而含义不同的名词，应该进行统一的定义和规范，这样才能够很好在组内进行交流)
+
+注重实效的程序员的特征是什么?我觉得是他们处理问题，寻求解决方案时的态度，风格，哲学。他们能够越出直接的问题去思考，总是设法把问题放在更大的语境中，总是设法注意更大的图景。毕竟，没有这样大的图景，你又怎么能够注重实效？你又怎么能够做出明智的妥协和有见识的决策呢？
+
+在所有的弱点中，最大的弱点就是害怕暴露弱点(所以尽量所得暴露弱点并且去完善它，这样才会有进步)。为你的东西负责，提供各种选择，不要找蹩脚的借口
+
+不要留着破窗户(低劣的设计，错误决策和糟糕的代码)不修。发现一个就修一个。如果没有足够的时间进行适当的修改，就用木板钉起来。或许你可以把出问题的代码加上注释，或是显示未实现消息，或是虚假的数据代替。采取某种行动防止进一步损坏，并说明情形处在你的控制中。同时破窗户可能会影响团队中其他成员的积极性
+
+人们发现，参与正在发生的成功要更容易一些，让他们瞥见未来，你就能让他们聚集在你的周围。看来我也知道有时候应该做些什么事情了。偶尔时候展望一下未来，会让别人也觉得有信心。做一个项目的变化催化剂。(ok，2008年在百度实习时候做的项目，老板已开始给出的是一个很丑陋的方案，可以说没有任何用途，但是每次作完之后，老板总是提一些需求并且说以前的实现效果不是很好，慢慢的这样改进，软件最后开始可用了。如果你在领导一个项目，你的责任还包括鼓励其他的员工不断完善软件:-))
+
+使质量成为需求问题。只有当质量成为一个需求问题，质量才会有明显的提升:-)
+
+艺术家会告诉你，如果你不懂的什么时候止步，所有的辛苦劳动就会遭到损坏。如果你一层又一层，细节复细节地添加，绘画就会迷失在绘制中。
+
+我们把程序员所知道关于计算技术和他们所工作的领域全部事实以及他们所有经验视为他们的知识资产(knowledge portfolios)，管理知识资产与金融资产非常相似
+   - 严肃的投资者定期投资-作为习惯
+   - 多元化是长期成功的关键-你知道不同事情越多，越有价值。掌握的技术越多，越能够更好地进行调整赶上变化
+   - 聪明的投资者在保守的投资和高风险，高回报投资间平衡资产-不要把所有的技术鸡蛋放在同一个篮子里
+   - 投资者设法低卖高买，以获取最大回报-Java刚出现时学习它非常有风险，但是对于早期采用者，现在有了丰厚的回报
+   - 应该周期性地重新评估和平衡资产-先前冷门的语言可能近期成为热门，先前热门的数据库技术可能冷门。
+
+目标:
+   - 每年至少学习一门新语言
+   - 每季度阅读一本技术书籍，在掌握你正在使用的技术后，阅读一些与你项目无关的书籍
+   - 阅读非技术书籍
+   - 上课
+   - 参加本地用户组织
+   - 试验不同环境
+   - 跟上潮流.IEEE Computer有趣文章汇总.IEEE Software软件开发人员.Communications of ACM CACM一直是行业标准，发表开创性文章可能比任何其他来源都多.SIGPLAN 上面发表语言规范，喜欢了解深入编程人准备的.Dr Dobbs Journal.范围广
+   - 上网.www.slashdot.org.包括很棒的技术和影响开发者问题的信息
+
+与他人交谈还可以帮助你建立人际网络，而因为在这个过程中找到了其他不相关问题的解决方案，旧友的资产也在不断增长。
+
+交流:
+   - 知道你要说什么。列出一份大纲或者然后根据大纲编写详细的信息，这样会组织的有条理一些:-)
+   - 了解你的听众。知道你的听众的技术背景，然后谈谈听众可能所感兴趣的内容
+   - 选择时机。选择好你的听众可能比较愿意听你交流的时候。比如你的程序由于内存错误存在问题，那么这个时候就是一个好的时机向他推销Valgrind的了:-)
+   - 选择风格。不同的人喜欢不同的风格，有些人喜欢简单，有些人喜欢具体一些，这个需要根据具体情况来变化:-)
+   - 让文档美观。文档美观就和菜肴外观优美一样重要，没有人愿意吃一盘看上去糟糕虽然很好吃的菜肴:-)
+   - 让听众参与，做倾听者并且回复他人。编写文档需要和听众的反馈结合起来，很明显，一旦得到用户的反馈那么交流就会更具有针对性。当别人向你提出一个问题时，你可以考虑加入你的文档，并且回复他说“下次交流的时候会谈到”:-)
+
+给予计算机两项自相矛盾的知识，是Captain James T.Kirk(from Star Trek)喜欢用来使四处劫掠的人工智能生命失效的方法。重复是有很大危害的，使得代码修改起来不方便就是不容易维护。但是在实际的商业商品中，软件可用也是一个很重要的问题，很多软件里面存在着很多重复但是没有人愿意去修改:-)
+   - 强加的重复(imposed duplication)。这类重复就很简单，比如信息的多种表示，文档和代码的内容重复，关键的还是在于设计问题。只要设计优良，这类重复可以避免
+   - 无意的重复(indavertent duplication)。这类重复虽说也是设计问题，但是大部分还是集中在编写代码的时候产生的，所以编写代码的时候注意就ok
+   - 无耐性的重复(inpatient duplication)。这类重复一般就是和上面差不多，只不过大部分为了满足快速的开发功能，但是就草草的进行编码，这样很容易造成重复。最好的办法就是在编写之前，仔细地在站在全局角度考虑如何实现:-)
+   - 开发者之间的重复(interdeveliper duplication)。这个就是接口不好造成的，这种问题的避免就是需要尽可能的交流来完成:-)
+
+对于注释的编写，头文件最好就是编写接口的作用，而源文件就是编写具体的实现。
+
+如果两个或者是更多的事物其中一个发生变化不会影响到其他事物，这些事物就是正交的。良好的系统数据库代码和界面代码正交，修改任何一项不会影响另外一项。
+
+错误在于假定决策是浇铸在石头上的，同时还在于没有为可能出现的意外事件做好准备。要把决策视为写在沙滩上的，而不要把它们刻在石头上。大浪随时可能到来，把它们抹去。
+
+原形制作生成用过就丢的代码。曳光弹代码虽然简约，但是却很完整，并且最终构成了系统的骨架一部分。你可以把原形制作视为第一次发射曳光弹之前的侦查和情报搜集工作.原形制作可以忽略那些细节1.正确性 2.完整性 3.强壮性 4.风格. 算法原形语言可以考虑Perl Python或者是Tcl而界面原形部分可以考虑Tcl/tk,Visual Basic,PowerBuilder或是Delphi。感觉脚本语言在不断的推出库的原因一方面是为了方便原形制作，同时也为语言成为非原形做好强力的准备。如果你觉得在你所在的环境或者文化中，原形代码的目的很有可能被误解，最好还是采用曳光弹的方法。你最后将得到一个坚实的框架，为将来的开发奠定基础
+
+语言的界限就是一个人的世界的界限-维特根斯坦.对于一个问题的描述，最好使用一门特定的语言进行描述。这种语言无需是可执行的。一开始它只是用于捕捉用户需求的一种方式或者是一种规范，但是如果你想跟进一步实现该语言，你的规范变成为了可执行文件。这或许大概就是一门语言的形成过程
+
+对于估算是一个很重要的能力，特别对于一些应用级的开发，估算是十分必要的。对于估算，下面是一个形式化的步骤，但是却很有效:-)
+   - 理解提问内容。知道问题是什么
+   - 建立系统模型。建立好一些可以接受的具体的问题，抽象一些，最好就是一个数学公式
+   - 把模型分解为组件。将问题分解到组件一级，每个组件存在一个参数。
+   - 给每个参数指定值。为每个组件参数定值
+   - 计算答案。
+   - 追踪估算能力。这步是很关键的，如果可以的话，得出一个答案最好去检验。如果不对的话，最好去看看那一个步骤除了错误，模型建立错误，组件拆分错误还是参数指定错误，这些都是锻炼你的机会:-)
+
+工具放大你的才干。你的工具越好，你越是能够刚好地掌握他们的用法，你的生产力就越高。从一套基本的通用工具开始，随着经验的获得，随着你遇到一些特殊的需求，你将会在其中增添新的工具。要与工匠一样，定期增添工具。总是寻找更好的做事方式。
+
+纯文本并非意味着文本无结构，XML,SGML,HTML都是具有良好定义结构的纯文本。
+
+GUI的好处是WYSIWYG,但缺点是WYSIAYG(what you see is all you get)
+
+选择一种编辑器，彻底了解它，并将其用于所有的编辑任务。如果你用一种编辑器进行所有的文本编辑活动，你就不必停下来思考怎么样完成文本操作：必须的击键将成为本能反应。编辑器将成为你双手的延伸。
+
+如果你目睹bug或者见到bug报告时的第一个反应是:”那不可能”，你就完全错了。一个脑细胞都不要浪费在“但那不可能发生”起头的思路上，因为很明显，那不仅可能，而且已经发生了注重实效的程序员会更进一步，他们连自己都不信任。知道没有人能够编写完美的代码，包括自己，所以注重实效的程序员针对自己的错误进行防卫性的编码
+
+在自责中有一种满足感。当我们责备自己时，会觉得再没有人有权责备我们。奥斯卡·王尔德(或许这就是懦夫存在的原因)
+
+嵌套的分配.对于一次需要使用不只一个资源的例程时，可以对资源分配的基本模式进行扩展。另外有两个建议
+   - 与资源分配顺序相反的顺序来进行解除资源的分配
+   - 对于不同请求资源的例程，总是使用相同的顺序去分配他们，这样会降低死锁发生的可能性:-)。
+不管我们在使用的是何种资源，事务，内存，文件，线程，窗口等，都满足上面的建议:-)
+
+再多的天才也无法胜过对于细节的关注 Levy’s Eighth Law(所以引入了抽象和模块)
+
+作为开发者，我们也工作在雷区。每天都有成百的陷阱在等着抓住我们。记住士兵的故事，我们应该警惕，不要得出错误结论。我们应该避免靠巧合编程-依靠运气和偶然的成功-而要深思熟虑的编程.怎么样深思熟虑的编程.要想让编写代码所花的时间更少，想要尽可能地在开发周期早期抓住并修正错误，想要一开始就少制造错误。如果我们能够深思熟虑，那对于我们会有帮助
+   - 总是意识到自己在做什么
+   - 不要盲目地编程。试图构建你不理解的应用或者使用你不熟悉的技术，就是希望自己被巧合误导
+   - 依照计划行事
+   - 依靠可靠的事物，不要依靠巧合或者是假定
+   - 为你的假定建立文档
+   - 不要只测试你的代码，还要测试你的假定
+   - 为你的工作划分优先级，把时间花在重要的方面
+
+当你遇到绊脚石，代码不再合时，你注意到有两样东西其实应该合并或者其他任何对你来说是“错误”的东西，不要对改动犹豫不决。应该现在就做。无论代码具有下面哪些特征，你都应该考虑重新构造代码 1.重复 2.非正交设计 3.过时的知识。事情便了，需求转移了，你对问题的了解加深了，代码也需要跟上这种变化 4.性能. 重构你的代码-四处移动功能，更新先前的决策-事实上是“痛苦管理”(pain managemen. 显然重构是一项需要慎重考虑，小心进行的活动。关于怎么进行利大于弊的重构，Martin Fowler给出了以下简单的指示
+   - 不要试图在重构时候加入新的功能
+   - 在开始重构之前确保你拥有良好的测试。尽可能经常运行这些测试。这样，如果你的改动修改破坏了任何东西，你就能很快知道
+
+芯片在设计时就考虑了测试，不只是在工厂，安装时，而且在部署现场进行测试。更加复杂的芯片和系统可能拥有完整的Built-In Self Test(BIST)特性，用于在内部运行某种基础级的诊断。或者拥有Test Access Mechanism(TAM)，用以提供一种测试装备。允许外部环境提供激励，并收集来自芯片的响应。
+
+构建测试窗口。对于大部分的单元测试工具，最终能够显示那些测试用例通过哪些没有通过并且能够很好的展现出来，但是如果我们需要进一步了解代码的运行状态的话，那么我们可以采用日志的方式看看测试的内容和具体的信息，所以日志还是很重要的:-)
+
+问题并不在于你是在盒子里面思考还是在盒子外面思考，而在于找到盒子-真正的约束(找到真正的问题,然后解决它,这才是最重要的.就像TP告诉我为什么脚本语言好，是因为你能够真正的找到问题而不被内存管理，如何实现低级的数据结构所分心。但是我觉得使用低级语言一样，只要我能够站在高层面的角度上思考问题而不被这个语言所限制).这正是你会退一步，问问你自己以下问题的时候
+   - 有更容易的办法吗？
+   - 你是在设法解决问题还是被外围的技术问题转移了注意力
+   - 这件事情为什么是一个问题
+   - 是什么使它如此难以解决
+   - 它必须以这种方式完成吗？
+   - 它真的必须完成吗?
+很多时候，当你设法回答这些问题时，你会有让自己吃惊的发现。你所需要的知识真正的约束，令人误解的约束还有区分它们的智慧
+
+你是一个了不起的表演者。你也需要倾听内心的低语声：“等等”如果你坐下来开始敲击键盘，在你的头脑里面反复出现某种疑虑，要注意它(要深思熟虑的编程)。倾听返回出现的疑虑，等你准备好再开始
+
+有些事情是不适合描述的。尤其是对于一些细节的问题，过度的描述反而容易限制开发者的编写效率。所以可以这样说，对于高层次的问题，我们必须要对其进行一些描述，而对于低层次的问题，比如如何实现我们就不要再施加更多的限制了:-)。
+
+我们是否应该使用形式方法，绝对应该。但是始终记住，形式开发方法知识工具箱里面的又一种工具。如果在仔细分析之后，你觉得要使用形式方法，那就采用它，但要记住谁是主人，不要变成方法学的奴隶注重实效的程序员批判地看待方法学，并从中提取精华，融合成自己的习惯。
+
+形式方法在开发中肯定有其位置。但是如果你遇到一个项目，其哲学是“类图就是应用，其余的只是机械编码时”你知道，你看到的是一个浸满水的项目团队和一个路途遥远的家（这或许就是我觉得那些软件工程课根本没有用的原因，因为讲这些课的老师就是这么一群人）
+
+花30分钟设计一个滑稽的标识，并且把它用在你的备忘录和报告上面，越别人交谈时，大方地使用你团队名字。这听起来很傻，但是能给你的团队一个用于建设的身份标识，并给世界某种难忘的，可以与你们工作相关联的东西（体现团队荣誉感）
+
+这里有一层隐含的关系，按照对你的授权，你越接近用户，你的级别就越高。离代码的用户有两三层远的程序员不大可能注意到它们的工作的应用语境，因此他们也将无法做出有见识的决策
+
+自动化使每个项目团队的必要组成部分。为了确保事情得以自动化，制定一个或者多个团队成员担任工具构建，构造和部署使项目中的苦差事自动化的工具，让它们制作makefile,shell脚本，编辑器模版和实用程序
+
+对于一些好的项目拥有的测试代码可能比产品代码还要多。编写这些测试代码所花的时间是值得的。从长远来看，它最后会便宜得多，而你实际上有希望制作出接近零缺陷的产品:-)
+
+注重实效的程序员会把文档当作整个开发过程的完整组成部分加以接受。不进行重复劳动，不浪费时间，并且把文档放在手边。如果可能，就把文档放在代码中。并且把英语当作另一种编程语言，这样你就会努力去维护你的注释了
+
+注释代码给你了完美的机会，让你去把项目的那些难以描述，容易忘记却又不能够记载在任何别的地方的东西记载下来：工程上面的权衡，为何作出这种决策还有放弃了那些替代的方案:-)
+
+用户高兴得的特征
+   - 快捷键
+   - 快速参考指南
+   - 彩色化
+   - 日志分析器
+   - 自动化安装
+   - 检查系统完整性
+   - 多个运行版本
+   - 为他们机构订制splash(交互式软件的初始画面)
+
+不得不说这里面提供了相当多的资源，有兴趣的话真的值得查阅
+   - IEEE Computer关注实践但是并不害怕理论
+   - IEEE Software针对软件从业人员
+   - Communications of the ACM这个里面理论内容就比较多
+   - SIGPLAN
+   - Dr Dobbs Journal这个范围比较广
+   - Software Development Magazine项目管理和软件开发的一般问题月刊
+   - jargon.org行话文件.www.tuxedo.org/~esr.The Cathedral and the Bazaar
+
+** 大教堂与市集(The Cathedral and the Bazaar)
+[[http://www.catb.org/~esr/writings/cathedral-bazaar/][The Cathedral and The Bazaar]]
+
+   - 好软件都源自解决开发者的切身之痛。Every good work of software starts by scratching a developer’s personal itch.
+   - 优秀的程序员知道要写什么，而伟大的程序员知道要改写（和重用）什么。Good programmers know what to write. Great ones know what to rewrite (and reuse).
+   - “为舍弃而计划，无论如何，你都要这样做。 “Plan to throw one away; you will, anyhow.” (Fred Brooks, The Mythical Man-Month, Chapter 11)
+   - 只要你态度正确，有趣的问题就会找上门来。If you have the right attitude, interesting problems will find you.
+   - 对一个项目失去兴趣的时候，你的最后责任就是找一个称职的接班人。When you lose interest in a program, your last duty to it is to hand it off to a competent successor.
+   - 把用户当作开发伙伴，是快速改进代码和有效调试的不二法门。Treating your users as co-developers is your least-hassle route to rapid code improvement and effective debugging.
+   - 早发布，常发布。并听取用户意见。Release early. Release often. And listen to your customers.
+   - 只要有足够多的人手参与公测和开发，任何问题都会显而易见并被很快化解。Givena large enough beta-tester and co-developer base, almost every problemwill be characterized quickly and the fix obvious to someone.
+   - 精巧的数据结构即使搭配笨拙的程序代码，也比精巧代码加笨拙结构的组合要强得多。Smart data structures and dumb code works a lot better than the other way around.
+   - 如果你把公测参与者作为最宝贵的资源来对待，那么他们就会成为你最宝贵的资源。If you treat your beta-testers as if they’re your most valuable resource, they will respond by becoming your most valuable resource.
+   - 自主创意很好，能认可源自用户的点子也不错。有时借笔生花更具成效。The next best thing to having good ideas is recognizing good ideas from your users. Sometimes the latter is better.
+   - 通常，当你确信自己在解决一个错误问题的时候，会激发最具突破和创造力的方案。Often, the most striking and innovative solutions come from realizing that your concept of the problem was wrong.
+   - “完美（的设计）意味着没有东西可以再被加入，而是没有东西可以移除”“Perfection (in design) is achieved not when there is nothing more to add, but rather when there is nothing more to take away.”
+   - 任何工具都应该起到预期的作用，而一个真正杰出的工具会带来出乎意料的用途。Any tool should be useful in the expected way, but a truly great tool lends itself to uses you never expected.
+   - 在写任何网关软件的时候，都该花点功夫尽可能不去干扰数据流——除非用户强迫你，否则永远不要抛弃任何信息When writing gateway software of any kind, take pains to disturb the data stream as little as possible—and never throw away information unless the recipient forces you to!写任何程序都是一样，维护好你的数据流
+   - 当你的语言还远不足以达到图灵完备的时候，不妨为语法蘸上一层“糖衣”When your language is nowhere near Turing-complete, syntactic sugar can be your friend.
+   - 安全系统的效用只取决于对秘密的保护，谨防伪安全。A security system is only as secure as its secret. Beware of pseudo-secrets.
+   - 要解决有趣的问题？那就先找到你感兴趣的吧！To solve an interesting problem, start by finding aproblem that is interesting to you
+   - 倘若开发的协调者拥有不逊于因特网的媒介，又懂得如何避免强权领导，那么群体智慧定要强于单打独斗。Provided the development coordinator has a communications medium at least as good as theInternet, and knows how to lead without coercion, many heads are inevitablybetter than one.
+
+关于Linus的. 其实，李纳斯的睿智和最有影响的手笔并不在于他发明了Linux内核，而是创造了一种模式。有一次我当面向他表达这个见解的时候，他莞尔地说起那句口头禅：“基本上，我很懒，懒到用他人的工作换取口碑。”像狐狸一样懒惰，或许如同罗伯特·海因莱笔下那个著名的人物一样——太懒了，才不会失败。李纳斯也不像（至少目前没有）理查德·斯多曼和詹姆斯·戈士林（NeWS和JAVA之父）那样在在设计领域天赋异禀，在我看来，他的才智更多的表现在操控和执行中。凭借着规避错误和防止陷入僵局的第六感，他能够发现解决问题的捷径。事实上，整个Linux的设计都散发出这种气质，处处体现出他质朴简洁的设计风格。
+
+Eric Raymond在做fetchmail时的建议
+   - 我早发布，常发布（从未低于十天一次，在高强度的开发周期则每天一次）。
+   - 我把每个曾和我讨论fetchmail的人都列入公测名单。
+   - 每当新版本发布，我都会不厌其烦的给公测名单里的每个人寄送一份，并鼓励其参与。
+   - 我听取公测人员的意见，在设计上征求他们的看法。并且当他们寄回补丁和反馈的时候，给予鼓励。
+一个奇怪的现象. 实际上，在1997年5月下旬我改写本书的时候发现，发现出于一个有趣的原因，当人数逼近300峰值时就会开始流失成员。一些人要求我把他们从名单中去掉，因为fetchmail对他们而言已经近乎完美了，所以他们不再需要收到通讯了。或许对于一个成熟的市集型项目，这是其正常生命周期的一部分吧。 所以我坚信fetchmail项目的成功应部分归因为我克制了自己的自作聪明；这（至少能够）反驳“原创设计制约市集模式成败”的观点。回头看Linux，假设李纳斯在开发操作系统核心时力主原创的话，我们现在还能见到如此稳健成功的内核?吗所以说在满足要求下简朴的设计永远好过复杂的设计，一开始就从简朴的角度出发，克制自己的聪明并且承认自己能力限制才是正道
+
+Bazaar模式下的软件开发的建议. 一旦你着手组建团队，就需要给出一个可行的承诺。你的程序并非必须运行良好，它可以是粗糙的、遍布瑕疵的、不完善的、也可以是缺少说明文件的。但是必须满足 a. 它能运行 b.能让潜在的协作开发者相信在不久的将来它能变得精良。在我看来一个项目的主持人是否能够做出足以彪炳的设计并不很关键。而至关重要的是，他是否可以从他人的创意中慧眼识英(操控性)。一个闭门造车的开发者将会输给一个懂得如何营造开放，演进环境的开发者。因为在这样的环境下，他可以从几百（甚至几千）人中汲取反馈从而探索设计空间、得到代码捐赠、错误检测、以及其他改进。
+
+关于科学和贡献的东西. 所以说，（软件或其他领域）革新的根本问题是：首先，如何培养那么多能够创新的人才；以及如何避免排挤他们。假定大教堂风格可以促成创新，而门槛低、流程通畅的市集模式则无能为力，显然是很荒谬的。如果创造源自一个人加一个好主意，那么能吸引成百上千人共同协作的社会环境必然优于一个必须通过政治手腕向上级推销创意的环境（为了避免不被炒鱿鱼，你必须在得到批准之后才能继续研发）。确实，如果我们检视一下大教堂模式下的软件创新史，不难发现源自其自身的创造凤毛麟角。大企业需要通过大学中的研究获取新知（因此，万圣节文件的作者对Linux对研究成果的快速吸收深表不安）。或者收购一些由于某个创意而组建的小公司。这两种创新均非源自大教堂文化。恰恰相反，很多类似被买断的创见被（万圣节文件作者鼓吹的）“庞大的管理成本”扼杀了。
+
+有趣的是，你会很快发现，即使你谦卑地坦陈别人为此做出多大的贡献，外界也不会这么看。大多数人认为是你创造了一切，而你只是为自己的天赋表示出适当的谦虚。李纳斯就是个生动的例子！话说回来，大多数科学、工程和软件的成果都不是来自原创天才，恰恰相反，是锐意进取铸就了神话。
+
+** 如何解题-数学思维新方法 by Polya
+   - 解题是一种实践性的技能，就好比游泳一样，我们是通过模仿和实践来学会任何一种实践性技能的。在学游泳时，你模仿别人的做法，用手和脚的动作来保持头部在水面之上，最后你通过操练游泳学会来游泳。学习解题时也是一样，你必须观察和模仿别人在解题时的做法，最后你通过解题学会了解题
+   - 要拟定一个方案，构思一个解题的想法，并不容易。要取得成功需要许多东西，诸如以前学到的知识，良好的思维习惯，目标集中此外还需要另外一样东西:好运气。而执行一个方案就要容易多了，需要的就是耐心
+   - 对于附带性问题，教师还是应可不要首先提出，除非整个班级都对这方面的基本知识有所了解。即使在这种情况下仍然会存在一些危险，回答一个附带性的问题可能会成为大多数学生的主要困难
+   - 教师的首要职责之一就是不能够给学生留下下列印象:数学题相互之间几乎没有什么联系，与其他事物也根本毫无联系
+   - 对于一个不完整的念头，你应该考虑它。如果他看上去很有利，那么你就应该考虑的更久一些。如果它看上去很可靠，你就应该弄清楚它能够引导你到多远并重新考虑整个情况。记住只要你对题目的概念有一个更完整，更有条理，更和谐或者是更加平衡的看法，你就应该对此表示感激了
+   - 在解题完成之后，你应该从不同的方面考虑你的解答，并且寻找与你过去所获知识之间的联系。考虑解答的每一个细节使其尽可能的简单，考虑解答中那些比较冗长的部分并尽可能的使他们简短，尝试改进你的整个答案使其直观并且尽可能自然地把它纳入你过去所获取的知识中.
+   - ”能无望而前行，百折而不挠”[II n'est point besoin esperer pour entreprendre ni reussir pour perseverer]这种决心对于科学家并不适用，科学家应该一开始抱着某种希望或者是获得了某种成功而坚持下去。在科学中有必要根据展开来合理地调整决心。除非一道题目有趣你才会去着手解决，一道题目有教益才会认真去做，一道题目有希望才会去全身心投入。但是如果下定了决心就要坚持下去，不要忽视小的成功相反需要去发现他们。
+   - 教学生解题也是一种意志教育，学生要解决对他们来说并不容易的题目，他们就要学会面对失败锲而不舍，重视小的进步，静候实质性的念头，当这一念头出现以后全力以赴
+   - 你的猜想也许是正确的，但是把一个生动的猜想当作一个已经证实的真理则是愚蠢的
+   - 潜意识活动的前提情况是在我们停止工作之前已经解决了部分题目或者是有了新的认识，在没有取得任何进展的情况下就搁置在一边却是不可取的
+   - 简单性是真理的标志[simplex sigillum veri]
+
+** 理想国(节选)
+理想国是柏拉图的代表作，该书不仅仅是哲学家的宣言书也是哲人政治家所写的治国计划纲要。虽然是柏拉图所著，但是里面大部分是恩师苏格拉底和其他哲学家的精彩辩论，辩论中涉及到了诸多问题比如国家专政，独裁，正义与非正义，善与恶，民主，法律，宗教，道德，妇女参政，教育等问题。这部分只是涉及到了国家政治，正义和非正义，以及民生这3个部分。书里面翻译的辩论过程虽然不觉得有多精彩，但是那个时候也确实有很多人有独到的见解[比如正义和非正义的问题上格劳孔对于正义的观点],里面涉及的辩论人有这些
+   - 苏格拉底
+   - 波勒霍斯马
+   - 克法洛斯
+   - 阿德曼托斯
+   - 格劳孔
+   - 色拉叙马霍斯
+需要紧记的是，一些观点虽然看上去即使大部分人的态度很明显但是却说服不了另外一方的话，那么就没有辩论成功。所以里面的论题虽然看上去非常明显是谁对谁错，但是却需要完全的解释一番和辩解一番，就像是数学题目一样知道这个结论是对的和证明这个结论是对的是两回事。
+
+--------------------
+
+   - 论财产与老有所福[老人的幸福是否有他所拥有的财产所决定]
+   - 理想国与理想政治[理想的国家人员应该是如何配备]
+   - 国家的力量与法律问题[在国家的力量下凭借法律我们应该限制那些东西]
+   - 论定国安邦[国民包括统治者被统治者之间如何对待才能够保持社会稳定]
+   - 论希腊内讧和战争[虽然是说希腊内讧问题，但是在书里面说的却是应该如何对待那些守卫国家的战士]
+   - 从寡头到无政府的政体形式[对比寡头和无政府政体形式]
+   - 正义和非正义[书中是分为几个部分探讨的，正义和邪恶，正义和非正义的区别，正义的起源和本质，最后是正义的最终定义。这个部分是最有意思的，其中色拉叙马霍斯几次可以说是挑衅苏格拉底，但是都被反驳回去了。在正义的起源和本质这个问题上，格劳孔的认识是相当精辟的，虽然看上去像是错误但是却无懈可击]
+   - 论国民教育[那些措施有利于国民教育]
+   - 智慧勇敢和节制的性质[评价智慧勇敢和节制对于国家的重要性]
+   - 论妇女天赋[应该如何去让妇女去发掘自己的天赋.不是探讨性别而是探讨我们对于妇女去发掘自己的天赋这件事情上应该持什么态度]
+   - 论哲学治国兼知识的存在[哲学即使是追求完美但是依然有可取的地方，知识不同于意见需要深入发觉并且抽象才能够感受其存在]
+   - 哲学家的德行[哲学家必须具备智慧，勇敢和节制才配得上哲学家，但是按照这个标准的话有太多伪哲学家了]
+   - 黑暗与光明的选择[黑暗类似于无知识的状态，光明是了解知识后状态]
+   - 独裁者的生活方式
+
+--------------------
+
+   - 年老不是问题，真正会出现问题的是人性格的因素。一个乐观的，心境淡泊的人是不会因为年岁的增长而增加压力的。反之那些具有相反性格的人，即使年纪再轻或者也是一种负担。一个人贫穷并不可怕只要他善良，可怕的是富有了却充满了邪恶，邪恶的夫人老了也不是得到安宁的。
+   - 不要按照你的意思去解释守卫我们城邦的人的幸福观
+   - 国家的领袖们必须时刻注意到绝对不能够让自己的国家在不知不觉中败坏了，必须始终守护自己国家的一切，包括不能够让体育和音乐推出新花样，违反固有的秩序。
+   - 真正的立法者无论是在政治井然有序还是杂乱无章的国家里，也不无论是在法律还是宪法上，都不应该标新立异自寻烦恼。因为在政治秩序混乱的国家里，法律和宪法根本就是一纸空文，但是在政治秩序良好的国家里，制定法律和宪法就相对简单甚至还可以参考前人留下的相关规章制度
+   - 一个从小立志长大要当军人的人，如果在小时候不演练一些关于战争的知识，未来就难以成为一个出色的战士。所以在小时候让他们见证一些战争是非常重要的，为了这个冒点险也是应该的
+   - 推翻寡头政体形式而建立起的无政府，很容易进入这么一种民主制度就是本着宽容的精神，根本不去管理我们那些琐碎的事情。他们对我们缔造的理想国所宣布的庄严原则全然藐视，除了极少数天赋极高的人以外，没有一个善良的人不是从小就在一个良好的环境下游戏学习受到好的教养
+   - 孩子的初始教育是非常重要的，所以在故事选编上应该建立一个严格审查制度。同时宣扬诸神做的都是合乎人间意愿的事情，神是正确的公正的。同时神是神圣的不会在言行方面欺骗百姓。
+   - 勇敢就是一种坚持，坚持拯救内心存余的懦弱的灵魂。勇敢的人无论是在苦恼还是在快乐之中，或是处于欲望还是害怕中，都永远坚持这种信念而不抛弃它。
+   - 节制是指人的一些快乐的欲望有秩序且有理性地得到控制，按照现在人的话说”就是自己做自己的主人”。
+   - 了解知识的过程是非常痛苦的，就好像在黑暗的洞穴里面待久了让他们看到眼光会刺眼一样。但是只要花上一点时间的话，他们是会最终接受洞外的一切事物的，因为长期受到囚禁，想要重新认识外面的东西总要给他们适应的过程的:-)
+
+--------------------
+
+看看格劳孔关于正义的观点
+   - 人们从非正义的事情上获得了甜头但是也因为行使非正义而遭罪。于是人们想出一个名堂就是立法来进行正义的定义。正义的本质实质上是折中。两个极端是干了最大坏事但是却没有受惩罚，遭受非正义但是却没有能力报复。这样一来，正义被置于两者的中间地带，并非他本身就是善良，而是因为没有去行恶的胆略和能力，才被冠以正义之称。
+   - 一般人行使正义并非出于真心，而是因为他们想非正义但是却得不到条件的许可。一旦他们有条件去行使非正义的话，就会去行使非正义的事情
+   - 非正义的人去行使非正义的事情，然后从非正义带来的利益中挑出一部分充作诸神的祭品，借此逃过上苍的惩罚。
+最后苏格拉底对于正义的定义[比较精辟]:正义就是能够使得勇敢，智慧和节制在这个城邦产生，并在它们产生之后一直保护他们的这个品质.
+
+** 分布式操作系统 by Andrew S. Tanenbaum
+分布式操作系统相对于集中式操作系统的优点
+   - 经济，微处理机提供了比大型机更好的性价比
+   - 速度，分布式系统总的计算能力比单个大型主机更强
+   - 固有的分布性，一些应用将涉及到空间上分散的机器
+   - 可靠性，如果一个机器崩溃那么整个系统还可以运转
+   - 渐增，计算能力能够逐渐增加
+
+分布式操作系统相对对于个人计算机
+   - 数据共享，允许多个用户访问一个公共数据库
+   - 设备共享，允许多个用户共享昂贵的外围设备
+   - 通信，人们之间通信更加容易
+   - 灵活性，是用最有效的方式将工作符合分配到可用机器上面
+
+分布式系统缺点
+   - 软件，目前为分布式系统开发软件还很少
+   - 网络，网络可能饱和而引起其他问题
+   - 安全，容易造成对保密数据的访问
+
+分布式系统为了使得这个系统看上去像是一个操作系统，因此在设计方面提出了下面几个要求
+   - 透明性(transparency)，实现一个单系统映像
+   - 灵活性，考虑使用微内核方式将各个服务放在不同服务器上面，比如文件服务/目录服务放在不同机器上
+   - 可靠性，我们不希望分布是系统比单处理机系统更脆弱
+   - 性能
+   - 可伸缩性，就是说规模的扩大对于分布式系统不会产生太多的问题，特别是性能方面。为了提供好的可伸缩性，应该在设计方面避免 a.集中式组件 b.集中式表 c.集中式算法
+
+NOTE（dirlt）：很早之前读的这本书（这本书应该也有一定的年头了），但是现在来看的话似乎分布式操作系统不是主流。相反直接在单机操作系统上层进行分布式框架的开发越来越多。不知道分布式操作系统以后是否会受到关注？：）
+
+** 米兰达警告(Miranda Warnings)
+   - You have the right to remain silent and refuse to answer questions. Anything you do say may be used against you in a court of law.
+   - You have the right to consult an attorney before speaking to the police and to have an attorney present during questioning now or in the future.
+   - If you cannot afford an attorney, one will be appointed for you before any questioning if you wish.
+   - If you decide to answer questions now without an attorney present you will still have the right to stop answering at any time until you talk to an attorney.
+   - Knowing and understanding your rights as I have explained them to you, are you willing to answer my questions without an attorney present?
+   - 你有权保持沉默，你对任何一个警察所说的一切都将可能被作为法庭对你不利的证据。
+   - 你有权利在接受警察询问之前委托律师，他（她）可以陪伴你受讯问的全过程。
+   - 如果你付不起律师费，只要你愿意，在所有询问之前将免费为你提供一名律师。
+   - 如果你希望跟你对律师谈话，你可以在任何时间停止回答问题，并且你可以让律师一直伴随你询问的全过程。
+
+--------------------
+*米兰达诉亚利桑那州案*
+
+1963年3月3日深夜，一位在美国亚利桑那州凤凰城某影院工作的女孩（18岁）下班回家时，一辆汽车突然停在她面前。一名男子从车里钻出来，一手抓胳膊一手捂嘴，将她塞进汽车后座，把手脚都捆住，并在车内将其强暴。该女孩被放开后，马上跑回家给警察打了电话。根据她的描述，警察于3月13日将米兰达抓获。抓获后，警察将被告进行了“排队”，受害女孩当场指认米兰达就是罪犯，米兰达也供认不讳，并写了一份供认书，还在上面签了名字。以米兰达的供认书和招供情况为证据，法院判决米兰达犯劫持罪和强奸罪，分别判处有期徒刑20年和30年。米兰达不服，在狱中多次向美国联邦最高法院写信上诉，终获成功，这便是美国刑诉领域中具有里程碑意义的米兰达诉亚利桑那州案。
+
+被告认为，自己当时的招供是被迫的，警察违反了不得强迫被追诉人对自己作证的宪法修正案第5条规定。美国联邦最高法院同意了被告的观点，认为：虽然被告肉体上没有受到强迫，甚至也没有人直接告诉他必须招供，但“心理上”的强迫是存在的。联邦最高法院的判决里宣布，警察局审讯室里的“气氛”很令人担心。现代审讯用的是“攻心”战术，审讯在室内进行，同外界隔绝，现场除了被告以外全是警察。警察所问的并不是被追诉者做了没做，而是为什么要做。此外，警察还用各种方法松懈被讯问者的警觉，如常常假装同情或者把犯罪的责任推到受害人或社会身上，让被讯问人觉得案件并非那么严重；或者软硬兼施，一会儿口气粗鲁，一会儿温文尔雅。所有这一切，联邦最高法院认为，都给被讯问者造成了巨大的心理压力，而这样供认的可信度是很低的，不应作为合法证据使用。因此，联邦最高法院明确规定：在审讯之前，警察必须明确告诉被讯问者：
+   - 有权保持沉默；
+   - 如果选择回答，那么所说的一切都可能作为对其不利的证据；
+   - 有权在审讯时要求律师在场；
+   - 如果没有钱请律师，法庭有义务为其指定律师。这就是米兰达诉亚利桑那州一案所产生的著名的“米兰达警告”。
+如果警察在审讯时没有预先作出以上4条警告，那么，被讯问人的供词一律不得作为证据进入司法程序。米兰达案判决30多年来，这条法律规定目前在美国是妇孺皆知。因此，嫌疑人被捕后，一般都是开口就说：“我要对我的律师说话”或“在同我的律师谈话之前我不想谈任何东西。”
+
+** 我要学的最后一门编程语言：LISP (Clojure)
+开发软件。事实上，我的整个职业生涯都是从事软件开发。早在互联网时代之前，在那次泡沫之前，那次泡沫之前的泡沫之前，我就在波士顿的一家小公司里的一份软件开发的岗位上苦苦奋斗，我们做多协议路由器。在那份工作中，我从做测试干起，是一个“质管员”，感谢这个公司的技术创始人的榜样，他努力的工作，在Cayman Systems中作为一个特殊的开发人员给予我们指导，使我找到了驱动我之后二十年的人生招唤：软件开发。
+
+这第一份工作不仅仅塑造了我的职业内容，同时，在Cayman，我遭遇了可怕的创业诱惑的冲击。第一次，我感觉到了一个公司创业的成功带来的直接、美好、让人紧张颤栗的强烈感觉。我感觉到了那种自己掌舵的愉悦，尽管只是部分的。这次跟自由与责任的第一次的亲密接触让我胃口大开，我从此走上了创业之路。
+
+我在Cayman Systems的导师给了我两条谏言，它们一直陪伴我至今：
+   - 当你想开办一个公司时，先从顾问做起。(看，他已经知道我入魔了。)从你的客户那里学习业务和开发，获得报酬的同时，利用他们的专家和资金，最终将其全部转化到你的产品里。
+   - 学习LISP。 
+我很不擅长听取建议，所以这两样我一个都没做。
+
+十年后(几乎也是这段时间)，我开始研究Ruby。当我发现Ruby时，一种高兴的，一种长出一口气，一种兴奋的感觉充满着我。它俘获了我，不仅仅从技术上，在之后的一年的学习这种语言中，我编写软件的方式、我解决问题的模式改变了。我可以用一种最简单的，但毫无疑问的语句描述这种奇异的感觉：“编程太有意思了！”。经过了多年对这种体验的深刻的反思，我对Paul Graham的话更深信不疑了：
+#+BEGIN_VERSE
+“编程语言不仅仅是一种技术，它更是一种思维习惯。” – http://www.paulgraham.com/avg.html 
+#+END_VERSE
+通过对其它语言的学习，我无意中学会了新的、更高效的思维习惯。Ruby使我成为一个更优秀的程序员。
+
+回顾往事，我发现有些地方做的很英明，并不是有意识的，就像是我早就知道了那句名言——早在它清晰的指导我行为处事之前。因为，你看，我第一眼看到Java，我就知道我讨厌它。我从来没有用Java写过一行代码，不会拿它来挣钱，更不会把它当作兴趣。我想我清楚的知道，深深的知道，它会改变我，使我成为一个“编码器”。甚至更糟。
+
+纽约时报推荐了一篇Guy Deutscher写的标题为“语言如何改变你的思维”的文章，文章先从回顾开始，然后谈到了在这个问题上的最新研究发现。
+#+BEGIN_VERSE
+“50多年前，著名的语言学家Roman Jakobson用一句简单的名言指明了语言之间最关键的不同之处：‘语言之间的不同本质在于它们能够传达的信息，而不是它们不能传达的信息。’这句名言告诉了我们解放我们母语潜能的关键所在：不同的语言用不同的方式影响我们的大脑思维，这并不是因为这种语言可以让我们这样思考问题，而是它在强迫你这样思考。”
+“当你的语言日常的强迫你去使用某些类型的信息进行说明，这会迫使你去留意那些使用其它种语言的人平时不会注意的某些细节和体验。因为这种说法的习惯是从小养成的，这种习惯已经成为大脑思维的习惯，超越了语言本身，直接影响了你的言行，感知，联想，感觉，记忆，以及世界观。” 
+#+END_VERSE
+基本上我不是一个办事果断的人，但年初我决定要给自己充充电，我誓言要再学一门新的语言。我知道，我现在是CTO，这样做会使我“失身份”，但我认为，我的能力就体现在能在技术界和商务界的贯通，我必须坚定的深度的同时浸润着这两个领域。我听说越来越多的语言开始利用JVM，所以我想Scala也许会是一个不错的选择。我不想用无聊的细节打搅你，但这种语言确实没有符合我的预期。
+
+六个星期之前，我发现了Clojure。现在，二十年来的今天，我懊悔不已，我发现导师的建议不该被当作耳边风，那是个极其重要的建议。我们知道，Clojure是LISP语言的一种方言。而事实证明，LISP并不是一种语言。LISP是一种思维方式。
+
+** 

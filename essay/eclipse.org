@@ -1,0 +1,7 @@
+* eclipse
+** FAQ
+*** 如何从maven项目导入eclipse
+mvn eclipse:eclipse 就可以建立eclipse工程文件了。之后直接在eclipse导入即可。wonderful：）
+
+
+

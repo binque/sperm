@@ -62,4 +62,4 @@ http://bjjc.zhcoo.com/show_manage_article.aspx?articleid=9120
 
 
 ** temp
-处理到 http://dirlt.com/blog/?paged=37
+处理到 http://dirlt.com/blog/?paged=30
