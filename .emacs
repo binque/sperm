@@ -219,10 +219,6 @@
 ;; Change cursor color depending on IBus status
 (setq ibus-cursor-color '("red" "blue" "limegreen"))
 
-;;; desktop.
-(require 'desktop)
-(desktop-save-mode t)
-
 ;;; session.
 (require 'session)
 (add-hook 'after-init-hook 'session-initialize)
@@ -390,3 +386,7 @@
   "Use `yas/completing-prompt' for `yas/prompt-functions' but only here..."
   (let ((yas/prompt-functions '(yas/completing-prompt)))
     ad-do-it))
+
+;;; desktop.
+(require 'desktop)
+(desktop-save-mode t)
