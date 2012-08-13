@@ -91,9 +91,9 @@ CLOSED: [2012-07-25 Wed 22:37]
 *** TODO 整理阅读收藏列表以及浏览器列表
 *** TODO Job Scheduling for Multi-User MapReduce Clusters
     - http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html
-
-
 *** TODO 整理blog
+
+*** TODO 建立本地测试环境，运行hourlyprocedure
 
 ** read it later
 *** TODO BigTable

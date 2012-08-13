@@ -21,6 +21,10 @@
    - MongoDB和其他几种数据库的对比. http://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis
    - MongoDB FAQ. http://cn.docs.mongodb.org/manual/faq/fundamentals/
 
+** 网络模型
+mongodb采用一个线程处理一个请求的模型，不太确定mongodb是否限制了并发连接数。
+如果没有限制的话，那么如果活跃连接数过多的话会导致上下文切换开销严重，导致mongodb挂掉。
+
 ** 单机存储
 这里有一些关于MongoDB单机存储方面的文章.
    - 深入MongoDB内部结构. http://blog.nosqlfan.com/html/2079.html

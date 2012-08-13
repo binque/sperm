@@ -63,3 +63,25 @@ http://bjjc.zhcoo.com/show_manage_article.aspx?articleid=9120
 
 ** temp
 处理到 http://dirlt.com/blog/?paged=30
+
+** hadoop-lzo
+#+BEGIN_EXAMPLE
+https://github.com/kevinweil/hadoop-lzo
+安装liblzo2库，sudo apt-get install liblzo2-2(liblzo2-dev)
+安装lzop程序，sudo apt-get install lzop
+clone git://github.com/kevinweil/hadoop-lzo.git
+编译，ant compile-native tar 将结果build/hadoop-lzo-0.4.14的hadoop-lzo-0.4.14.jar复制到 $HADOOP_HOME/lib，将build/hadoop-lzo-0.4.14/lib/native下的文件复制到$HADOOP_HOME/lib/native (native/Linux-amd64-64)
+修改core-site.xml配置
+<property>
+
+<name>io.compression.codecs</name>    <value>org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec</value>
+</property>
+<property>
+
+<name>io.compression.codec.lzo.class</name>
+
+<value>com.hadoop.compression.lzo.LzoCodec</value>
+</property>
+
+#+END_EXAMPLE
+

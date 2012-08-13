@@ -1,17 +1,13 @@
-#!/usr/bin/env python
-#coding:utf-8
-#Copyright (C) dirlt
-
-POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>%(groupId)s</groupId>
-  <artifactId>%(artifactId)s</artifactId>
+  <groupId>com.dirlt.hadoop</groupId>
+  <artifactId>WordCount</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>%(project)s</name>
+  <name>wordcount</name>
   <url>http://maven.apache.org</url>
 
   <properties>
@@ -38,11 +34,11 @@ POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="ht
     <!--   <version>2.3.0</version> -->
     <!-- </dependency> -->
 
-    <!-- <dependency> -->
-    <!--   <groupId>org.apache.hadoop</groupId> -->
-    <!--   <artifactId>hadoop-core</artifactId> -->
-    <!--   <version>0.20.2-cdh3u3</version> -->
-    <!-- </dependency> -->
+    <dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-core</artifactId>
+      <version>0.20.2-cdh3u3</version>
+    </dependency>
 
     <!-- <dependency> -->
     <!--   <groupId>org.apache.hbase</groupId> -->
@@ -126,23 +122,23 @@ POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="ht
         </executions>  
       </plugin>  
 
-            <!-- <plugin> -->
-            <!--     <artifactId>maven-assembly-plugin</artifactId> -->
-            <!--     <configuration> -->
-            <!--         <descriptorRefs> -->
-            <!--             <descriptorRef>jar-with-dependencies</descriptorRef> -->
-            <!--         </descriptorRefs> -->
-            <!--     </configuration> -->
-            <!--     <executions> -->
-            <!--       <execution> -->
-            <!--         <id>make-assembly</id>  -->
-            <!--         <phase>package</phase> -->
-            <!--         <goals> -->
-            <!--           <goal>single</goal> -->
-            <!--         </goals> -->
-            <!--       </execution> -->
-            <!--     </executions> -->
-            <!-- </plugin> -->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -172,7 +168,7 @@ POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="ht
           <arguments>
             <argument>-cp</argument>
             <classpath/>
-            <argument>%(groupId)s.%(artifactId)s.Main</argument>
+            <argument>com.dirlt.hadoop.WordCount.WordCount</argument>
           </arguments>
         </configuration>
       </plugin>
@@ -219,106 +215,3 @@ POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="ht
   </build>
 
 </project>
-"""
-
-SRC_TEMPLATE="""/* coding:utf-8
- * Copyright (C) dirlt
- */
-
-package %(groupId)s.%(artifactId)s;
-
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import org.apache.log4j.Logger;
-
-public class Main {
-  private static final Logger LOG  = Logger.getLogger(Main.class);
-  public static void main(String[] args) {
-    // TODO(dirlt):
-  }
-}
-"""
-
-TEST_TEMPLATE="""/* coding:utf-8
- * Copyright (C) dirlt
- */
-
-package %(groupId)s.%(artifactId)s;
-
-import org.junit.*;
-import static org.junit.Assert.*;
-
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import org.apache.log4j.Logger;
-
-public class MainTest {
-  private static final Logger LOG  = Logger.getLogger(Main.class);
-  @Before
-  public void setUp() throws Exception {
-    // TODO(dirlt):
-  }
-  @After
-  public void tearDown() throws Exception {
-    // TODO(dirlt):
-  }
-
-  @Test
-  public void testMain() throws Exception {
-    // TODO(dirlt):
-  }
-}
-"""
-
-LOG4J="""#
-# Copyright (C) dirlt
-#
-
-log4j.rootCategory=INFO, stdout , FILE
-
-log4j.appender.stdout=org.apache.log4j.ConsoleAppender
-log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
-log4j.appender.stdout.layout.ConversionPattern=%%d %%p [%%c] - <%%m>%%n
-
-log4j.appender.FILE=org.apache.log4j.FileAppender
-log4j.appender.FILE.File=%(artifactId)s.log
-log4j.appender.FILE.Append=true
-log4j.appender.FILE.layout=org.apache.log4j.PatternLayout
-log4j.appender.FILE.layout.ConversionPattern=%%d %%p [%%c] - <%%m>%%n
-
-# log4j.appender.FILE=org.apache.log4j.RollingFileAppender
-# log4j.appender.FILE.File=%(artifactId)s.log
-# log4j.appender.FILE.MaxFileSize=1GB
-# log4j.appender.FILE.MaxBackupIndex=1
-# log4j.appender.FILE.Append=true
-# log4j.appender.FILE.layout=org.apache.log4j.PatternLayout
-# log4j.appender.FILE.layout.ConversionPattern=%%d %%p [%%c] - <%%m>%%n
-
-"""
-
-import os
-def generate(project,groupId,artifactId):
-    cps=groupId.split('.')
-    cps.append(artifactId)
-    os.system('mkdir -p %s'%(project))
-    open('%s/pom.xml'%(project),'w').write(POM_TEMPLATE%(locals()))
-    os.system('mkdir -p %s/src/main/java/%s/'%(project,'/'.join(cps)))
-    os.system('mkdir -p %s/src/test/java/%s/'%(project,'/'.join(cps)))
-    os.system('mkdir -p %s/src/main/resources/'%(project))
-    os.system('mkdir -p %s/src/test/resources/'%(project))
-    open('%s/src/main/java/%s/Main.java'%(project,'/'.join(cps)),'w').write(SRC_TEMPLATE%(locals()))
-    open('%s/src/test/java/%s/MainTest.java'%(project,'/'.join(cps)),'w').write(TEST_TEMPLATE%(locals()))
-    open('%s/src/main/resources/log4j.properties'%(project),'w').write(LOG4J%(locals()))
-    open('%s/src/test/resources/log4j.properties'%(project),'w').write(LOG4J%(locals()))
-
-import sys
-if __name__=='__main__':
-    if(len(sys.argv)!=4):
-        print 'create a new project in maven'
-        print 'usage:%s project-name groupId artifactId'%(sys.argv[0])
-    else:
-        generate(sys.argv[1],sys.argv[2],sys.argv[3])
