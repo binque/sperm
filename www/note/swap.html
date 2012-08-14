@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="swap"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-10 17:23:54 CST"/>
+<meta name="generated" content="2012-08-14 10:46:05 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -106,6 +106,7 @@
 <li><a href="#sec-1-4">1.4 老婆事情</a></li>
 <li><a href="#sec-1-5">1.5 水管</a></li>
 <li><a href="#sec-1-6">1.6 temp</a></li>
+<li><a href="#sec-1-7">1.7 hadoop-lzo</a></li>
 </ul>
 </li>
 </ul>
@@ -266,13 +267,45 @@ PPR 管：作为一种新型的水管材料，PPR 水管具有得天独厚的优
 <div class="outline-text-3" id="text-1-6">
 
 <p>处理到 <a href="http://dirlt.com/blog/?paged=30">http://dirlt.com/blog/?paged=30</a>
-</p></div>
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> hadoop-lzo</h3>
+<div class="outline-text-3" id="text-1-7">
+
+
+
+
+<pre class="example">https://github.com/kevinweil/hadoop-lzo
+安装liblzo2库，sudo apt-get install liblzo2-2(liblzo2-dev)
+安装lzop程序，sudo apt-get install lzop
+clone git://github.com/kevinweil/hadoop-lzo.git
+编译，ant compile-native tar 将结果build/hadoop-lzo-0.4.14的hadoop-lzo-0.4.14.jar复制到 $HADOOP_HOME/lib，将build/hadoop-lzo-0.4.14/lib/native下的文件复制到$HADOOP_HOME/lib/native (native/Linux-amd64-64)
+修改core-site.xml配置
+&lt;property&gt;
+
+&lt;name&gt;io.compression.codecs&lt;/name&gt;    &lt;value&gt;org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+
+&lt;name&gt;io.compression.codec.lzo.class&lt;/name&gt;
+
+&lt;value&gt;com.hadoop.compression.lzo.LzoCodec&lt;/value&gt;
+&lt;/property&gt;
+
+</pre>
+
+
+</div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-10 17:23:54 CST</p>
+<p class="date">Date: 2012-08-14 10:46:05 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

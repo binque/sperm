@@ -5,9 +5,10 @@
    - 在eclipse导入工程
    - 在preferences=》Java=》Build Path=》Classpath Variables里面添加M2_REPO，通常为/home/${USER}/.m2/repository
 
-
-
-
-
-
-
+*** 常用快捷键
+   - 格式化 C+S+F
+   - 注释 C+S+C
+   - 切换声明 F3
+   - 跳回 Alt+L
+   - 切换编辑Tab Ctrl+PageUp/Down
+   - 

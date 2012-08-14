@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="mongodb"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-02 13:24:04 CST"/>
+<meta name="generated" content="2012-08-14 10:46:03 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -101,11 +101,12 @@
 <li><a href="#sec-1">1 mongodb</a>
 <ul>
 <li><a href="#sec-1-1">1.1 简介</a></li>
-<li><a href="#sec-1-2">1.2 单机存储</a></li>
-<li><a href="#sec-1-3">1.3 内存占用</a></li>
-<li><a href="#sec-1-4">1.4 Sharding</a></li>
-<li><a href="#sec-1-5">1.5 HA方案</a></li>
-<li><a href="#sec-1-6">1.6 代码分析</a></li>
+<li><a href="#sec-1-2">1.2 网络模型</a></li>
+<li><a href="#sec-1-3">1.3 单机存储</a></li>
+<li><a href="#sec-1-4">1.4 内存占用</a></li>
+<li><a href="#sec-1-5">1.5 Sharding</a></li>
+<li><a href="#sec-1-6">1.6 HA方案</a></li>
+<li><a href="#sec-1-7">1.7 代码分析</a></li>
 </ul>
 </li>
 </ul>
@@ -170,8 +171,19 @@
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 单机存储</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 网络模型</h3>
 <div class="outline-text-3" id="text-1-2">
+
+<p>mongodb采用一个线程处理一个请求的模型，不太确定mongodb是否限制了并发连接数。
+如果没有限制的话，那么如果活跃连接数过多的话会导致上下文切换开销严重，导致mongodb挂掉。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 单机存储</h3>
+<div class="outline-text-3" id="text-1-3">
 
 <p>这里有一些关于MongoDB单机存储方面的文章.
 </p><ul>
@@ -272,9 +284,9 @@ NOTE(dirlt):应该大部分的RDBMS也是这种实现方式来实现复合索引
 
 </div>
 
-<div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 内存占用</h3>
-<div class="outline-text-3" id="text-1-3">
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 内存占用</h3>
+<div class="outline-text-3" id="text-1-4">
 
 <p>这里有一些关于MongoDB内存使用和Linux内存方面的文章.
 </p><ul>
@@ -295,9 +307,9 @@ MongoDB不管是索引还是数据文件都强烈依赖于mmap.但是这里有�
 
 </div>
 
-<div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Sharding</h3>
-<div class="outline-text-3" id="text-1-4">
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> Sharding</h3>
+<div class="outline-text-3" id="text-1-5">
 
 <p>mdb可以通过指定shard key来做auto-sharding.对于sharding的话需要三个组件
 </p><ul>
@@ -332,9 +344,9 @@ auto-sharding有三个需要考虑的问题：
 
 </div>
 
-<div id="outline-container-1-5" class="outline-3">
-<h3 id="sec-1-5"><span class="section-number-3">1.5</span> HA方案</h3>
-<div class="outline-text-3" id="text-1-5">
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> HA方案</h3>
+<div class="outline-text-3" id="text-1-6">
 
 <p>对于HA方案来说的话，mdb有两种解决方案
 </p><ul>
@@ -402,9 +414,9 @@ A crashed server with missing heartbeat will be detected by other members and re
 
 </div>
 
-<div id="outline-container-1-6" class="outline-3">
-<h3 id="sec-1-6"><span class="section-number-3">1.6</span> 代码分析</h3>
-<div class="outline-text-3" id="text-1-6">
+<div id="outline-container-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> 代码分析</h3>
+<div class="outline-text-3" id="text-1-7">
 
 <p>TODO(dirlt):
 </p></div>
@@ -413,7 +425,7 @@ A crashed server with missing heartbeat will be detected by other members and re
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-02 13:24:04 CST</p>
+<p class="date">Date: 2012-08-14 10:46:03 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
