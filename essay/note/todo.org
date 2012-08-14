@@ -78,6 +78,11 @@ CLOSED: [2012-07-25 Wed 22:37]
     CLOSED: [2012-08-08 Wed 20:34]
 *** DONE MapReduce
     CLOSED: [2012-08-09 Thu 20:40]
+*** DONE 整理阅读收藏列表以及浏览器列表
+    CLOSED: [2012-08-14 Tue 07:00]
+
+*** DONE 建立本地测试环境，运行hourlyprocedure
+    CLOSED: [2012-08-14 Tue 07:00]
 
 
 ** daily todo
@@ -88,17 +93,15 @@ CLOSED: [2012-07-25 Wed 22:37]
 *** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
 *** TODO 阅读完Core Java I
-*** TODO 整理阅读收藏列表以及浏览器列表
 *** TODO Job Scheduling for Multi-User MapReduce Clusters
     - http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html
 *** TODO 整理blog
 
-*** TODO 建立本地测试环境，运行hourlyprocedure
-
 ** read it later
 *** TODO BigTable
-*** TODO YARN
 *** TODO mapreduce里面如何做join
+*** TODO YARN
+
 *** TODO pregel
 *** TODO Percolator
 *** TODO dremel

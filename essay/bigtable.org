@@ -1,1 +1,87 @@
 * bigtable
+   - http://research.google.com/archive/bigtable.html
+   - Bigtable: A Distributed Storage System for Structured Data
+   - Fay Chang, Jeffrey Dean, Sanjay Ghemawat, Wilson C. Hsieh, Deborah A. Wallach, Mike Burrows, Tushar Chandra, Andrew Fikes, and Robert E. Gruber 
+   - 2006
+
+** Abstract
+   - Bigtable is a distributed storage system for managing structured data that is designed to scale to a very large size: petabytes of data across thousands of commodity servers. (针对千台机器管理PB级别数据）
+   - both in terms of data size (from URLs to web pages to satellite imagery) and latency requirements (from backend bulk processing to real-time data serving).（同时考虑了数据集大小以及响应延迟）
+
+** Introduction
+   - Bigtable does not support a full relational data model; instead, it provides clients with a simple data model that supports dynamic control over data layout and format, and al-lows clients to reason about the locality properties of the data represented in the underlying storage.（不支持完全的数据库关系模型。提供的是半结构化数据模型，支持动态控制数据布局和格式，允许用户通知数据用于底层存储的locality信息）
+     - Data is in-dexed using row and column names that can be arbitrary strings.（通过行列来进行索引）
+     - Bigtable also treats data as uninterpreted strings, although clients often serialize various forms of struc-tured and semi-structured data into these strings. （数据可以是半结构化也可以是结构化的）
+     - Clients can control the locality of their data through careful choices in their schemas. （通过设计schema来控制locality信息） *NOTE（dirlt）：只是使用schema？*
+     - Bigtable schema pa-rameters let clients dynamically control whether to serve data out of memory or from disk.（schema参数可以让用户动态控制是否使用超过内存大小数据） *TODO（dirlt）：for what*
+
+** Data Model
+   - A Bigtable is a sparse, distributed, persistent multi-dimensional sorted map. The map is indexed by a row key, column key, and a timestamp; each value in the map is an uninterpreted array of bytes.（本质上是稀疏的，分布式，可持久化的多维sorted-map。通过row-key和column-key找到对应的cell，在这个cell上面通过timestamp来从多维数据中取出一维） (row:string, column:string, time:int64) =》 string
+
+file:./images/bigtable-data-model.png
+
+*** Rows
+   - The row keys in a table are arbitrary strings (currently up to 64KB in size, although 10-100 bytes is a typical size for most of our users). (rowkey范围限制在64KB，但是10-100bytes是一个典型值）
+   - Every read or write of data under a single row key is atomic (regardless of the number of different columns being read or written in the row), a design decision that makes it easier for clients to reason about the system’s behavior in the presence of concurrent updates to the same row.（对于每一行的读写都是原子操作的，这样对于concurrent更新的话比较好reason）
+   - Bigtable maintains data in lexicographic order by row key. The row range for a table is dynamically partitioned. Each row range is called a tablet, which is the unit of dis-tribution and load balancing.（对于row-key都是按照字典序排列的，并且每个row range都会动态划分。划分出来的row range对应的数据成为tablet，其实就是table里面一个连续的小部分，非常类似于chunk，作为分布以及负载均衡的最小单元）
+
+*** Column Families
+   - Column keys are grouped into sets called column fami-lies, which form the basic unit of access control （所有的column都放在某一个column family下面进行管理）
+   - All data stored in a column family is usually of the same type (we compress data in the same column family together).（通常在一个column family下面的column都是相同类型的，这样方便进行压缩）
+   - A column family must be created before data can be stored under any column key in that family; after a family has been created, any column key within the family can be used. （首先需要创建cf，之后可以在cf下面创建任意的column）
+   - It is our intent that the number of distinct column families in a table be small (in the hundreds at most), and that families rarely change during operation. In contrast, a table may have an unbounded number of columns.（设计假设cf非常少最多100个左右，并且不会经常变化。而对于里面的column来说没有上限）
+   - Access control and both disk and memory account-ing are performed at the column-family level（底层访问操作通常都是针对cf进行的。使用cf聚合的话，一方面可以减少访问多个字段的代价，另外在存储方面也可以进行压缩）
+     
+
+*** Timestamps
+   - Each cell in a Bigtable can contain multiple versions of the same data; these versions are indexed by timestamp. Bigtable timestamps are 64-bit integers. They can be as-signed by Bigtable, in which case they represent “real time” in microseconds, or be explicitly assigned by client applications. Applications that need to avoid collisions must generate unique timestamps themselves. Different versions of a cell are stored in decreasing timestamp or-der, so that the most recent versions can be read first.（timestamp用来区分多个版本，timestamp是一个64bit整数，这个可以由bigtable产生也可以用户指定。主要功能就是为了区分版本。所有的版本都是存放在一起并且按照降序排列，因为首先读取是最新的版本）
+   - To make the management of versioned data less oner-ous, we support two per-column-family settings that tell Bigtable to garbage-collect cell versions automatically. The client can specify either that only the last n versions of a cell be kept, or that only new-enough versions be kept (e.g., only keep values that were written in the last seven days).（支持针对每个cf设置使用最近几个版本）
+
+** API
+** Building Blocks
+   - 使用GFS作为文件系统（参考[[file:gfs.org][gfs]]）
+   - 使用SSTable来管理数据（参考[[file:leveldb.org][leveldb]]）
+   - 使用Chubby来管理调度（参考[[file:chubby.org][chubby]]）
+     - to ensure that there is at most one active master at any time; （确保只有一个master在运行）
+     - to store the bootstrap location of Bigtable data（保存初始化bigtable数据的位置）
+     - to discover tablet servers and finalize tablet server deaths （检测tablet server的上下线）
+     - to store Bigtable schema information (the column family information for each ta-ble); （存储schema信息，每个table里面的cf信息）
+     - to store access control lists.（访问控制列表）
+   - If Chubby becomes unavailable for an extended period of time, Bigtable be-comes unavailable.（如果chubby不可用那么整个集群不可用）
+   - 但是影响效果非常小。集群数据不可用因为chubby不可用的平均比率在0.0047%，但个集群受影响最高比率在0.0326%
+
+** Implementation
+   - The Bigtable implementation has three major compo- nents: a library that is linked into every client, one mas- ter server, and many tablet servers. （library，master server以及tablet server三个部分组成） Tablet servers can be dynamically added (or removed) from a cluster to acco-modate changes in workloads.（对于所有的tablet server都可以动态添加并且移除来适应workload）
+   - master负责包括下面这些事情：
+     - assigning tablets to tablet servers, （assign tablet到ts上）
+     - detecting the addition and expiration of tablet servers, （检测是否有tablet server挂掉）
+     - balancing tablet-server load, and （对tablet server做负载均衡）
+     - garbage col-lection of files in GFS. （对GFS进行GC）
+     - In addition, it handles schema changes such as table and column family creations.（处理schema变化以及cf的创建）
+   - tablet server负责下面这些事情：
+     - Each tablet server manages a set of tablets (typically we have somewhere between ten to a thousand tablets per tablet server). （每个tablet server分配到10-1k左右的tablet）
+     - The tablet server handles read and write requests to the tablets that it has loaded, （每个tablet server负责其管理的tablet操作）
+     - and also splits tablets that have grown too large.（如果tablet过大的话那么主动进行分裂，默认每个tablet在100-200MB左右）
+   - client直接和tablet server进行交互。因为client并不依赖于master来进行location定位，所以大部分时候不需要和master交互，因此master负载非常轻。
+
+*** Tablet Location
+file:./images/bigtable-tablet-location-hierarchy.png
+
+   - root tablet是比较特殊的METADATA tablet从来不进行分裂
+   - METADATA tablet是kv结构并且是有序的。其中k是table identifier+end row key，v则是对应志向的位置
+     - 查找的时候首先在root tablet上面做二分查找，找到对应的METADATA tablet。
+     - 然后在METADATA tablet上面做二分找着，找到对应的user tablet。
+     - 然后在user tablet上面找到对应的值。
+   - *NOTE（dirlt）：不过之前业强提的方法似乎更加可行，就是root仅仅存放table name，而在下面一级存放end row key*
+   - meta tablet server每行存储大概1KB数据，一个大约使用128MB内存，这样对于三级结构来说允许存储大约我2^34个tablets。
+   - client会cache tablet位置，但是如果位置信息错误的话，那么需要逐层向上查询。因为对于cache empty情况需要3个roundtrip，而对于stale情况需要6个roundtrip
+   - Although tablet locations are stored in memory, so no GFS accesses are required, we further reduce this cost in the common case by having the client library prefetch tablet locations: it reads the metadata for more than one tablet whenever it reads the METADATA table. *TODO（dirlt）：预取可以减少什么开销呢？*
+
+
+*** Tablet Assignment
+*** Tablet Serving
+*** Compactions
+
+
+
+
