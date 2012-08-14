@@ -61,14 +61,14 @@ file:./images/bigtable-data-model.png
    - tablet server负责下面这些事情：
      - Each tablet server manages a set of tablets (typically we have somewhere between ten to a thousand tablets per tablet server). （每个tablet server分配到10-1k左右的tablet）
      - The tablet server handles read and write requests to the tablets that it has loaded, （每个tablet server负责其管理的tablet操作）
-     - and also splits tablets that have grown too large.（如果tablet过大的话那么主动进行分裂，默认每个tablet在100-200MB左右）
+     - and also splits tablets that have grown too large.（如果tablet过大的话那么主动进行分裂，默认每个tablet在100-200MB左右） *NOTE（dirlt）：现在HBase的一个region在2G）*
    - client直接和tablet server进行交互。因为client并不依赖于master来进行location定位，所以大部分时候不需要和master交互，因此master负载非常轻。
 
 *** Tablet Location
 file:./images/bigtable-tablet-location-hierarchy.png
 
    - root tablet是比较特殊的METADATA tablet从来不进行分裂
-   - METADATA tablet是kv结构并且是有序的。其中k是table identifier+end row key，v则是对应志向的位置
+   - METADATA tablet是kv结构并且是有序的。其中k是table identifier+end row key，v则是对应志向的位置（位置信息应该都是GFS的地址）
      - 查找的时候首先在root tablet上面做二分查找，找到对应的METADATA tablet。
      - 然后在METADATA tablet上面做二分找着，找到对应的user tablet。
      - 然后在user tablet上面找到对应的值。
@@ -77,11 +77,81 @@ file:./images/bigtable-tablet-location-hierarchy.png
    - client会cache tablet位置，但是如果位置信息错误的话，那么需要逐层向上查询。因为对于cache empty情况需要3个roundtrip，而对于stale情况需要6个roundtrip
    - Although tablet locations are stored in memory, so no GFS accesses are required, we further reduce this cost in the common case by having the client library prefetch tablet locations: it reads the metadata for more than one tablet whenever it reads the METADATA table. *TODO（dirlt）：预取可以减少什么开销呢？*
 
-
 *** Tablet Assignment
+assignment这个信息应该是维护在master上面的，且没有必要进行持久化。
+
+如何处理tablet server挂掉：
+   - 所有的tablet server都在chubby上面注册节点并且加锁。如果和chubby节点断开的话，那么重新连接并且获取锁。如果文件已经删除的话，那么就自动退出。
+   - master会定时询问tablet server是否存活。如果没有查询到存活的话，那么会尝试lock tablet server创建的节点。如果lock成功的话，那么删除这个文件。这样确保tablet server之后不会继续服务。
+   - 如果master认为某个ts挂掉的话，那么会重新assign原来分配所有的tablet出去。 *TODO（dirlt）：如何确保负载均衡*
+   - 如果master和chubby断开的话，那么也会自己直接退出。
+
+master启动时候需要重新获得assignment信息：
+   - master重启的话不会影响assignment
+   - master在chubby上面创建一个文件并且lock
+   - 和当前所有的tablet server进行通信，获得所有的tablet server。
+   - 如果METADATA tablet server没有被assign的话，那么assign META ts
+   - 扫描所有的META ts，看哪些tablet server没有被assign出去，如果没有assign的话那么发起assign
+
+如果tablet server上面的tablet发起变化的话，那么也会有assign行为：
+   - table创建删除
+   - 两个tablet进行merge成为一个大的tablet（这个master才能够看到）
+   - tablet split（这个单个tablet server就能够感知到自己的tablet过大从而需要split）
+对于前面两个行为的话是master发起的话能够追踪所有的变化。
+
+对于tablet server发起操作导致tablet变化的话，完成之后写入METADATA tablet，通知master。 *TODO（dirlt）：但是如果通知不到的话，master是否会去定时扫描呢？*
+
+In case the split notification is lost (either because the tablet server or the master died), the master detects the new tablet when it asks a tablet server to load the tablet that has now split. The tablet server will notify the master of the split, because the tablet entry it finds in the METADATA table will specify only a portion of the tablet that the master asked it to load.
+
 *** Tablet Serving
 *** Compactions
+compaction分为三种：
+   - minor compaction. memtable -> sstable
+   - merging compaction. sstable + memtable -> sstable(s)
+   - major compaction. sstable -> one sstable
+其中leveldb里面实现只有前面两种。merging compaction就是几个sstable合并（合并的sstable里面没有deletion），而major compaction回将所有的sstable合并成为一个sstable（里面没有任何deletion）
 
+** Refinements
+*** Locality groups
+通过将多个cf合并成为一个locality group，然后为这个locality group分配单独的一个sstable。通过将不同属性的cf区分开，并且将相同属性的cf进行聚合，这样可以提高读效率。允许指定参数来说明那些locality group需要放在memory里面。
 
+*** Compression
+   - The first pass uses Bentley and McIlroy’s scheme , which compresses long common strings across a large window. 
+   - The second pass uses a fast compression algorithm that looks for repetitions in a small 16 KB window of the data.
+   - Both compression passes are very fast—they encode at 100–200 MB/s, and decode at 400–1000 MB/s on modern machines.
 
+*** Caching for read performance
+   - Scan Cache在高层缓存读取到的k/v。比较适合重复读取相同数据（相对与Block Cache效率更好）
+   - Block Cache在底层缓存读取到的block。比较适合遍历或者是反复读取附近数据。（leveldb实现里面只是提供了block cache）
 
+*** Bloom filters
+新版本的leveldb里面也实现了bloom filter，可以屏蔽掉很多无用的disk seek
+
+*** Commit-log implementation
+TODO（dirlt）：
+
+*** Speeding up tablet recovery
+这个主要发生在tablet主动迁移的时候。因为迁移的时候memtable内容没有存放到gfs上面，因此如果直接unload的话，那么在另外一台机器上面就需要重新从gfs读取log并且进行recovery。
+为了加快这个过程，source tablet server在主动迁移时候发生如下行为：
+   - 将memtable使用minor compaction将内容写入sstable
+   - 停止对这个tablet的服务
+   - 将上面时间内所有的memtable操作重新做一个minor compaction（very fast)
+这样另外一台机器load tablet的时候就可以直接使用了。
+
+*** Exploiting immutability
+对于obsolete tablet sstable的回收过程是这样的：
+   - 从root里面可以获得所有的tablet对应的sstable（tablet管理的sstable都在METADATA tablet上面注册了）
+   - master可以查询每个tablet server所管理的sstable
+   - 对比master就可以发现那些sstable是可以被GC的。
+
+** Performance Evaluation
+** Real Applications
+TODO（dirlt）：
+** Lessons
+TODO（dirlt）：
+** Related Work
+** Conclusions
+TODO（dirlt）：
+** Q&A
+*** 每个tablet对应一个sstable文件吗？
+每个tablet可能会对应到多个sstable，
