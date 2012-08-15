@@ -1,0 +1,4 @@
+* birthday-at-2012
+#+TITLE: 写在2012年的生日
+
+file:../images/birthday-2012-wife-wish.png

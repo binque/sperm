@@ -4,6 +4,8 @@
 *.so
 *.elc
 *.pyc
+*.class
+*.jar
 
 .emacs.d/tramp
 .emacs.d/ac-comphist.dat
@@ -48,3 +50,6 @@ code/cc/itachi/test/test_net_handler
 code/cc/sasuke/test/rpc_client
 code/cc/sasuke/test/rpc_server
 code/cc/sasuke/test/test_zmq
+
+code/java/wordcount/target
+

@@ -26,6 +26,7 @@ public class WordCount {
 		public void map(LongWritable key, Text value, Context context)
 				throws IOException, InterruptedException {
 			context.write(value, new IntWritable(1));
+			Thread.sleep(1000*100); // sleep 100 secs
 		}
 	}
 
