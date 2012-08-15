@@ -101,6 +101,7 @@ CLOSED: [2012-07-25 Wed 22:37]
 *** TODO 整理现在报价情况等
 
 *** TODO 写在生日的这一天
+*** TODO 搞定打印机这件事情
 ** read it later
 *** TODO mapreduce里面如何做join
 *** TODO YARN

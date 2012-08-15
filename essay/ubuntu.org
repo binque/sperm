@@ -148,7 +148,35 @@ unity restart &
    - sudo apt-get install recordmydesktop # 录制桌面
    - sudo apt-get install maven2
    - sudo apt-get install ttyload
+   - sudo apt-get install autoconf
+   - sudo apt-get install libtool
+   - sudo apt-get install automake
+   - sudo apt-get install alien
 
 *** amarok循环播放
 在amarok的右下角有task progression的图标，选择repeat track即可。
+
+
+*** deb包管理
+--------------------
+
+*deb和rpm包转换*
+
+   - 安装alien
+   - rpm转deb sudo alien -d test.rpm
+   - deb转rpm sudo alien -r test.deb
+
+看了一下alien的help还可和下面几个包格式互转
+   - slp
+   - lsb
+   - tgz
+   - pkg
+
+甚至可以直接调用alien -i test.rpm直接安装而不需要转换。
+
+--------------------
+
+*安装deb*
+
+sudo dpkg -i test.deb
 
