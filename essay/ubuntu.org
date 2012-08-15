@@ -147,6 +147,7 @@ unity restart &
    - sudo apt-get install gunicorn
    - sudo apt-get install recordmydesktop # 录制桌面
    - sudo apt-get install maven2
+   - sudo apt-get install ttyload
 
 *** amarok循环播放
 在amarok的右下角有task progression的图标，选择repeat track即可。

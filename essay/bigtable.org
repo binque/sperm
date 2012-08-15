@@ -153,13 +153,24 @@ compaction分为三种：
    - 对比master就可以发现那些sstable是可以被GC的。
 
 ** Performance Evaluation
-** Real Applications
-TODO（dirlt）：
+** Real Applications  
 ** Lessons
-TODO（dirlt）：
+   - One lesson we learned is that large distributed sys-tems are vulnerable to many types of failures, not just the standard network partitions and fail-stop failures as-sumed in many distributed protocols.（design for failure）
+   - delay adding new features until it is clear how the new features will be used. 延迟添加新功能直到确实存在必要。之前考虑过是否需要增加general-purpose transaction，但是知道很多真实应用程序使用之后才发现，其实需要的是一个row transaction。而对于distributed transaction的需求，大部分是想维护二级索引。Where people have requested distributed trans-actions, the most important use is for maintaining sec-ondary indices, and we plan to add a specialized mech-anism to satisfy this need. The new mechanism will be less general than distributed transactions, but will be more efficient (especially for updates that span hundreds of rows or more) and will also interact better with our scheme for optimistic cross-data-center replication. 对于维护二级索引方案使用了一个特殊方式来满足这个需求。
+   - A practical lesson that we learned from supporting Bigtable is the importance of proper system-level mon-itoring (i.e., monitoring both Bigtable itself, as well as the client processes using Bigtable). （监控）
+     - we ex-tended our RPC system so that for a sample of the RPCs, it keeps a detailed trace of the important actions done on behalf of that RPC. This feature has allowed us to de-tect and fix many problems such as lock contention on tablet data structures, slow writes to GFS while com-mitting Bigtable mutations, and stuck accesses to the METADATA table when METADATA tablets are unavail-able. （lock contention，slow write，stuck access to METADATA）
+     - Another example of useful monitoring is that ev-ery Bigtable cluster is registered in Chubby. This allows us to track down all clusters, discover how big they are, see which versions of our software they are running, how much traffic they are receiving, and whether or not there are any problems such as unexpectedly large latencies.（cluster注册到chubby上面，收集每个cluster的一些数据）
+   - The most important lesson we learned is the value of simple designs. （简单设计）
+
 ** Related Work
 ** Conclusions
-TODO（dirlt）：
+   - Bigtable clusters have been in production use since April 2005, （2005.4开始投入产品使用）
+   - and we spent roughly seven person-years on design and implementa-tion before that date. （耗费7人年）
+   - As of August 2006, more than sixty projects are using Bigtable.（2006.8 60个项目使用bigtable）
+   - We are in the process of implementing several addi-tional Bigtable features, such as support for secondary indices and infrastructure for building cross-data-center replicated Bigtables with multiple master replicas.（支持二级索引以及使用multi-master跨机房的解决方案）
+   - We have also begun deploying Bigtable as a service to prod-uct groups, so that individual groups do not need to main-tain their own clusters. 将bigtable cluster作为service对外。
+   - As our service clusters scale, we will need to deal with more resource-sharing issues within Bigtable itself 对于service的话，那么就需要考虑资源隔离以及有效利用。
+
 ** Q&A
 *** 每个tablet对应一个sstable文件吗？
 每个tablet可能会对应到多个sstable。对于一个tablet来说，组织可以就是gfs一个目录，下面存放很多sstable文件。

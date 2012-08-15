@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="bigtable"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-15 08:11:17 CST"/>
+<meta name="generated" content="2012-08-15 11:53:21 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -552,7 +552,18 @@ In case the split notification is lost (either because the tablet server or the 
 <h4 id="sec-1-7-5"><span class="section-number-4">1.7.5</span> Commit-log implementation</h4>
 <div class="outline-text-4" id="text-1-7-5">
 
-<p>TODO（dirlt）：
+<p>如果每个tablet的操作都写单独的redo文件的话，那么会对gfs造成很大的压力。因此解决办法就是，对于一个tablet server上面所有的tablet的commit log，都记录在同一个文件里面。
+</p>
+<p>
+但是这样会对recovery造成一定的问题：假设这个tablet server上面有100 tablet的话，如果down掉，那么100 tablet重新assign之后每个tablet server都需要读取这个文件，
+然后根据log里面的内容判断除外哪些log是自己需要的。
+</p>
+<p>
+这个问题的解决是通过将这个log进行排序。如果有一个tablet server需要读取这个log的话，那么会通知master，master发起排序操作。按照 （table, row name, log sequence number ）
+这个复合键进行排序。排序之后每个tablet server只需要找到相应的偏移就可以开始顺序读取了。
+</p>
+<p>
+另外写gfs的时候也可能因为很多原因造成perfor-mance hiccups(e.g., a GFS server machine involved in the write crashes, or the network paths traversed to reach the particular set of three GFS servers is suffering network congestion, or is heavily loaded).，为了减少latency spike，对于tablet server写commit log是采用两个线程完成的 <b>TODO（dirlt）：这个为什么会有帮助呢？两个线程是两个不同的连接，但是同一机器上面的话pipeline应该是相同的。</b> ，但是只有一个线程在执行。如果一个线程写入比较慢的话，那么就会切换到另外一个线程写入。因为log里面都带了sequence number，所以在读取的时候可以进行判重避免读取重复数据。
 </p>
 </div>
 
@@ -611,8 +622,7 @@ In case the split notification is lost (either because the tablet server or the 
 <h3 id="sec-1-9"><span class="section-number-3">1.9</span> Real Applications</h3>
 <div class="outline-text-3" id="text-1-9">
 
-<p>TODO（dirlt）：
-</p></div>
+</div>
 
 </div>
 
@@ -620,8 +630,26 @@ In case the split notification is lost (either because the tablet server or the 
 <h3 id="sec-1-10"><span class="section-number-3">1.10</span> Lessons</h3>
 <div class="outline-text-3" id="text-1-10">
 
-<p>TODO（dirlt）：
-</p></div>
+<ul>
+<li>One lesson we learned is that large distributed sys-tems are vulnerable to many types of failures, not just the standard network partitions and fail-stop failures as-sumed in many distributed protocols.（design for failure）
+</li>
+<li>delay adding new features until it is clear how the new features will be used. 延迟添加新功能直到确实存在必要。之前考虑过是否需要增加general-purpose transaction，但是知道很多真实应用程序使用之后才发现，其实需要的是一个row transaction。而对于distributed transaction的需求，大部分是想维护二级索引。Where people have requested distributed trans-actions, the most important use is for maintaining sec-ondary indices, and we plan to add a specialized mech-anism to satisfy this need. The new mechanism will be less general than distributed transactions, but will be more efficient (especially for updates that span hundreds of rows or more) and will also interact better with our scheme for optimistic cross-data-center replication. 对于维护二级索引方案使用了一个特殊方式来满足这个需求。
+</li>
+<li>A practical lesson that we learned from supporting Bigtable is the importance of proper system-level mon-itoring (i.e., monitoring both Bigtable itself, as well as the client processes using Bigtable). （监控）
+<ul>
+<li>we ex-tended our RPC system so that for a sample of the RPCs, it keeps a detailed trace of the important actions done on behalf of that RPC. This feature has allowed us to de-tect and fix many problems such as lock contention on tablet data structures, slow writes to GFS while com-mitting Bigtable mutations, and stuck accesses to the METADATA table when METADATA tablets are unavail-able. （lock contention，slow write，stuck access to METADATA）
+</li>
+<li>Another example of useful monitoring is that ev-ery Bigtable cluster is registered in Chubby. This allows us to track down all clusters, discover how big they are, see which versions of our software they are running, how much traffic they are receiving, and whether or not there are any problems such as unexpectedly large latencies.（cluster注册到chubby上面，收集每个cluster的一些数据）
+</li>
+</ul>
+
+</li>
+<li>The most important lesson we learned is the value of simple designs. （简单设计）
+</li>
+</ul>
+
+
+</div>
 
 </div>
 
@@ -637,8 +665,23 @@ In case the split notification is lost (either because the tablet server or the 
 <h3 id="sec-1-12"><span class="section-number-3">1.12</span> Conclusions</h3>
 <div class="outline-text-3" id="text-1-12">
 
-<p>TODO（dirlt）：
-</p></div>
+<ul>
+<li>Bigtable clusters have been in production use since April 2005, （2005.4开始投入产品使用）
+</li>
+<li>and we spent roughly seven person-years on design and implementa-tion before that date. （耗费7人年）
+</li>
+<li>As of August 2006, more than sixty projects are using Bigtable.（2006.8 60个项目使用bigtable）
+</li>
+<li>We are in the process of implementing several addi-tional Bigtable features, such as support for secondary indices and infrastructure for building cross-data-center replicated Bigtables with multiple master replicas.（支持二级索引以及使用multi-master跨机房的解决方案）
+</li>
+<li>We have also begun deploying Bigtable as a service to prod-uct groups, so that individual groups do not need to main-tain their own clusters. 将bigtable cluster作为service对外。
+</li>
+<li>As our service clusters scale, we will need to deal with more resource-sharing issues within Bigtable itself 对于service的话，那么就需要考虑资源隔离以及有效利用。
+</li>
+</ul>
+
+
+</div>
 
 </div>
 
@@ -653,7 +696,8 @@ In case the split notification is lost (either because the tablet server or the 
 <h4 id="sec-1-13-1"><span class="section-number-4">1.13.1</span> 每个tablet对应一个sstable文件吗？</h4>
 <div class="outline-text-4" id="text-1-13-1">
 
-<p>每个tablet可能会对应到多个sstable，
+<p>每个tablet可能会对应到多个sstable。对于一个tablet来说，组织可以就是gfs一个目录，下面存放很多sstable文件。
+如果master想知道某个tablet有哪些sstable的话，直接通过文件系统gfs查询即可。
 </p></div>
 </div>
 </div>
@@ -661,7 +705,7 @@ In case the split notification is lost (either because the tablet server or the 
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-15 08:11:17 CST</p>
+<p class="date">Date: 2012-08-15 11:53:21 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

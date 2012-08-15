@@ -80,10 +80,10 @@ CLOSED: [2012-07-25 Wed 22:37]
     CLOSED: [2012-08-09 Thu 20:40]
 *** DONE 整理阅读收藏列表以及浏览器列表
     CLOSED: [2012-08-14 Tue 07:00]
-
 *** DONE 建立本地测试环境，运行hourlyprocedure
     CLOSED: [2012-08-14 Tue 07:00]
-
+*** DONE BigTable
+    CLOSED: [2012-08-15 Wed 11:53]
 
 ** daily todo
 *** TODO 和别人交流emacs是如何工作的！
@@ -98,10 +98,8 @@ CLOSED: [2012-07-25 Wed 22:37]
 *** TODO 整理blog
 
 ** read it later
-*** TODO BigTable
 *** TODO mapreduce里面如何做join
 *** TODO YARN
-
 *** TODO pregel
 *** TODO Percolator
 *** TODO dremel
