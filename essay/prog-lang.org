@@ -363,6 +363,29 @@ operator new与new operator
    - operator delete(a);//进行内存释放
 说到这里，我们需要清楚为什么需要有new []和delete []的方法了。对于operator new和delete来说真的不关心这些，因为只是分配内存，而对于new operator和delete operator就需要关心了，因为需要关心有多少个对象，这样的话才能够调用每个对象的构造函数。调用了new []分配的对象也一定需要使用delete []来释放，不然只会调用第一个元素析构函数和释放它的空间。
 
+*** static assert
+#+BEGIN_SRC C++
+#define STATIC_ASSERT(_cond,_name)      typedef char STATIC_ASSERT_FAILED_ ## _name [ (_cond) ? 1 : -1 ]
+#define STATIC_SIZE_ASSERT(_type,_size) STATIC_ASSERT ( sizeof(_type)==_size, _type ## _MUST_BE_ ## _size ## _BYTES )
+#+END_SRC
+
+这个宏用来检测sizeof(_type)==_size这个假设，这个可以在编译代码的时候可以进行断言。好比下面这段程序
+
+#+BEGIN_SRC C++
+int main() {
+  STATIC_SIZE_ASSERT(int,8);
+  return 0;
+}
+#+END_SRC
+
+那么编译就会出现
+#+BEGIN_EXAMPLE
+main.cc:5: error: size of array `STATIC_ASSERT_FAILED_int_MUST_BE_8_BYTES’ is negative
+#+END_EXAMPLE
+
+当然错误信息并不是非常的优美，但是已经提供了足够多的信息了。不过这种编译断言可能只是比较适合用于简单断言比如sizeof等，对于复杂断言话可能还是需要依赖于configure这种工具比如系统是否有libunwind库。
+
+
 ** java
 *** 相关资料
    - Core Java Volume I: Fundamentals

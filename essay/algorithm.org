@@ -92,7 +92,6 @@ const char *str;
 }
 #+END_SRC
 
-
 ** 一致性hash(Consistent hashing)
    - http://en.wikipedia.org/wiki/Consistent_hash
    - http://www.tomkleinpeter.com/2008/03/17/programmers-toolbox-part-3-consistent-hashing/

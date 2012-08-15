@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="章炎的主页"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-15 08:11:15 CST"/>
+<meta name="generated" content="2012-08-15 14:16:38 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -194,12 +194,15 @@
 <li><a href="./lzf.html">lzf</a> redis使用的开源压缩解压库。轻量(两个文件)可以很容易地独立纳入项目。
 </li>
 <li><a href="build-system.html">build-system</a> 在实现baidu in-house的构建工具comake2之前，做过构建系统的调研总结出来的。在语法表达上面(非常重要)借鉴了SCons,考虑了其他构建系统提供的功能。
+<ul>
+<li><a href="mave.html">maven</a> 主要针对Java开发的基于工程对象模型(POM, Project Object Model)构建系统，主要记录了一些使用方面的问题和解决办法。
+</li>
+</ul>
+
 </li>
 <li><a href="oprofile.html">oprofile</a> OProfile(系统级profiler)的原理和应用。不过说实话没有分析过源代码(或者是自己技术背景不行)终究觉得对这个东西理解不够深入，而且自己也仅仅是使用OProfile功能的子集。
 </li>
 <li><a href="swig.html">swig</a> C/C++多语言扩展接口生成器，使用起来非常方便(至于生成的代码没有看过效率如何).个人觉得比较适合quick &amp; dirty的方案。
-</li>
-<li><a href="mave.html">maven</a> 主要针对Java开发的基于工程对象模型(POM, Project Object Model)构建系统，主要记录了一些使用方面的问题和解决办法。
 </li>
 <li><a href="git.html">git</a> 分布式版本控制系统。很多项目都在使用Git进行版本管理包括Linux Kernel, Ruby on Rails, WINE, X.org等。
 </li>
@@ -208,6 +211,17 @@
 <li><a href="emacs.html">emacs</a> 如何更好地使用Emacs。自己依然只是使用一些简单功能，身边有很多牛人用Emacs那是相当的出神入化。
 </li>
 <li><a href="linux.html">linux</a> 主要是介绍Linux下面一些工具使用以及和内核相关的知识。（将原来<a href="./APUE.html">APUE</a> 和 <a href="./UNP.html">UNP</a> 中的一部分内容放在这里面来了，这样可以保持这两篇内容比较稳定）
+<ul>
+<li><a href="./cpu.html">cpu</a> cpu
+</li>
+<li><a href="./memory.html">memory</a> 内存
+</li>
+<li><a href="./coroutine.html">coroutine</a> 协程
+</li>
+<li><a href="./lock.html">lock</a> 锁
+</li>
+</ul>
+
 </li>
 <li><a href="fvwm.html">fvwm</a> F* Virtual Windows Manager.Linux下面高度可定制化的窗口管理器。
 </li>
@@ -249,6 +263,8 @@
 </li>
 <li><a href="ace.html">ace</a> 开源的网络编程框架。非常重量级，也被人诟病为学术产物而不是适合生产实践。TODO(dirlt):只是有大概的了解，有待更深入的研究.
 </li>
+<li><a href="./apache.html">apache</a> 历史悠久的开源HTTP服务器。 an effort to develop and maintain an open-source HTTP server for modern operating systems including UNIX and Windows NT <a href="http://httpd.apache.org/">http://httpd.apache.org/</a>
+</li>
 </ul>
 
 
@@ -270,6 +286,8 @@
 <li><a href="redis.html">redis</a> 内存存储系统，支持丰富的数据类型以及相应的计算(支持持久化)。外围包装网络访问接口(并且提供了丰富的客户端),可以比较方便地在分布式系统内或者是环境下面使用.
 </li>
 <li><a href="./dsgm.html">dsgm</a> Document Synchronization based on Google Mail. <a href="https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm">https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm</a>
+</li>
+<li><a href="./mysql.html">mysql</a> 开源关系型数据库。The world's most popular open source database <a href="http://www.mysql.com/">http://www.mysql.com/</a>
 </li>
 </ul>
 
@@ -366,6 +384,11 @@
 </li>
 <li><a href="./note/graduate-final-report.html">研究生答辩</a>
 </li>
+<li><a href="./note/talk-with-luoyan.html">和罗琰的谈话</a>      
+</li>
+<li><a href="./note/cola-and-water.html">可乐和矿泉水</a>
+
+</li>
 </ul>
 
 </li>
@@ -398,7 +421,7 @@
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-15 08:11:15 CST</p>
+<p class="date">Date: 2012-08-15 14:16:38 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

@@ -62,7 +62,7 @@ http://bjjc.zhcoo.com/show_manage_article.aspx?articleid=9120
 
 
 ** temp
-处理到 http://dirlt.com/blog/?paged=30
+处理到 http://dirlt.com/blog/?paged=26
 
 ** hadoop-lzo
 #+BEGIN_EXAMPLE
