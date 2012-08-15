@@ -128,7 +128,15 @@ compaction分为三种：
 新版本的leveldb里面也实现了bloom filter，可以屏蔽掉很多无用的disk seek
 
 *** Commit-log implementation
-TODO（dirlt）：
+如果每个tablet的操作都写单独的redo文件的话，那么会对gfs造成很大的压力。因此解决办法就是，对于一个tablet server上面所有的tablet的commit log，都记录在同一个文件里面。
+
+但是这样会对recovery造成一定的问题：假设这个tablet server上面有100 tablet的话，如果down掉，那么100 tablet重新assign之后每个tablet server都需要读取这个文件，
+然后根据log里面的内容判断除外哪些log是自己需要的。
+
+这个问题的解决是通过将这个log进行排序。如果有一个tablet server需要读取这个log的话，那么会通知master，master发起排序操作。按照 （table, row name, log sequence number ）
+这个复合键进行排序。排序之后每个tablet server只需要找到相应的偏移就可以开始顺序读取了。
+
+另外写gfs的时候也可能因为很多原因造成perfor-mance hiccups(e.g., a GFS server machine involved in the write crashes, or the network paths traversed to reach the particular set of three GFS servers is suffering network congestion, or is heavily loaded).，为了减少latency spike，对于tablet server写commit log是采用两个线程完成的 *TODO（dirlt）：这个为什么会有帮助呢？两个线程是两个不同的连接，但是同一机器上面的话pipeline应该是相同的。* ，但是只有一个线程在执行。如果一个线程写入比较慢的话，那么就会切换到另外一个线程写入。因为log里面都带了sequence number，所以在读取的时候可以进行判重避免读取重复数据。
 
 *** Speeding up tablet recovery
 这个主要发生在tablet主动迁移的时候。因为迁移的时候memtable内容没有存放到gfs上面，因此如果直接unload的话，那么在另外一台机器上面就需要重新从gfs读取log并且进行recovery。
@@ -154,4 +162,5 @@ TODO（dirlt）：
 TODO（dirlt）：
 ** Q&A
 *** 每个tablet对应一个sstable文件吗？
-每个tablet可能会对应到多个sstable，
+每个tablet可能会对应到多个sstable。对于一个tablet来说，组织可以就是gfs一个目录，下面存放很多sstable文件。
+如果master想知道某个tablet有哪些sstable的话，直接通过文件系统gfs查询即可。
