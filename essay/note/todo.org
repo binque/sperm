@@ -84,6 +84,8 @@ CLOSED: [2012-07-25 Wed 22:37]
     CLOSED: [2012-08-14 Tue 07:00]
 *** DONE BigTable
     CLOSED: [2012-08-15 Wed 11:53]
+*** DONE 写在生日的这一天
+    CLOSED: [2012-08-16 Thu 00:44]
 
 ** daily todo
 *** TODO 和别人交流emacs是如何工作的！
@@ -100,7 +102,7 @@ CLOSED: [2012-07-25 Wed 22:37]
 *** TODO 七夕礼物？
 *** TODO 整理现在报价情况等
 
-*** TODO 写在生日的这一天
+*** TODO 谢谢career
 *** TODO 搞定打印机这件事情
 ** read it later
 *** TODO mapreduce里面如何做join

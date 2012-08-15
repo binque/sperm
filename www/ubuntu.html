@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="ubuntu"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-15 11:53:18 CST"/>
+<meta name="generated" content="2012-08-16 00:39:13 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -144,6 +144,7 @@
 <li><a href="#sec-1-8">1.8 开发和娱乐</a>
 <ul>
 <li><a href="#sec-1-8-1">1.8.1 amarok循环播放</a></li>
+<li><a href="#sec-1-8-2">1.8.2 deb包管理</a></li>
 </ul>
 </li>
 </ul>
@@ -557,6 +558,14 @@ dirtysalt1987@gmail.com
 </li>
 <li>sudo apt-get install ttyload
 </li>
+<li>sudo apt-get install autoconf
+</li>
+<li>sudo apt-get install libtool
+</li>
+<li>sudo apt-get install automake
+</li>
+<li>sudo apt-get install alien
+</li>
 </ul>
 
 
@@ -569,6 +578,57 @@ dirtysalt1987@gmail.com
 
 <p>在amarok的右下角有task progression的图标，选择repeat track即可。
 </p>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-8-2" class="outline-4">
+<h4 id="sec-1-8-2"><span class="section-number-4">1.8.2</span> deb包管理</h4>
+<div class="outline-text-4" id="text-1-8-2">
+
+
+<hr/>
+
+<p>
+<b>deb和rpm包转换</b>
+</p>
+<ul>
+<li>安装alien
+</li>
+<li>rpm转deb sudo alien -d test.rpm
+</li>
+<li>deb转rpm sudo alien -r test.deb
+</li>
+</ul>
+
+
+<p>
+看了一下alien的help还可和下面几个包格式互转
+</p><ul>
+<li>slp
+</li>
+<li>lsb
+</li>
+<li>tgz
+</li>
+<li>pkg
+</li>
+</ul>
+
+
+<p>
+甚至可以直接调用alien -i test.rpm直接安装而不需要转换。
+</p>
+
+<hr/>
+
+<p>
+<b>安装deb</b>
+</p>
+<p>
+sudo dpkg -i test.deb
+</p>
 </div>
 </div>
 </div>
@@ -576,7 +636,7 @@ dirtysalt1987@gmail.com
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-15 11:53:18 CST</p>
+<p class="date">Date: 2012-08-16 00:39:13 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
