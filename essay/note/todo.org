@@ -14,9 +14,8 @@
     - http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html
 *** TODO 整理blog
 *** TODO 七夕礼物？
-*** TODO 整理现在报价情况等
-*** TODO 搞定打印机这件事情
 *** TODO 沙袋？
+*** TODO git stash save/pop
 ** read it later
 *** TODO mapreduce里面如何做join
 *** TODO YARN
