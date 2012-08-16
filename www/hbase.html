@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>hbase</title>
-<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hbase"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-02 13:24:26 CST"/>
+<meta name="generated" content="2012-08-16 16:09:02 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -100,7 +100,12 @@
 <ul>
 <li><a href="#sec-1">1 hbase</a>
 <ul>
-<li><a href="#sec-1-1">1.1 hbase shell</a></li>
+<li><a href="#sec-1-1">1.1 FAQ</a>
+<ul>
+<li><a href="#sec-1-1-1">1.1.1 hbase shell</a></li>
+<li><a href="#sec-1-1-2">1.1.2 业强 2012-08-16 hbase讲座</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -115,8 +120,15 @@
 </div>
 
 <div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> hbase shell</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> FAQ</h3>
 <div class="outline-text-3" id="text-1-1">
+
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> hbase shell</h4>
+<div class="outline-text-4" id="text-1-1-1">
 
 <ul>
 <li>scan 'test'
@@ -133,12 +145,62 @@
 
 
 </div>
+
+</div>
+
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> 业强 2012-08-16 hbase讲座</h4>
+<div class="outline-text-4" id="text-1-1-2">
+
+<p><img src="./images/hbase-architecture.png"  alt="./images/hbase-architecture.png" />
+</p>
+
+<p>
+HRegion类似于tablet，每个HRegion有很多Store存储不同的column family。
+</p>
+<p>
+对于memstore内存大小限制的话，有两个方面：
+</p><ul>
+<li>HRegion如果总体内存比较大的话，那么会选择几个Store里面的memstore进行flush
+</li>
+<li>如果Store里面的memstore本身比较大的话，也会进行flush
+</li>
+</ul>
+
+
+<p>
+scan过程大致是这样的：
+</p><ul>
+<li>首先scanner得到memstore以及所有的hfile，以及这个似乎时候的timestamp（hbase使用timestamp作为version)进行归并排序。
+</li>
+<li>如果期间memstore发生写，或者是flush，或者是进行compaction的话，那么会通知scanner
+</li>
+<li>scanner会重新组织这些内容，根据上次读取到的value,忽路duplicated的数据。   
+</li>
+</ul>
+
+<p>这样的好处就是通常在scanner的时候不会阻塞其他操作。
+</p>
+
+<hr/>
+
+<p>
+但是我看了一下leveldb代码，觉得实现上更好。对于immutable memtable以及memtable做引用计数，在iterator里面保存两个table。
+如果memtable compaction之后的话，那么直接创建一个新的memtable即可。原有的table在iterator销毁的时候就会自动释放。
+</p>
+
+<hr/>
+
+<p>
+对于column family是可以设置超时时间的。在进行flush或者是compaction的时候，会判断这个value是否超过ttl。如果超过ttl的话那么就会直接丢弃。
+</p></div>
+</div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-02 13:24:26 CST</p>
+<p class="date">Date: 2012-08-16 16:09:02 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
