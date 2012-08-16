@@ -225,7 +225,7 @@ SRC_TEMPLATE="""/* coding:utf-8
  * Copyright (C) dirlt
  */
 
-package %(groupId)s.%(artifactId)s;
+package %(groupId)s;
 
 import java.io.*;
 import java.util.*;
@@ -233,8 +233,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import org.apache.log4j.Logger;
 
-public class Main {
-  private static final Logger LOG  = Logger.getLogger(Main.class);
+public class %(artifactId)s {
+  private static final Logger LOG  = Logger.getLogger(%(artifactId)s.class);
   public static void main(String[] args) {
     // TODO(dirlt):
   }
@@ -245,7 +245,7 @@ TEST_TEMPLATE="""/* coding:utf-8
  * Copyright (C) dirlt
  */
 
-package %(groupId)s.%(artifactId)s;
+package %(groupId)s;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -256,8 +256,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import org.apache.log4j.Logger;
 
-public class MainTest {
-  private static final Logger LOG  = Logger.getLogger(Main.class);
+public class %(artifactId)sTest {
+  private static final Logger LOG  = Logger.getLogger(%(artifactId)sTest.class);
   
   @Before
   public void setUp() throws Exception {
@@ -270,7 +270,7 @@ public class MainTest {
   }
 
   @Test
-  public void testMain() throws Exception {
+  public void test() throws Exception {
     // TODO(dirlt):
   }
 }
@@ -305,15 +305,14 @@ log4j.appender.FILE.layout.ConversionPattern=%%d %%p [%%c] - <%%m>%%n
 import os
 def generate(project,groupId,artifactId):
     cps=groupId.split('.')
-    cps.append(artifactId)
     os.system('mkdir -p %s'%(project))
     open('%s/pom.xml'%(project),'w').write(POM_TEMPLATE%(locals()))
     os.system('mkdir -p %s/src/main/java/%s/'%(project,'/'.join(cps)))
     os.system('mkdir -p %s/src/test/java/%s/'%(project,'/'.join(cps)))
     os.system('mkdir -p %s/src/main/resources/'%(project))
     os.system('mkdir -p %s/src/test/resources/'%(project))
-    open('%s/src/main/java/%s/Main.java'%(project,'/'.join(cps)),'w').write(SRC_TEMPLATE%(locals()))
-    open('%s/src/test/java/%s/MainTest.java'%(project,'/'.join(cps)),'w').write(TEST_TEMPLATE%(locals()))
+    open('%s/src/main/java/%s/%s.java'%(project,'/'.join(cps),artifactId),'w').write(SRC_TEMPLATE%(locals()))
+    open('%s/src/test/java/%s/%sTest.java'%(project,'/'.join(cps),artifactId),'w').write(TEST_TEMPLATE%(locals()))
     open('%s/src/main/resources/log4j.properties'%(project),'w').write(LOG4J%(locals()))
     open('%s/src/test/resources/log4j.properties'%(project),'w').write(LOG4J%(locals()))
 

@@ -2,7 +2,7 @@
  * Copyright (C) dirlt
  */
 
-package com.dirlt.hadoop;
+package com.dirlt.java;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -13,8 +13,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import org.apache.log4j.Logger;
 
-public class WordCountTest {
-  private static final Logger LOG  = Logger.getLogger(WordCountTest.class);
+public class TimerTest {
+  private static final Logger LOG  = Logger.getLogger(TimerTest.class);
   
   @Before
   public void setUp() throws Exception {
