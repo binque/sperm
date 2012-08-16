@@ -105,15 +105,15 @@
      - [[file:./note/graduate-final-report.org][研究生答辩]]
      - [[file:./note/talk-with-luoyan.org][和罗琰的谈话]]      
      - [[file:./note/cola-and-water.org][可乐和矿泉水]]
-     - [[file:./note/birthday-at-2012.org][写在2012年的生日]]
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
-   - [[file:./note/fun.org][fun]] 搞笑的文字等。
-   - [[file:note/movie.org][movie]] 自己看过的电影以及里面的一些经典台词和对白。
+   - [[file:./note/fun.org][fun]] 搞笑的文字。
+   - [[file:note/movie.org][movie]] 电影的一些经典台词和对白。
+   - [[file:note/lyric.org][lyric]] 有时候歌词也是可以打动人的。
    - [[file:./note/pregnancy.org][pregnancy]] 怀孕需要注意的一些事情。
    - [[file:note/health.org][health]] 拥有健康的身体才能够更好地享受生活和工作。
    - [[file:./note/recipe.org][recipe]] 菜谱。是谁说的，活着就是为了更好的吃：）
    - [[file:./note/book.org][book]] 自己看过的一些书，可能不太好分类所以全部放在这里了。
-   - [[file:./note/career.org][career]] 关于职业发展和人生问题的考虑和想法。
+   - [[file:note/excerpt.org][excerpt]] 网络上的一些摘抄。
    - [[file:note/house.org][house]] 住房问题。在天朝这是一个大问题。
    - [[file:note/to-death.org][to-death]] 给离去的亲人们。
    - [[file:note/naruto.org][naruto]] 火影忍者，你懂的。

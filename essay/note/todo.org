@@ -2,91 +2,6 @@
 ** monthly
 ** weekly
 ** daily done
-*** DONE 调整桌面字体大小。
-*** DONE 调整ubuntu窗口管理器。
-CLOSED: [2012-07-25 Wed 01:05]
-*** DONE 备份ProxySwitchySharp文件
-*** DONE Ubuntu的virtualbox如何识别USB解决网银问题
-CLOSED: [2012-07-25 Wed 01:04]
-*** DONE 搞定邮件thunderbird客户端
-CLOSED: [2012-07-25 Wed 01:04]
-*** DONE thunderbird是否有配置可以导出？
-CLOSED: [2012-07-25 Wed 15:08]
-*** DONE emacs邮件客户端
-*** DONE emacsRSS阅读器
-*** DONE 支付网银
-*** DONE 考虑同步到dirlt.com更好办法并且同步到BAE
-CLOSED: [2012-07-25 Wed 15:08]
-*** DONE 如何在essay里面保存密码
-CLOSED: [2012-07-25 Wed 15:08]
-*** DONE 搞定Evernote的linux客户端
-    CLOSED: [2012-07-26 Thu 00:48]
-*** DONE 调研yasnippet,这个考虑是否可以代替doxymacs来做当前模版插入
-CLOSED: [2012-07-25 Wed 22:37]
-*** DONE org-s5插件制slide（discard）
-    CLOSED: [2012-07-25 Wed 22:52]
-*** DONE 整理一下IDC参观内容
-    CLOSED: [2012-07-30 Mon 18:04]
-*** DONE python encode/decode
-    CLOSED: [2012-07-30 Mon 20:13]
-*** DONE linux io_setup
-    CLOSED: [2012-07-30 Mon 22:42]
-    - http://www.kernel.org/doc/man-pages/online/pages/man2/io_setup.2.html
-*** DONE 调研ooize并且整理调度器需求文档
-    CLOSED: [2012-07-31 Tue 15:28]
-*** DONE 整理收藏以及微薄收藏等
-    CLOSED: [2012-08-01 Wed 23:30]
-*** DONE 晓峰创业总结
-    CLOSED: [2012-07-31 Tue 00:28]
-*** DONE 阅读完成oozie的workflow流程部分
-    CLOSED: [2012-07-31 Tue 21:04]
-*** DONE http://linuxtoy.org/feed
-    CLOSED: [2012-08-01 Wed 23:43]
-*** DONE 阅读完成oozie的coordinator流程部分
-    CLOSED: [2012-08-02 Thu 13:10]
-*** DONE oozie简单搭建以及运行
-    CLOSED: [2012-08-02 Thu 13:32]
-*** DONE hadoop单节点集群搭建
-    CLOSED: [2012-08-02 Thu 13:44]
-*** DONE 统计现在所有的任务运行情况，占用槽位等。
-    CLOSED: [2012-08-02 Thu 17:15]
-*** DONE 总结当前业务逻辑
-    CLOSED: [2012-08-02 Thu 20:11]
-*** DONE 探索Evernote的意义
-    CLOSED: [2012-08-02 Thu 20:26]
-*** DONE 应该收藏哪些内容
-    CLOSED: [2012-08-02 Thu 20:26]
-*** DONE 整理wife.org
-    CLOSED: [2012-08-03 Fri 14:04]
-*** DONE 重新阅读当前分群需求
-    CLOSED: [2012-08-03 Fri 16:14]
-*** DONE 询问工资详情
-    CLOSED: [2012-08-03 Fri 18:28]
-*** DONE 似乎gfs里面对于write state状态理解有误
-    CLOSED: [2012-08-04 Sat 00:21]
-*** DONE 阅读原来调度器的文档和代码
-    CLOSED: [2012-08-06 Mon 23:30]
-*** DONE 阅读小时任务并且尝试学习优化（高）
-    CLOSED: [2012-08-06 Mon 23:36]
-*** DONE GFS
-    CLOSED: [2012-08-07 Tue 11:00]
-*** DONE 整理gfs的疑问
-    CLOSED: [2012-08-08 Wed 13:01]
-*** DONE 编写调度器详细设计文档
-    CLOSED: [2012-08-08 Wed 15:18]
-*** DONE HDFS
-    CLOSED: [2012-08-08 Wed 20:34]
-*** DONE MapReduce
-    CLOSED: [2012-08-09 Thu 20:40]
-*** DONE 整理阅读收藏列表以及浏览器列表
-    CLOSED: [2012-08-14 Tue 07:00]
-*** DONE 建立本地测试环境，运行hourlyprocedure
-    CLOSED: [2012-08-14 Tue 07:00]
-*** DONE BigTable
-    CLOSED: [2012-08-15 Wed 11:53]
-*** DONE 写在生日的这一天
-    CLOSED: [2012-08-16 Thu 00:44]
-
 ** daily todo
 *** TODO 和别人交流emacs是如何工作的！
 *** TODO 考虑使用fvwm(awesome)
@@ -98,12 +13,10 @@ CLOSED: [2012-07-25 Wed 22:37]
 *** TODO Job Scheduling for Multi-User MapReduce Clusters
     - http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html
 *** TODO 整理blog
-
 *** TODO 七夕礼物？
 *** TODO 整理现在报价情况等
-
-*** TODO 谢谢career
 *** TODO 搞定打印机这件事情
+*** TODO 沙袋？
 ** read it later
 *** TODO mapreduce里面如何做join
 *** TODO YARN

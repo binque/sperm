@@ -1,0 +1,4 @@
+* lyric
+** hey-jude
+file:../images/hey-jude.jpg
+
