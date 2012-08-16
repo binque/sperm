@@ -1,8 +1,33 @@
 * hbase
-** hbase shell
+** FAQ
+*** hbase shell
    - scan 'test'
    - scan 'test' , { LIMIT=>10 }
    - scan 'test' , { COLUMN=>['cf:url'] }
    - scan 'test' , { STARTROW=>'xyz' }
    - count 'test'
 
+*** 业强 2012-08-16 hbase讲座
+file:./images/hbase-architecture.png
+
+
+HRegion类似于tablet，每个HRegion有很多Store存储不同的column family。
+
+对于memstore内存大小限制的话，有两个方面：
+   - HRegion如果总体内存比较大的话，那么会选择几个Store里面的memstore进行flush
+   - 如果Store里面的memstore本身比较大的话，也会进行flush
+
+scan过程大致是这样的：
+   - 首先scanner得到memstore以及所有的hfile，以及这个似乎时候的timestamp（hbase使用timestamp作为version)进行归并排序。
+   - 如果期间memstore发生写，或者是flush，或者是进行compaction的话，那么会通知scanner
+   - scanner会重新组织这些内容，根据上次读取到的value,忽路duplicated的数据。   
+这样的好处就是通常在scanner的时候不会阻塞其他操作。
+
+--------------------
+
+但是我看了一下leveldb代码，觉得实现上更好。对于immutable memtable以及memtable做引用计数，在iterator里面保存两个table。
+如果memtable compaction之后的话，那么直接创建一个新的memtable即可。原有的table在iterator销毁的时候就会自动释放。
+
+--------------------
+
+对于column family是可以设置超时时间的。在进行flush或者是compaction的时候，会判断这个value是否超过ttl。如果超过ttl的话那么就会直接丢弃。
