@@ -85,3 +85,10 @@ clone git://github.com/kevinweil/hadoop-lzo.git
 
 #+END_EXAMPLE
 
+** hbase join
+http://stackoverflow.com/questions/11327316/how-to-join-tables-in-hbase 其中几个链接似乎不错，可以看看，提到了
+MultiTableInput方式
+
+
+
+

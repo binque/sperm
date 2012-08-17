@@ -16,6 +16,8 @@
 *** TODO 七夕礼物？
 *** TODO 沙袋？
 *** TODO git stash save/pop
+*** TODO 总结inotify
+    - http://www.ibm.com/developerworks/cn/linux/l-inotifynew/index.html
 ** read it later
 *** TODO mapreduce里面如何做join
 *** TODO YARN

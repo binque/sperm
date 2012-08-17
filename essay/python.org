@@ -1,0 +1,42 @@
+* python
+** encode/decode
+python字符串是unicode类型，二进制是str类型。
+   - encode是将unicode转换成为str
+   - decode是将str转换成为unicode
+#+BEGIN_EXAMPLE
+>>> a="中国"
+>>> a
+'\xe4\xb8\xad\xe5\x9b\xbd'
+>>> a.decode('utf8')
+u'\u4e2d\u56fd'
+>>> print a.decode('utf8')
+中国
+>>> print a.decode('gb18030')
+涓浗
+#+END_EXAMPLE
+
+这里一个比较难处理的问题就是字符编码的识别，这个在我的项目[[file:./dsgm.org][dsgm]] 遇到过。个人现在处理的办法就是尝试全部转换成为utf8来进行处理。实现办法就是首先尝试转换
+到gb18030,如果转换失败的话那么转换成为utf8（当然这不是最好的，使用chardet这样的模块似乎是更合理的选择），这样的操作对于我们中国大陆用户来说基本上应该
+OK，就我所知道的系统XP都是GB2312编码，linux/mac通常设置成为utf8，而cygwin这样架在windows上面的系统通常也是gb2312。
+
+#+BEGIN_SRC Python
+def toUTF8(s):
+    try:
+        # detect gb2312 first.
+        return s.decode('gb2312').encode('utf8')
+    except UnicodeDecodeError,e:
+        return s
+        
+def toLocal(s):
+    try:
+        open(s,'r') # what a tricky way.
+        return s
+    except IOError,e:
+        if(e.errno==22): # errno.EINVAL
+            return s.decode('utf8').encode('gb2312')
+        return s
+#+END_SRC
+对于从本地转换出去的话，我们首先尝试使用gb2312进行decode，如果失败的话那么就认为是utf8编码，当然这里会有一定的错误机率（但是不大）。
+转换到本地的话，我们唯一不确定的就是本地是utf8格式还是gb2312格式。可以通过尝试打开一个文件来判断，其中22是errno.EINVAL的错误编码。
+如果字符编码错误的话，那么返回的就是invalid argument的错误，同样会存在一定错误机率（但是不大）。出现错误几率的原因就是这些码点，使用
+gb2312可以正常解释，使用utf8也可以正常解释。
