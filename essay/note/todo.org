@@ -19,7 +19,8 @@
 *** TODO 总结inotify
     - http://www.ibm.com/developerworks/cn/linux/l-inotifynew/index.html
 *** TODO python wsgi
-
+*** TODO 将信息作为图片存储起来这个idea似乎非常不错：）
+*** TODO http://www.systemswemake.com/
 ** read it later
 *** TODO mapreduce里面如何做join
 *** TODO YARN
