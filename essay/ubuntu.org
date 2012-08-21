@@ -152,6 +152,8 @@ unity restart &
    - sudo apt-get install libtool
    - sudo apt-get install automake
    - sudo apt-get install alien
+   - sudo apt-get install dos2unix
+   - sudo apt-get install astyle
 
 *** amarok循环播放
 在amarok的右下角有task progression的图标，选择repeat track即可。
