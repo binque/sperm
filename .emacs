@@ -262,21 +262,13 @@
             auto-mode-alist))
 
 
-;;; muitl-eshell
-(defun multi-eshell ()
-  (interactive)
-  (progn
-    (eshell)
-    (rename-buffer (generate-new-buffer-name "eshell"))))
-
 ;;; multi-term.
 (require 'multi-term)
 (setq multi-term-program "/bin/bash")
 (setq multi-term-buffer-name "multi-term")
 ;; 打开之后直接定位到这个窗口
 (setq multi-term-dedicated-select-after-open-p t) 
-
-(global-set-key "\C-x." 'multi-eshell)
+(global-set-key "\C-x." 'multi-term)
 
 ;;; protobuf-mode.
 (require 'protobuf-mode)
@@ -380,9 +372,9 @@
 ;;; yasnippet
 ;; sudo apt-get install yasnippet
 ;; http://capitaomorte.github.com/yasnippet/
-(setq load-path (cons "~/.emacs.d/capitaomorte-yasnippet-8a26ab0/" load-path))
+(setq load-path (cons "~/.emacs.d/yasnippet-0.6.1c/" load-path))
 (require 'yasnippet)
-(yas-global-mode 1)
+(yas/initialize)
 (setq yas/root-directory (cons "~/.emacs.d/snippets"
                                yas/root-directory))
 (yas/load-directory "~/.emacs.d/snippets")
