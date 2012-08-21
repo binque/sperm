@@ -1,7 +1,7 @@
 PROGNAME=$0
 BINDIR=`python -c "import os;print os.path.abspath('.')"`
 
-TARGETS=".bash_profile .bashrc .emacs .emacs.d .vpn-umeng .xmodmap .xinitrc"
+TARGETS=".bashrc .emacs .emacs.d .vpn-umeng .xmodmap .xinitrc"
 for target in $TARGETS
 do
   echo "[$PROGNAME]installing $target..."
@@ -11,6 +11,10 @@ done
 echo "[$PROGNAME]installing index.html..."
 sudo rm -rf /index.html
 sudo ln -s $BINDIR/index.html /index.html
+
+echo "[$PROGNAME]installing .bash_profile"
+rm -rf $HOME/.bash_profile
+ln -s $BINDIR/.bashrc $HOME/.bash_profile
 
 TARGETS="2utf8 cxxindent \
 oprof mysqldb syslog \

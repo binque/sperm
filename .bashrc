@@ -1,12 +1,10 @@
 #!/bin/bash
+echo "source .bashrc"
 
-BASHRC=1
-if [ -f ~/.bash_profile ]; then
-    # to prevent recursive execute .bashrc.
-    # see also .bash_profile
-    if [ $BASHPF"X" == "X" ]; then
-        . ~/.bash_profile
-    fi
+MAC=0
+if [ $MACHTYPE == "x86_64-apple-darwin12" ]
+then
+    MAC=1
 fi
 
 #=============================================================
@@ -219,9 +217,9 @@ PS1="[\u@\h] > "
 # Personnal Aliases
 #-------------------
 
-alias rm='rm -i'
-alias cp='cp -i'
-alias mv='mv -i'
+#alias rm='rm -i'
+#alias cp='cp -i'
+#alias mv='mv -i'
 # -> Prevents accidentally clobbering files.
 alias mkdir='mkdir -p'
 
@@ -237,12 +235,14 @@ alias pjet='enscript -h -G -fCourier9 -d $LPDEST'
             # Pretty-print using enscript
 
 alias du='du -kh'       # Makes a more readable output.
-alias df='df -kTh'
+#alias df='df -kTh'
+alias df='df -kh'
 
 #-------------------------------------------------------------
 # The 'ls' family (this assumes you use a recent GNU ls)
 #-------------------------------------------------------------
-alias ll="ls -l --group-directories-first"
+#alias ll="ls -l --group-directories-first"
+alias ll="ls -l"
 alias ls='ls -hF --color'  # add colors for filetype recognition
 alias la='ls -Al'          # show hidden files
 alias lx='ls -lXB'         # sort by extension
@@ -827,3 +827,98 @@ complete -o default -F _meta_comp command type which man nice time
 # mode:shell-script
 # sh-shell:bash
 # End:
+
+export DOC="$HOME/github/sperm/essay"
+export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64/
+export CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:.
+export MANPATH=/usr/local/share/man:/usr/share/man
+
+PATH=$JAVA_HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH
+PATH=$HOME/utils/bin:$PATH
+PATH=$JAVA_HOME/bin:$PATH
+PATH=$HOME/utils/graphviz/bin:$PATH
+MANPATH=$HOME/utils/graphviz/share/man:$MANPATH
+PATH=$HOME/utils/ant/bin:$PATH
+PATH=$HOME/utils/python/bin:$PATH
+MANPATH=$HOME/utils/python/share/man:$MANPATH
+PATH=$HOME/utils/valgrind/bin:$PATH
+PATH=$HOME/utils/protobuf/bin:$PATH
+PATH=$HOME/utils/astyle/build/gcc/bin/:$PATH
+PATH=$HOME/utils/flex/bin:$PATH
+PATH=$HOME/utils/php/bin:$PATH
+PATH=$HOME/utils/thrift/bin:$PATH
+PATH=$HOME/utils/sqlite/bin:$PATH
+MANPATH=$HOME/utils/sqlite/shared/man:$MANPATH
+PATH=$HOME/utils/bochs/bin:$PATH
+PATH=$HOME/utils/mysql/bin:$PATH
+PATH=$HOME/utils/emacs/bin:$PATH
+MANPATH=$HOME/utils/emacs/share/man:$MANPATH
+PATH=$HOME/utils/git/bin:$PATH
+PATH=$HOME/utils/git/libexec/git-core:$PATH
+MANPATH=$HOME/utils/git/share/man:$MANPATH
+PATH=$HOME/utils/lynx/bin:$PATH
+MANPATH=$HOME/utils/lynx/man:$MANPATH
+PATH=$HOME/utils/ccache/bin:$PATH
+MANPATH=$HOME/utils/ccache/share/man/:$MANPATH
+PATH=$HOME/utils/rar/bin:$PATH
+PATH=$HOME/utils/oprofile/bin:$PATH
+MANPATH=$HOME/utils/oprofile/share/man:$MANPATH
+PATH=$HOME/utils/subversion/bin:$PATH
+MANPATH=$HOME/utils/subversion/share/man:$MANPATH
+PATH=$HOME/utils/distcc/bin:$PATH
+MANPATH=$HOME/utils/distcc/shared/man:$MANPATH
+PATH=$HOME/utils/tree/bin:$PATH
+MANPATH=$HOME/utils/tree/man:$MANPATH
+PATH=$HOME/utils/cmake/bin:$PATH
+PATH=$HOME/utils/asciidoc/bin:$PATH
+MANPATH=$HOME/utils/asciidoc/share/man:$MANPATH
+PATH=$HOME/utils/xmlto/bin:$PATH
+MANPATH=$HOME/utils/xmlto/share/man:$MANPATH
+PATH=$HOME/utils/swig/bin:$PATH
+MANPATH=$HOME/utils/swig/shared/man:$MANPATH
+PATH=$HOME/utils/tcpdump/sbin:$PATH
+MANPATH=$HOME/utils/tcpdump/share/man:$MANPATH
+MANPATH=$HOME/utils/zeromq/share/man:$MANPATH
+PATH=$HOME/utils/m4/bin:$PATH
+PATH=$HOME/utils/autoconf/bin:$PATH
+PATH=$HOME/utils/automake/bin:$PATH
+MANPATH=$HOME/utils/m4/share/man:$MANPATH
+MANPATH=$HOME/utils/autoconf/share/man:$MANPATH
+MANPATH=$HOME/utils/automake/share/man:$MANPATH
+PATH=$HOME/utils/clisp/bin:$PATH
+MANPATH=$HOME/utils/clisp/share/man:$MANPATH
+PATH=$HOME/github/depot_tools:$PATH
+PATH=$HOME/utils/nginx/sbin:$PATH
+PATH=$HOME/utils/hadoop-0.20.2-cdh3u3/bin:$PATH
+PATH=$HOME/utils/hbase-0.90.4-cdh3u3/bin:$PATH
+PATH=$HOME/utils/oozie-2.3.2-cdh3u3/bin:$PATH
+
+
+export PATH
+export MANPATH
+
+export M2_REPO=$HOME/.m2/repository/
+export LC_ALL=zh_CN.UTF8
+export LANG=zn_CN.UTF8
+alias ed="emacs"
+
+# default value of oozie url.
+export OOZIE_URL="http://localhost:11000/oozie" 
+
+if [ $MAC == 1 ]
+then
+    alias ls="ls -G"
+fi
+
+alias sl='ls'
+alias dstat='dstat -cdlmnpsy'
+git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --"
+git config --global color.ui true
+git config --global user.name "dirtysalt"
+git config --global user.email "dirtysalt1987@gmail.com"
+
+alias u1="ssh -p 16021 -l yunbg 118.194.160.9"
+alias u2="ssh -p 16021 -l yunbg 118.194.161.167"
+alias u3="ssh -p 16021 -l yunbg 118.194.160.11"
+alias dp1="ssh -p 16021 -l dp 211.151.139.253"
+
