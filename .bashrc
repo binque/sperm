@@ -2,7 +2,7 @@
 echo "source .bashrc"
 
 MAC=0
-if [ $MACHTYPE == "x86_64-apple-darwin12" ]
+if [ $HOME == "/Users/dirlt" ]
 then
     MAC=1
 fi
