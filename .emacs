@@ -261,13 +261,22 @@
       (cons '("\\.\\(xml\\|xsl\\|rng\\|xhtml\\|html\\|htm\\)\\'" . nxml-mode)
             auto-mode-alist))
 
+
+;;; muitl-eshell
+(defun multi-eshell ()
+  (interactive)
+  (progn
+    (eshell)
+    (rename-buffer (generate-new-buffer-name "eshell"))))
+
 ;;; multi-term.
 (require 'multi-term)
 (setq multi-term-program "/bin/bash")
 (setq multi-term-buffer-name "multi-term")
-(global-set-key "\C-x." 'multi-term)
 ;; 打开之后直接定位到这个窗口
 (setq multi-term-dedicated-select-after-open-p t) 
+
+(global-set-key "\C-x." 'multi-eshell)
 
 ;;; protobuf-mode.
 (require 'protobuf-mode)
@@ -403,5 +412,4 @@
 (desktop-save-mode t)
 
 (if 'mac-system
-    (global-set-key [(f11)] 'ns-toggle-fullscreen))
-    
+    (global-set-key [(f10)] 'ns-toggle-fullscreen))

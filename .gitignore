@@ -14,6 +14,7 @@
 .emacs.d/.session
 .emacs.d/anything-c-adaptive-history
 .emacs.d/org-clock-save.el
+.emacs.d/eshell/
 
 essay/*.html
 essay/note/*.html
