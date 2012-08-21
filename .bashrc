@@ -899,7 +899,7 @@ export MANPATH
 
 export M2_REPO=$HOME/.m2/repository/
 export LC_ALL=zh_CN.UTF8
-export LANG=zn_CN.UTF8
+export LANG=zh_CN.UTF8
 alias ed="emacs"
 
 # default value of oozie url.
