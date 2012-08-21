@@ -134,7 +134,6 @@
 (require 'color-theme)
 (color-theme-initialize)
 (color-theme-billw)
-;; (color-theme-arjen)
 
 ;;; auto-complete.
 ;; sudo apt-get install auto-complete-el
