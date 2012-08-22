@@ -267,8 +267,17 @@
 (setq multi-term-buffer-name "multi-term")
 ;; 打开之后直接定位到这个窗口
 (setq multi-term-dedicated-select-after-open-p t) 
-(global-set-key "\C-x." 'multi-term)
 
+(defun multi-eshell ()
+  (interactive)
+  (progn
+    (eshell)
+    (rename-buffer (generate-new-buffer-name "eshell-"))))
+
+(global-set-key "\C-x." 'multi-term)
+(if mac-system 
+    (global-set-key "\C-x." 'multi-eshell))
+                
 ;;; protobuf-mode.
 (require 'protobuf-mode)
 (setq auto-mode-alist 
