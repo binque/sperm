@@ -898,8 +898,8 @@ export PATH
 export MANPATH
 
 export M2_REPO=$HOME/.m2/repository/
-export LC_ALL=zh_CN.UTF8
-export LANG=zh_CN.UTF8
+export LC_ALL=en_US.UTF8
+export LANG=en_US.UTF8
 alias ed="emacs"
 
 # default value of oozie url.
