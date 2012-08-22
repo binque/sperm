@@ -1,0 +1,5 @@
+Design, Implementation and Tutorial: http://dirlt.com/dsgm.html
+
+TODO:
+   -  add some status in another db. and support 'dsgm status'
+   -  output log to file for easier debugging
