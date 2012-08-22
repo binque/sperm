@@ -19,7 +19,7 @@ ln -s $BINDIR/.bashrc $HOME/.bash_profile
 TARGETS="2utf8 cxxindent \
 oprof mysqldb syslog \
 local-install org2twiki \
- gc pom-create vpn-umeng vpn-gfw
+ gc pom-create vpn-umeng vpn-gfw gfw
 rhs pcrypt einstall uinstall"
 
 INSTALLDIR=$HOME/utils/bin
