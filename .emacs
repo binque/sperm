@@ -1,8 +1,13 @@
 ;;; .emacs
 
+(setq mac-system nil)
+(if (string-equal (getenv "HOME") "/Users/dirlt")
+    (setq mac-system t))
+
 ;;; common code.
 ;; sudo apt-get install emacs-goodies-el
 (setq load-path (cons "~/.emacs.d/" load-path))
+(setq load-path (cons "~/.emacs.d/emacs-goodies-el-35.0/elisp/emacs-goodies-el/" load-path))
 (require 'xml-parse)
 (autoload 'make-regexp "make-regexp"
   "Return a regexp to match a string item in STRINGS.")
@@ -97,17 +102,17 @@
 ;;   - C-c d m will insert a blank multiline Doxygen comment.
 ;;   - C-c d s will insert a blank singleline Doxygen comment.
 ;;   - C-c d @ will insert grouping comments around the current region.
-(require 'doxymacs)
-(add-hook 'c-mode-common-hook 'doxymacs-mode)
-(add-hook 'python-mode-hook 'doxymacs-mode)
-(add-hook 'java-mode-hook 'doxymacs-mode)
-(defun my-doxymacs-font-lock-hook ()
-  (if (or (eq major-mode 'c-mode) 
-          (eq major-mode 'c++-mode)
-          (eq major-mode 'python-mode)
-          (eq major-mode 'java-mode))
-      (doxymacs-font-lock)))
-(add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
+;; (require 'doxymacs)
+;; (add-hook 'c-mode-common-hook 'doxymacs-mode)
+;; (add-hook 'python-mode-hook 'doxymacs-mode)
+;; (add-hook 'java-mode-hook 'doxymacs-mode)
+;; (defun my-doxymacs-font-lock-hook ()
+;;   (if (or (eq major-mode 'c-mode) 
+;;           (eq major-mode 'c++-mode)
+;;           (eq major-mode 'python-mode)
+;;           (eq major-mode 'java-mode))
+;;       (doxymacs-font-lock)))
+;; (add-hook 'font-lock-mode-hook 'my-doxymacs-font-lock-hook)
 
 ;;; hippie-expand.
 (setq hippie-expand-try-functions-list
@@ -125,14 +130,15 @@
         try-expand-whole-kill))
 
 ;;; color-theme. http://alexpogosyan.com/color-theme-creator
+(setq load-path (cons "~/.emacs.d/color-theme-6.6.0" load-path))
 (require 'color-theme)
 (color-theme-initialize)
 (color-theme-billw)
-;; (color-theme-arjen)
 
 ;;; auto-complete.
 ;; sudo apt-get install auto-complete-el
 ;; http://cx4a.org/software/auto-complete/manual.html
+(setq load-path (cons "~/.emacs.d/auto-complete-1.3.1" load-path))
 (require 'auto-complete-config)
 (ac-config-default)
 (add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
@@ -163,6 +169,7 @@
 
 ;;; python-mode.
 ;; sudo apt-get install python-mode
+(setq load-path (cons "~/.emacs.d/python-mode.el-6.0.11" load-path))
 (require 'python-mode)
 
 ;;; php-mode
@@ -209,15 +216,17 @@
 
 ;;; ibus.
 ;; sudo apt-get install ibus-el
-(require 'ibus)
-(add-hook 'after-init-hook 'ibus-mode-on)
-;; Use C-SPC for Set Mark command
-;; (ibus-define-common-key ?\C-\s nil)
-;; Use C-/ for Undo command
-(ibus-define-common-key ?\C-/ nil) ;; 绑定在undo上面
-(global-set-key [(shift)] 'ibus-toggle)
-;; Change cursor color depending on IBus status
-(setq ibus-cursor-color '("red" "blue" "limegreen"))
+(if (not 'mac-system)
+    (progn
+      (require 'ibus)
+      (add-hook 'after-init-hook 'ibus-mode-on)
+      ;; Use C-SPC for Set Mark command
+      ;; (ibus-define-common-key ?\C-\s nil)
+      ;; Use C-/ for Undo command
+      (ibus-define-common-key ?\C-/ nil) ;; 绑定在undo上面
+      (global-set-key [(shift)] 'ibus-toggle)
+      ;; Change cursor color depending on IBus status
+      (setq ibus-cursor-color '("red" "blue" "limegreen"))))
 
 ;;; session.
 (require 'session)
@@ -251,13 +260,14 @@
       (cons '("\\.\\(xml\\|xsl\\|rng\\|xhtml\\|html\\|htm\\)\\'" . nxml-mode)
             auto-mode-alist))
 
+
 ;;; multi-term.
 (require 'multi-term)
 (setq multi-term-program "/bin/bash")
 (setq multi-term-buffer-name "multi-term")
-(global-set-key "\C-x." 'multi-term)
 ;; 打开之后直接定位到这个窗口
 (setq multi-term-dedicated-select-after-open-p t) 
+(global-set-key "\C-x." 'multi-term)
 
 ;;; protobuf-mode.
 (require 'protobuf-mode)
@@ -361,6 +371,7 @@
 ;;; yasnippet
 ;; sudo apt-get install yasnippet
 ;; http://capitaomorte.github.com/yasnippet/
+(setq load-path (cons "~/.emacs.d/yasnippet-0.6.1c/" load-path))
 (require 'yasnippet)
 (yas/initialize)
 (setq yas/root-directory (cons "~/.emacs.d/snippets"
@@ -390,3 +401,6 @@
 ;;; desktop.
 (require 'desktop)
 (desktop-save-mode t)
+
+(if 'mac-system
+    (global-set-key [(f10)] 'ns-toggle-fullscreen))

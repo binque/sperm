@@ -2,7 +2,7 @@
 echo "source .bashrc"
 
 MAC=0
-if [ $MACHTYPE == "x86_64-apple-darwin12" ]
+if [ $HOME == "/Users/dirlt" ]
 then
     MAC=1
 fi
@@ -899,7 +899,7 @@ export MANPATH
 
 export M2_REPO=$HOME/.m2/repository/
 export LC_ALL=zh_CN.UTF8
-export LANG=zn_CN.UTF8
+export LANG=zh_CN.UTF8
 alias ed="emacs"
 
 # default value of oozie url.

@@ -1,0 +1,18 @@
+#!/bin/bash
+function start() {
+    echo "ssh -D10080 -qfnN fuckgfw@umeng.us"
+    ssh -D10080 -qfnN fuckgfw@umeng.us
+}
+
+function stop() {
+    for pid in `ps aux | grep "ssh -D10080 -qfnN fuckgfw@umeng.us" | grep -v "grep" | awk '{print $2;}'`
+    do
+        echo "kill -9 $pid of 'ssh -D10080 -qfnN fuckgfw@umeng.us'"
+        kill -9 $pid
+    done
+}
+
+stop
+start
+
+    
