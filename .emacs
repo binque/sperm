@@ -216,7 +216,7 @@
 
 ;;; ibus.
 ;; sudo apt-get install ibus-el
-(if (not 'mac-system)
+(if (not mac-system)
     (progn
       (require 'ibus)
       (add-hook 'after-init-hook 'ibus-mode-on)
@@ -402,5 +402,5 @@
 (require 'desktop)
 (desktop-save-mode t)
 
-(if 'mac-system
+(if mac-system
     (global-set-key [(f10)] 'ns-toggle-fullscreen))
