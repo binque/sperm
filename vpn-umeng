@@ -1,7 +1,9 @@
 #!/bin/bash
 function start() {
-    echo "cd $HOME/.vpn-umeng && sudo openvpn --daemon --config client.conf"
-    cd $HOME/.vpn-umeng && sudo openvpn --daemon --config client.conf
+    echo "cd $HOME/.vpn-umeng-shijihulian && sudo openvpn --daemon --config client.conf"
+    cd $HOME/.vpn-umeng-shijihulian && sudo openvpn --daemon --config client.conf
+    echo "cd $HOME/.vpn-umeng-zhaowei && sudo openvpn --daemon --config client.conf"
+    cd $HOME/.vpn-umeng-zhaowei && sudo openvpn --daemon --config client.conf
 }
 
 function stop() {

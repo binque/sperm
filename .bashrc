@@ -901,6 +901,7 @@ export M2_REPO=$HOME/.m2/repository/
 export LC_ALL=en_US.UTF8
 export LANG=en_US.UTF8
 alias ed="emacs"
+export EDITOR="emacs"
 
 # default value of oozie url.
 export OOZIE_URL="http://localhost:11000/oozie" 

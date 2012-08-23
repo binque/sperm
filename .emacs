@@ -273,11 +273,9 @@
   (progn
     (eshell)
     (rename-buffer (generate-new-buffer-name "eshell-"))))
-
 (global-set-key "\C-x." 'multi-term)
-(if mac-system 
-    (global-set-key "\C-x." 'multi-eshell))
-                
+(global-set-key "\C-x," 'multi-eshell)
+       
 ;;; protobuf-mode.
 (require 'protobuf-mode)
 (setq auto-mode-alist 

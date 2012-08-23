@@ -1,7 +1,7 @@
 PROGNAME=$0
 BINDIR=`python -c "import os;print os.path.abspath('.')"`
 
-TARGETS=".bashrc .emacs .emacs.d .vpn-umeng"
+TARGETS=".bashrc .emacs .emacs.d .vpn-umeng-shijihulian .vpn-umeng-zhaowei"
 for target in $TARGETS
 do
   echo "[$PROGNAME]installing $target..."
