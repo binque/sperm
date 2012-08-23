@@ -13,7 +13,8 @@
 *** TODO Job Scheduling for Multi-User MapReduce Clusters
     - http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html
 *** TODO 整理blog
-*** TODO 七夕礼物？
+*** DONE 七夕礼物？
+    CLOSED: [2012-08-23 Thu 23:10]
 *** TODO 沙袋？
 *** TODO git stash save/pop
 *** TODO 总结inotify
@@ -23,10 +24,12 @@
 *** TODO http://www.systemswemake.com/
 *** TODO 购买macbook以及如何使用
 *** TODO 小时级别任务优化，以及实现如何解析要求。（小时级别将各个mapper以及reducer单独独立出来）
-*** TODO 链接补上hadoop1.whaleincloud.com(zhaowei的vpn设置）？现在只有世纪互联。
+*** DONE 链接补上hadoop1.whaleincloud.com(zhaowei的vpn设置）？现在只有世纪互联。
+    CLOSED: [2012-08-23 Thu 23:10]
 *** TODO mac自定义手势。
 ** read it later
-*** TODO mapreduce里面如何做join
+*** DONE mapreduce里面如何做join
+    CLOSED: [2012-08-23 Thu 23:10]
 *** TODO YARN
 *** TODO pregel
 *** TODO Percolator

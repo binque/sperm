@@ -20,7 +20,7 @@ mac软件还是非常齐全的，我大致安装了下面这些东西:
 下面软件是通过homebrew自动安装的: 
    - brew install openvpn
    - brew install emacs --cocoa --srgb
-   - 
+   - brew install svn --unicode-path
 
 ** brew
    - brew search <package> # 搜索package 
