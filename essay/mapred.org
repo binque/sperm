@@ -1,1 +1,35 @@
 * mapred
+** YARN
+*** Introducing Apache Hadoop YARN 
+http://hortonworks.com/blog/introducing-apache-hadoop-yarn/ 
+
+看起来YARN的主要目的是将Hadoop不仅仅用于map-reduce的计算方式，还包括MPI，graph-processing，simple services等，
+而MR仅仅是作为其中一种计算方式。底层依然是使用HDFS。发布方式的话还是将HDFS，YARN，MR，以及Common一起统一发布。
+
+*** Apache Hadoop YARN – Background and an Overview 
+http://hortonworks.com/blog/apache-hadoop-yarn-background-and-an-overview/
+
+对于MR来说，最关键的一点就是lack of data motion。通过将任务放在数据所在的机器上面，而不是将数据移动到任务所在的机器上面，可以节省带宽提高计算效率。现在来说MR分为下面三个部分：
+   - The end-user *MapReduce API* for programming the desired MapReduce application. 
+   - The *MapReduce framework*, which is the runtime implementation of various phases such as the map phase, the sort/shuffle/merge aggregation and the reduce phase. （framework做的事情是runtime的工作，比如怎么划分数据，怎么进行reducer上面的拉数据等）
+   - The *MapReduce system*, which is the backend infrastructure required to run the user’s MapReduce application, manage cluster resources, schedule thousands of concurrent jobs etc. （system做的事情是确保runtime可以work的工作，集群管理如何调度）
+
+file:./images/MRArch.png
+
+For a while, we have understood that the Apache Hadoop MapReduce framework needed an overhaul. In particular, with regards to the JobTracker, we needed to address several aspects regarding scalability, cluster utilization, ability for customers to control upgrades to the stack i.e. customer agility and equally importantly, supporting workloads other than MapReduce itself. 考虑对于MR framework需要做下面这些改进，尤其是对于JobTracker来说：
+   - 扩展性。我的理解是master有更好的处理能力，应该来支持更多的节点加入集群。2009年产品部署上能够达到5k个节点。
+   - 集群利用。现在hadoop是将所有的nodes看作是distince map-reduce slots的，并且两者是不可替换的。可能mapper使用非常多而reducer非常少（或者相反），这样的情况会限制集群利用效率。
+   - 灵活地控制software stack。我的理解是对于软件的升级，可能不能够完全替换，因此需要支持集群中有多个版本的MR运行。主要还是兼容性问题。
+   - 服务不同的workload而非MR。比如MPI，graph-processing，realtime-processing，并且减少HDFS到自己存储系统之间数据的迁移（现在MR输入一定要在HDFS上面）
+
+--------------------
+
+YARN主要做的工作就是在资源利用的改进上面，将资源利用已经workflow分离：
+   - 资源利用通过引入的ResouceManager（RM）以及NodeManager（NM）来管理。
+     - NM主要做单机上面的资源收集汇报给RM
+     - RM能够用来了解整个集群的资源使用情况，通过收集NM以及AM汇报信息。
+     - RM提供pluggable Scheduler来计算资源分配。
+   - workflow方面将MR和其他类型workflow分离，抽象成为ApplicationManager（AM）以及Container
+
+file:./images/YARNArch.png
+

@@ -1,6 +1,14 @@
 * excerpt
 #+TITLE: 网络摘抄
 --------------------
+ 【贫穷的根源】穷人表面上最缺的是—金钱；本质上可能最缺的是—野心；脑袋里可能最缺的是—观念；面对机会时最缺的是—把握；命运中最缺的是——选择；骨子里可能最缺的是—勇气 ；改变上最缺的是—行动；肚子里可能最缺的是—知识；事业上最缺的是—坚持；性格中可能最缺的是—胆色。
+
+--------------------
+牛郎和织女的故事告诉我们，偷看女生洗澡是找媳妇的一个好方法
+
+可惜通过这种方式找到的，一年只能见一次。
+
+--------------------
 *本福德定律(Benford’s Law)*
 Pick a random financial transaction from the ledger of a typical business and there is about a 30% chance that the first non-zero digit of the amount of money involved is a 1. This counter-intuitive fact is a result of Benford’s Law, discovered by astronomer Simon Newcomb in the late 1800′s and rediscovered by physicist Frank Benford in the early 1900′s. They found that real world data are not evenly distributed. Instead, given a random number related to some natural or social phenomenon satisfying certain conditions, the probability that the first non-zero digit of the number is D is log10(1 + 1/D).
 从随机的金融交易涉及的金额来看，有30%的几率第一位非零数字是1。这个违反直觉的定律就是本福德定律(Benford’s Law).他们发现世界上存在的数字并不是均匀分布的，在满足一定条件下的自然或者是社会现象涉及到的数字，第一个非零数字为D的几率为log10(1 + 1/D).

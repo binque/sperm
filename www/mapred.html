@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>mapred</title>
-<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="mapred"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-10 08:07:49 CST"/>
+<meta name="generated" content="2012-08-23 09:21:35 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -98,7 +98,16 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 mapred</a></li>
+<li><a href="#sec-1">1 mapred</a>
+<ul>
+<li><a href="#sec-1-1">1.1 YARN</a>
+<ul>
+<li><a href="#sec-1-1-1">1.1.1 Introducing Apache Hadoop YARN</a></li>
+<li><a href="#sec-1-1-2">1.1.2 Apache Hadoop YARN – Background and an Overview</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -107,12 +116,98 @@
 <h2 id="sec-1"><span class="section-number-2">1</span> mapred</h2>
 <div class="outline-text-2" id="text-1">
 
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> YARN</h3>
+<div class="outline-text-3" id="text-1-1">
+
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Introducing Apache Hadoop YARN</h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+<p><a href="http://hortonworks.com/blog/introducing-apache-hadoop-yarn/">http://hortonworks.com/blog/introducing-apache-hadoop-yarn/</a> 
+</p>
+<p>
+看起来YARN的主要目的是将Hadoop不仅仅用于map-reduce的计算方式，还包括MPI，graph-processing，simple services等，
+而MR仅仅是作为其中一种计算方式。底层依然是使用HDFS。发布方式的话还是将HDFS，YARN，MR，以及Common一起统一发布。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> Apache Hadoop YARN – Background and an Overview</h4>
+<div class="outline-text-4" id="text-1-1-2">
+
+<p><a href="http://hortonworks.com/blog/apache-hadoop-yarn-background-and-an-overview/">http://hortonworks.com/blog/apache-hadoop-yarn-background-and-an-overview/</a>
+</p>
+<p>
+对于MR来说，最关键的一点就是lack of data motion。通过将任务放在数据所在的机器上面，而不是将数据移动到任务所在的机器上面，可以节省带宽提高计算效率。现在来说MR分为下面三个部分：
+</p><ul>
+<li>The end-user <b>MapReduce API</b> for programming the desired MapReduce application. 
+</li>
+<li>The <b>MapReduce framework</b>, which is the runtime implementation of various phases such as the map phase, the sort/shuffle/merge aggregation and the reduce phase. （framework做的事情是runtime的工作，比如怎么划分数据，怎么进行reducer上面的拉数据等）
+</li>
+<li>The <b>MapReduce system</b>, which is the backend infrastructure required to run the user’s MapReduce application, manage cluster resources, schedule thousands of concurrent jobs etc. （system做的事情是确保runtime可以work的工作，集群管理如何调度）
+</li>
+</ul>
+
+
+<p>
+<img src="./images/MRArch.png"  alt="./images/MRArch.png" />
+</p>
+<p>
+For a while, we have understood that the Apache Hadoop MapReduce framework needed an overhaul. In particular, with regards to the JobTracker, we needed to address several aspects regarding scalability, cluster utilization, ability for customers to control upgrades to the stack i.e. customer agility and equally importantly, supporting workloads other than MapReduce itself. 考虑对于MR framework需要做下面这些改进，尤其是对于JobTracker来说：
+</p><ul>
+<li>扩展性。我的理解是master有更好的处理能力，应该来支持更多的节点加入集群。2009年产品部署上能够达到5k个节点。
+</li>
+<li>集群利用。现在hadoop是将所有的nodes看作是distince map-reduce slots的，并且两者是不可替换的。可能mapper使用非常多而reducer非常少（或者相反），这样的情况会限制集群利用效率。
+</li>
+<li>灵活地控制software stack。我的理解是对于软件的升级，可能不能够完全替换，因此需要支持集群中有多个版本的MR运行。主要还是兼容性问题。
+</li>
+<li>服务不同的workload而非MR。比如MPI，graph-processing，realtime-processing，并且减少HDFS到自己存储系统之间数据的迁移（现在MR输入一定要在HDFS上面）
+</li>
+</ul>
+
+
+
+<hr/>
+
+<p>
+YARN主要做的工作就是在资源利用的改进上面，将资源利用已经workflow分离：
+</p><ul>
+<li>资源利用通过引入的ResouceManager（RM）以及NodeManager（NM）来管理。
+<ul>
+<li>NM主要做单机上面的资源收集汇报给RM
+</li>
+<li>RM能够用来了解整个集群的资源使用情况，通过收集NM以及AM汇报信息。
+</li>
+<li>RM提供pluggable Scheduler来计算资源分配。
+</li>
+</ul>
+
+</li>
+<li>workflow方面将MR和其他类型workflow分离，抽象成为ApplicationManager（AM）以及Container
+</li>
+</ul>
+
+
+<p>
+<img src="./images/YARNArch.png"  alt="./images/YARNArch.png" />
+</p>
+</div>
+</div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-10 08:07:49 CST</p>
+<p class="date">Date: 2012-08-23 09:21:35 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

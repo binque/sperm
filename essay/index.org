@@ -105,6 +105,7 @@
      - [[file:./note/graduate-final-report.org][研究生答辩]]
      - [[file:./note/talk-with-luoyan.org][和罗琰的谈话]]      
      - [[file:./note/cola-and-water.org][可乐和矿泉水]]
+     - [[file:./note/get-marriage-identity.org][领证经历]]
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
    - [[file:./note/travel.org][travel]] 要不读书、要不旅行。心和身体， 得有一个在路上。
    - [[file:./note/fun.org][fun]] 搞笑的文字。
