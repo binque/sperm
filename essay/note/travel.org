@@ -1,0 +1,6 @@
+* travel
+#+TITLE: 旅行游记
+
+** 丽江
+*** 小指南
+file:../images/lijang-travel-tips.jpg
