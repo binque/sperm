@@ -22,6 +22,9 @@
 看过一些文章说MBA是如何的好：
    - MacBook Air与工作效率 – Tim[后端技术] http://timyang.net/misc/macbook-air-productive/
    - Why the MBA 11 is now my sole computer http://antirez.com/post/apple-mba11-my-sole-computer.html
+   - 为什么国外程序员爱用 Mac？ | vpsee.com http://www.vpsee.com/2009/06/why-programmers-love-mac/
+   - 为什么我认为每个程序员都应该用Mac OS X？ - Tinyfool的Blog http://tiny4.org/blog/2010/02/why-programmers-should-use-mac-os-x/
+
 同时weibo上的朋友们推荐我选择mba，但是也有同学推荐自己买一个thinkpad然后换ssd。
 #+BEGIN_EXAMPLE
 dirlt：求笔记本推荐，不求mac，轻便同时高性能，最好ssd，thinkpad x201i就很好，但是似乎不是ssd。
