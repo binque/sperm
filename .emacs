@@ -317,8 +317,10 @@
 (setq browse-url-generic-program 
       ;; (executable-find "google-chrome")
       ;; (executable-find "chromium-browser")
-      (executable-find "firefox")
-      browse-url-browser-function 'browse-url-generic)
+      (executable-find "firefox"))
+(if mac-system
+    (setq browse-url-browser-function 'browse-url-default-macosx-browser))
+
 
 ;;; org-mode. I have to include it because I've changed the code.
 ;; sudo apt-get install org-mode

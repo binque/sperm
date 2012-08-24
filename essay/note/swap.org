@@ -1,4 +1,4 @@
->* swap
+* swap
 ** java
    - 日志,log4j
    - 泛型 
@@ -59,10 +59,6 @@ http://bjjc.zhcoo.com/show_manage_article.aspx?articleid=9120
 【宝胜】【鲁能泰山】【远东】【胜华电缆】【上上】【亨通光电】【熊猫电线】【耐克森】【五彩江南】【日辉-阳谷电缆】
 
 1.金德 2.伟星 3.金牛角 4.星德 5.白蝶 )6.日丰 7.联塑 8.中财 9.皮尔萨 10.爱康-保利
-
-
-** temp
-处理到 http://dirlt.com/blog/?paged=26
 
 ** hadoop-lzo
 #+BEGIN_EXAMPLE

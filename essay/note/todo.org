@@ -9,6 +9,7 @@
 ** TODO Job Scheduling for Multi-User MapReduce Clusters
     - http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html
 ** TODO 整理blog
+    - http://dirlt.com/blog/?paged=26
 ** TODO 沙袋？
 ** TODO git stash save/pop
 ** TODO 总结inotify
