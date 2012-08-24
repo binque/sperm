@@ -71,7 +71,6 @@
    - [[file:./dsgm.org][dsgm]] Document Synchronization based on Google Mail. https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm
    - [[file:./mysql.org][mysql]] 开源关系型数据库。The world's most popular open source database http://www.mysql.com/
 
-
 ** Distributed System
    - [[file:streambase.org][streambase]] 在实现baidu in-house的分布式实时流式计算系统之前，调研的商用流式计算系统。没有办法获得源代码只能够从文档中猜测其内部实现以及参考其提供的功能与接口。
    - [[file:chubby.org][chubby]] google为松耦合分布式系统开发的锁服务，但是在现实中还可以作为名字服务来使用。
@@ -103,9 +102,12 @@
      - [[file:./note/baidu-bit-shanghai-route.org][百度BIT上海行程]]
      - [[file:./note/retrospect-2009.org][回顾2009]]
      - [[file:./note/graduate-final-report.org][研究生答辩]]
-     - [[file:./note/talk-with-luoyan.org][和罗琰的谈话]]      
+     - [[file:./note/talk-with-luoyan.org][和罗琰的谈话]]
      - [[file:./note/cola-and-water.org][可乐和矿泉水]]
      - [[file:./note/get-marriage-identity.org][领证经历]]
+     - [[file:./note/purchase-mba.org][购买MacBookAir]]
+     - [[file:note/okr.org][Objectives and Key Results]]
+     - [[file:note/2012-birthday.org][2012生日]]
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
    - [[file:./note/travel.org][travel]] 要不读书、要不旅行。心和身体， 得有一个在路上。
    - [[file:./note/fun.org][fun]] 搞笑的文字。

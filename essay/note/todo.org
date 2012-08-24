@@ -16,7 +16,6 @@
 ** TODO python wsgi
 ** TODO 将信息作为图片存储起来这个idea似乎非常不错：）
 ** TODO http://www.systemswemake.com/
-** TODO 购买macbook以及如何使用
 ** TODO 小时级别任务优化，以及实现如何解析要求。（小时级别将各个mapper以及reducer单独独立出来）
 ** TODO mac自定义手势。
 ** TODO YARN
