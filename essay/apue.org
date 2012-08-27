@@ -549,7 +549,7 @@ readahead可以异步地发起IO操作将所需要读入磁盘内容读入page c
 *** write
 write也是从当前偏移开始写数据的，然后修改当前文件偏移。如果设置了O_APPEND选项打开文件的话，
 那么write每次写操作，都会首先移动到文件最末尾然后写数据。这个选项非常重要，可以让文件
-追加写成为原子操作。
+追加写成为原子操作。如果write大小不超过PIPE_BUF的话保证是原子操作。
 
 除非使用O_DIRECT否则write通常是先写page cache，然后系统将page cache刷到磁盘上面去。
 系统将page cache写回到磁盘上的时机包括下面几个：
@@ -568,6 +568,35 @@ write也是从当前偏移开始写数据的，然后修改当前文件偏移。
 注意到这里可能启动pdflush daemon在后台刷新脏页。另外系统每隔dirty_writeback_centisecs时间会启动
 pdflush daemon将脏页刷到磁盘上面。而pdflush daemon工作方式是这样的，检查脏页是否存在超过
 dirty_expire_centisecs时间的，如果超过的话那么就会在后台刷新这些脏页。
+
+
+--------------------
+漫谈linux文件IO_raochaoxun-ChinaUnix博客 http://blog.chinaunix.net/uid-27105712-id-3270102.html
+
+下面是整个write过程
+file:./images/linux-write-procedure.gif
+   - glibc write是将app_buffer->libc_buffer->page_cache
+   - write是将app_buffer->page_cache
+   - mmap可以直接获取page_cache直写
+   - write+O_DIRECT的话将app_buffer写到io_queue里面
+     - io_queue一方面将写邻近扇区的内容进行merge，另外一方面进行排序确保磁头和磁
+       盘旋转最少。
+     - io_queue的工作也需要结合IO调度算法。不过这些仅仅对于physical disk有效。
+     - 对于ssd而言的话，因为完全是随机写，基本没有调度算法。
+   - driver（filesystem module）通过DMA写入disk_cache之后(使用fsync就可以强制刷新)到disk上面了。
+   - 直接操作设备（RAW）方式直接写disk_cache.
+
+#+BEGIN_EXAMPLE
+O_DIRECT 和 RAW设备最根本的区别是O_DIRECT是基于文件系统的，也就是在应用层来看，其操作对象是文件句柄，内核和文件层来看，其操作是基于inode和数据块，这些概念都是和ext2/3的文件系统相关，写到磁盘上最终是ext3文件。
+
+而RAW设备写是没有文件系统概念，操作的是扇区号，操作对象是扇区，写出来的东西不一定是ext3文件（如果按照ext3规则写就是ext3文件）。
+
+一般基于O_DIRECT来设计优化自己的文件模块，是不满系统的cache和调度策略，自己在应用层实现这些，来制定自己特有的业务特色文件读写。但是写出来的东西是ext3文件，该磁盘卸下来，mount到其他任何linux系统上，都可以查看。
+
+而基于RAW设备的设计系统，一般是不满现有ext3的诸多缺陷，设计自己的文件系统。自己设计文件布局和索引方式。举个极端例子：把整个磁盘做一个文件来写，不要索引。这样没有inode限制，没有文件大小限制，磁盘有多大，文件就能多大。这样的磁盘卸下来，mount到其他linux系统上，是无法识别其数据的。
+
+两者都要通过驱动层读写；在系统引导启动，还处于实模式的时候，可以通过bios接口读写raw设备。
+#+END_EXAMPLE
 
 *** pread/pwrite
 pread/pwrite相当于一个方便的lseek+read/write操作，并且有一个特点就是不修改当前文件偏移。

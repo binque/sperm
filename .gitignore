@@ -15,6 +15,8 @@
 .emacs.d/anything-c-adaptive-history
 .emacs.d/org-clock-save.el
 
+essay/images/.DS_Store
+
 essay/*.html
 essay/note/*.html
 essay/note/private.org
