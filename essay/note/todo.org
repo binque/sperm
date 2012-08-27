@@ -30,3 +30,4 @@
 ** TODO RSS paper planes
 ** TODO 看看怎么能搞起sketchup.
 ** TODO mongodb设计collection结构并且搞定geoindex部分，如果控制一个item的超时。（看起来似乎只能够通过后台以及查询来去掉）
+** TODO 整理tcmalloc的讨论
