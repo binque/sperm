@@ -10,10 +10,7 @@
     - http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html
 ** TODO 整理blog
     - http://dirlt.com/blog/?paged=26
-** TODO 沙袋？
 ** TODO git stash save/pop
-** TODO 总结inotify
-    - http://www.ibm.com/developerworks/cn/linux/l-inotifynew/index.html
 ** TODO python wsgi
 ** TODO http://www.systemswemake.com/
 ** TODO 小时级别任务优化，以及实现如何解析要求。（小时级别将各个mapper以及reducer单独独立出来）

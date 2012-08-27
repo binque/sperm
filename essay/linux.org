@@ -1173,4 +1173,11 @@ TODO(dirlt): http://iptraf.seul.org/
 *** ttyload
 *** iodump
 *** iopp
+*** screen
+**** 使用screen启动后台任务
+   - screen创建一个新会话
+   - 在会话里面执行命令
+   - C-a d从这个会话里面detach出来
+   - screen -s <session> 可以重新attach上这个会话。
+
 
