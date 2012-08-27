@@ -7,7 +7,7 @@
    - sudo apt-get install libzookeeper-mt-dev
    - sudo apt-get install libgoogle-perftools-dev
    - sudo apt-get install google-perftools   
-
+   - sudo apt-get install python-imaging
 * cc
    - common // some common code.
    - sasuke // a half-async-half-sync rpc implementation based on zeromq.(http://www.zeromq.org/)
@@ -16,7 +16,9 @@
    - astyle // C/C++/Java language code formatter.(http://astyle.sourceforge.net/astyle.html)
 
 * py
+   - common // some common code.
    - dsgm // Documentation Synchronize based on Google Mail. http://dirlt.com/dsgm.html
+   - pcrypt // encryption into picture.
 
 * project name
    - madara //

@@ -6,7 +6,7 @@ import os
 import string
 import sys
 #curdir=os.path.dirname(__file__)
-#readme=os.path.join(curdir,'README')
+#readme=os.path.join(curdir,'README.org')
 readme='./README'
 xs=map(lambda x:string.strip(x),open(readme).readlines())
 deps=['scons','g++','python']

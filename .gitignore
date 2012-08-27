@@ -23,6 +23,10 @@ sae/
 
 code/py/dsgm/dsgm.db
 code/py/dsgm/dsgm.conf     
+code/py/pcrypt/pcrypt.png
+code/py/pcrypt/pcrypt.py.ok
+
+
 code/cc/.sconsign.dblite
 code/cc/astyle/test/test_astyle
 code/cc/bench/t_cond
@@ -52,4 +56,5 @@ code/cc/sasuke/test/rpc_server
 code/cc/sasuke/test/test_zmq
 
 code/java/wordcount/target
+
 
