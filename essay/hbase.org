@@ -7,6 +7,7 @@
    - scan 'test' , { STARTROW=>'xyz' }
    - count 'test'
 
+** View
 *** 业强 2012-08-16 hbase讲座
 file:./images/hbase-architecture.png
 
@@ -32,7 +33,7 @@ scan过程大致是这样的：
 
 对于column family是可以设置超时时间的。在进行flush或者是compaction的时候，会判断这个value是否超过ttl。如果超过ttl的话那么就会直接丢弃。
 
-** asynchbase
+*** asynchbase
 https://github.com/stumbleupon/asynchbase
 
    - asynchbase和HTable的性能对比 http://www.tsunanet.net/~tsuna/asynchbase/benchmark/viz.html 
