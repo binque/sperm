@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="ubuntu"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-27 22:55:25 CST"/>
+<meta name="generated" content="2012-08-28 16:03:29 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -144,7 +144,8 @@
 <li><a href="#sec-1-8">1.8 开发和娱乐</a>
 <ul>
 <li><a href="#sec-1-8-1">1.8.1 amarok循环播放</a></li>
-<li><a href="#sec-1-8-2">1.8.2 deb包管理</a></li>
+<li><a href="#sec-1-8-2">1.8.2 deb安装文件列表</a></li>
+<li><a href="#sec-1-8-3">1.8.3 deb包管理</a></li>
 </ul>
 </li>
 </ul>
@@ -576,7 +577,17 @@ dirtysalt1987@gmail.com
 </li>
 <li>sudo apt-get install python-imaging
 </li>
+<li>sudo apt-get install python-imaging-doc
+</li>
 <li>sudo apt-get install screen
+</li>
+<li>sudo apt-get install python-pychart
+</li>
+<li>sudo apt-get install python-pychart-doc
+</li>
+<li>sudo apt-get install python-doc
+</li>
+<li>sudo apt-get install python-setuptools
 </li>
 </ul>
 
@@ -590,14 +601,29 @@ dirtysalt1987@gmail.com
 
 <p>在amarok的右下角有task progression的图标，选择repeat track即可。
 </p>
-
 </div>
 
 </div>
 
 <div id="outline-container-1-8-2" class="outline-4">
-<h4 id="sec-1-8-2"><span class="section-number-4">1.8.2</span> deb包管理</h4>
+<h4 id="sec-1-8-2"><span class="section-number-4">1.8.2</span> deb安装文件列表</h4>
 <div class="outline-text-4" id="text-1-8-2">
+
+<p>通常我们不太清楚一个deb安装了哪些文件，尤其是doc的话可能不知道放置在什么位置上面。
+</p>
+<p>
+我们可以通过搜索引擎查找这个包，然后在 <a href="http://packages.ubuntu.com">http://packages.ubuntu.com</a> 下面找到这个包以及对应的文件列表信息。
+</p>
+<p>
+doc存放位置通常在/usr/share/doc/&lt;package&gt;/下面。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-8-3" class="outline-4">
+<h4 id="sec-1-8-3"><span class="section-number-4">1.8.3</span> deb包管理</h4>
+<div class="outline-text-4" id="text-1-8-3">
 
 
 <hr/>
@@ -648,7 +674,7 @@ sudo dpkg -i test.deb
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-27 22:55:25 CST</p>
+<p class="date">Date: 2012-08-28 16:03:29 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

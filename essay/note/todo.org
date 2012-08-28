@@ -13,7 +13,6 @@
 ** TODO git stash save/pop
 ** TODO python wsgi
 ** TODO http://www.systemswemake.com/
-** TODO 小时级别任务优化，以及实现如何解析要求。（小时级别将各个mapper以及reducer单独独立出来）
 ** TODO YARN
 ** TODO pregel
 ** TODO Percolator
@@ -27,3 +26,4 @@
 ** TODO mongodb设计collection结构并且搞定geoindex部分，如果控制一个item的超时。（看起来似乎只能够通过后台以及查询来去掉）
 ** TODO 整理tcmalloc的讨论
 ** TODO 设计过滤规则描述
+** TODO 对比HBase的get效率。

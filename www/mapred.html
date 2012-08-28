@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="mapred"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-27 10:08:13 CST"/>
+<meta name="generated" content="2012-08-28 16:03:30 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -104,6 +104,7 @@
 <ul>
 <li><a href="#sec-1-1-1">1.1.1 Introducing Apache Hadoop YARN</a></li>
 <li><a href="#sec-1-1-2">1.1.2 Apache Hadoop YARN – Background and an Overview</a></li>
+<li><a href="#sec-1-1-3">1.1.3 Apache Hadoop YARN – Concepts and Applications</a></li>
 </ul>
 </li>
 </ul>
@@ -192,22 +193,113 @@ YARN主要做的工作就是在资源利用的改进上面，将资源利用已�
 </ul>
 
 </li>
-<li>workflow方面将MR和其他类型workflow分离，抽象成为ApplicationManager（AM）以及Container
+<li>workflow方面将MR和其他类型workflow分离，抽象成为ApplicationManager（AM）以及Container（既有ResourceAllocation概念，也有ApplicationNode概念）
+</li>
+</ul>
+
+
+<p>     
+<img src="./images/YARNArch.png"  alt="./images/YARNArch.png" />
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> Apache Hadoop YARN – Concepts and Applications</h4>
+<div class="outline-text-4" id="text-1-1-3">
+
+<p><a href="http://hortonworks.com/blog/apache-hadoop-yarn-concepts-and-applications/">http://hortonworks.com/blog/apache-hadoop-yarn-concepts-and-applications/</a>
+</p>
+<p>
+将AM和RM分离的好处在于：一方面减轻RM的压力这样可以让RM管理更多的集群，另外一方面可以让AM支持更多类型的计算而不仅仅是MR
+</p>
+<p>
+AM对RM提供Resource Request。对于Resource Model定义包括下面几个方面：
+</p><ul>
+<li>Resource-name (hostname, rackname – we are in the process of generalizing this further to support more complex network topologies with YARN-18).（我需要哪些机器，可以制定host，rack，或者是*/any）
+</li>
+<li>Memory (in MB)（需要使用的内存大小）
+</li>
+<li>CPU (cores, for now)（CPU的个数）
+</li>
+<li>In future, expect us to add more resource-types such as disk/network I/O, GPUs etc.（各种IO参数）
+</li>
+</ul>
+
+<p>每一个Resource Model如果满足之后在一个机器上面形成一个Container。Resource Request包括下面几个部分：
+</p><ul>
+<li>&lt;resource-name, priority, resource-requirement, number-of-containers&gt;
+</li>
+<li>resource-name is either hostname, rackname or * to indicate no preference. In future, we expect to support even more complex topologies for virtual machines on a host, more complex networks etc.
+</li>
+<li>priority is intra-application priority for this request (to stress, this isn’t across multiple applications).
+</li>
+<li>resource-requirement is required capabilities such as memory, cpu etc. (at the time of writing YARN only supports memory and cpu).
+</li>
+<li>number-of-containers is just a multiple of such containers.（我需要多少个这样的container？）
 </li>
 </ul>
 
 
 <p>
-<img src="./images/YARNArch.png"  alt="./images/YARNArch.png" />
-</p>
-</div>
+ApplicationMaster需要通知Container来执行任务，因为现在的任务不限于MR，需要提供下面这些信息：
+</p><ul>
+<li>Command line to launch the process within the container. 命令行
+</li>
+<li>Environment variables. 环境变量
+</li>
+<li>Local resources necessary on the machine prior to launch, such as jars, shared-objects, auxiliary data files etc. 一些本地资源
+</li>
+<li>Security-related tokens. 安全token
+</li>
+</ul>
+
+
+<p>
+整个YARN执行任务的步骤包括下面这几步： Application execution consists of the following steps:
+</p><ul>
+<li>Application submission. 提交任务
+</li>
+<li>Bootstrapping the ApplicationMaster instance for the application. 启动AM
+</li>
+<li>Application execution managed by the ApplicationMaster instance. AM在不同的Container启动task
+</li>
+</ul>
+
+
+<p>
+Let’s walk through an application execution sequence (steps are illustrated in the diagram):
+</p><ul>
+<li>A client program submits the application, including the necessary specifications to launch the application-specific ApplicationMaster itself. （用户首先提交AM）
+</li>
+<li>The ResourceManager assumes the responsibility to negotiate a specified container in which to start the ApplicationMaster and then launches the ApplicationMaster.（RM为AM分配所需要的Container，并且启动AM）
+</li>
+<li>The ApplicationMaster, on boot-up, registers with the ResourceManager – the registration allows the client program to query the ResourceManager for details, which allow it to  directly communicate with its own ApplicationMaster.（AM向RM进行注册）
+</li>
+<li>During normal operation the ApplicationMaster negotiates appropriate resource containers via the resource-request protocol.（AM通过Resouce Request和RM进行资源协调，获得所需要的Container）
+</li>
+<li>On successful container allocations, the ApplicationMaster launches the container by providing the container launch specification to the NodeManager. The launch specification, typically, includes the necessary information to allow the container to communicate with the ApplicationMaster itself.（AM通知Container所处的NM启动task）
+</li>
+<li>The application code executing within the container then provides necessary information (progress, status etc.) to its ApplicationMaster via an application-specific protocol.（Container会定时和AM进行通信，通知进度等）
+</li>
+<li>During the application execution, the client that submitted the program communicates directly with the ApplicationMaster to get status, progress updates etc. via an application-specific protocol.（client直接和AM进行通信了解整个任务进度）
+</li>
+<li>Once the application is complete, and all necessary work has been finished, the ApplicationMaster deregisters with the ResourceManager and shuts down, allowing its own container to be repurposed.（任务完成之后AM通知RM注销并且释放所持有的Container）
+</li>
+</ul>
+
+
+<p>
+<img src="./images/yarnflow.png"  alt="./images/yarnflow.png" />
+</p></div>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-27 10:08:13 CST</p>
+<p class="date">Date: 2012-08-28 16:03:30 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

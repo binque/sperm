@@ -60,6 +60,9 @@ http://bjjc.zhcoo.com/show_manage_article.aspx?articleid=9120
 
 1.金德 2.伟星 3.金牛角 4.星德 5.白蝶 )6.日丰 7.联塑 8.中财 9.皮尔萨 10.爱康-保利
 
+** 地板
+一个牌子，叫必美 
+
 ** hadoop-lzo
 #+BEGIN_EXAMPLE
 https://github.com/kevinweil/hadoop-lzo

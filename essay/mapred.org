@@ -29,7 +29,46 @@ YARN主要做的工作就是在资源利用的改进上面，将资源利用已�
      - NM主要做单机上面的资源收集汇报给RM
      - RM能够用来了解整个集群的资源使用情况，通过收集NM以及AM汇报信息。
      - RM提供pluggable Scheduler来计算资源分配。
-   - workflow方面将MR和其他类型workflow分离，抽象成为ApplicationManager（AM）以及Container
-
+   - workflow方面将MR和其他类型workflow分离，抽象成为ApplicationManager（AM）以及Container（既有ResourceAllocation概念，也有ApplicationNode概念）
+     
 file:./images/YARNArch.png
 
+*** Apache Hadoop YARN – Concepts and Applications
+http://hortonworks.com/blog/apache-hadoop-yarn-concepts-and-applications/
+
+将AM和RM分离的好处在于：一方面减轻RM的压力这样可以让RM管理更多的集群，另外一方面可以让AM支持更多类型的计算而不仅仅是MR
+
+AM对RM提供Resource Request。对于Resource Model定义包括下面几个方面：
+   - Resource-name (hostname, rackname – we are in the process of generalizing this further to support more complex network topologies with YARN-18).（我需要哪些机器，可以制定host，rack，或者是*/any）
+   - Memory (in MB)（需要使用的内存大小）
+   - CPU (cores, for now)（CPU的个数）
+   - In future, expect us to add more resource-types such as disk/network I/O, GPUs etc.（各种IO参数）
+每一个Resource Model如果满足之后在一个机器上面形成一个Container。Resource Request包括下面几个部分：
+   - <resource-name, priority, resource-requirement, number-of-containers>
+   - resource-name is either hostname, rackname or * to indicate no preference. In future, we expect to support even more complex topologies for virtual machines on a host, more complex networks etc.
+   - priority is intra-application priority for this request (to stress, this isn’t across multiple applications).
+   - resource-requirement is required capabilities such as memory, cpu etc. (at the time of writing YARN only supports memory and cpu).
+   - number-of-containers is just a multiple of such containers.（我需要多少个这样的container？）
+
+ApplicationMaster需要通知Container来执行任务，因为现在的任务不限于MR，需要提供下面这些信息：
+   - Command line to launch the process within the container. 命令行
+   - Environment variables. 环境变量
+   - Local resources necessary on the machine prior to launch, such as jars, shared-objects, auxiliary data files etc. 一些本地资源
+   - Security-related tokens. 安全token
+
+整个YARN执行任务的步骤包括下面这几步： Application execution consists of the following steps:
+   - Application submission. 提交任务
+   - Bootstrapping the ApplicationMaster instance for the application. 启动AM
+   - Application execution managed by the ApplicationMaster instance. AM在不同的Container启动task
+
+Let’s walk through an application execution sequence (steps are illustrated in the diagram):
+   - A client program submits the application, including the necessary specifications to launch the application-specific ApplicationMaster itself. （用户首先提交AM）
+   - The ResourceManager assumes the responsibility to negotiate a specified container in which to start the ApplicationMaster and then launches the ApplicationMaster.（RM为AM分配所需要的Container，并且启动AM）
+   - The ApplicationMaster, on boot-up, registers with the ResourceManager – the registration allows the client program to query the ResourceManager for details, which allow it to  directly communicate with its own ApplicationMaster.（AM向RM进行注册）
+   - During normal operation the ApplicationMaster negotiates appropriate resource containers via the resource-request protocol.（AM通过Resouce Request和RM进行资源协调，获得所需要的Container）
+   - On successful container allocations, the ApplicationMaster launches the container by providing the container launch specification to the NodeManager. The launch specification, typically, includes the necessary information to allow the container to communicate with the ApplicationMaster itself.（AM通知Container所处的NM启动task）
+   - The application code executing within the container then provides necessary information (progress, status etc.) to its ApplicationMaster via an application-specific protocol.（Container会定时和AM进行通信，通知进度等）
+   - During the application execution, the client that submitted the program communicates directly with the ApplicationMaster to get status, progress updates etc. via an application-specific protocol.（client直接和AM进行通信了解整个任务进度）
+   - Once the application is complete, and all necessary work has been finished, the ApplicationMaster deregisters with the ResourceManager and shuts down, allowing its own container to be repurposed.（任务完成之后AM通知RM注销并且释放所持有的Container）
+
+file:./images/yarnflow.png

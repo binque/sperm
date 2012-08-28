@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hadoop"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-27 10:08:16 CST"/>
+<meta name="generated" content="2012-08-28 17:48:28 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -113,6 +113,7 @@
 <li><a href="#sec-1-2-1">1.2.1 Hadoop即将过时了吗？</a></li>
 <li><a href="#sec-1-2-2">1.2.2 MapReduce和并行数据库，朋友还是敌人？</a></li>
 <li><a href="#sec-1-2-3">1.2.3 MapReduce：一个重大的倒退</a></li>
+<li><a href="#sec-1-2-4">1.2.4 Best Practices for Selecting Apache Hadoop Hardware</a></li>
 </ul>
 </li>
 </ul>
@@ -592,6 +593,37 @@ MapReduce与现有的数据库管理系统工具不兼容。一个现代的SQL�
 
 <p>MapReduce不能使用这些工具，同时它也没有自己的工具。直到它能与SQL兼容或者有人编写了这些工具，MapReduce仍然在端到端的任务中显得十分困难。
 </p>
+</div>
+
+</div>
+
+<div id="outline-container-1-2-4" class="outline-4">
+<h4 id="sec-1-2-4"><span class="section-number-4">1.2.4</span> Best Practices for Selecting Apache Hadoop Hardware</h4>
+<div class="outline-text-4" id="text-1-2-4">
+
+<p><a href="http://hortonworks.com/blog/best-practices-for-selecting-apache-hadoop-hardware/">http://hortonworks.com/blog/best-practices-for-selecting-apache-hadoop-hardware/</a>
+</p>
+<p>
+RAID cards, redundant power supplies and other per-component reliability features are not needed. Buy error-correcting RAM and SATA drives with good MTBF numbers. Good RAM allows you to trust the quality of your computations. Hard drives are the largest source of failures, so buy decent ones.（不需要选购RAID，冗余电源或者是一些满足高可靠性组件，但是选择带有ECC的RAM以及good MTBF的SATA硬盘却是非常需要的。ECC RAM可以让你确保计算结果的正确性，而SATA故障是大部分故障的主要原因）
+</p>
+<ul>
+<li>On CPU: It helps to understand your workload, but for most systems I recommend sticking with medium clock speeds and no more than 2 sockets. Both your upfront costs and power costs rise quickly on the high-end. For many workloads, the extra performance per node is not cost-effective.（没有特别要求，普通频率，dual-socket？？？）
+</li>
+<li>On Power: Power is a major concern when designing Hadoop clusters. It is worth understanding how much power the systems you are buying use and not buying the biggest and fastest nodes on the market.In years past we saw huge savings in pricing and significant power savings by avoiding the fastest CPUs, not buying redundant power supplies, etc.  Nowadays, vendors are building machines for cloud data centers that are designed to reduce cost and power and that exclude a lot of the niceties that bulk up traditional servers.  Spermicro, Dell and HP all have such product lines for cloud providers, so if you are buying in large volume, it is worth looking for stripped-down cloud servers. （根据自己的需要尽量减少能耗开销，撇去一些不需要的部件。而且现在很多厂商也在尽量减少不必要的部件）
+</li>
+<li>On RAM: What you need to consider is the amount of RAM needed to keep the processors busy and where the knee in the cost curve resides. Right now 48GB seems like a pretty good number. You can get this much RAM at commodity prices on low-end server motherboards. This is enough to provide the Hadoop framework with lots of RAM (~4 GB) and still have plenty to run many processes. Don’t worry too much about RAM, you’ll find a use for it, often running more processes in parallel. If you don’t, the system will still use it to good effect, caching disk data and improving performance.（RAM方面的话越大越好，对于48GB的RAM来说普通的主板也是支持的。如果RAM用的上的话那么允许多个进程并行执行，如果暂时永不上的话可以做cache来提高速度）
+</li>
+<li>On Disk: Look to buy high-capacity SATA drives, usually 7200RPM. Hadoop is storage hungry and seek efficient but it does not require fast, expensive hard drives. Keep in mind that with 12-drive systems you are generally getting 24 or 36 TB/node. Until recently, putting this much storage in a node was not practical because, in large clusters, disk failures are a regular occurrence and replicating 24+TB could swamp the network for long enough to really disrupt work and cause jobs to miss SLAs. The most recent release of Hadoop 0.20.204 is engineered to handle the failure of drives more elegantly, allowing machines to continue serving from their remaining drives. With these changes, we expect to see a lot of 12+ drive systems. In general, add disks for storage and not seeks. If your workload does not require huge amounts of storage, dropping disk count to 6 or 4 per box is a reasonable way to economize.（高容量SATA硬盘，最好是7.2KRPM，并且最好单机上面挂在12个硬盘。对于hadoop之前这种方式并不实际，因为磁盘非常容易损坏并且备份这24TB的数据非常耗时。而hadoop可以很好地解决这个问题。
+</li>
+</ul>
+
+<p>小集群来说的话，通常单个机器上面挂在4-6个disk即可）
+</p><ul>
+<li>On Network: This is the hardest variable to nail down. Hadoop workloads vary a lot. The key is to buy enough network capacity to allow all nodes in your cluster to communicate with each other at reasonable speeds and for reasonable cost. For smaller clusters, I’d recommend at least 1GB all-to-all bandwidth, which is easily achieved by just connecting all of your nodes to a good switch. With larger clusters this is still a good target although based on workload you can probably go lower. In the very large data centers the Yahoo! built, they are seeing 2*10GB per 20 node rack going up to a pair of central switches, with rack nodes connected with two 1GB links. As a rule of thumb, watch the ratio of network-to-computer cost and aim for network cost being somewhere around 20% of your total cost. Network costs should include your complete network, core switches, rack switches, any network cards needed, etc. We’ve been seeing InfiniBand and 10GB Ethernet networks to the node now. If you can build this cost effectively, that’s great. However, keep in mind that Hadoop grew up with commodity Ethernet, so understand your workload requirements before spending too much on the network.（这个主要还是看需求。通常来说网络整体开销占据所有开销的20%，包括核心交换机，机架之间的交换机以及网卡设备等。yahoo大集群的部署方式是rack之间使用2*10GB的核心交换机工作，而20个节点的rack之间内部使用1GB链路）。
+</li>
+</ul>
+
+
 
 </div>
 </div>
@@ -600,7 +632,7 @@ MapReduce与现有的数据库管理系统工具不兼容。一个现代的SQL�
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-27 10:08:16 CST</p>
+<p class="date">Date: 2012-08-28 17:48:28 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

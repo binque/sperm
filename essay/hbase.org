@@ -31,3 +31,20 @@ scan过程大致是这样的：
 --------------------
 
 对于column family是可以设置超时时间的。在进行flush或者是compaction的时候，会判断这个value是否超过ttl。如果超过ttl的话那么就会直接丢弃。
+
+** asynchbase
+https://github.com/stumbleupon/asynchbase
+
+   - asynchbase和HTable的性能对比 http://www.tsunanet.net/~tsuna/asynchbase/benchmark/viz.html 
+   - OpenTSDB is a distributed, scalable Time Series Database (TSDB)  http://opentsdb.net/index.html 
+
+从看asynchbase介绍来看，我猜想asynchbase用在MR范围还是有限的。
+   - asynchbase就是一个异步client，能够很好地解决一个app里面对于hbase有很多个连接的场景。
+   - 但是在MR里面，拿我们现在的HourlyProcedure来说，每次get都是一个同步过程，一定要取回结果才能够进行下一步的操作。整个MR框架就限制了异步client的作用。
+   - asynchbase现在使用的场景应该是OpenTSDB，因为没有MR框架限制，所以异步client可以工作很好。
+
+
+
+
+
+

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="linux"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-27 22:55:28 CST"/>
+<meta name="generated" content="2012-08-28 17:48:26 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -116,13 +116,25 @@
 </li>
 <li><a href="#sec-1-1-2">1.1.2 /proc/meminfo</a></li>
 <li><a href="#sec-1-1-3">1.1.3 /proc/stat</a></li>
-<li><a href="#sec-1-1-4">1.1.4 /proc/uptime</a></li>
-<li><a href="#sec-1-1-5">1.1.5 /proc/diskstats</a></li>
-<li><a href="#sec-1-1-6">1.1.6 /proc/sys</a></li>
-<li><a href="#sec-1-1-7">1.1.7 /proc/sys/vm/overcommit_memory</a></li>
-<li><a href="#sec-1-1-8">1.1.8 /proc/sys/vm/overcommit_ratio</a></li>
-<li><a href="#sec-1-1-9">1.1.9 /proc/sys/vm/swappiness</a></li>
-<li><a href="#sec-1-1-10">1.1.10 /proc/sys/vm/dirty_*</a></li>
+<li><a href="#sec-1-1-4">1.1.4 /proc/swaps</a></li>
+<li><a href="#sec-1-1-5">1.1.5 /proc/cmdline</a></li>
+<li><a href="#sec-1-1-6">1.1.6 /proc/uptime</a></li>
+<li><a href="#sec-1-1-7">1.1.7 /proc/version</a></li>
+<li><a href="#sec-1-1-8">1.1.8 /proc/mounts</a></li>
+<li><a href="#sec-1-1-9">1.1.9 /proc/modules</a></li>
+<li><a href="#sec-1-1-10">1.1.10 /proc/diskstats</a></li>
+<li><a href="#sec-1-1-11">1.1.11 /proc/sys</a></li>
+<li><a href="#sec-1-1-12">1.1.12 /proc/sys/vm/overcommit_memory</a></li>
+<li><a href="#sec-1-1-13">1.1.13 /proc/sys/vm/overcommit_ratio</a></li>
+<li><a href="#sec-1-1-14">1.1.14 /proc/sys/vm/swappiness</a></li>
+<li><a href="#sec-1-1-15">1.1.15 /proc/sys/vm/dirty_*</a></li>
+<li><a href="#sec-1-1-16">1.1.16 /proc/cpuinfo</a></li>
+<li><a href="#sec-1-1-17">1.1.17 /proc/crypto</a></li>
+<li><a href="#sec-1-1-18">1.1.18 /proc/loadavg</a></li>
+<li><a href="#sec-1-1-19">1.1.19 /proc/locks</a></li>
+<li><a href="#sec-1-1-20">1.1.20 /proc/slabinfo</a></li>
+<li><a href="#sec-1-1-21">1.1.21 /proc/vmstat</a></li>
+<li><a href="#sec-1-1-22">1.1.22 /proc/zoneinfo</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-2">1.2 vmlinuz</a></li>
@@ -260,7 +272,9 @@
 </li>
 <li>smaps 进程运行内存镜像图示(文本)各个段大小
 </li>
-<li>stat ???
+<li>stat 当前进程的状态信息
+</li>
+<li>statm 当前进程占用内存的状态信息
 </li>
 <li>status 进程运行系统状态
 </li>
@@ -310,7 +324,7 @@
 <h5 id="sec-1-1-1-4"><span class="section-number-5">1.1.1.4</span> maps</h5>
 <div class="outline-text-5" id="text-1-1-1-4">
 
-<p>TODO:
+<p>当前进程关联到的每个可执行文件和库文件在内存中的映射区域及其访问权限所组成的列表
 </p>
 </div>
 
@@ -361,8 +375,56 @@
 <h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> /proc/meminfo</h4>
 <div class="outline-text-4" id="text-1-1-2">
 
-<p>TODO(dirlt):
+<p>系统中关于当前内存的利用状况等的信息，常由free命令使用；可以使用文件查看命令直接读取此文件，其内容显示为两列，前者为统计属性，后者为对应的值；
 </p>
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; cat /proc/meminfo 
+MemTotal:        3960316 kB
+MemFree:          202908 kB
+Buffers:           53632 kB
+Cached:           764004 kB
+SwapCached:       131884 kB
+Active:          2484752 kB
+Inactive:        1016724 kB
+Active(anon):    2280636 kB
+Inactive(anon):   814792 kB
+Active(file):     204116 kB
+Inactive(file):   201932 kB
+Unevictable:          32 kB
+Mlocked:              32 kB
+SwapTotal:       4103164 kB
+SwapFree:        2678984 kB
+Dirty:              1492 kB
+Writeback:             0 kB
+AnonPages:       2629544 kB
+Mapped:           122244 kB
+Shmem:            411588 kB
+Slab:             125096 kB
+SReclaimable:      83480 kB
+SUnreclaim:        41616 kB
+KernelStack:        5904 kB
+PageTables:        50164 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     6083320 kB
+Committed_AS:    7203968 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:      362948 kB
+VmallocChunk:   34359276724 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:         0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+DirectMap4k:       57344 kB
+DirectMap2M:     4052992 kB
+</pre>
+
+
 </div>
 
 </div>
@@ -371,35 +433,233 @@
 <h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> /proc/stat</h4>
 <div class="outline-text-4" id="text-1-1-3">
 
-<p>TODO(dirlt):系统数据
-</p>
+<p>实时追踪自系统上次启动以来的多种统计信息；如下所示，其中，
+</p><ul>
+<li>“cpu”行后的八个值分别表示以1/100（jiffies）秒为单位的统计值（包括系统运行于用户模式、低优先级用户模式，运系统模式、空闲模式、I/O等待模式的时间等）；
+</li>
+<li>“intr”行给出中断的信息，第一个为自系统启动以来，发生的所有的中断的次数；然后每个数对应一个特定的中断自系统启动以来所发生的次数；
+</li>
+<li>“ctxt”给出了自系统启动以来CPU发生的上下文交换的次数。
+</li>
+<li>“btime”给出了从系统启动到现在为止的时间，单位为秒；
+</li>
+<li>“processes (total_forks) 自系统启动以来所创建的任务的个数目；
+</li>
+<li>“procs_running”：当前运行队列的任务的数目；
+</li>
+<li>“procs_blocked”：当前被阻塞的任务的数目；
+</li>
+</ul>
+
+
+
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; cat /proc/stat 
+cpu  25175536 13184 10088010 208990815 1165440 37 29476 0 0 0
+cpu0 7597990 7286 3089511 49810301 706702 37 23258 0 0 0
+cpu1 7914370 3065 2901460 50300065 188223 0 2403 0 0 0
+cpu2 4922712 1228 2039477 54300492 171151 0 1921 0 0 0
+cpu3 4740463 1604 2057560 54579955 99363 0 1892 0 0 0
+intr 8881387947 2112 3 0 0 0 0 0 0 1 0 0 0 3175452 0 0 0 0 0 0 0 3554144 0 0 224677 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 6681668 12 51519086 12401 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0                                                                                                                                  
+ctxt 12584201613
+btime 1345525951
+processes 234445
+procs_running 3
+procs_blocked 0
+softirq 304218476 0 151026247 103572 14071723 3554590 0 262575 55846497 864372 78488900
+</pre>
+
+
 </div>
 
 </div>
 
 <div id="outline-container-1-1-4" class="outline-4">
-<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> /proc/uptime</h4>
+<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> /proc/swaps</h4>
 <div class="outline-text-4" id="text-1-1-4">
 
-<p>TODO(dirlt):
+<p>当前系统上的交换分区及其空间利用信息，如果有多个交换分区的话，则会每个交换分区的信息分别存储于/proc/swap目录中的单独文件中，而其优先级数字越低，被使用到的可能性越大；
 </p>
+
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; cat /proc/swaps 
+Filename                                Type            Size    Used    Priority
+/dev/sda5                               partition       4103164 1423572 -1
+</pre>
+
+
+
 </div>
 
 </div>
 
 <div id="outline-container-1-1-5" class="outline-4">
-<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> /proc/diskstats</h4>
+<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> /proc/cmdline</h4>
 <div class="outline-text-4" id="text-1-1-5">
 
-<p>TODO(dirlt):磁盘数据
+<p>在启动时传递至内核的相关参数信息，这些信息通常由lilo或grub等启动管理工具进行传递；
 </p>
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; cat /proc/cmdline 
+BOOT_IMAGE=/boot/vmlinuz-3.2.0-27-generic root=UUID=b25db1c7-e694-4eed-8d11-ea33047338cb ro quiet splash vt.handoff=7
+</pre>
+
+
 </div>
 
 </div>
 
 <div id="outline-container-1-1-6" class="outline-4">
-<h4 id="sec-1-1-6"><span class="section-number-4">1.1.6</span> /proc/sys</h4>
+<h4 id="sec-1-1-6"><span class="section-number-4">1.1.6</span> /proc/uptime</h4>
 <div class="outline-text-4" id="text-1-1-6">
+
+<p>系统上次启动以来的运行时间，如下所示，其第一个数字表示系统运行时间，第二个数字表示系统空闲时间，单位是秒；系统上次启动以来的运行时间，如下所示，其第一个数字表示系统运行时间，第二个数字表示系统空闲时间，单位是秒；
+</p>
+
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; cat /proc/uptime 
+621137.39 2116303.76
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-7" class="outline-4">
+<h4 id="sec-1-1-7"><span class="section-number-4">1.1.7</span> /proc/version</h4>
+<div class="outline-text-4" id="text-1-1-7">
+
+<p>当前系统运行的内核版本号
+</p>
+
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; cat /proc/version
+Linux version 3.2.0-27-generic (buildd@allspice) (gcc version 4.6.3 (Ubuntu/Linaro 4.6.3-1ubuntu5) ) #43-Ubuntu SMP Fri Jul 6 14:25:57 UTC 2012
+</pre>
+
+
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-8" class="outline-4">
+<h4 id="sec-1-1-8"><span class="section-number-4">1.1.8</span> /proc/mounts</h4>
+<div class="outline-text-4" id="text-1-1-8">
+
+<p>系统当前挂载的所有文件系统.第一列表示挂载的设备，第二列表示在当前目录树中的挂载点，第三点表示当前文件系统的类型，第四列表示挂载属性（ro或者rw），第五列和第六列用来匹配/etc/mtab文件中的转储（dump）属性；
+</p>
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; cat /proc/mounts 
+rootfs / rootfs rw 0 0
+sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+udev /dev devtmpfs rw,relatime,size=1971356k,nr_inodes=492839,mode=755 0 0
+devpts /dev/pts devpts rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000 0 0
+tmpfs /run tmpfs rw,nosuid,relatime,size=792064k,mode=755 0 0
+/dev/disk/by-uuid/b25db1c7-e694-4eed-8d11-ea33047338cb / ext4 rw,relatime,errors=remount-ro,user_xattr,barrier=1,data=ordered 0 0
+none /sys/fs/fuse/connections fusectl rw,relatime 0 0
+none /sys/kernel/debug debugfs rw,relatime 0 0
+none /sys/kernel/security securityfs rw,relatime 0 0
+none /run/lock tmpfs rw,nosuid,nodev,noexec,relatime,size=5120k 0 0
+none /run/shm tmpfs rw,nosuid,nodev,relatime 0 0
+/dev/sda3 /home ext4 rw,relatime,user_xattr,barrier=1,data=ordered 0 0
+binfmt_misc /proc/sys/fs/binfmt_misc binfmt_misc rw,nosuid,nodev,noexec,relatime 0 0
+gvfs-fuse-daemon /home/dirlt/.gvfs fuse.gvfs-fuse-daemon rw,nosuid,nodev,relatime,user_id=1000,group_id=1000 0 0
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-9" class="outline-4">
+<h4 id="sec-1-1-9"><span class="section-number-4">1.1.9</span> /proc/modules</h4>
+<div class="outline-text-4" id="text-1-1-9">
+
+<p>当前装入内核的所有模块名称列表，可以由lsmod命令使用，也可以直接查看；如下所示，其中第一列表示模块名，第二列表示此模块占用内存空间大小，第三列表示此模块有多少实例被装入，第四列表示此模块依赖于其它哪些模块，第五列表示此模块的装载状态（Live：已经装入；Loading：正在装入；Unloading：正在卸载），第六列表示此模块在内核内存（kernel memory）中的偏移量；
+</p>
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; cat /proc/modules 
+pci_stub 12622 1 - Live 0x0000000000000000
+vboxpci 23200 0 - Live 0x0000000000000000 (O)
+vboxnetadp 13382 0 - Live 0x0000000000000000 (O)
+vboxnetflt 23441 0 - Live 0x0000000000000000 (O)
+vboxdrv 287082 3 vboxpci,vboxnetadp,vboxnetflt, Live 0x0000000000000000 (O)
+bnep 18281 2 - Live 0x0000000000000000
+rfcomm 47604 0 - Live 0x0000000000000000
+bluetooth 180104 10 bnep,rfcomm, Live 0x0000000000000000
+binfmt_misc 17540 1 - Live 0x0000000000000000
+snd_hda_codec_realtek 223962 1 - Live 0x0000000000000000
+ppdev 17113 0 - Live 0x0000000000000000
+eeepc_wmi 13109 0 - Live 0x0000000000000000
+asus_wmi 24456 1 eeepc_wmi, Live 0x0000000000000000
+sparse_keymap 13890 1 asus_wmi, Live 0x0000000000000000
+snd_hda_intel 33773 5 - Live 0x0000000000000000
+snd_hda_codec 127706 2 snd_hda_codec_realtek,snd_hda_intel, Live 0x0000000000000000
+snd_hwdep 13668 1 snd_hda_codec, Live 0x0000000000000000
+snd_pcm 97188 3 snd_hda_intel,snd_hda_codec, Live 0x0000000000000000
+snd_seq_midi 13324 0 - Live 0x0000000000000000
+snd_rawmidi 30748 1 snd_seq_midi, Live 0x0000000000000000
+snd_seq_midi_event 14899 1 snd_seq_midi, Live 0x0000000000000000
+snd_seq 61896 2 snd_seq_midi,snd_seq_midi_event, Live 0x0000000000000000
+snd_timer 29990 2 snd_pcm,snd_seq, Live 0x0000000000000000
+snd_seq_device 14540 3 snd_seq_midi,snd_rawmidi,snd_seq, Live 0x0000000000000000
+parport_pc 32866 1 - Live 0x0000000000000000
+snd 78855 18 snd_hda_codec_realtek,snd_hda_intel,snd_hda_codec,snd_hwdep,snd_pcm,snd_rawmidi,snd_seq,snd_timer,snd_seq_device, Live 0
+x0000000000000000                                                                                                                   
+psmouse 87692 0 - Live 0x0000000000000000
+serio_raw 13211 0 - Live 0x0000000000000000
+soundcore 15091 1 snd, Live 0x0000000000000000
+snd_page_alloc 18529 2 snd_hda_intel,snd_pcm, Live 0x0000000000000000
+mac_hid 13253 0 - Live 0x0000000000000000
+i915 472897 3 - Live 0x0000000000000000
+wmi 19256 1 asus_wmi, Live 0x0000000000000000
+drm_kms_helper 46978 1 i915, Live 0x0000000000000000
+drm 242038 4 i915,drm_kms_helper, Live 0x0000000000000000
+i2c_algo_bit 13423 1 i915, Live 0x0000000000000000
+mei 41616 0 - Live 0x0000000000000000 (C)
+video 19596 1 i915, Live 0x0000000000000000
+lp 17799 0 - Live 0x0000000000000000
+parport 46562 3 ppdev,parport_pc,lp, Live 0x0000000000000000
+usbhid 47199 0 - Live 0x0000000000000000
+hid 99559 1 usbhid, Live 0x0000000000000000
+r8169 62099 0 - Live 0x0000000000000000
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-10" class="outline-4">
+<h4 id="sec-1-1-10"><span class="section-number-4">1.1.10</span> /proc/diskstats</h4>
+<div class="outline-text-4" id="text-1-1-10">
+
+<p>每块磁盘设备的磁盘I/O统计信息列表
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-11" class="outline-4">
+<h4 id="sec-1-1-11"><span class="section-number-4">1.1.11</span> /proc/sys</h4>
+<div class="outline-text-4" id="text-1-1-11">
 
 <p>在/proc/sys下面有一些可以动态修改的内核参数，有两种方式可以修改这些参数。
 </p>
@@ -429,9 +689,9 @@ vm.swappiness = 0
 
 </div>
 
-<div id="outline-container-1-1-7" class="outline-4">
-<h4 id="sec-1-1-7"><span class="section-number-4">1.1.7</span> /proc/sys/vm/overcommit_memory</h4>
-<div class="outline-text-4" id="text-1-1-7">
+<div id="outline-container-1-1-12" class="outline-4">
+<h4 id="sec-1-1-12"><span class="section-number-4">1.1.12</span> /proc/sys/vm/overcommit_memory</h4>
+<div class="outline-text-4" id="text-1-1-12">
 
 <p>所谓的overcommit是过量使用的意思。
 </p><ul>
@@ -448,9 +708,9 @@ vm.swappiness = 0
 
 </div>
 
-<div id="outline-container-1-1-8" class="outline-4">
-<h4 id="sec-1-1-8"><span class="section-number-4">1.1.8</span> /proc/sys/vm/overcommit_ratio</h4>
-<div class="outline-text-4" id="text-1-1-8">
+<div id="outline-container-1-1-13" class="outline-4">
+<h4 id="sec-1-1-13"><span class="section-number-4">1.1.13</span> /proc/sys/vm/overcommit_ratio</h4>
+<div class="outline-text-4" id="text-1-1-13">
 
 <p>如果overcommit_memory值为2的话，那么这个参数决定了系统的&lt;可用内存&gt;的大小。计算方式是 (Physical-RAM-Size) - ratio / 100 + (Swap-Size).
 </p>
@@ -473,9 +733,9 @@ dirlt@dirlt-virtual-machine:~/github/sperm/essay$ cat /proc/sys/vm/overcommit_ra
 
 </div>
 
-<div id="outline-container-1-1-9" class="outline-4">
-<h4 id="sec-1-1-9"><span class="section-number-4">1.1.9</span> /proc/sys/vm/swappiness</h4>
-<div class="outline-text-4" id="text-1-1-9">
+<div id="outline-container-1-1-14" class="outline-4">
+<h4 id="sec-1-1-14"><span class="section-number-4">1.1.14</span> /proc/sys/vm/swappiness</h4>
+<div class="outline-text-4" id="text-1-1-14">
 
 <p>这个参数决定系统使用swap的程度。但是这个参数并没有禁止使用swap分区，而只是一个依赖于swap分区的程度。
 如果这个值设置成为0的话那么，那么系统会尽可能地将减少page swap in/out操作，将更多的内存操作于物理内存上面。
@@ -484,12 +744,663 @@ dirlt@dirlt-virtual-machine:~/github/sperm/essay$ cat /proc/sys/vm/overcommit_ra
 
 </div>
 
-<div id="outline-container-1-1-10" class="outline-4">
-<h4 id="sec-1-1-10"><span class="section-number-4">1.1.10</span> /proc/sys/vm/dirty_*</h4>
-<div class="outline-text-4" id="text-1-1-10">
+<div id="outline-container-1-1-15" class="outline-4">
+<h4 id="sec-1-1-15"><span class="section-number-4">1.1.15</span> /proc/sys/vm/dirty_*</h4>
+<div class="outline-text-4" id="text-1-1-15">
 
 <p>这几个参数主要是用来控制脏页刷回磁盘策略。关于脏页刷回磁盘的过程可以参看"文件IO/write"一节。
 </p>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-16" class="outline-4">
+<h4 id="sec-1-1-16"><span class="section-number-4">1.1.16</span> /proc/cpuinfo</h4>
+<div class="outline-text-4" id="text-1-1-16">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-17" class="outline-4">
+<h4 id="sec-1-1-17"><span class="section-number-4">1.1.17</span> /proc/crypto</h4>
+<div class="outline-text-4" id="text-1-1-17">
+
+<p>系统上已安装的内核使用的密码算法及每个算法的详细信息列表
+</p>
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; cat /proc/crypto 
+name         : cbc(aes)
+driver       : cbc(aes-generic)
+module       : kernel
+priority     : 100
+refcnt       : 1
+selftest     : passed
+type         : blkcipher
+blocksize    : 16
+min keysize  : 16
+max keysize  : 32
+ivsize       : 16
+geniv        : &lt;default&gt;
+
+name         : hmac(sha256)
+driver       : hmac(sha256-generic)
+module       : kernel
+priority     : 0
+refcnt       : 2
+selftest     : passed
+type         : shash
+blocksize    : 64
+digestsize   : 32
+
+name         : hmac(sha1)
+driver       : hmac(sha1-generic)
+module       : kernel
+priority     : 0
+refcnt       : 2
+selftest     : passed
+type         : shash
+blocksize    : 64
+digestsize   : 20
+
+name         : stdrng
+driver       : krng
+module       : kernel
+priority     : 200
+refcnt       : 1
+selftest     : passed
+type         : rng
+seedsize     : 0
+
+name         : crc32c
+driver       : crc32c-generic
+module       : kernel
+priority     : 100
+refcnt       : 1
+selftest     : passed
+type         : shash
+blocksize    : 1
+digestsize   : 4
+
+name         : aes
+driver       : aes-generic
+module       : kernel
+priority     : 100
+refcnt       : 1
+selftest     : passed
+type         : cipher
+blocksize    : 16
+min keysize  : 16
+max keysize  : 32
+
+name         : sha256
+driver       : sha256-generic
+module       : kernel
+priority     : 0
+refcnt       : 3
+selftest     : passed
+type         : shash
+blocksize    : 64
+digestsize   : 32
+
+name         : sha224
+driver       : sha224-generic
+module       : kernel
+priority     : 0
+refcnt       : 1
+selftest     : passed
+type         : shash
+blocksize    : 64
+digestsize   : 28
+
+name         : sha1
+driver       : sha1-generic
+module       : kernel
+priority     : 0
+refcnt       : 3
+selftest     : passed
+type         : shash
+blocksize    : 64
+digestsize   : 20
+
+name         : md5
+driver       : md5-generic
+module       : kernel
+priority     : 0
+refcnt       : 1
+selftest     : passed
+type         : shash
+blocksize    : 64
+digestsize   : 16
+
+name         : crc32c
+driver       : crc32c-intel
+module       : kernel
+priority     : 200
+refcnt       : 1
+selftest     : passed
+type         : shash
+blocksize    : 1
+digestsize   : 4
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-18" class="outline-4">
+<h4 id="sec-1-1-18"><span class="section-number-4">1.1.18</span> /proc/loadavg</h4>
+<div class="outline-text-4" id="text-1-1-18">
+
+<p>保存关于CPU和磁盘I/O的负载平均值，其前三列分别表示每1秒钟、每5秒钟及每15秒的负载平均值，类似于uptime命令输出的相关信息；第四列是由斜线隔开的两个数值，前者表示当前正由内核调度的实体（进程和线程）的数目，后者表示系统当前存活的内核调度实体的数目；第五列表示此文件被查看前最近一个由内核创建的进程的PID.
+</p>
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; cat /proc/loadavg 
+2.46 2.14 2.16 15/736 11012
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-19" class="outline-4">
+<h4 id="sec-1-1-19"><span class="section-number-4">1.1.19</span> /proc/locks</h4>
+<div class="outline-text-4" id="text-1-1-19">
+
+<p>保存当前由内核锁定的文件的相关信息，包含内核内部的调试数据；每个锁定占据一行，且具有一个惟一的编号；如下输出信息中每行的第二列表示当前锁定使用的锁定类别，POSIX表示目前较新类型的文件锁，由lockf系统调用产生，FLOCK是传统的UNIX文件锁，由flock系统调用产生；第三列也通常由两种类型，ADVISORY表示不允许其他用户锁定此文件，但允许读取，MANDATORY表示此文件锁定期间不允许其他用户任何形式的访问；
+</p>
+
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; cat /proc/locks 
+1: POSIX  ADVISORY  WRITE 18536 08:01:1573063 0 9223372036854775806
+2: POSIX  ADVISORY  WRITE 3187 08:03:1970738 0 0
+3: POSIX  ADVISORY  WRITE 3187 08:03:1971423 0 0
+4: POSIX  ADVISORY  WRITE 3187 08:03:1971422 0 0
+5: POSIX  ADVISORY  WRITE 3187 08:03:1971421 0 0
+6: POSIX  ADVISORY  READ  647 08:01:3702340 1073741826 1073742335
+7: FLOCK  ADVISORY  WRITE 28279 08:01:394731 0 EOF
+8: POSIX  ADVISORY  WRITE 25505 08:03:1442453 1073741824 1073742335
+9: POSIX  ADVISORY  READ  25505 08:03:1442317 128 128
+10: POSIX  ADVISORY  READ  25505 08:03:1443015 1073741826 1073742335
+11: POSIX  ADVISORY  READ  25505 08:03:1441997 128 128
+12: POSIX  ADVISORY  READ  25505 08:03:1443023 1073741826 1073742335
+13: POSIX  ADVISORY  READ  25505 08:03:1443008 1073741826 1073742335
+14: POSIX  ADVISORY  WRITE 25505 08:03:1443000 0 EOF
+15: POSIX  ADVISORY  WRITE 18249 08:03:1971018 0 9223372036854775806
+16: POSIX  ADVISORY  WRITE 17989 08:03:1970815 0 9223372036854775806
+17: POSIX  ADVISORY  WRITE 4378 08:03:2492158 1073741824 1073742335
+18: POSIX  ADVISORY  READ  4378 08:03:2491544 1073741826 1073742335
+19: POSIX  ADVISORY  READ  4378 08:03:2492160 128 128
+20: POSIX  ADVISORY  READ  4378 08:03:2491555 1073741826 1073742335
+21: POSIX  ADVISORY  READ  4378 08:03:2491887 128 128
+22: POSIX  ADVISORY  READ  4378 08:03:2491558 1073741826 1073742335
+23: POSIX  ADVISORY  WRITE 4378 08:03:2491537 0 EOF
+24: POSIX  ADVISORY  READ  1945 08:03:1179790 124 124
+25: POSIX  ADVISORY  WRITE 1953 08:03:1179792 0 0
+26: POSIX  ADVISORY  READ  1951 08:03:1179790 128 128
+27: POSIX  ADVISORY  READ  1951 08:03:1179788 1073741826 1073742335
+28: POSIX  ADVISORY  READ  1945 08:03:1179790 128 128
+29: POSIX  ADVISORY  READ  1945 08:03:1179788 1073741826 1073742335
+30: POSIX  ADVISORY  WRITE 997 00:0f:1714 0 EOF
+31: FLOCK  ADVISORY  WRITE 958 00:0f:8496 0 EOF
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-20" class="outline-4">
+<h4 id="sec-1-1-20"><span class="section-number-4">1.1.20</span> /proc/slabinfo</h4>
+<div class="outline-text-4" id="text-1-1-20">
+
+<p>在内核中频繁使用的对象（如inode、dentry等）都有自己的cache，即slab pool，而/proc/slabinfo文件列出了这些对象相关slap的信息；详情可以参见内核文档中slapinfo的手册页；
+</p>
+
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; sudo cat /proc/slabinfo                                                                                    
+[sudo] password for dirlt: 
+slabinfo - version: 2.1
+# name            &lt;active_objs&gt; &lt;num_objs&gt; &lt;objsize&gt; &lt;objperslab&gt; &lt;pagesperslab&gt; : tunables &lt;limit&gt; &lt;batchcount&gt; &lt;sharedfactor&gt; : sla
+bdata &lt;active_slabs&gt; &lt;num_slabs&gt; &lt;sharedavail&gt;                                                                                      
+ip6_dst_cache        100    100    320   25    2 : tunables    0    0    0 : slabdata      4      4      0
+UDPLITEv6              0      0   1024   16    4 : tunables    0    0    0 : slabdata      0      0      0
+UDPv6                 64     64   1024   16    4 : tunables    0    0    0 : slabdata      4      4      0
+tw_sock_TCPv6        425    450    320   25    2 : tunables    0    0    0 : slabdata     18     18      0
+TCPv6                221    221   1920   17    8 : tunables    0    0    0 : slabdata     13     13      0
+flow_cache             0      0    104   39    1 : tunables    0    0    0 : slabdata      0      0      0
+kcopyd_job             0      0   3240   10    8 : tunables    0    0    0 : slabdata      0      0      0
+dm_uevent              0      0   2608   12    8 : tunables    0    0    0 : slabdata      0      0      0
+dm_rq_target_io        0      0    408   20    2 : tunables    0    0    0 : slabdata      0      0      0
+cfq_queue            510    510    232   17    1 : tunables    0    0    0 : slabdata     30     30      0
+bsg_cmd                0      0    312   26    2 : tunables    0    0    0 : slabdata      0      0      0
+mqueue_inode_cache     18     18    896   18    4 : tunables    0    0    0 : slabdata      1      1      0
+fuse_request         104    104    608   26    4 : tunables    0    0    0 : slabdata      4      4      0
+fuse_inode            46     46    704   23    4 : tunables    0    0    0 : slabdata      2      2      0
+ecryptfs_key_record_cache      0      0    576   28    4 : tunables    0    0    0 : slabdata      0      0      0
+ecryptfs_inode_cache      0      0    960   17    4 : tunables    0    0    0 : slabdata      0      0      0
+hugetlbfs_inode_cache     28     28    576   28    4 : tunables    0    0    0 : slabdata      1      1      0
+journal_handle       680    680     24  170    1 : tunables    0    0    0 : slabdata      4      4      0
+journal_head         720    720    112   36    1 : tunables    0    0    0 : slabdata     20     20      0
+revoke_record       4992   4992     32  128    1 : tunables    0    0    0 : slabdata     39     39      0
+ext4_inode_cache   53478  53478    880   18    4 : tunables    0    0    0 : slabdata   2971   2971      0
+ext4_free_data      3650   4015     56   73    1 : tunables    0    0    0 : slabdata     55     55      0
+ext4_allocation_context   3810   3810    136   30    1 : tunables    0    0    0 : slabdata    127    127      0
+ext4_io_end          261    406   1128   29    8 : tunables    0    0    0 : slabdata     14     14      0
+ext4_io_page        1284   2816     16  256    1 : tunables    0    0    0 : slabdata     11     11      0
+ext3_inode_cache       0      0    776   21    4 : tunables    0    0    0 : slabdata      0      0      0
+ext3_xattr             0      0     88   46    1 : tunables    0    0    0 : slabdata      0      0      0
+dquot                  0      0    256   16    1 : tunables    0    0    0 : slabdata      0      0      0
+dnotify_mark        4230   4230    136   30    1 : tunables    0    0    0 : slabdata    141    141      0
+dio                  100    100    640   25    4 : tunables    0    0    0 : slabdata      4      4      0
+pid_namespace          0      0   2128   15    8 : tunables    0    0    0 : slabdata      0      0      0
+user_namespace         0      0   1072   30    8 : tunables    0    0    0 : slabdata      0      0      0
+UDP-Lite               0      0    832   19    4 : tunables    0    0    0 : slabdata      0      0      0
+ip_fib_trie          292    292     56   73    1 : tunables    0    0    0 : slabdata      4      4      0
+arp_cache             72     72    448   18    2 : tunables    0    0    0 : slabdata      4      4      0
+UDP                   76     76    832   19    4 : tunables    0    0    0 : slabdata      4      4      0
+tw_sock_TCP          240    240    256   16    1 : tunables    0    0    0 : slabdata     15     15      0
+TCP                  140    252   1728   18    8 : tunables    0    0    0 : slabdata     14     14      0
+blkdev_queue          51     51   1880   17    8 : tunables    0    0    0 : slabdata      3      3      0
+blkdev_requests      374    374    368   22    2 : tunables    0    0    0 : slabdata     17     17      0
+fsnotify_event      1632   1632    120   34    1 : tunables    0    0    0 : slabdata     48     48      0
+bip-256                7      7   4224    7    8 : tunables    0    0    0 : slabdata      1      1      0
+bip-128                0      0   2176   15    8 : tunables    0    0    0 : slabdata      0      0      0
+bip-64                 0      0   1152   28    8 : tunables    0    0    0 : slabdata      0      0      0
+bip-16                21     21    384   21    2 : tunables    0    0    0 : slabdata      1      1      0
+sock_inode_cache    1149   1300    640   25    4 : tunables    0    0    0 : slabdata     52     52      0
+net_namespace          0      0   2560   12    8 : tunables    0    0    0 : slabdata      0      0      0
+shmem_inode_cache   2929   3375    640   25    4 : tunables    0    0    0 : slabdata    135    135      0
+Acpi-ParseExt       3304   3304     72   56    1 : tunables    0    0    0 : slabdata     59     59      0
+Acpi-State           204    204     80   51    1 : tunables    0    0    0 : slabdata      4      4      0
+Acpi-Namespace      1428   1428     40  102    1 : tunables    0    0    0 : slabdata     14     14      0
+task_delay_info     1764   1764    112   36    1 : tunables    0    0    0 : slabdata     49     49      0
+taskstats             96     96    328   24    2 : tunables    0    0    0 : slabdata      4      4      0
+proc_inode_cache    3001   3302    624   26    4 : tunables    0    0    0 : slabdata    127    127      0
+sigqueue             150    150    160   25    1 : tunables    0    0    0 : slabdata      6      6      0
+bdev_cache            76     76    832   19    4 : tunables    0    0    0 : slabdata      4      4      0
+sysfs_dir_cache    18480  18480    144   28    1 : tunables    0    0    0 : slabdata    660    660      0
+inode_cache         7515   8120    560   29    4 : tunables    0    0    0 : slabdata    280    280      0
+dentry             63000  63000    192   21    1 : tunables    0    0    0 : slabdata   3000   3000      0
+iint_cache             0      0    112   36    1 : tunables    0    0    0 : slabdata      0      0      0
+buffer_head        54221  60684    104   39    1 : tunables    0    0    0 : slabdata   1556   1556      0
+vm_area_struct     44863  48047    176   23    1 : tunables    0    0    0 : slabdata   2089   2089      0
+mm_struct            252    252    896   18    4 : tunables    0    0    0 : slabdata     14     14      0
+files_cache          465    506    704   23    4 : tunables    0    0    0 : slabdata     22     22      0
+signal_cache         456    600   1088   30    8 : tunables    0    0    0 : slabdata     20     20      0
+sighand_cache        285    315   2112   15    8 : tunables    0    0    0 : slabdata     21     21      0
+task_xstate         1631   1824    832   19    4 : tunables    0    0    0 : slabdata     96     96      0
+task_struct          758    820   5872    5    8 : tunables    0    0    0 : slabdata    164    164      0
+anon_vma           12228  13328     72   56    1 : tunables    0    0    0 : slabdata    238    238      0
+shared_policy_node  39239  42670     48   85    1 : tunables    0    0    0 : slabdata    502    502      0
+numa_policy          680    680     24  170    1 : tunables    0    0    0 : slabdata      4      4      0
+radix_tree_node    11597  15792    568   28    4 : tunables    0    0    0 : slabdata    564    564      0
+idr_layer_cache     1320   1320    544   30    4 : tunables    0    0    0 : slabdata     44     44      0
+dma-kmalloc-8192       0      0   8192    4    8 : tunables    0    0    0 : slabdata      0      0      0
+dma-kmalloc-4096       0      0   4096    8    8 : tunables    0    0    0 : slabdata      0      0      0
+dma-kmalloc-2048       0      0   2048   16    8 : tunables    0    0    0 : slabdata      0      0      0
+dma-kmalloc-1024       0      0   1024   16    4 : tunables    0    0    0 : slabdata      0      0      0
+dma-kmalloc-512        0      0    512   16    2 : tunables    0    0    0 : slabdata      0      0      0
+dma-kmalloc-256        0      0    256   16    1 : tunables    0    0    0 : slabdata      0      0      0
+dma-kmalloc-128        0      0    128   32    1 : tunables    0    0    0 : slabdata      0      0      0
+dma-kmalloc-64         0      0     64   64    1 : tunables    0    0    0 : slabdata      0      0      0
+dma-kmalloc-32         0      0     32  128    1 : tunables    0    0    0 : slabdata      0      0      0
+dma-kmalloc-16         0      0     16  256    1 : tunables    0    0    0 : slabdata      0      0      0
+dma-kmalloc-8          0      0      8  512    1 : tunables    0    0    0 : slabdata      0      0      0
+dma-kmalloc-192        0      0    192   21    1 : tunables    0    0    0 : slabdata      0      0      0
+dma-kmalloc-96         0      0     96   42    1 : tunables    0    0    0 : slabdata      0      0      0
+kmalloc-8192          87     92   8192    4    8 : tunables    0    0    0 : slabdata     23     23      0
+kmalloc-4096         200    240   4096    8    8 : tunables    0    0    0 : slabdata     30     30      0
+kmalloc-2048         422    544   2048   16    8 : tunables    0    0    0 : slabdata     34     34      0
+kmalloc-1024        1154   1280   1024   16    4 : tunables    0    0    0 : slabdata     80     80      0
+kmalloc-512         2848   3328    512   16    2 : tunables    0    0    0 : slabdata    208    208      0
+kmalloc-256        14079  14704    256   16    1 : tunables    0    0    0 : slabdata    919    919      0
+kmalloc-128         3467   6816    128   32    1 : tunables    0    0    0 : slabdata    213    213      0
+kmalloc-64         10415  12928     64   64    1 : tunables    0    0    0 : slabdata    202    202      0
+kmalloc-32         10224  11648     32  128    1 : tunables    0    0    0 : slabdata     91     91      0
+kmalloc-16          4608   4608     16  256    1 : tunables    0    0    0 : slabdata     18     18      0
+kmalloc-8          31744  31744      8  512    1 : tunables    0    0    0 : slabdata     62     62      0
+kmalloc-192         3055   4368    192   21    1 : tunables    0    0    0 : slabdata    208    208      0
+kmalloc-96          4031   4116     96   42    1 : tunables    0    0    0 : slabdata     98     98      0
+kmem_cache            32     32    256   16    1 : tunables    0    0    0 : slabdata      2      2      0
+kmem_cache_node      128    128     64   64    1 : tunables    0    0    0 : slabdata      2      2      0
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-21" class="outline-4">
+<h4 id="sec-1-1-21"><span class="section-number-4">1.1.21</span> /proc/vmstat</h4>
+<div class="outline-text-4" id="text-1-1-21">
+
+<p>当前系统虚拟内存的多种统计数据，信息量可能会比较大，这因系统而有所不同，可读性较好；
+</p>
+
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; cat /proc/vmstat 
+nr_free_pages 39606
+nr_inactive_anon 207905
+nr_active_anon 575539
+nr_inactive_file 51308
+nr_active_file 51193
+nr_unevictable 8
+nr_mlock 8
+nr_anon_pages 662833
+nr_mapped 30562
+nr_file_pages 242500
+nr_dirty 288
+nr_writeback 0
+nr_slab_reclaimable 20951
+nr_slab_unreclaimable 10401
+nr_page_table_pages 12576
+nr_kernel_stack 739
+nr_unstable 0
+nr_bounce 0
+nr_vmscan_write 1043356
+nr_vmscan_immediate_reclaim 310904
+nr_writeback_temp 0
+nr_isolated_anon 0
+nr_isolated_file 0
+nr_shmem 106998
+nr_dirtied 14956613
+nr_written 13377394
+numa_hit 6181305909
+numa_miss 0
+numa_foreign 0
+numa_interleave 5518
+numa_local 6181305909
+numa_other 0
+nr_anon_transparent_hugepages 0
+nr_dirty_threshold 92555
+nr_dirty_background_threshold 46277
+pgpgin 17601663
+pgpgout 64310804
+pswpin 491621
+pswpout 789986
+pgalloc_dma 0
+pgalloc_dma32 5030620457
+pgalloc_normal 1192146375
+pgalloc_movable 0
+pgfree 6222807408
+pgactivate 4825471
+pgdeactivate 4561700
+pgfault 5884815503
+pgmajfault 159176
+pgrefill_dma 0
+pgrefill_dma32 2727143
+pgrefill_normal 3119709
+pgrefill_movable 0
+pgsteal_dma 0
+pgsteal_dma32 4612169
+pgsteal_normal 2661815
+pgsteal_movable 0
+pgscan_kswapd_dma 0
+pgscan_kswapd_dma32 6468262
+pgscan_kswapd_normal 4573712
+pgscan_kswapd_movable 0
+pgscan_direct_dma 0
+pgscan_direct_dma32 275766
+pgscan_direct_normal 246885
+pgscan_direct_movable 0
+zone_reclaim_failed 0
+pginodesteal 0
+slabs_scanned 1904768
+kswapd_steal 7105516
+kswapd_inodesteal 41781
+kswapd_low_wmark_hit_quickly 10
+kswapd_high_wmark_hit_quickly 980
+kswapd_skip_congestion_wait 4130
+pageoutrun 147240
+allocstall 3159
+pgrotated 884823
+compact_blocks_moved 0
+compact_pages_moved 0
+compact_pagemigrate_failed 0
+compact_stall 5
+compact_fail 3
+compact_success 2
+htlb_buddy_alloc_success 0
+htlb_buddy_alloc_fail 0
+unevictable_pgs_culled 0
+unevictable_pgs_scanned 0
+unevictable_pgs_rescued 74
+unevictable_pgs_mlocked 82
+unevictable_pgs_munlocked 74
+unevictable_pgs_cleared 0
+unevictable_pgs_stranded 0
+unevictable_pgs_mlockfreed 0
+thp_fault_alloc 0
+thp_fault_fallback 0
+thp_collapse_alloc 0
+thp_collapse_alloc_failed 0
+thp_split 0
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-22" class="outline-4">
+<h4 id="sec-1-1-22"><span class="section-number-4">1.1.22</span> /proc/zoneinfo</h4>
+<div class="outline-text-4" id="text-1-1-22">
+
+<p>内存区域（zone）的详细信息列表
+</p>
+
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; cat /proc/zoneinfo 
+Node 0, zone      DMA
+  pages free     3977
+        min      65
+        low      81
+        high     97
+        scanned  0
+        spanned  4080
+        present  3913
+    nr_free_pages 3977
+    nr_inactive_anon 0
+    nr_active_anon 0
+    nr_inactive_file 0
+    nr_active_file 0
+    nr_unevictable 0
+    nr_mlock     0
+    nr_anon_pages 0
+    nr_mapped    0
+    nr_file_pages 0
+    nr_dirty     0
+    nr_writeback 0
+    nr_slab_reclaimable 0
+    nr_slab_unreclaimable 0
+    nr_page_table_pages 0
+    nr_kernel_stack 0
+    nr_unstable  0
+    nr_bounce    0
+    nr_vmscan_write 0
+    nr_vmscan_immediate_reclaim 0
+    nr_writeback_temp 0
+    nr_isolated_anon 0
+    nr_isolated_file 0
+    nr_shmem     0
+    nr_dirtied   0
+    nr_written   0
+    numa_hit     0
+    numa_miss    0
+    numa_foreign 0
+    numa_interleave 0
+    numa_local   0
+    numa_other   0
+    nr_anon_transparent_hugepages 0
+        protection: (0, 2906, 3912, 3912)
+  pagesets
+    cpu: 0
+              count: 0
+              high:  0
+              batch: 1
+  vm stats threshold: 6
+    cpu: 1
+              count: 0
+              high:  0
+              batch: 1
+  vm stats threshold: 6
+    cpu: 2
+              count: 0
+              high:  0
+              batch: 1
+  vm stats threshold: 6
+    cpu: 3
+              count: 0
+              high:  0
+              batch: 1
+  vm stats threshold: 6
+  all_unreclaimable: 1
+  start_pfn:         16
+  inactive_ratio:    1
+Node 0, zone    DMA32
+  pages free     36397
+        min      12503
+        low      15628
+        high     18754
+        scanned  0
+        spanned  1044480
+        present  744178
+    nr_free_pages 36397
+    nr_inactive_anon 122972
+    nr_active_anon 492944
+    nr_inactive_file 32614
+    nr_active_file 31141
+    nr_unevictable 0
+    nr_mlock     0
+    nr_anon_pages 528611
+    nr_mapped    16731
+    nr_file_pages 167055
+    nr_dirty     202
+    nr_writeback 0
+    nr_slab_reclaimable 14391
+    nr_slab_unreclaimable 3764
+    nr_page_table_pages 5393
+    nr_kernel_stack 217
+    nr_unstable  0
+    nr_bounce    0
+    nr_vmscan_write 573794
+    nr_vmscan_immediate_reclaim 248788
+    nr_writeback_temp 0
+    nr_isolated_anon 0
+    nr_isolated_file 0
+    nr_shmem     74754
+    nr_dirtied   8249855
+    nr_written   6854644
+    numa_hit     5001386683
+    numa_miss    0
+    numa_foreign 0
+    numa_interleave 0
+    numa_local   5001386683
+    numa_other   0
+    nr_anon_transparent_hugepages 0
+        protection: (0, 0, 1006, 1006)
+  pagesets
+    cpu: 0
+              count: 62
+              high:  186
+              batch: 31
+  vm stats threshold: 36
+    cpu: 1
+              count: 171
+              high:  186
+              batch: 31
+  vm stats threshold: 36
+    cpu: 2
+              count: 62
+              high:  186
+              batch: 31
+  vm stats threshold: 36
+    cpu: 3
+              count: 125
+              high:  186
+              batch: 31
+  vm stats threshold: 36
+  all_unreclaimable: 0
+  start_pfn:         4096
+  inactive_ratio:    4
+Node 0, zone   Normal
+  pages free     5426
+        min      4327
+        low      5408
+        high     6490
+        scanned  0
+        spanned  261632
+        present  257544
+    nr_free_pages 5426
+    nr_inactive_anon 81011
+    nr_active_anon 80301
+    nr_inactive_file 18852
+    nr_active_file 20072
+    nr_unevictable 8
+    nr_mlock     8
+    nr_anon_pages 131848
+    nr_mapped    13831
+    nr_file_pages 71702
+    nr_dirty     172
+    nr_writeback 0
+    nr_slab_reclaimable 6568
+    nr_slab_unreclaimable 6641
+    nr_page_table_pages 7176
+    nr_kernel_stack 523
+    nr_unstable  0
+    nr_bounce    0
+    nr_vmscan_write 469562
+    nr_vmscan_immediate_reclaim 62116
+    nr_writeback_temp 0
+    nr_isolated_anon 0
+    nr_isolated_file 0
+    nr_shmem     28316
+    nr_dirtied   6708910
+    nr_written   6523845
+    numa_hit     1183081020
+    numa_miss    0
+    numa_foreign 0
+    numa_interleave 5518
+    numa_local   1183081020
+    numa_other   0
+    nr_anon_transparent_hugepages 0
+        protection: (0, 0, 0, 0)
+  pagesets
+    cpu: 0
+              count: 41
+              high:  186
+              batch: 31
+  vm stats threshold: 24
+    cpu: 1
+              count: 170
+              high:  186
+              batch: 31
+  vm stats threshold: 24
+    cpu: 2
+              count: 132
+              high:  186
+              batch: 31
+  vm stats threshold: 24
+    cpu: 3
+              count: 185
+              high:  186
+              batch: 31
+  vm stats threshold: 24
+  all_unreclaimable: 0
+  start_pfn:         1048576
+  inactive_ratio:    1
+</pre>
+
+
 </div>
 </div>
 
@@ -2551,7 +3462,7 @@ TODO(dirlt):后续可能需要学习如何使用autobench分布式测试，因�
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-27 22:55:28 CST</p>
+<p class="date">Date: 2012-08-28 17:48:26 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
