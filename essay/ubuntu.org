@@ -157,11 +157,22 @@ unity restart &
    - sudo apt-get install valgrind
    - sudo apt-get install mongodb
    - sudo apt-get install python-imaging
+   - sudo apt-get install python-imaging-doc
    - sudo apt-get install screen
+   - sudo apt-get install python-pychart
+   - sudo apt-get install python-pychart-doc
+   - sudo apt-get install python-doc
+   - sudo apt-get install python-setuptools
 
 *** amarok循环播放
 在amarok的右下角有task progression的图标，选择repeat track即可。
 
+*** deb安装文件列表
+通常我们不太清楚一个deb安装了哪些文件，尤其是doc的话可能不知道放置在什么位置上面。
+
+我们可以通过搜索引擎查找这个包，然后在 http://packages.ubuntu.com 下面找到这个包以及对应的文件列表信息。
+
+doc存放位置通常在/usr/share/doc/<package>/下面。
 
 *** deb包管理
 --------------------
