@@ -1,7 +1,4 @@
 * todo
-** TODO 和别人交流emacs是如何工作的！
-** TODO 考虑使用fvwm(awesome)
-** TODO 整理org以及剩余的.emacs部分.主要是学习agenda的管理
 ** TODO 总结一下flex/bison是如何使用的
 ** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
@@ -9,7 +6,7 @@
 ** TODO Job Scheduling for Multi-User MapReduce Clusters
     - http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html
 ** TODO 整理blog
-    - http://dirlt.com/blog/?paged=26
+    - http://dirlt.com/blog/?paged=19
 ** TODO git stash save/pop
 ** TODO python wsgi
 ** TODO http://www.systemswemake.com/
@@ -23,7 +20,6 @@
 ** TODO RSS system we make
 ** TODO RSS paper planes
 ** TODO 看看怎么能搞起sketchup.
-** TODO mongodb设计collection结构并且搞定geoindex部分，如果控制一个item的超时。（看起来似乎只能够通过后台以及查询来去掉）
-** TODO 整理tcmalloc的讨论
 ** TODO 设计过滤规则描述
 ** TODO 对比HBase的get效率。
+** TODO 海角七号   

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="gcc-asm"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-23 23:12:28 CST"/>
+<meta name="generated" content="2012-08-29 16:56:28 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -124,8 +124,14 @@
 <li><a href="#sec-1-5-3-2">1.5.3.2 关于gcc的行内汇编(2)</a></li>
 <li><a href="#sec-1-5-3-3">1.5.3.3 关于gcc的行内汇编(3)</a></li>
 <li><a href="#sec-1-5-3-4">1.5.3.4 关于gcc的行内汇编(4)</a></li>
+</ul></li>
 </ul>
 </li>
+<li><a href="#sec-1-6">1.6 x86-64寄存器约定</a>
+<ul>
+<li><a href="#sec-1-6-1">1.6.1 各个寄存器作用</a></li>
+<li><a href="#sec-1-6-2">1.6.2 寄存器保存约定</a></li>
+<li><a href="#sec-1-6-3">1.6.3 传参数寄存器选择</a></li>
 </ul>
 </li>
 </ul>
@@ -1316,7 +1322,124 @@ return -1; \
 </pre>
 
 
+
 </div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> x86-64寄存器约定</h3>
+<div class="outline-text-3" id="text-1-6">
+
+<p>NOTE(dirlt):很早之前整理的，不知道现在是否还正确。基本上开发是使用不到寄存器约定的，除非自己开发编译器。
+</p>
+
+</div>
+
+<div id="outline-container-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> 各个寄存器作用</h4>
+<div class="outline-text-4" id="text-1-6-1">
+
+<ul>
+<li>%eax 返回使用的SSE寄存器的个数的上限，1th返回值的寄存器
+</li>
+<li>%rbx callee-saved的寄存器
+</li>
+<li>%rcx 4th参数传递的寄存器
+</li>
+<li>%rdx 3th参数传递的寄存器，2th返回值的寄存器
+</li>
+<li>%rsp stack pointer寄存器
+</li>
+<li>%rbp callee-saved的寄存器，frame pointer寄存器
+</li>
+<li>%rsi 2nd参数传递的寄存器
+</li>
+<li>%rdi 1st参数传递的寄存器
+</li>
+<li>%r8 5th参数传递的寄存器
+</li>
+<li>%r9 6th参数传递的寄存器
+</li>
+<li>%r10 临时寄存器，常用来做static chain pointer，这个指针常用于存在嵌套函数和嵌套作用域的语言
+</li>
+<li>%r11 临时寄存器
+</li>
+<li>%r12-%r15 callee-saved的寄存器
+</li>
+<li>%xmm0-%xmm1 返回浮点数的寄存器
+</li>
+<li>%xmm2-%xmm7 临时寄存器
+</li>
+<li>%mmx0-%mmx7 临时寄存器
+</li>
+<li>%st0,%st1 返回long double的寄存器
+</li>
+<li>%st2-%st7 临时寄存器
+</li>
+<li>%fs 系统使用的寄存器，用于线程专用数据的寄存器
+</li>
+<li>%mxcsr SSE2的控制和状态寄存器
+</li>
+<li>%x87sw x87的状态寄存器
+</li>
+<li>%x87cw x87的控制寄存器
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-6-2" class="outline-4">
+<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> 寄存器保存约定</h4>
+<div class="outline-text-4" id="text-1-6-2">
+
+<p>函数调用的时候分为调用函数的保存寄存器组(caller saved)和被调函数的保存寄存器组(callee saved)。对于callee saved保存的寄存器组有下面这些(这些都是如果被调函数需要使用的话那么需要自己进行保存):
+</p><ul>
+<li>%mxcsr
+</li>
+<li>%x87cw
+</li>
+<li>%rFLAGS
+</li>
+<li>%rsp
+</li>
+<li>%rbp
+</li>
+<li>%rbx
+</li>
+<li>%r12-%r15
+</li>
+</ul>
+
+<p>其他的寄存器都是caller saved的
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-6-3" class="outline-4">
+<h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> 传参数寄存器选择</h4>
+<div class="outline-text-4" id="text-1-6-3">
+
+<p>确定了传入参数使用哪一类型寄存器之后，然后必须确定需要传入哪一个寄存器
+</p><ul>
+<li>对于参数的寄存器的分配从左向右进行，从最左边向右来确定参数是否应该放在寄存器中
+</li>
+<li>对于通用寄存器的分配的顺序是 %rdi %rsi %rdx %rcx %r8 %r9
+</li>
+<li>对于SSE寄存器分配的顺序是 %xmm0~%xmm7,对于浮点数都使用这些寄存器
+</li>
+<li>对于x87寄存器的的话，分配的位置是堆栈上面从 %st(0)~%st(7),对于long double使用这些寄存器
+</li>
+<li>对于剩下的参数都是通过堆栈传递的，剩下的参数从右向左进行压栈传入堆栈      
+</li>
+</ul>
+
 </div>
 </div>
 </div>
@@ -1324,8 +1447,8 @@ return -1; \
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-23 23:12:28 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-08-29 16:56:28 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

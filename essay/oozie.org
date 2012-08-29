@@ -321,3 +321,15 @@ file:./images/oozie-coord-job-action-info.png
    - 时区似乎只是支持UTC。对于我来说处在Asia/Shanghai这个timezone，时间是提前8个小时的。这个在使用的时候需要转换一下。
    - oozie调度时间似乎比较怪异（不像是分钟级别，也不像是小时级别，而且现在也没有找到参数配置）。即使对于上面这个小时任务，可以看到create time间隔是5min左右。file:./images/oozie-coord-create-interval.png
    - oozie支持故障恢复。我直接restart之后启动oozie，之前提交的coord job还能够正常执行。
+
+** azkaban
+   - Azkaban http://sna-projects.com/azkaban/
+   - Quick Start http://sna-projects.com/azkaban/quickstart.php
+   - Documentation http://sna-projects.com/azkaban/documentation.php
+   - Workflow Engines for Hadoop http://www.crobak.org/2012/07/workflow-engines-for-hadoop/
+
+   - azkaban是twitter出的一个任务调度系统。从Quick Start以及Documentation来看的话，确实比oozie要简单很多而且非常直观。
+   - 任务之间的依赖，不能够指定部分完成（比如我们希望任务A依赖于B，但是并不是B完全执行完成A才可以启动，而是B的某个阶段完成的话就可以启动A）。
+   - 从job描述上面看，系统本身并没有来做cron这见事情，可能是通过外部任务自己cron方式提交来完成cron功能。
+   - azkaban对于每一个command单独fork出一个单元来监视这个command完成情况（猜想应该是判断是否返回值为0确定是否成功执行，但是对于MR这样的任务来说的话，如果forker挂掉的话任务本身也依然是在执行的，这样下次重启的话就会重复启动多个任务）。
+   - TODO（dirlt）：不确定是否可以删除任务或者修改任务？

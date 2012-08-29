@@ -1851,3 +1851,63 @@ TODO:
 *** CPUProfiler
 TODO:
 
+** Discussion
+*** tcmalloc中的 MmapSysAllocator::Alloc 疑问(nwlzee)
+*Question* 
+
+#+BEGIN_EXAMPLE
+您好，我看到这函数有点不了解。
+在MmapSysAllocator::Alloc 中：
+
+// 。。。
+  if ((ptr & (alignment - 1)) != 0) {
+    adjust = alignment - (ptr & (alignment - 1));
+  }
+
+  // Return the unused memory to the system
+  if (adjust > 0) {
+    munmap(reinterpret_cast<void*>(ptr), adjust);
+  }
+  if (adjust < extra) {
+    munmap(reinterpret_cast<void*>(ptr + adjust + size), extra - adjust);
+  }
+
+  ptr += adjust;
+  return reinterpret_cast<void*>(ptr);
+
+我从man 手册知道munmap 是以page 单位大小释放的内存的，
+当 munmap(reinterpret_cast<void*>(ptr), adjust); 释放adjust所
+包含的页了，则返回 ptr += adjust (可能指向刚才释放的页中某一地址)，这地址ptr不是无效了？
+#+END_EXAMPLE
+
+--------------------
+
+*Answer*
+
+看看MmapSysAllocator::Alloc这个函数吧，假设这里的alignment==page_size的情况的话，
+   1. extra = alignment - pagesize; 所以extra==0
+   2. ptr肯定和page_size对齐，因此adjust==0
+所以你可以看到其实两个分支都没有走到的。
+
+其实在实际使用的时候alignment通常也是page_size的倍数。如果alignment==k*page_size的话，你会发现
+   1. extra也是page_size倍数
+   2. adjust也是page_size倍数
+因此在munmap的时候不会存在跨越page_size边界这样的问题的。
+
+最后你看看tcmalloc是怎么使用MmapSysAllocator对象的。相信你也看得非常仔细，tcmalloc是 DefaultSysAllocator创建两个对象
+   1. SbrkSysAllocator
+   2. MmapSysAllocator
+你看看DefaultSysAllocator调用情况，
+#+BEGIN_EXAMPLE
+[dirlt@umeng-ubuntu-pc] > grep "TCMalloc_SystemAlloc" *
+common.cc:  void* result = TCMalloc_SystemAlloc(bytes, NULL);
+page_heap.cc:#include "system-alloc.h"      // for TCMalloc_SystemAlloc, etc
+page_heap.cc:  void* ptr = TCMalloc_SystemAlloc(ask << kPageShift, &actual_size, kPageSize);
+page_heap.cc:      ptr = TCMalloc_SystemAlloc(ask << kPageShift, &actual_size, kPageSize);
+system-alloc.cc:  // This doesn't overflow because TCMalloc_SystemAlloc has already
+system-alloc.cc:    // NOTE: not a devmem_failure - we'd like TCMalloc_SystemAlloc to
+system-alloc.cc:void* TCMalloc_SystemAlloc(size_t size, size_t *actual_size,
+system-alloc.h:extern void* TCMalloc_SystemAlloc(size_t bytes, size_t *actual_bytes,
+#+END_EXAMPLE
+
+你会看到实际上调用TCMalloc_SystemAlloc时候，alignment都是==kPageSize的。因此实际tcmalloc 使用时候不会出现这个问题。

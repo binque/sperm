@@ -3485,7 +3485,6 @@ Alarm clock received
 -1 errno=Interrupted system call
 #+END_EXAMPLE
 
-
 **** abort
 此函数向自身发送SIGABRT信号。如果进程设置了捕获SIGABRT的话，即使从处理函数返回的话，那么仍然不会返回到调用者。
 并且POSIX规定该函数并不理会进程对于此信号的阻塞和忽略。让进程捕获SIGABRT的意图是，希望进程终止之前执行所需要的清理操作，
@@ -4219,29 +4218,6 @@ TODO(zhangyan04):个人觉得相当无用而且异常繁琐。为了保证锁和
 我们打算对于API分为下面这几个部分进行介绍。https://computing.llnl.gov/tutorials/pthreads/
 通读这些API之后，对realtime threads这个部分的很多内容不是很理解，包括clock_id,mutex下面protocol等。
 
-**** coroutine
-[ZZ] http://en.wikipedia.org/wiki/Coroutine
-
-[ZZ] http://en.wikipedia.org/wiki/Continuation
-
-[ZZ] http://en.wikipedia.org/wiki/Green_threads
-
-[ZZ] http://www.gnu.org/software/pth/
-
-[ZZ] http://www.xmailserver.org/libpcl.html
-
-[ZZ] http://software.schmorp.de/pkg/libcoro.html
-
-[ZZ] http://www.goron.de/~froese/coro/
-
-[ZZ] http://code.google.com/p/libconcurrency/
-
-[ZZ] http://swtch.com/libtask/
-
-[ZZ] http://www.csl.mtu.edu/cs4411.ck/www/NOTES/non-local-goto/coroutine.html
-
-libpcl里面的co_exit/co_exit_to/co_resume里面存放了caller和restarget这两个变量，表示调用者和应该恢复到的coroutine.但是一旦使用这种实现的话，那么调用者只能够按照stack的方式来调用coroutine,不然函数调用完成返回之后是会存在问题的，但是这样也就失去了coroutine意义了。而co_call还使用了co_exit这个函数，导致整个libpcl可以说不是很可用。不过里面设计上考虑了多线程环境使用了specific,并且使用了co_runner来做trampoline,这个在实现上面是非常巧妙的。此外文档也说了在处理线程的时候需要调用sigaltstack不然信号处理部分可能会和和你的coroutine的stack重合。其实只需要pth里面这些接口即可，create/delete/switch/exit(这个语义通知另外一个coroutine选择另外一个coroutine执行).pth可以看看但是比较大但是仅仅是覆盖thread部分内容(第三推荐)，而libtask涵盖了线程IO网络各个部分也可以看看(第二推荐)。
-
 **** attr
 ***** init
      - pthread_attr_init
@@ -4471,6 +4447,88 @@ pthread_setconcurrency (level)
      - pthread_key_delete
      - pthread_getspecific
      - pthread_setspecific
+
+*** 使用注意
+**** pthread cancel陷阱
+最近几天看core java,对于多线程部分的话提到了最好不要stop,suspend,resume线程。在外部去干扰线程执行的话，容易造成线程资源占用以及运行状态不合理。
+
+下面代码就是最近遇到一个问题的例子。main -> func1 -> func2.然后main等待func1建立完成之后cancel并且join func1.而func1就是join func2.而func2里面尝试持有一个mutex lock.其中mutex lock里面存在字段holder_表示哪个线程持有这个lock.为了确保mutex lock的锁释放正确，会在析构去assert没有任何线程持有这个lock.单独看这个mutex lock实现没有任何问题，但是在这个cancel线程场景下…
+#+BEGIN_SRC C++
+/* coding:utf-8
+ * Copyright (C) dirlt
+ */
+
+#include <unistd.h>
+#include <linux/unistd.h>
+#include <pthread.h>
+#include <cassert>
+#include <cstdio>
+
+class Lock {
+ public:
+  Lock():holder_(0){
+    pthread_mutex_init(&lock_,NULL);
+  }
+  ~Lock(){
+    assert(holder_==0);
+    pthread_mutex_destroy(&lock_);
+  }
+  void lock() {
+    pthread_mutex_lock(&lock_);
+    holder_=syscall(__NR_gettid);
+  }
+  void unlock() {
+    holder_=0;
+    pthread_mutex_unlock(&lock_);
+  }
+ private:
+  pthread_mutex_t lock_;
+  pid_t holder_;
+}; // class Lock
+
+static Lock lock;
+void* func2(void* arg){
+  printf("enter func2\n");
+  lock.lock();
+  while(1){
+    sleep(2);
+  }
+  lock.unlock();
+  printf("exit func2\n");
+  return NULL;
+}
+void* func1(void* arg){
+  printf("enter func1\n");
+  pthread_t tid;
+  pthread_create(&tid,NULL,func2,NULL);
+  pthread_join(tid,NULL);
+  printf("exit func1\n");
+  return NULL;
+}
+int main() {
+  pthread_t tid;
+  pthread_create(&tid,NULL,func1,NULL);
+  // wait thread func1 and func2 ready.
+  sleep(1);
+  pthread_cancel(tid);
+  pthread_join(tid,NULL);
+  printf("exit main\n");
+  return 0;
+}
+#+END_SRC
+
+运行结果为下
+#+BEGIN_EXAMPLE
+    [zhangyan04@tc-hpc-dev.tc.baidu.com]$ ./a.out
+    enter func1
+    enter func2
+    exit main
+    a.out: main.cc:17: Lock::~Lock(): Assertion `holder_==0′ failed.
+    已放弃 (core dumped) 
+#+END_EXAMPLE
+可以看到func1以及func2都没有正常退出，但是main函数是正常退出。main函数正常退出的话就会尝试析构全局这个lock对象，而这个lock对象在func2被持有。这就是外部干扰线程的结果。
+
+*对于这个问题解决办法非常简单，就是外部设置退出标记，然后线程去检测这个退出标记的置位，然后让这个线程自己决定如何退出。所以对于线程控制的话，我们更应该使用一种cooperative而不是preemptive的方式来达到。*
 
 ** 守护进程
 守护进程也是精灵进程(daemon),是一种生存期较长的进程，常常在系统自举时候启动，仅仅在系统关闭时终止。

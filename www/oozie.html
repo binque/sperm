@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="oozie"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-23 23:11:57 CST"/>
+<meta name="generated" content="2012-08-29 16:56:24 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -104,6 +104,7 @@
 <li><a href="#sec-1-2">1.2 deployment</a></li>
 <li><a href="#sec-1-3">1.3 workflow</a></li>
 <li><a href="#sec-1-4">1.4 coordinator</a></li>
+<li><a href="#sec-1-5">1.5 azkaban</a></li>
 </ul>
 </li>
 </ul>
@@ -647,14 +648,45 @@ NOTE（dirlt）：不过后来测试了一下之后，发现其实是可以观�
 </li>
 </ul>
 
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> azkaban</h3>
+<div class="outline-text-3" id="text-1-5">
+
+<ul>
+<li>Azkaban <a href="http://sna-projects.com/azkaban/">http://sna-projects.com/azkaban/</a>
+</li>
+<li>Quick Start <a href="http://sna-projects.com/azkaban/quickstart.php">http://sna-projects.com/azkaban/quickstart.php</a>
+</li>
+<li>Documentation <a href="http://sna-projects.com/azkaban/documentation.php">http://sna-projects.com/azkaban/documentation.php</a>
+</li>
+<li>Workflow Engines for Hadoop <a href="http://www.crobak.org/2012/07/workflow-engines-for-hadoop/">http://www.crobak.org/2012/07/workflow-engines-for-hadoop/</a>
+
+</li>
+<li>azkaban是twitter出的一个任务调度系统。从Quick Start以及Documentation来看的话，确实比oozie要简单很多而且非常直观。
+</li>
+<li>任务之间的依赖，不能够指定部分完成（比如我们希望任务A依赖于B，但是并不是B完全执行完成A才可以启动，而是B的某个阶段完成的话就可以启动A）。
+</li>
+<li>从job描述上面看，系统本身并没有来做cron这见事情，可能是通过外部任务自己cron方式提交来完成cron功能。
+</li>
+<li>azkaban对于每一个command单独fork出一个单元来监视这个command完成情况（猜想应该是判断是否返回值为0确定是否成功执行，但是对于MR这样的任务来说的话，如果forker挂掉的话任务本身也依然是在执行的，这样下次重启的话就会重复启动多个任务）。
+</li>
+<li>TODO（dirlt）：不确定是否可以删除任务或者修改任务？
+</li>
+</ul>
+
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-23 23:11:57 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-08-29 16:56:24 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

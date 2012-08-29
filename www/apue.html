@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="apue"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-27 22:55:41 CST"/>
+<meta name="generated" content="2012-08-29 16:56:36 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -313,35 +313,39 @@
 <li><a href="#sec-1-11-13">1.11.13 线程和IO</a></li>
 <li><a href="#sec-1-11-14">1.11.14 API</a>
 <ul>
-<li><a href="#sec-1-11-14-1">1.11.14.1 coroutine</a></li>
-<li><a href="#sec-1-11-14-2">1.11.14.2 attr</a>
+<li><a href="#sec-1-11-14-1">1.11.14.1 attr</a>
 <ul>
-<li><a href="#sec-1-11-14-2-1">1.11.14.2.1 init</a></li>
-<li><a href="#sec-1-11-14-2-2">1.11.14.2.2 detach</a></li>
-<li><a href="#sec-1-11-14-2-3">1.11.14.2.3 guard</a></li>
-<li><a href="#sec-1-11-14-2-4">1.11.14.2.4 sched</a></li>
-<li><a href="#sec-1-11-14-2-5">1.11.14.2.5 scope</a></li>
-<li><a href="#sec-1-11-14-2-6">1.11.14.2.6 stack</a></li>
+<li><a href="#sec-1-11-14-1-1">1.11.14.1.1 init</a></li>
+<li><a href="#sec-1-11-14-1-2">1.11.14.1.2 detach</a></li>
+<li><a href="#sec-1-11-14-1-3">1.11.14.1.3 guard</a></li>
+<li><a href="#sec-1-11-14-1-4">1.11.14.1.4 sched</a></li>
+<li><a href="#sec-1-11-14-1-5">1.11.14.1.5 scope</a></li>
+<li><a href="#sec-1-11-14-1-6">1.11.14.1.6 stack</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-11-14-3">1.11.14.3 sync</a>
+<li><a href="#sec-1-11-14-2">1.11.14.2 sync</a>
 <ul>
-<li><a href="#sec-1-11-14-3-1">1.11.14.3.1 mutex</a></li>
-<li><a href="#sec-1-11-14-3-2">1.11.14.3.2 cond</a></li>
-<li><a href="#sec-1-11-14-3-3">1.11.14.3.3 rwlock</a></li>
-<li><a href="#sec-1-11-14-3-4">1.11.14.3.4 spinlock</a></li>
-<li><a href="#sec-1-11-14-3-5">1.11.14.3.5 barrier</a></li>
+<li><a href="#sec-1-11-14-2-1">1.11.14.2.1 mutex</a></li>
+<li><a href="#sec-1-11-14-2-2">1.11.14.2.2 cond</a></li>
+<li><a href="#sec-1-11-14-2-3">1.11.14.2.3 rwlock</a></li>
+<li><a href="#sec-1-11-14-2-4">1.11.14.2.4 spinlock</a></li>
+<li><a href="#sec-1-11-14-2-5">1.11.14.2.5 barrier</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-11-14-4">1.11.14.4 control</a>
+<li><a href="#sec-1-11-14-3">1.11.14.3 control</a>
 <ul>
-<li><a href="#sec-1-11-14-4-1">1.11.14.4.1 run</a></li>
-<li><a href="#sec-1-11-14-4-2">1.11.14.4.2 cancel</a></li>
-<li><a href="#sec-1-11-14-4-3">1.11.14.4.3 signal</a></li>
-<li><a href="#sec-1-11-14-4-4">1.11.14.4.4 sched</a></li>
-<li><a href="#sec-1-11-14-4-5">1.11.14.4.5 resource</a></li>
-<li><a href="#sec-1-11-14-4-6">1.11.14.4.6 specific</a></li>
+<li><a href="#sec-1-11-14-3-1">1.11.14.3.1 run</a></li>
+<li><a href="#sec-1-11-14-3-2">1.11.14.3.2 cancel</a></li>
+<li><a href="#sec-1-11-14-3-3">1.11.14.3.3 signal</a></li>
+<li><a href="#sec-1-11-14-3-4">1.11.14.3.4 sched</a></li>
+<li><a href="#sec-1-11-14-3-5">1.11.14.3.5 resource</a></li>
+<li><a href="#sec-1-11-14-3-6">1.11.14.3.6 specific</a></li>
 </ul></li>
+</ul>
+</li>
+<li><a href="#sec-1-11-15">1.11.15 使用注意</a>
+<ul>
+<li><a href="#sec-1-11-15-1">1.11.15.1 pthread cancel陷阱</a></li>
 </ul></li>
 </ul>
 </li>
@@ -6043,7 +6047,6 @@ Alarm clock received
 </pre>
 
 
-
 </div>
 
 </div>
@@ -7181,55 +7184,15 @@ int pthread_kill(pthread_t thread,int signo);
 </div>
 
 <div id="outline-container-1-11-14-1" class="outline-5">
-<h5 id="sec-1-11-14-1"><span class="section-number-5">1.11.14.1</span> coroutine</h5>
+<h5 id="sec-1-11-14-1"><span class="section-number-5">1.11.14.1</span> attr</h5>
 <div class="outline-text-5" id="text-1-11-14-1">
 
-<p>[ZZ] <a href="http://en.wikipedia.org/wiki/Coroutine">http://en.wikipedia.org/wiki/Coroutine</a>
-</p>
-<p>
-[ZZ] <a href="http://en.wikipedia.org/wiki/Continuation">http://en.wikipedia.org/wiki/Continuation</a>
-</p>
-<p>
-[ZZ] <a href="http://en.wikipedia.org/wiki/Green_threads">http://en.wikipedia.org/wiki/Green_threads</a>
-</p>
-<p>
-[ZZ] <a href="http://www.gnu.org/software/pth/">http://www.gnu.org/software/pth/</a>
-</p>
-<p>
-[ZZ] <a href="http://www.xmailserver.org/libpcl.html">http://www.xmailserver.org/libpcl.html</a>
-</p>
-<p>
-[ZZ] <a href="http://software.schmorp.de/pkg/libcoro.html">http://software.schmorp.de/pkg/libcoro.html</a>
-</p>
-<p>
-[ZZ] <a href="http://www.goron.de/~froese/coro/">http://www.goron.de/~froese/coro/</a>
-</p>
-<p>
-[ZZ] <a href="http://code.google.com/p/libconcurrency/">http://code.google.com/p/libconcurrency/</a>
-</p>
-<p>
-[ZZ] <a href="http://swtch.com/libtask/">http://swtch.com/libtask/</a>
-</p>
-<p>
-[ZZ] <a href="http://www.csl.mtu.edu/cs4411.ck/www/NOTES/non-local-goto/coroutine.html">http://www.csl.mtu.edu/cs4411.ck/www/NOTES/non-local-goto/coroutine.html</a>
-</p>
-<p>
-libpcl里面的co_exit/co_exit_to/co_resume里面存放了caller和restarget这两个变量，表示调用者和应该恢复到的coroutine.但是一旦使用这种实现的话，那么调用者只能够按照stack的方式来调用coroutine,不然函数调用完成返回之后是会存在问题的，但是这样也就失去了coroutine意义了。而co_call还使用了co_exit这个函数，导致整个libpcl可以说不是很可用。不过里面设计上考虑了多线程环境使用了specific,并且使用了co_runner来做trampoline,这个在实现上面是非常巧妙的。此外文档也说了在处理线程的时候需要调用sigaltstack不然信号处理部分可能会和和你的coroutine的stack重合。其实只需要pth里面这些接口即可，create/delete/switch/exit(这个语义通知另外一个coroutine选择另外一个coroutine执行).pth可以看看但是比较大但是仅仅是覆盖thread部分内容(第三推荐)，而libtask涵盖了线程IO网络各个部分也可以看看(第二推荐)。
-</p>
-</div>
 
 </div>
 
-<div id="outline-container-1-11-14-2" class="outline-5">
-<h5 id="sec-1-11-14-2"><span class="section-number-5">1.11.14.2</span> attr</h5>
-<div class="outline-text-5" id="text-1-11-14-2">
-
-
-</div>
-
-<div id="outline-container-1-11-14-2-1" class="outline-6">
-<h6 id="sec-1-11-14-2-1"><span class="section-number-6">1.11.14.2.1</span> init</h6>
-<div class="outline-text-6" id="text-1-11-14-2-1">
+<div id="outline-container-1-11-14-1-1" class="outline-6">
+<h6 id="sec-1-11-14-1-1"><span class="section-number-6">1.11.14.1.1</span> init</h6>
+<div class="outline-text-6" id="text-1-11-14-1-1">
 
 <ul>
 <li>pthread_attr_init
@@ -7243,9 +7206,9 @@ libpcl里面的co_exit/co_exit_to/co_resume里面存放了caller和restarget这�
 
 </div>
 
-<div id="outline-container-1-11-14-2-2" class="outline-6">
-<h6 id="sec-1-11-14-2-2"><span class="section-number-6">1.11.14.2.2</span> detach</h6>
-<div class="outline-text-6" id="text-1-11-14-2-2">
+<div id="outline-container-1-11-14-1-2" class="outline-6">
+<h6 id="sec-1-11-14-1-2"><span class="section-number-6">1.11.14.1.2</span> detach</h6>
+<div class="outline-text-6" id="text-1-11-14-1-2">
 
 <ul>
 <li>pthread_attr_getdetachstate
@@ -7260,9 +7223,9 @@ libpcl里面的co_exit/co_exit_to/co_resume里面存放了caller和restarget这�
 
 </div>
 
-<div id="outline-container-1-11-14-2-3" class="outline-6">
-<h6 id="sec-1-11-14-2-3"><span class="section-number-6">1.11.14.2.3</span> guard</h6>
-<div class="outline-text-6" id="text-1-11-14-2-3">
+<div id="outline-container-1-11-14-1-3" class="outline-6">
+<h6 id="sec-1-11-14-1-3"><span class="section-number-6">1.11.14.1.3</span> guard</h6>
+<div class="outline-text-6" id="text-1-11-14-1-3">
 
 <ul>
 <li>pthread_attr_setguardsize
@@ -7278,9 +7241,9 @@ libpcl里面的co_exit/co_exit_to/co_resume里面存放了caller和restarget这�
 
 </div>
 
-<div id="outline-container-1-11-14-2-4" class="outline-6">
-<h6 id="sec-1-11-14-2-4"><span class="section-number-6">1.11.14.2.4</span> sched</h6>
-<div class="outline-text-6" id="text-1-11-14-2-4">
+<div id="outline-container-1-11-14-1-4" class="outline-6">
+<h6 id="sec-1-11-14-1-4"><span class="section-number-6">1.11.14.1.4</span> sched</h6>
+<div class="outline-text-6" id="text-1-11-14-1-4">
 
 <ul>
 <li>pthread_attr_getinheritsched
@@ -7324,9 +7287,9 @@ struct sched_param
 
 </div>
 
-<div id="outline-container-1-11-14-2-5" class="outline-6">
-<h6 id="sec-1-11-14-2-5"><span class="section-number-6">1.11.14.2.5</span> scope</h6>
-<div class="outline-text-6" id="text-1-11-14-2-5">
+<div id="outline-container-1-11-14-1-5" class="outline-6">
+<h6 id="sec-1-11-14-1-5"><span class="section-number-6">1.11.14.1.5</span> scope</h6>
+<div class="outline-text-6" id="text-1-11-14-1-5">
 
 <ul>
 <li>pthread_attr_setscope
@@ -7350,9 +7313,9 @@ system contention scope是只线程直接和系统范围内其他线程竞争，
 
 </div>
 
-<div id="outline-container-1-11-14-2-6" class="outline-6">
-<h6 id="sec-1-11-14-2-6"><span class="section-number-6">1.11.14.2.6</span> stack</h6>
-<div class="outline-text-6" id="text-1-11-14-2-6">
+<div id="outline-container-1-11-14-1-6" class="outline-6">
+<h6 id="sec-1-11-14-1-6"><span class="section-number-6">1.11.14.1.6</span> stack</h6>
+<div class="outline-text-6" id="text-1-11-14-1-6">
 
 <ul>
 <li>pthread_attr_getstack
@@ -7376,16 +7339,16 @@ system contention scope是只线程直接和系统范围内其他线程竞争，
 
 </div>
 
-<div id="outline-container-1-11-14-3" class="outline-5">
-<h5 id="sec-1-11-14-3"><span class="section-number-5">1.11.14.3</span> sync</h5>
-<div class="outline-text-5" id="text-1-11-14-3">
+<div id="outline-container-1-11-14-2" class="outline-5">
+<h5 id="sec-1-11-14-2"><span class="section-number-5">1.11.14.2</span> sync</h5>
+<div class="outline-text-5" id="text-1-11-14-2">
 
 
 </div>
 
-<div id="outline-container-1-11-14-3-1" class="outline-6">
-<h6 id="sec-1-11-14-3-1"><span class="section-number-6">1.11.14.3.1</span> mutex</h6>
-<div class="outline-text-6" id="text-1-11-14-3-1">
+<div id="outline-container-1-11-14-2-1" class="outline-6">
+<h6 id="sec-1-11-14-2-1"><span class="section-number-6">1.11.14.2.1</span> mutex</h6>
+<div class="outline-text-6" id="text-1-11-14-2-1">
 
 <ul>
 <li>pthread_mutex_init
@@ -7452,9 +7415,9 @@ system contention scope是只线程直接和系统范围内其他线程竞争，
 
 </div>
 
-<div id="outline-container-1-11-14-3-2" class="outline-6">
-<h6 id="sec-1-11-14-3-2"><span class="section-number-6">1.11.14.3.2</span> cond</h6>
-<div class="outline-text-6" id="text-1-11-14-3-2">
+<div id="outline-container-1-11-14-2-2" class="outline-6">
+<h6 id="sec-1-11-14-2-2"><span class="section-number-6">1.11.14.2.2</span> cond</h6>
+<div class="outline-text-6" id="text-1-11-14-2-2">
 
 <ul>
 <li>pthread_cond_init
@@ -7488,9 +7451,9 @@ system contention scope是只线程直接和系统范围内其他线程竞争，
 
 </div>
 
-<div id="outline-container-1-11-14-3-3" class="outline-6">
-<h6 id="sec-1-11-14-3-3"><span class="section-number-6">1.11.14.3.3</span> rwlock</h6>
-<div class="outline-text-6" id="text-1-11-14-3-3">
+<div id="outline-container-1-11-14-2-3" class="outline-6">
+<h6 id="sec-1-11-14-2-3"><span class="section-number-6">1.11.14.2.3</span> rwlock</h6>
+<div class="outline-text-6" id="text-1-11-14-2-3">
 
 <ul>
 <li>pthread_rwlock_init
@@ -7526,9 +7489,9 @@ system contention scope是只线程直接和系统范围内其他线程竞争，
 
 </div>
 
-<div id="outline-container-1-11-14-3-4" class="outline-6">
-<h6 id="sec-1-11-14-3-4"><span class="section-number-6">1.11.14.3.4</span> spinlock</h6>
-<div class="outline-text-6" id="text-1-11-14-3-4">
+<div id="outline-container-1-11-14-2-4" class="outline-6">
+<h6 id="sec-1-11-14-2-4"><span class="section-number-6">1.11.14.2.4</span> spinlock</h6>
+<div class="outline-text-6" id="text-1-11-14-2-4">
 
 <ul>
 <li>pthread_spin_init
@@ -7548,9 +7511,9 @@ system contention scope是只线程直接和系统范围内其他线程竞争，
 
 </div>
 
-<div id="outline-container-1-11-14-3-5" class="outline-6">
-<h6 id="sec-1-11-14-3-5"><span class="section-number-6">1.11.14.3.5</span> barrier</h6>
-<div class="outline-text-6" id="text-1-11-14-3-5">
+<div id="outline-container-1-11-14-2-5" class="outline-6">
+<h6 id="sec-1-11-14-2-5"><span class="section-number-6">1.11.14.2.5</span> barrier</h6>
+<div class="outline-text-6" id="text-1-11-14-2-5">
 
 <ul>
 <li>pthread_barrier_init // 以count初始化,表明有多少个线程需要同步
@@ -7576,16 +7539,16 @@ system contention scope是只线程直接和系统范围内其他线程竞争，
 
 </div>
 
-<div id="outline-container-1-11-14-4" class="outline-5">
-<h5 id="sec-1-11-14-4"><span class="section-number-5">1.11.14.4</span> control</h5>
-<div class="outline-text-5" id="text-1-11-14-4">
+<div id="outline-container-1-11-14-3" class="outline-5">
+<h5 id="sec-1-11-14-3"><span class="section-number-5">1.11.14.3</span> control</h5>
+<div class="outline-text-5" id="text-1-11-14-3">
 
 
 </div>
 
-<div id="outline-container-1-11-14-4-1" class="outline-6">
-<h6 id="sec-1-11-14-4-1"><span class="section-number-6">1.11.14.4.1</span> run</h6>
-<div class="outline-text-6" id="text-1-11-14-4-1">
+<div id="outline-container-1-11-14-3-1" class="outline-6">
+<h6 id="sec-1-11-14-3-1"><span class="section-number-6">1.11.14.3.1</span> run</h6>
+<div class="outline-text-6" id="text-1-11-14-3-1">
 
 <ul>
 <li>pthread_create
@@ -7603,9 +7566,9 @@ system contention scope是只线程直接和系统范围内其他线程竞争，
 
 </div>
 
-<div id="outline-container-1-11-14-4-2" class="outline-6">
-<h6 id="sec-1-11-14-4-2"><span class="section-number-6">1.11.14.4.2</span> cancel</h6>
-<div class="outline-text-6" id="text-1-11-14-4-2">
+<div id="outline-container-1-11-14-3-2" class="outline-6">
+<h6 id="sec-1-11-14-3-2"><span class="section-number-6">1.11.14.3.2</span> cancel</h6>
+<div class="outline-text-6" id="text-1-11-14-3-2">
 
 <ul>
 <li>pthread_cancel
@@ -7646,9 +7609,9 @@ system contention scope是只线程直接和系统范围内其他线程竞争，
 
 </div>
 
-<div id="outline-container-1-11-14-4-3" class="outline-6">
-<h6 id="sec-1-11-14-4-3"><span class="section-number-6">1.11.14.4.3</span> signal</h6>
-<div class="outline-text-6" id="text-1-11-14-4-3">
+<div id="outline-container-1-11-14-3-3" class="outline-6">
+<h6 id="sec-1-11-14-3-3"><span class="section-number-6">1.11.14.3.3</span> signal</h6>
+<div class="outline-text-6" id="text-1-11-14-3-3">
 
 <ul>
 <li>pthread_kill
@@ -7664,9 +7627,9 @@ system contention scope是只线程直接和系统范围内其他线程竞争，
 
 </div>
 
-<div id="outline-container-1-11-14-4-4" class="outline-6">
-<h6 id="sec-1-11-14-4-4"><span class="section-number-6">1.11.14.4.4</span> sched</h6>
-<div class="outline-text-6" id="text-1-11-14-4-4">
+<div id="outline-container-1-11-14-3-4" class="outline-6">
+<h6 id="sec-1-11-14-3-4"><span class="section-number-6">1.11.14.3.4</span> sched</h6>
+<div class="outline-text-6" id="text-1-11-14-3-4">
 
 <ul>
 <li>pthread_getschedparam
@@ -7683,9 +7646,9 @@ system contention scope是只线程直接和系统范围内其他线程竞争，
 
 </div>
 
-<div id="outline-container-1-11-14-4-5" class="outline-6">
-<h6 id="sec-1-11-14-4-5"><span class="section-number-6">1.11.14.4.5</span> resource</h6>
-<div class="outline-text-6" id="text-1-11-14-4-5">
+<div id="outline-container-1-11-14-3-5" class="outline-6">
+<h6 id="sec-1-11-14-3-5"><span class="section-number-6">1.11.14.3.5</span> resource</h6>
+<div class="outline-text-6" id="text-1-11-14-3-5">
 
 <ul>
 <li>pthread_getcpuclockid
@@ -7760,9 +7723,9 @@ pthread_setconcurrency (level)
 
 </div>
 
-<div id="outline-container-1-11-14-4-6" class="outline-6">
-<h6 id="sec-1-11-14-4-6"><span class="section-number-6">1.11.14.4.6</span> specific</h6>
-<div class="outline-text-6" id="text-1-11-14-4-6">
+<div id="outline-container-1-11-14-3-6" class="outline-6">
+<h6 id="sec-1-11-14-3-6"><span class="section-number-6">1.11.14.3.6</span> specific</h6>
+<div class="outline-text-6" id="text-1-11-14-3-6">
 
 <ul>
 <li>pthread_once
@@ -7781,6 +7744,112 @@ pthread_setconcurrency (level)
 
 
 </div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-11-15" class="outline-4">
+<h4 id="sec-1-11-15"><span class="section-number-4">1.11.15</span> 使用注意</h4>
+<div class="outline-text-4" id="text-1-11-15">
+
+
+</div>
+
+<div id="outline-container-1-11-15-1" class="outline-5">
+<h5 id="sec-1-11-15-1"><span class="section-number-5">1.11.15.1</span> pthread cancel陷阱</h5>
+<div class="outline-text-5" id="text-1-11-15-1">
+
+<p>最近几天看core java,对于多线程部分的话提到了最好不要stop,suspend,resume线程。在外部去干扰线程执行的话，容易造成线程资源占用以及运行状态不合理。
+</p>
+<p>
+下面代码就是最近遇到一个问题的例子。main -&gt; func1 -&gt; func2.然后main等待func1建立完成之后cancel并且join func1.而func1就是join func2.而func2里面尝试持有一个mutex lock.其中mutex lock里面存在字段holder_表示哪个线程持有这个lock.为了确保mutex lock的锁释放正确，会在析构去assert没有任何线程持有这个lock.单独看这个mutex lock实现没有任何问题，但是在这个cancel线程场景下…
+</p>
+
+
+<pre class="src src-C++">/* coding:utf-8
+ * Copyright (C) dirlt
+ */
+
+#include &lt;unistd.h&gt;
+#include &lt;linux/unistd.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;cassert&gt;
+#include &lt;cstdio&gt;
+
+class Lock {
+ public:
+  Lock():holder_(0){
+    pthread_mutex_init(&amp;lock_,NULL);
+  }
+  ~Lock(){
+    assert(holder_==0);
+    pthread_mutex_destroy(&amp;lock_);
+  }
+  void lock() {
+    pthread_mutex_lock(&amp;lock_);
+    holder_=syscall(__NR_gettid);
+  }
+  void unlock() {
+    holder_=0;
+    pthread_mutex_unlock(&amp;lock_);
+  }
+ private:
+  pthread_mutex_t lock_;
+  pid_t holder_;
+}; // class Lock
+
+static Lock lock;
+void* func2(void* arg){
+  printf(<span style="color: #ffff00;">"enter func2\n"</span>);
+  lock.lock();
+  while(1){
+    sleep(2);
+  }
+  lock.unlock();
+  printf(<span style="color: #ffff00;">"exit func2\n"</span>);
+  return NULL;
+}
+void* func1(void* arg){
+  printf(<span style="color: #ffff00;">"enter func1\n"</span>);
+  pthread_t tid;
+  pthread_create(&amp;tid,NULL,func2,NULL);
+  pthread_join(tid,NULL);
+  printf(<span style="color: #ffff00;">"exit func1\n"</span>);
+  return NULL;
+}
+int main() {
+  pthread_t tid;
+  pthread_create(&amp;tid,NULL,func1,NULL);
+  // wait thread func1 and func2 ready.
+  sleep(1);
+  pthread_cancel(tid);
+  pthread_join(tid,NULL);
+  printf(<span style="color: #ffff00;">"exit main\n"</span>);
+  return 0;
+}
+</pre>
+
+
+<p>
+运行结果为下
+</p>
+
+
+<pre class="example">[zhangyan04@tc-hpc-dev.tc.baidu.com]$ ./a.out
+enter func1
+enter func2
+exit main
+a.out: main.cc:17: Lock::~Lock(): Assertion `holder_==0′ failed.
+已放弃 (core dumped) 
+</pre>
+
+<p>
+可以看到func1以及func2都没有正常退出，但是main函数是正常退出。main函数正常退出的话就会尝试析构全局这个lock对象，而这个lock对象在func2被持有。这就是外部干扰线程的结果。
+</p>
+<p>
+<b>对于这个问题解决办法非常简单，就是外部设置退出标记，然后线程去检测这个退出标记的置位，然后让这个线程自己决定如何退出。所以对于线程控制的话，我们更应该使用一种cooperative而不是preemptive的方式来达到。</b>
+</p>
 </div>
 </div>
 </div>
@@ -9797,7 +9866,7 @@ child about to exit
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-27 22:55:41 CST</p>
+<p class="date">Date: 2012-08-29 16:56:36 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

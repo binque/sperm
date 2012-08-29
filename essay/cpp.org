@@ -358,3 +358,293 @@ main.cc:5: error: size of array `STATIC_ASSERT_FAILED_int_MUST_BE_8_BYTES’ is 
 
 当然错误信息并不是非常的优美，但是已经提供了足够多的信息了。不过这种编译断言可能只是比较适合用于简单断言比如sizeof等，对于复杂断言话可能还是需要依赖于configure这种工具比如系统是否有libunwind库。
 
+** boost::function和boost::bind
+之前看到陈硕同学在[[http://blog.csdn.net/solstice/][博客]] 给出的C++工程实践推荐，使用boost::function和boost::bind代替虚函数。之所以我们需要使用虚函数，无非就是希望统一执行接口。统一接口通过虚函数是一种方法，而使用boost::function和boost::bind也可以达到相同的目的。
+
+首先我们假设存在一个Executor类，里面有一个执行队列，所有的Task首先被push进来然后遍历执行。对于这个Task我们本身只需要一个执行接口void fun(Executor*).如果通过虚函数实现的话，我们需要定义一个abstract class含有virtual函数，然后在具体的类里面实现它。但是如果很不幸的话我们原本定义的类不是这样的，而是
+#+BEGIN_SRC C++
+class A{
+ public:
+  void fun(Executor* x,std::string s){
+    std::cout << "executor=" << x << ", s=" << s << std::endl;
+  }
+}; // class A
+
+class B{
+ public:
+  void fun(Executor* x,int s){
+    std::cout << "executor=" << x << ", s=" << s << std::endl;
+  }
+}; // class B
+#+END_SRC
+
+那我们必须重新定义AdapterA以及AdapterB封装一下。实现上可能非常简单，内部存下std::string以及int的内容，外加一个A,B的指针，在fun里面调用A,B的fun实现并且把内容传进去调用。
+
+这是一种蹩脚的方法，类的个数会急剧膨胀。但是如果我们使用boost::function和boost::bind的话，可以不用添加新的Adapter类来解决这个问题。
+#+BEGIN_SRC C++
+  x.push(boost::bind(&A::fun,&a,_1,"hello"));
+  x.push(boost::bind(&A::fun,&a,_1,"world"));
+  x.push(boost::bind(&B::fun,&b,_1,123));
+  x.push(boost::bind(&B::fun,&b,_1,456));
+#+END_SRC
+
+这里_1是boost::bind导出的符号表示占位符，这个参数表示接口中的第一个参数，这里不进行绑定。第一个参数表示函数地址，如果是成员函数的话那么需要传入对象地址（这里对于对象内存管理的话，可能需要智能指针的帮助。可以参考http://xuchaoqian.com/?p=797)。事实上稍微猜想一下boost::function和boost::bind实现，boost::function用于产生新的类型，boost::bind用于产生这个类型的对象，并且将指针以及所需要的closure context都绑定上去。我本来想实现的，但是发现基于模板的元编程，我确实不会:(
+
+----------
+
+之后我在想，虽然这个方式不错消除继承完全按照基于对象的方式编程，但是如果对于对象所需要的接口非常多的话，并且虚函数本身就是语言内置的特性，相对来说使用起来会更加方便。下面是可编译的示例代码之后我在想，虽然这个方式不错消除继承完全按照基于对象的方式编程，但是如果对于对象所需要的接口非常多的话，并且虚函数本身就是语言内置的特性，相对来说使用起来会更加方便。下面是可编译的示例代码
+#+BEGIN_SRC C++
+/*
+ * Copyright (C) dirlt
+ */
+
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+#include <queue>
+#include <string>
+#include <iostream>
+
+class Executor {
+  typedef boost::function<void(Executor*,int)> Callable;
+  typedef std::queue<Callable> Q;
+ public:
+  void push(Callable c){
+    q_.push(c);
+  }
+  void run() {
+    while(!q_.empty()){
+      Callable c=q_.front();
+      q_.pop();
+      c(this,1);
+    }
+  }
+ private:
+  Q q_;
+}; // class Executor
+
+class A{
+ public:
+  void fun(Executor* x,std::string s,int){
+    std::cout << "executor=" << x << ", s=" << s << std::endl;
+  }
+}; // class A
+
+class B{
+ public:
+  void fun(Executor* x,int s,int){
+    std::cout << "executor=" << x << ", s=" << s << std::endl;
+  }
+}; // class B
+
+int main() {
+  Executor x;
+  A a;
+  B b;
+  x.push(boost::bind(&A::fun,&a,_1,"hello",_2));
+  x.push(boost::bind(&A::fun,&a,_1,"world",_2));
+  x.push(boost::bind(&B::fun,&b,_1,123,_2));
+  x.push(boost::bind(&B::fun,&b,_1,456,_2));
+  x.run();
+  return 0;
+}
+#+END_SRC
+
+** 试用boost::spirit
+今天被Dr. Yang推荐使用boost::spirit，模板编程实现的语法解析器。Dr. Yang推荐我看看hypertable里面实现的hql，里面就是使用spirit实现的hql(hypertable query language)，在src/cc/Hypertable/Lib/HqlParser.h里面。粗看一下功能还是非常强大的，对于很多使用flex/bison完成的工作都可以通过spirit来完成。看上去是LALR解析器，现在不太清楚就是如果出现shift/reduce或者是reduce/reduce冲突的话spirit是怎么解决的。NOTE(dirlt):事实上是LL解析器，而且如果没有猜错应该是LL(1)解析器。
+
+对于action的话需要单独编写function object来完成，operator()是这个grammar对应的字符串。定义ParserState来构建语法树是一个好主意。对于里面更多的细节现在还是不太了解，关于入门使用可以查看代码中的链接或者documentation.
+#+BEGIN_EXAMPLE
+/* coding:utf-8
+ * Copyright (C) dirlt
+ */
+
+// http://www.ibm.com/developerworks/cn/aix/library/au-boost_parser/
+#include <iostream>
+#include <string>
+#include <boost/spirit.hpp>
+using namespace boost::spirit;
+
+struct ParserState {
+  std::string name;
+}; // class ParserState
+
+
+struct set_name {
+  set_name(ParserState& state):state(state){}
+  void operator()(char const* s,char const* e) const{
+    state.name.assign(s,e);
+  }
+  ParserState& state;
+};
+
+struct Parser : public grammar< Parser >{
+  Parser(ParserState& state):state(state) {}
+  template< typename ScannerT >
+  struct definition {
+    definition(Parser const& self){
+      keywords = ""; // define keywords.
+      typedef strlit<> Token; // case sensitive
+      // typedef inhibit_case< strlit<> > Token // case insensitive
+      Token MY = "my";
+      Token NAME = "name";
+      Token IS = "is";
+      chlit<> DOUBLEQUOTE('"');
+
+      // grammers.
+      identifier = lexeme_d[(alpha_p >> *(alnum_p | '_')) - (keywords)];
+      string_literal = lexeme_d[DOUBLEQUOTE >> +(anychar_p - chlit<>('"')) >> DOUBLEQUOTE];
+      statement = MY >> NAME >> IS >> string_literal[set_name(self.state)];      
+    }
+    // entry.
+    rule< ScannerT> const& start() const {
+      return statement;
+    }
+    symbols<> keywords;
+    rule< ScannerT> statement,
+      identifier,
+      string_literal;
+  }; // class definition
+  ParserState& state;
+}; // class Parser
+
+int main ()
+{
+  std::string input="my name is \"lilei\"";
+  ParserState state;
+  Parser parser(state);
+  parse_info<> info=parse(input.c_str(),parser,space_p);
+  if(info.full){
+    printf("%s\n",state.name.c_str());
+  }
+  return 0;
+}
+#+END_EXAMPLE
+
+** google::protobuf动态编译
+使用google::protobuf如果我们不知道生成消息schema的话，那么就需要依赖于google::protobuf动态编译的能力了。google::protobuf支持动态地读取某个proto文件并且进行动态编译。其实这里说编译有点不太恰当，因为内部并没有生成native code,不过确实使得我们有能力去动态构造一个消息。
+
+使用动态编译的话，首先需要了解google::protobuf的反射能力，这个网上有很多关于这方面的文章，这里就不赘述。为了更好地管理动态编译代码，我单独提取了一个类ProtoDynamic，关于里面使用的类可以去阅读protobuf官方网站的documentation，大致使用到了：
+   - SourceTree/DiskSourceTree（当然自己实现SourceTree接口从内存读取Source.MemorySourceTree)
+   - Importer
+   - DynamicMessageFactory
+然后就是一些涉及到反射的类（不完全）：
+   - FileDescriptor
+   - Descriptor
+   - DescriptorPool
+   - MessageFactory
+   - Message
+   - Reflection
+   - FieldDescriptor
+
+----------
+首先看看封装之后的类
+#+BEGIN_SRC C++
+/* coding:utf-8
+ * Copyright (C) dirlt
+ */
+
+#ifndef __SPERM_CC_COMMON_PROTO_DYNAMIC_H__
+#define __SPERM_CC_COMMON_PROTO_DYNAMIC_H__
+
+#include <iostream>
+#include <google/protobuf/descriptor.h>
+#include <google/protobuf/compiler/importer.h>
+#include <google/protobuf/dynamic_message.h>
+
+namespace common {
+
+// ------------------------------------------------------------
+// simplify usage of dynamic message in protobuf.
+class ProtoDynamic:
+  public google::protobuf::compiler::MultiFileErrorCollector {
+public:
+  ProtoDynamic(): importer_(&tree_, this) {
+    tree_.MapPath("/", "/"); // absolute path.
+    tree_.MapPath("", "."); // default starts with current directory.
+  }
+  virtual ~ProtoDynamic() {}
+  virtual void AddError(const std::string& filename,
+                        int line, int column,
+                        const std::string& message) {
+    std::cerr << filename << '@' << line << ',' << column
+              << ':' << message << std::endl;
+  }
+  const google::protobuf::FileDescriptor* import(const std::string& filename) {
+    return importer_.Import(filename);
+  }
+  const google::protobuf::Descriptor* findMessageTypeByName(
+    const google::protobuf::FileDescriptor* fd,
+    const std::string& name) const {
+    return fd->pool()->FindMessageTypeByName(name);
+  }
+  google::protobuf::MessageFactory* newMessageFactory(
+    const google::protobuf::FileDescriptor* fd) const {
+    return new google::protobuf::DynamicMessageFactory(fd->pool());
+  }
+  void deleteMessageFactory(google::protobuf::MessageFactory* factory) const {
+    delete factory;
+  }
+private:
+  google::protobuf::compiler::DiskSourceTree tree_;
+  google::protobuf::compiler::Importer importer_;
+}; // class ProtoDynamic
+
+} // namespace common
+
+#endif // __SPERM_CC_COMMON_PROTO_DYNAMIC_H__
+#+END_SRC
+
+----------
+然后看看如何使用。假设我们存在一个proto文件
+#+BEGIN_EXAMPLE
+package sample;
+    message Session {
+    optional string user=1;
+    optional string passwd=2;
+}; 
+#+END_EXAMPLE
+
+然后我们使用下面代码来验证动态编译的功能。在得到MessageFactory以及Descriptor之后的话代码就非常好写了。
+
+#+BEGIN_SRC C++
+/* coding:utf-8
+ * Copyright (C) dirlt
+ */
+
+#include <cassert>
+#include "common/proto_dynamic.h"
+#include "sample.pb.h"
+
+using namespace google::protobuf;
+using namespace google::protobuf::compiler;
+using namespace common;
+using namespace sample;
+
+int main() {
+  std::string data;
+  {
+    // create message dynamicly.
+    ProtoDynamic dynamic;
+    const FileDescriptor* fd = dynamic.import("sample.proto");
+    assert(fd);
+    const Descriptor* desc = dynamic.findMessageTypeByName(fd, "sample.Session");
+    assert(desc);
+    MessageFactory* factory = dynamic.newMessageFactory(fd);
+    Message* msg = factory->GetPrototype(desc)->New();
+    const Reflection* reflection = msg->GetReflection();
+    assert(reflection);
+
+    reflection->SetString(msg, desc->FindFieldByName("user"), "dirlt");
+    reflection->SetString(msg, desc->FindFieldByName("passwd"), "fuck");
+    msg->SerializeToString(&data);
+  }
+  {
+    Session session;
+    session.ParseFromString(data);
+    assert(strcmp(session.user().c_str(), "dirlt") == 0);
+    assert(strcmp(session.passwd().c_str(), "fuck") == 0);
+  }
+  return 0;
+}
+#+END_SRC
+

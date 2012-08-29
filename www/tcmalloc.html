@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="tcmalloc"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-23 23:11:47 CST"/>
+<meta name="generated" content="2012-08-29 16:56:23 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -169,6 +169,11 @@
 <li><a href="#sec-1-5-4">1.5.4 HeapChecker</a></li>
 <li><a href="#sec-1-5-5">1.5.5 HeapProfiler</a></li>
 <li><a href="#sec-1-5-6">1.5.6 CPUProfiler</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-6">1.6 Discussion</a>
+<ul>
+<li><a href="#sec-1-6-1">1.6.1 tcmalloc中的 MmapSysAllocator::Alloc 疑问(nwlzee)</a></li>
 </ul>
 </li>
 </ul>
@@ -2773,13 +2778,114 @@ inline void do_free(void* ptr) {
 </p>
 </div>
 </div>
+
+</div>
+
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> Discussion</h3>
+<div class="outline-text-3" id="text-1-6">
+
+
+</div>
+
+<div id="outline-container-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> tcmalloc中的 MmapSysAllocator::Alloc 疑问(nwlzee)</h4>
+<div class="outline-text-4" id="text-1-6-1">
+
+<p><b>Question</b> 
+</p>
+
+
+
+<pre class="example">您好，我看到这函数有点不了解。
+在MmapSysAllocator::Alloc 中：
+
+// 。。。
+  if ((ptr &amp; (alignment - 1)) != 0) {
+    adjust = alignment - (ptr &amp; (alignment - 1));
+  }
+
+  // Return the unused memory to the system
+  if (adjust &gt; 0) {
+    munmap(reinterpret_cast&lt;void*&gt;(ptr), adjust);
+  }
+  if (adjust &lt; extra) {
+    munmap(reinterpret_cast&lt;void*&gt;(ptr + adjust + size), extra - adjust);
+  }
+
+  ptr += adjust;
+  return reinterpret_cast&lt;void*&gt;(ptr);
+
+我从man 手册知道munmap 是以page 单位大小释放的内存的，
+当 munmap(reinterpret_cast&lt;void*&gt;(ptr), adjust); 释放adjust所
+包含的页了，则返回 ptr += adjust (可能指向刚才释放的页中某一地址)，这地址ptr不是无效了？
+</pre>
+
+
+
+<hr/>
+
+<p>
+<b>Answer</b>
+</p>
+<p>
+看看MmapSysAllocator::Alloc这个函数吧，假设这里的alignment==page_size的情况的话，
+</p><ol>
+<li>extra = alignment - pagesize; 所以extra==0
+</li>
+<li>ptr肯定和page_size对齐，因此adjust==0
+</li>
+</ol>
+
+<p>所以你可以看到其实两个分支都没有走到的。
+</p>
+<p>
+其实在实际使用的时候alignment通常也是page_size的倍数。如果alignment==k*page_size的话，你会发现
+</p><ol>
+<li>extra也是page_size倍数
+</li>
+<li>adjust也是page_size倍数
+</li>
+</ol>
+
+<p>因此在munmap的时候不会存在跨越page_size边界这样的问题的。
+</p>
+<p>
+最后你看看tcmalloc是怎么使用MmapSysAllocator对象的。相信你也看得非常仔细，tcmalloc是 DefaultSysAllocator创建两个对象
+</p><ol>
+<li>SbrkSysAllocator
+</li>
+<li>MmapSysAllocator
+</li>
+</ol>
+
+<p>你看看DefaultSysAllocator调用情况，
+</p>
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; grep "TCMalloc_SystemAlloc" *
+common.cc:  void* result = TCMalloc_SystemAlloc(bytes, NULL);
+page_heap.cc:#include "system-alloc.h"      // for TCMalloc_SystemAlloc, etc
+page_heap.cc:  void* ptr = TCMalloc_SystemAlloc(ask &lt;&lt; kPageShift, &amp;actual_size, kPageSize);
+page_heap.cc:      ptr = TCMalloc_SystemAlloc(ask &lt;&lt; kPageShift, &amp;actual_size, kPageSize);
+system-alloc.cc:  // This doesn't overflow because TCMalloc_SystemAlloc has already
+system-alloc.cc:    // NOTE: not a devmem_failure - we'd like TCMalloc_SystemAlloc to
+system-alloc.cc:void* TCMalloc_SystemAlloc(size_t size, size_t *actual_size,
+system-alloc.h:extern void* TCMalloc_SystemAlloc(size_t bytes, size_t *actual_bytes,
+</pre>
+
+
+<p>
+你会看到实际上调用TCMalloc_SystemAlloc时候，alignment都是==kPageSize的。因此实际tcmalloc 使用时候不会出现这个问题。
+</p></div>
+</div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-23 23:11:47 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-08-29 16:56:23 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

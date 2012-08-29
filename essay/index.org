@@ -46,6 +46,7 @@
      - [[file:./coroutine.org][coroutine]] 协程
      - [[file:./lock.org][lock]] 锁
      - [[file:./continuation.org][continuation]] 延续
+     - [[file:./sysperf.org][sysperf]] 系统性能
    - [[file:fvwm.org][fvwm]] F* Virtual Windows Manager.Linux下面高度可定制化的窗口管理器。
    - [[file:./mac.org][mac]] 如何更好地使用mac。以前使用windows，后来转向ubuntu，再后来买了个air，熟悉mac又需要一段时间了。
    - [[file:./license.org][license]] 一些常见的开源协议。不知道自己以后是否可以用得上：）
@@ -113,6 +114,14 @@
      - [[file:./note/purchase-mba.org][购买MacBookAir]]
      - [[file:note/okr.org][Objectives and Key Results]]
      - [[file:note/2012-birthday.org][2012生日]]
+     - [[file:note/as-child-in-warm-house.org][温室长大的孩子]]
+     - [[file:note/how-to-apply-domain.org][如何申请域名]]
+     - [[file:note/2012-1-1-go-home.org][2012元旦回家]]
+     - [[file:note/drive-learning.org][学车经历]]
+     - [[file:note/code-for-run.org][为运行而生的代码]]
+     - [[file:note/retrospect-2011.org][回顾2011]]
+     - [[file:note/communicate-and-relationship.org][交流和关系]]
+     - [[file:note/purchase-diamond.org][购买钻戒]]
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
    - [[file:./note/travel.org][travel]] 要不读书、要不旅行。心和身体， 得有一个在路上。
    - [[file:./note/fun.org][fun]] 搞笑的文字。
