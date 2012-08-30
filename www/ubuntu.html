@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="ubuntu"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-30 09:17:03 CST"/>
+<meta name="generated" content="2012-08-31 00:34:16 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -115,6 +115,7 @@
 <li><a href="#sec-1-3">1.3 邮件客户端</a>
 <ul>
 <li><a href="#sec-1-3-1">1.3.1 配置gmail</a></li>
+<li><a href="#sec-1-3-2">1.3.2 thunderbird的Inbox文件过大</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-4">1.4 虚拟机</a>
@@ -316,6 +317,38 @@ System Settings =》 Details 里面可以设置默认浏览器。至于emacs里�
 home:http://dirlt.com
 dirtysalt1987@gmail.com
 </pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> thunderbird的Inbox文件过大</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+<ul>
+<li><a href="http://blog.tianya.cn/blogger/post_read.asp?BlogID=3802303&amp;PostID=35373429">http://blog.tianya.cn/blogger/post_read.asp?BlogID=3802303&amp;PostID=35373429</a>
+</li>
+</ul>
+
+
+<p>
+在安装新的操作系统时候，可能需要将原来的邮件全部迁移过去。thunderbird迁移邮件非常方便。在C:\Documents and Settings\\Application Data\Thunderbird\Profiles\wkq5wydz.default\Mail\ 下面会有你这个pop-server对应的文件，比如Inbox(对应thunderbird的收件箱),Drafts(对应thunderbird的草稿箱）等。将这些文件直接copy过去就OK了。不得不说这点非常方便：）
+</p>
+<p>
+但是我们会遇到一个问题就是Inbox文件太大了。而且如果我们在thunderbird下面删除收件箱里面内容的话，会发现这个Inbox文件其实没有发生变化。原因是因为thunderbird采用标记删除，所以原来的邮件内容依然是保存的（也就是说如果我们通过修改Inbox里面的标记位是可以恢复的，而且这个工作不难，因为阅读Inbox的内容就会发现里面保存的文本格式。不过谨慎选用编辑器，不要将Inbox内容全部载入不然内存会爆掉的）。 <b>解决这个问题非常简单，就是在thunderbird下面针对这个文件夹右键点击压缩。对于草稿箱和其他的文件夹是一样的操作。而且在thunderbird下面有工具-&gt;选项-&gt;高级-&gt;网络&amp;磁盘空间里面，可以选择如果超过过大的话就会进行压缩。</b>
+</p>
+<p>
+作为后端开发者，觉得thunderbird这样做是很正常的。有几种方式：
+</p><ol>
+<li>一种是用小碎片文件来解决，每个小碎片文件对应一个邮件，但是这样邮件太多的话性能和碎片会成为问题，但是增加和删除都非常方便
+</li>
+<li>另外就是使用大文件来追加写，然后针对每封邮件进行索引。索引可以保存在内存里面并且定期dump出去，启动时候检查索引是否和文件对应，不对应的话那么可能需要增量做一部分索引。但是这样删除会成为问题，标记删除可能就是最好的办法了。所以需要用户手动或者是通过程序判断磁盘文件大小来触发压缩。
+</li>
+<li>使用数据库本质上和2是一样的，只不过可以在一定程度上简化代码。在删除方便可能还是使用压缩删除。如果是我自己做的话那么可能考虑使用sqlite来做。单机可以embed,并且通过SQL来进行检索或者是其他操作。
+</li>
+</ol>
 
 
 </div>
@@ -674,7 +707,7 @@ sudo dpkg -i test.deb
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-30 09:17:03 CST</p>
+<p class="date">Date: 2012-08-31 00:34:16 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

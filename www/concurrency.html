@@ -3,11 +3,11 @@
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>zookeeper</title>
+<title>concurrency</title>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="zookeeper"/>
+<meta name="title" content="concurrency"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-31 00:34:16 CST"/>
+<meta name="generated" content="2012-08-31 00:35:24 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -91,18 +91,18 @@
 </div>
 
 <div id="content">
-<h1 class="title">zookeeper</h1>
+<h1 class="title">concurrency</h1>
 
 
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 zookeeper</a>
+<li><a href="#sec-1">1 concurrency</a>
 <ul>
-<li><a href="#sec-1-1">1.1 FAQ</a>
+<li><a href="#sec-1-1">1.1 View</a>
 <ul>
-<li><a href="#sec-1-1-1">1.1.1 部署zookeeper</a></li>
+<li><a href="#sec-1-1-1">1.1.1 Concurrency Hazards: Solving 11 Likely Problems In Your Multithreaded Code</a></li>
 </ul>
 </li>
 </ul>
@@ -112,56 +112,59 @@
 </div>
 
 <div id="outline-container-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> zookeeper</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> concurrency</h2>
 <div class="outline-text-2" id="text-1">
 
 
 </div>
 
 <div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> FAQ</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> View</h3>
 <div class="outline-text-3" id="text-1-1">
 
 
 </div>
 
 <div id="outline-container-1-1-1" class="outline-4">
-<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> 部署zookeeper</h4>
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Concurrency Hazards: Solving 11 Likely Problems In Your Multithreaded Code</h4>
 <div class="outline-text-4" id="text-1-1-1">
 
+<p><a href="http://msdn.microsoft.com/en-us/magazine/cc817398.aspx">http://msdn.microsoft.com/en-us/magazine/cc817398.aspx</a>
+</p>
+<p>
+大概有下面这几点吧：
+</p><ul>
+<li>Forgotten Synchronization（没有同步）
+</li>
+<li>Incorrect Granularity（不正确的锁粒度）
+</li>
+<li>Read and Write Tearing（逻辑上我们看上去读写一次内存，但是底层可能因为不对齐/大小原因读写两次）
+</li>
+<li>Lock-Free Reordering（里面还提到了recursive lock以及死锁问题）
+</li>
+<li>Lock Convoys（请求锁的速率高于critical section的处理速率，导致很多请求hang住。解决办法就是减少section大小和提高处理速度。这个问题完全是系统设计处理模型造成的，不过确实会造成性能问题）
+</li>
+<li>Two-Step Dance(发生的情况大致是如果A占有锁lock,但是触发事件造成B被唤醒，而B也需要lock但是没有办法占有，接着又切换回来，造成不必要的cs.不过我倒是觉得这个问题不是很常见的）
+</li>
+<li>Priority Inversion（这个完全是因为线程优先级造成的。低优先级占有lock，但是高优先级不断地被调度，但是因为lock问题没有成功，同样造成不必要的cs.感觉和上面问题倒是一样，只不过触发条件不同。个人觉得这个问题完全可以在scheduler上解决的）
+</li>
+<li>Patterns for Achieving Safety（后面三点都是关于获得thread safety的建议）
 <ul>
-<li><a href="http://blog.csdn.net/cxhzqhzq/article/details/6538491">http://blog.csdn.net/cxhzqhzq/article/details/6538491</a>
+<li>Immutablity.数据不可变性
+</li>
+<li>Purity.方法没有side-effect
+</li>
+<li>Isolation.每个线程只有自己独立的数据.
+</li>
+</ul>
+
 </li>
 </ul>
 
 
 <p>
-接触过zookeeper这么久了，自己也实现了一个同步的zookeeper client(放在github上，考虑过确实需要一个异步的zookeeper client,但是又考虑到自己对zookeeper本身就不了解，这么多触发的事件也不太清楚，所以暂时就不写了。不过异步的zkclient可以纳入itachi这个框架里面）。虽然对于paxos也不是非常了解，但是也算是大致了解吧（其实我觉得完全没有必要实现paxos,paxos只是一个general solution,对于zookeeper完全可以做一个specialized solution)。每次使用zkclient都是找别人的搭建好的集群。如果自己了解简单地部署zookeeper的话倒是可以很方便地进行单测。
+里面有几篇推荐的文章应该是值得一看的。
 </p>
-<p>
-zookeeper需要java.下载好zookeeper的package解压之后的话，在zookeeper目录下面建立data和dataLog文件夹。然后如果自己是server1的话，在data下面建立文件myid内容为1（echo "1" &gt; data/myid)(不同实例使用不同id）.对于其他机器的话也是同样的操作。然后进行conf目录（cp zoo_sample.cfg zoo.cfg)，然后修改文件
-</p>
-
-
-<pre class="example">TickTime=2000
-initLimit=5
-syncLimit=2
-dataDir=/home/ransom/zookeeper/server1/data
-dataLogDir=/home/ransom/zookeeper/server1/dataLog
-clientPort=2181 #选择服务的端口
-server.1=127.0.0.1:2888:3888 #后面这个端口范围可能是zookeeper通信的端口，可以有重叠。
-server.2=127.0.0.1:2889:3889
-server.3=127.0.0.1:2890:3890 
-
-</pre>
-
-<p>
-然后在bin目录下面使用zkServer.sh restart即可。zookeeper也配置了zkCli.sh.通过zkCli.sh -server 127.0.0.1:2181即可进行交互式的界面来查看zookeeper上面的数据。
-</p>
-
-
-
-
 </div>
 </div>
 </div>
@@ -169,7 +172,7 @@ server.3=127.0.0.1:2890:3890
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-31 00:34:16 CST</p>
+<p class="date">Date: 2012-08-31 00:35:24 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

@@ -102,4 +102,26 @@ The basic idea behind the consistent hashing algorithm is to hash both objects a
 
 一致性hash基本思想就是将所有对象都使用同样的hash函数进行hash(包括要被分布的对象，以及分布到的位置）。如果某个分布位置被移除的话，那么原本在这个位置上的对象就会分布在临近的分布位置上，而其他的对象却不用移动自己的位置。如果分布位置之间interval间隔过大的话那么可以制作virtual node来使得interval映射足够小，而这些virtual node映射到同一个node节点上面。实际上上述文章中也进行实验证明interval小的话那么standard deviations也变小了，每个node均摊的object基本均匀了：）。
 
-** 
+** 树最长距离
+树的最长距离定义为任意两个节点之间距离的最大值。咋一看这个问题，似乎就是根节点左子树高度和右子树高度之和，但是实际上可能对于子树里面可能会存在更长的距离。对于最长距离的话应该仅存在于这两者之间。
+
+#+BEGIN_SRC Python
+#!/usr/bin/env python
+#coding:utf-8
+#Copyright (C) dirlt
+
+def tree_dist(root):
+    if(not root):
+        return (0,-1,-1)
+    (a,b,c)=tree_dist(root.left)
+    (d,e,f)=tree_dist(root.right)
+    ml=max(b,c)+1
+    mr=max(e,f)+1
+    return (max(a,d,ml+mr),ml,mr)
+            
+def TreeDistance(root):
+    return tree_dist(root)[0]
+#+END_SRC
+
+对于返回元组来说的话(a,b,c)，a表示树的最长距离，b表示左子树的高度，c表示右子树的高度。
+

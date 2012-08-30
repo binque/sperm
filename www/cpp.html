@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="cpp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-30 11:58:15 CST"/>
+<meta name="generated" content="2012-08-31 00:34:32 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -111,6 +111,13 @@
 <li><a href="#sec-1-9">1.9 boost::function和boost::bind</a></li>
 <li><a href="#sec-1-10">1.10 试用boost::spirit</a></li>
 <li><a href="#sec-1-11">1.11 google::protobuf动态编译</a></li>
+<li><a href="#sec-1-12">1.12 重新认识static_cast</a>
+<ul>
+<li><a href="#sec-1-12-1">1.12.1 正确的例子</a></li>
+<li><a href="#sec-1-12-2">1.12.2 当处理多继承时</a></li>
+<li><a href="#sec-1-12-3">1.12.3 应该怎么做</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -1021,13 +1028,152 @@ int main() {
 
 
 
+
+</div>
+
+</div>
+
+<div id="outline-container-1-12" class="outline-3">
+<h3 id="sec-1-12"><span class="section-number-3">1.12</span> 重新认识static_cast</h3>
+<div class="outline-text-3" id="text-1-12">
+
+<p>学习C的时候总是认为强转不过就是二进制层面的强转。开始学习C++之后就认为C语言的强转对应的就是reinterpret_cast.而static_cast和reinterpret_cast的差别不过就是static_cast可以做一些类型上面的检查，所以在大多数的时候都习惯使用reinterpret_cast而非static_cast.直到在编写itachi（一个异步网络编程框架）的时候，才发现并不是这么回事。下面的例子是我遇到问题的一个抽象。
+</p>
+
+</div>
+
+<div id="outline-container-1-12-1" class="outline-4">
+<h4 id="sec-1-12-1"><span class="section-number-4">1.12.1</span> 正确的例子</h4>
+<div class="outline-text-4" id="text-1-12-1">
+
+
+
+
+<pre class="src src-C++">#include &lt;cstdio&gt;
+struct A{
+}; // class A
+
+struct B: public A{
+  int g;
+}; // class B
+
+void onComplete(A* o){
+  B* pb=reinterpret_cast&lt;B*&gt;(o);
+  printf(<span style="color: #ffff00;">"%p\n"</span>,&amp;(pb-&gt;g));
+}
+
+int main() {
+  B b;
+  onComplete(&amp;b);
+  printf(<span style="color: #ffff00;">"%p\n"</span>,&amp;(b.g));
+  return 0;
+}
+
+</pre>
+
+
+<p>
+运行结果是
+</p>
+
+
+<pre class="example">[dirlt@localhost ~]$ ./a.out
+0xbff031b0
+0xbff031b0 
+</pre>
+
+
+<p>
+在onComplete这里我们希望处理一个A*抽象类型。假设我们从外围上面保证传入onComplete是一个B或者是B的子类型。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-12-2" class="outline-4">
+<h4 id="sec-1-12-2"><span class="section-number-4">1.12.2</span> 当处理多继承时</h4>
+<div class="outline-text-4" id="text-1-12-2">
+
+<p>处理B类型没有问题，但是处理B的子类型的话，那么上面代码可能就会出现问题。因为对于B子类型而言的话很可能在 <b>对象模型</b> 之前添加了一些字段，按照reintrepret_cast语义的话是直接二进制映射，字段没有虚方法所以是直接按照偏移来取的，因此可能存在问题。但是看看下面这个例子
+</p>
+
+
+<pre class="src src-C++">#include &lt;cstdio&gt;
+struct A{
+}; // class A
+
+struct B: public A{
+  int g;
+}; // class B
+
+struct Holder{
+  int dummy;
+};
+struct C: public Holder,
+          public B{
+}; // class C
+
+void onComplete(A* o){
+  B* pb=reinterpret_cast&lt;B*&gt;(o);
+  printf(<span style="color: #ffff00;">"o:%p pb-&gt;g:%p\n"</span>,pb, &amp;(pb-&gt;g));
+}
+
+int main() {
+  C c;
+  onComplete(&amp;c);
+  printf(<span style="color: #ffff00;">"c:%p c.g:%p\n"</span>,&amp;c, &amp;(c.g));
+  return 0;
+}
+</pre>
+
+
+<p>
+运行结果
+</p>
+
+
+<pre class="example">[dirlt@localhost ~]$ ./a.out
+o:0xbfff9aa0 pb-&gt;g:0xbfff9aa0
+c:0xbfff9a9c c.g:0xbfff9aa0 
+</pre>
+
+
+<p>
+问题出来了，并不像我们想的那样，pb-&gt;g和c.g的地址是一样的。但是神奇的是，o和c的地址是不一样的。这是为什么呢？原因就在于static_cast.在传参的时候，根据形参和实参之间的类型信息来进行指针的转换。 <b>也就是说，static_cast能够正确处理类型系统。而这点reintrepret_cast是做不到的。</b>
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-12-3" class="outline-4">
+<h4 id="sec-1-12-3"><span class="section-number-4">1.12.3</span> 应该怎么做</h4>
+<div class="outline-text-4" id="text-1-12-3">
+
+<p><b>因为自己也缺乏C++对象模型方面的知识，所以也没有办法从底层解释原因。</b> 但是结论我想说的就是，尽量地执行static_cast而非reinterpret_cast.reinterpret_cast对于继承方面基本没有做任何事情，而使用static_cast的话则能够检测到类型系统，然后根据类型系统来进行正确的转换。 <b>要是想对于static_cast有更多认识的话，必须看看C++对象模型的实现。</b>
+</p>
+<p>
+下面我总结了一下各种cast应该使用的场景：
+</p><ol>
+<li>static_cast无论如何应该首先考虑使用，而且编译器在生成函数调用时候内部也是在用static_cast.
+</li>
+<li>reinterpret_cast只有在你确定只处理某两种final类型时候，两者之间的转换。比如在内存操作时候uint8_t*和char*之间的转换
+</li>
+<li>const_cast只有在消除const以及volatile这些标记时候有用。
+</li>
+<li>dynamic_cast得到父类型但是不确定子类型的时候，你需要逐个尝试转换可以使用。但是如果外部存在字符串比如type这样的字段表示类型的话，那么可以直接使用static_cast.
+</li>
+</ol>
+
+
+
+</div>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-30 11:58:15 CST</p>
+<p class="date">Date: 2012-08-31 00:34:32 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

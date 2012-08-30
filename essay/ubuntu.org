@@ -60,6 +60,18 @@ home:http://dirlt.com
 dirtysalt1987@gmail.com
 #+END_EXAMPLE
 
+*** thunderbird的Inbox文件过大
+   - http://blog.tianya.cn/blogger/post_read.asp?BlogID=3802303&PostID=35373429
+
+在安装新的操作系统时候，可能需要将原来的邮件全部迁移过去。thunderbird迁移邮件非常方便。在C:\Documents and Settings\\Application Data\Thunderbird\Profiles\wkq5wydz.default\Mail\ 下面会有你这个pop-server对应的文件，比如Inbox(对应thunderbird的收件箱),Drafts(对应thunderbird的草稿箱）等。将这些文件直接copy过去就OK了。不得不说这点非常方便：）
+
+但是我们会遇到一个问题就是Inbox文件太大了。而且如果我们在thunderbird下面删除收件箱里面内容的话，会发现这个Inbox文件其实没有发生变化。原因是因为thunderbird采用标记删除，所以原来的邮件内容依然是保存的（也就是说如果我们通过修改Inbox里面的标记位是可以恢复的，而且这个工作不难，因为阅读Inbox的内容就会发现里面保存的文本格式。不过谨慎选用编辑器，不要将Inbox内容全部载入不然内存会爆掉的）。 *解决这个问题非常简单，就是在thunderbird下面针对这个文件夹右键点击压缩。对于草稿箱和其他的文件夹是一样的操作。而且在thunderbird下面有工具->选项->高级->网络&磁盘空间里面，可以选择如果超过过大的话就会进行压缩。*
+
+作为后端开发者，觉得thunderbird这样做是很正常的。有几种方式：
+   1. 一种是用小碎片文件来解决，每个小碎片文件对应一个邮件，但是这样邮件太多的话性能和碎片会成为问题，但是增加和删除都非常方便
+   2. 另外就是使用大文件来追加写，然后针对每封邮件进行索引。索引可以保存在内存里面并且定期dump出去，启动时候检查索引是否和文件对应，不对应的话那么可能需要增量做一部分索引。但是这样删除会成为问题，标记删除可能就是最好的办法了。所以需要用户手动或者是通过程序判断磁盘文件大小来触发压缩。
+   3. 使用数据库本质上和2是一样的，只不过可以在一定程度上简化代码。在删除方便可能还是使用压缩删除。如果是我自己做的话那么可能考虑使用sqlite来做。单机可以embed,并且通过SQL来进行检索或者是其他操作。
+
 ** 虚拟机
 安装
    - sudo apt-get install virtualbox

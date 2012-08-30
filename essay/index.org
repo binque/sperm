@@ -9,8 +9,8 @@
 可以从我的linkedin里面看到我做过的projects。感觉自己对各方面都感兴趣，不过现在关注的主要是:
    - 计算机系统(Compute System)
    - 网络编程框架(Network Programming)
-   - 单机存储系统(Storage)
-   - 分布式实践(Distributed System)
+   - 单机存储系统(Storage System)
+   - 分布式系统(Distributed System)
    - 程序设计语言和设计模式(Programming Language and Design Pattern)
 
 我想找到自己最爱的编程语言，然后快速地写出有用的程序。(现在自认为还没有做到这点,what a shame!)
@@ -47,6 +47,7 @@
      - [[file:./lock.org][lock]] 锁
      - [[file:./continuation.org][continuation]] 延续
      - [[file:./sysperf.org][sysperf]] 系统性能
+     - [[file:concurrency.org][concurrency]] 并发
    - [[file:fvwm.org][fvwm]] F* Virtual Windows Manager.Linux下面高度可定制化的窗口管理器。
    - [[file:./mac.org][mac]] 如何更好地使用mac。以前使用windows，后来转向ubuntu，再后来买了个air，熟悉mac又需要一段时间了。
    - [[file:./license.org][license]] 一些常见的开源协议。不知道自己以后是否可以用得上：）
@@ -124,6 +125,7 @@
      - [[file:note/communicate-and-relationship.org][交流和关系]]
      - [[file:note/purchase-diamond.org][购买钻戒]]
      - [[file:note/how-to-define-software-stable.org][如何定义软件稳定]]
+     - [[file:note/take-wedding-photo.org][婚纱摄影经历]]
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
    - [[file:./note/travel.org][travel]] 要不读书、要不旅行。心和身体， 得有一个在路上。
    - [[file:./note/fun.org][fun]] 搞笑的文字。

@@ -8,7 +8,6 @@
 很早之前一直不理解内存屏障到底要解决什么问题，直到第一次编写lockfree queue的时候才稍微意识到，内存屏障这个问题在编写多线程和编写设备驱动时候需要考虑的。内存屏障有两种，一种是关于和编译器相关的内存屏障，一种是和CPU相关的内存屏障。
 
 *** 编译器内存屏障
-
 #+BEGIN_SRC C++
 // #define mfence_c() __asm__ __volatile__("": : :"memory") 
 #define barrier() __asm__ __volatile__("": : :"memory") 
@@ -36,7 +35,6 @@ int main() {
 barrier除了上面功能（强迫编译器刷新寄存器分配）之外，wyz还告诉我可能会阻止gcc进行instruction reorder.指令重排会出现很多问题。曾经在编写infpack遇到过这个问题，现在这段代码在compress.h这里，compress_uint64里面使用了mfence_c.加这个内存障碍是jjp告诉我的，当时这段代码除了问题加了这个barrier就好了，但是凭的是直觉也不太清楚为什么。
 
 *** CPU内存屏障
-
 #+BEGIN_SRC C++
 // #define mfence_x86() __asm__ __volatile__("mfence":::"memory")
 #define rmb() __asm__ __volatile__("lfence":::"memory")
@@ -67,13 +65,37 @@ barrier除了上面功能（强迫编译器刷新寄存器分配）之外，wyz�
 
 关于多核Cache一致性问题的话对于programmer这一层似乎没有必要考虑。好比线程A,B（分摊在两个core和两个cpu cache上）共同操作同一个volatile bool flag.如果A将flag置为true的话，如果CPU底层不做好一致性协议的话，那么线程B可能就永远没有办法感知到这个值了（因为线程B每次都是从所在的CPU Cache来读取的，而从线程B所在CPU Cache每次读取的都是旧值）。而且如果是这样的话，对programmer负担很大，就是写完一次多核变量的话必须显示地调用Cache一致性函数（太麻烦了）。但是为了高效的话，搞不好会存在这样的CPU要求programmer显示地来控制CPU Cache以便提高效率。但是现在所接触到的Intel CPU底层都是会保证这点的。
 
-** Page Cache和Buffer Cache的区别
+*** 再谈内存屏障
+最近又有同事(wangyuanzheng)问起这个问题，提出了一些不同的看法。所以我重新看了一下以前文章里面留下的链接，并且大致地阅读了一下链接里面给出的文章，叫做《Memory Barriers a Hardware View for Software Hackers》。
+
+ps:内存模型是在是一个非常深的坑。
+   1.《Memory Consistency Models For Shared-Memory Multiprocessors》368pages
+   2.《What Every Programmer Should Know About Memory》 114pages
+身边同学对于这个问题的理解，就好像对Paxos算法的理解一样（好像现在改善了很多），大家各执一词理解不同。
+
+这篇文章从CPU Cache开始说起，然后谈到了SMP Cache一致性问题使用MESI协议来解决。然后为了提高MESI效率的话减少不必要的停顿，添加了两个设施store buffer和invalidate queue（看个一知半解吧），但是却让我明白了一个问题。 *所谓CPU上面的内存屏障，并不是为了解决CPU乱序执行出现的问题，而是因为SMP Cache一致性问题不完善的解决方案而导致每个CPU对于memory perspective/visibility不同* 。对于代码来说，会出现三种order:
+   1. program order.这个就是我们programmer认为代码应该执行的顺序。
+   2. executive order.这个是在compiler进行instruction reorder之后，代码应该执行的顺序。在这里CPU乱序执行是无关的，对我们来说是透明的。
+   3. perspective order.这个是以user来说所看到的执行顺序。
+
+对于perspective order这里想说一个哲学问题。其实对于user也不知道最终执行顺序是什么，而是根据内存的状态来推测最终执行顺序是什么。就好比下面这段代码，假设a=b=0
+#+BEGIN_EXAMPLE
+CPU0 a=1
+CPU1 b=a+1
+#+END_EXAMPLE
+如果结果a=1,b=2的话，那我们会想当然地认为CPU0先执行而CPU1后执行。如果a=1,b=1的话，那么我们会想当然地认为CPU1先执行而CPU0后执行。对于user来说不关注CPU是怎么来执行的，而是通过外部状态的表现（File,Disk,Memory,Log）等来判断程序是否按照我所认为的program order执行。
+
+这里引用《Memory Barriers a Hardware View for Software Hackers》的一段话作为结尾：
+#+BEGIN_VERSE
+Many CPU architectures therefore provide weaker memory-barrier instructions that do only one or the other of these two. Roughly speaking, a “read mem-ory barrier” marks only the invalidate queue and a “write memory barrier” marks only the store buffer. while a full-fledged memory barrier does both.
+
+The effect of this is that a read memory barrier orders only loads on the CPU that executes it, so that all loads preceding the read memory barrier will appear to have completed before any load following the read memory barrier. Similarly, a write memory barrier orders only stores, again on the CPU that executes it, and again so that all stores preceding the write memory barrier will appear to have com-pleted before any store following the write memory barrier. A full-fledged memory barrier orders both loads and stores, but again only on the CPU execut-ing the memory barrier. 
+#+END_VERSE
+
+** Page Cache and Buffer Cache
 http://www.penglixun.com/tech/system/the_diffrents_of_page_cache_and_buffer_cache.html
 
 磁盘的操作有逻辑级（文件系统）和物理级（磁盘块），这两种Cache就是分别缓存逻辑和物理级数据的。假设我们通过文件系统操作文件，那么文件将被缓存到Page Cache，如果需要刷新文件的时候，Page Cache将交给Buffer Cache去完成，因为Buffer Cache就是缓存磁盘块的。也就是说，直接去操作文件，那就是Page Cache区缓存，用dd等命令直接操作磁盘块，就是Buffer Cache缓存的东西。
-
-
-
 
 ** Page Fault
 Wikipedia http://en.wikipedia.org/wiki/Page_fault

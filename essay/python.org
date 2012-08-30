@@ -40,3 +40,49 @@ def toLocal(s):
 转换到本地的话，我们唯一不确定的就是本地是utf8格式还是gb2312格式。可以通过尝试打开一个文件来判断，其中22是errno.EINVAL的错误编码。
 如果字符编码错误的话，那么返回的就是invalid argument的错误，同样会存在一定错误机率（但是不大）。出现错误几率的原因就是这些码点，使用
 gb2312可以正常解释，使用utf8也可以正常解释。
+
+** wsgi
+wsgi(web server gateway interface)定义了一个webserver的标准编程接口，对于coder来说只需要实现这个接口，然后可以选择外部其他的framework（比如gunicore），就可以将webserver运行起来了。下面是一个参考代码
+#+BEGIN_SRC Python
+def logic(environ,start_response):    
+    start_response('200 OK', # status code
+                   [('Content-type','text/plain')]) # header
+    return ("OK",)
+#+END_SRC
+对于logic需要处理两个参数：
+   - environ 表示环境变量，对于get/post请求数据都会放在这里.下面是常用的环境
+     - PATH_INFO // 请求path
+     - REQUEST_METHOD // 请求方法 GET/POST
+     - CONTENT_LENGTH // 
+     - QUERY_STRING // path后面接的query，可以使用cgi.parse_qs来进行解析
+       - cgi.parse_qs解析后的结果就是dict
+       - 如果dict同一个key出现多次的话会以数组方式保留
+     - wsgi.input // 可以读取POST数据
+   - start_response 表示一个continuation，恢复status code以及header
+
+之后我们只需要选择一个合适的框架就可以运行起来了。python内置了一个wsgi framework。这里的validator可以帮助外围做一些验证。
+#+BEGIN_SRC Python
+def run():
+    vlogic=validator(logic)
+    httpd = make_server('', 8000, vlogic)
+    httpd.serve_forever()
+#+END_SRC
+
+内置framework使用的是单进程启动模式，但是我们也可以很容易地修改成为多进程模式。不过更好的方式就是利用已有的webserver framework比如gunicore。假设上面的文件为x.py,那么使用下面方式启动即可
+#+BEGIN_EXAMPLE
+[dirlt@compaq-pc] > gunicorn -w 4 x:logic
+2012-08-30 23:18:59 [16116] [INFO] Starting gunicorn 0.13.4
+2012-08-30 23:18:59 [16116] [INFO] Listening at: http://127.0.0.1:8000 (16116)
+2012-08-30 23:18:59 [16116] [INFO] Using worker: sync
+2012-08-30 23:18:59 [16119] [INFO] Booting worker with pid: 16119
+2012-08-30 23:18:59 [16120] [INFO] Booting worker with pid: 16120
+2012-08-30 23:18:59 [16122] [INFO] Booting worker with pid: 16122
+2012-08-30 23:18:59 [16121] [INFO] Booting worker with pid: 16121
+^C2012-08-30 23:19:09 [16120] [INFO] Worker exiting (pid: 16120)
+2012-08-30 23:19:09 [16116] [INFO] Handling signal: int
+2012-08-30 23:19:09 [16119] [INFO] Worker exiting (pid: 16119)
+2012-08-30 23:19:09 [16122] [INFO] Worker exiting (pid: 16122)
+2012-08-30 23:19:09 [16121] [INFO] Worker exiting (pid: 16121)
+2012-08-30 23:19:09 [16116] [INFO] Shutting down: Master
+#+END_EXAMPLE
+

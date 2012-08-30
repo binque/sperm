@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="memory"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-30 09:17:10 CST"/>
+<meta name="generated" content="2012-08-31 00:34:28 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -104,9 +104,10 @@
 <ul>
 <li><a href="#sec-1-1-1">1.1.1 编译器内存屏障</a></li>
 <li><a href="#sec-1-1-2">1.1.2 CPU内存屏障</a></li>
+<li><a href="#sec-1-1-3">1.1.3 再谈内存屏障</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-2">1.2 Page Cache和Buffer Cache的区别</a></li>
+<li><a href="#sec-1-2">1.2 Page Cache and Buffer Cache</a></li>
 <li><a href="#sec-1-3">1.3 Page Fault</a></li>
 </ul>
 </li>
@@ -146,7 +147,6 @@
 <div id="outline-container-1-1-1" class="outline-4">
 <h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> 编译器内存屏障</h4>
 <div class="outline-text-4" id="text-1-1-1">
-
 
 
 
@@ -195,7 +195,6 @@ barrier除了上面功能（强迫编译器刷新寄存器分配）之外，wyz�
 
 
 
-
 <pre class="src src-C++">// #define mfence_x86() __asm__ __volatile__(<span style="color: #ffff00;">"mfence"</span>:::<span style="color: #ffff00;">"memory"</span>)
 #define rmb() __asm__ __volatile__(<span style="color: #ffff00;">"lfence"</span>:::<span style="color: #ffff00;">"memory"</span>)
 #define wmb() __asm__ __volatile__(<span style="color: #ffff00;">"sfence"</span>:::<span style="color: #ffff00;">"memory"</span>)
@@ -232,12 +231,62 @@ barrier除了上面功能（强迫编译器刷新寄存器分配）之外，wyz�
 关于多核Cache一致性问题的话对于programmer这一层似乎没有必要考虑。好比线程A,B（分摊在两个core和两个cpu cache上）共同操作同一个volatile bool flag.如果A将flag置为true的话，如果CPU底层不做好一致性协议的话，那么线程B可能就永远没有办法感知到这个值了（因为线程B每次都是从所在的CPU Cache来读取的，而从线程B所在CPU Cache每次读取的都是旧值）。而且如果是这样的话，对programmer负担很大，就是写完一次多核变量的话必须显示地调用Cache一致性函数（太麻烦了）。但是为了高效的话，搞不好会存在这样的CPU要求programmer显示地来控制CPU Cache以便提高效率。但是现在所接触到的Intel CPU底层都是会保证这点的。
 </p>
 </div>
+
+</div>
+
+<div id="outline-container-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> 再谈内存屏障</h4>
+<div class="outline-text-4" id="text-1-1-3">
+
+<p>最近又有同事(wangyuanzheng)问起这个问题，提出了一些不同的看法。所以我重新看了一下以前文章里面留下的链接，并且大致地阅读了一下链接里面给出的文章，叫做《Memory Barriers a Hardware View for Software Hackers》。
+</p>
+<p>
+ps:内存模型是在是一个非常深的坑。
+   1.《Memory Consistency Models For Shared-Memory Multiprocessors》368pages
+   2.《What Every Programmer Should Know About Memory》 114pages
+身边同学对于这个问题的理解，就好像对Paxos算法的理解一样（好像现在改善了很多），大家各执一词理解不同。
+</p>
+<p>
+这篇文章从CPU Cache开始说起，然后谈到了SMP Cache一致性问题使用MESI协议来解决。然后为了提高MESI效率的话减少不必要的停顿，添加了两个设施store buffer和invalidate queue（看个一知半解吧），但是却让我明白了一个问题。 <b>所谓CPU上面的内存屏障，并不是为了解决CPU乱序执行出现的问题，而是因为SMP Cache一致性问题不完善的解决方案而导致每个CPU对于memory perspective/visibility不同</b> 。对于代码来说，会出现三种order:
+</p><ol>
+<li>program order.这个就是我们programmer认为代码应该执行的顺序。
+</li>
+<li>executive order.这个是在compiler进行instruction reorder之后，代码应该执行的顺序。在这里CPU乱序执行是无关的，对我们来说是透明的。
+</li>
+<li>perspective order.这个是以user来说所看到的执行顺序。
+</li>
+</ol>
+
+
+<p>
+对于perspective order这里想说一个哲学问题。其实对于user也不知道最终执行顺序是什么，而是根据内存的状态来推测最终执行顺序是什么。就好比下面这段代码，假设a=b=0
+</p>
+
+
+<pre class="example">CPU0 a=1
+CPU1 b=a+1
+</pre>
+
+<p>
+如果结果a=1,b=2的话，那我们会想当然地认为CPU0先执行而CPU1后执行。如果a=1,b=1的话，那么我们会想当然地认为CPU1先执行而CPU0后执行。对于user来说不关注CPU是怎么来执行的，而是通过外部状态的表现（File,Disk,Memory,Log）等来判断程序是否按照我所认为的program order执行。
+</p>
+<p>
+这里引用《Memory Barriers a Hardware View for Software Hackers》的一段话作为结尾：
+</p>
+<p class="verse">
+Many CPU architectures therefore provide weaker memory-barrier instructions that do only one or the other of these two. Roughly speaking, a “read mem-ory barrier” marks only the invalidate queue and a “write memory barrier” marks only the store buffer. while a full-fledged memory barrier does both.<br/>
+<br/>
+The effect of this is that a read memory barrier orders only loads on the CPU that executes it, so that all loads preceding the read memory barrier will appear to have completed before any load following the read memory barrier. Similarly, a write memory barrier orders only stores, again on the CPU that executes it, and again so that all stores preceding the write memory barrier will appear to have com-pleted before any store following the write memory barrier. A full-fledged memory barrier orders both loads and stores, but again only on the CPU execut-ing the memory barrier. <br/>
+</p>
+
+
+</div>
 </div>
 
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Page Cache和Buffer Cache的区别</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Page Cache and Buffer Cache</h3>
 <div class="outline-text-3" id="text-1-2">
 
 <p><a href="http://www.penglixun.com/tech/system/the_diffrents_of_page_cache_and_buffer_cache.html">http://www.penglixun.com/tech/system/the_diffrents_of_page_cache_and_buffer_cache.html</a>
@@ -245,9 +294,6 @@ barrier除了上面功能（强迫编译器刷新寄存器分配）之外，wyz�
 <p>
 磁盘的操作有逻辑级（文件系统）和物理级（磁盘块），这两种Cache就是分别缓存逻辑和物理级数据的。假设我们通过文件系统操作文件，那么文件将被缓存到Page Cache，如果需要刷新文件的时候，Page Cache将交给Buffer Cache去完成，因为Buffer Cache就是缓存磁盘块的。也就是说，直接去操作文件，那就是Page Cache区缓存，用dd等命令直接操作磁盘块，就是Buffer Cache缓存的东西。
 </p>
-
-
-
 </div>
 
 </div>
@@ -270,7 +316,7 @@ Page Fault分为两种，minor fault和major fault，触发时机都是在进程
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-30 09:17:10 CST</p>
+<p class="date">Date: 2012-08-31 00:34:28 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

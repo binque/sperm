@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="切换回windows"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-23 23:12:43 CST"/>
+<meta name="generated" content="2012-08-31 00:34:35 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -112,7 +112,7 @@
 前几天<a href="struggle-with-ubuntu.html">折腾了Ubuntu</a> ，决定还是装回Windows.但是我昨天安装Windows也是同样的扯淡（不过相比安装Ubuntu来说的话这个淡扯得相对小了一些）。
 </p>
 <p>
-我的笔记本是<a href="http://detail.zol.com.cn/notebook/index172346.shtml">这个型号</a> 的，之前在<a href="purchase-compaq-notebook.html">这里</a> 也写过购买过程。之前使用的是Vista,但是听同事说这个算是Windows一个过渡系统，为了不让操作系统给笔记本带来太多负担，所以打算安装XP.在VeryCD上面下载了一个XP SP3 MSDN ISO,用UltraISO安装到了U盘上面，但是死活引导不起来。听同事说这个是因为XP并不能够很好地使用U盘安装，必须使用WinToFlash这样的工具将ISO内容写入到U盘上面。折腾了两个小时，终于弄好U盘了。插上去，我擦，XP提示“不识别大容量硬盘”。感觉是不是因为原来Ubuntu上面是ext3/ext4文件格式不识别，所以又安装了一个WinPE准备做fdisk.但是网络上的WinPE死活用不了。想到一个办法，用同事的Win7的USB安装盘首先格式化硬盘，然后再安装XP.我擦，有这么曲线救国的吗！！！Win7会分出一个100MB的空间专门留作系统内部使用，对于有洁癖的人来说是不可接受的。我也算是半个洁癖的人，但是被Ubuntu折腾之后，寻思还是先搞定问题起吧。不幸的是曲线救国并没有成功，XP依然提示”不识别大容量硬盘”.最后问同学才知道，原版的SP3是不支持SATA硬盘的。我配置的硬盘从BIOS里面看是wdc wd2500bevt-60ZCT1（西部数据，SATA).网上流传说可以通过设置IDE兼容模式来解决这个问题，但是天啊，我的BIOS非常简单根本就没有这个选项。我哭了。最后同事问我”那你以前是安装什么系统”，”Vista”，”那你可以直接安装Win7.至少Win7比Vista耗更少资源，因为Vista可以说是XP-&gt;Win7的过渡版本”.不知道同事是安慰我还是事实就是这样，我决定回家还是安装Win7吧。安装Win7确实非常方便.只不过安装完了之后还需要弄一些软件，但是弄这些软件比在Ubuntu下面弄这些软件容易多了。另外就是Win7有的是64bit的，先看看自己的CPU是否是64位，我的是<a href="http://detail.zol.com.cn/214/213591/param.shtml">Core2 Duo T6400</a>是64位处理器
+我的笔记本是<a href="http://detail.zol.com.cn/notebook/index172346.shtml">这个型号</a> 的，之前在<a href="purchase-compaq-notebook.html">这里</a> 也写过购买过程。之前使用的是Vista,但是听同事说这个算是Windows一个过渡系统，为了不让操作系统给笔记本带来太多负担，所以打算安装XP.在VeryCD上面下载了一个XP SP3 MSDN ISO,用UltraISO安装到了U盘上面，但是死活引导不起来。听同事说这个是因为XP并不能够很好地使用U盘安装，必须使用WinToFlash这样的工具将ISO内容写入到U盘上面。折腾了两个小时，终于弄好U盘了。插上去，我擦， <b>XP提示“不识别大容量硬盘”</b> 。感觉是不是因为原来Ubuntu上面是ext3/ext4文件格式不识别，所以又安装了一个WinPE准备做fdisk.但是网络上的WinPE死活用不了。想到一个办法，用同事的Win7的USB安装盘首先格式化硬盘，然后再安装XP. <b>我擦，有这么曲线救国的吗！！！</b> Win7会分出一个100MB的空间专门留作系统内部使用，对于有洁癖的人来说是不可接受的。我也算是半个洁癖的人，但是被Ubuntu折腾之后，寻思还是先搞定问题起吧。不幸的是曲线救国并没有成功，XP依然提示”不识别大容量硬盘”.最后问同学才知道，原版的SP3是不支持SATA硬盘的。我配置的硬盘从BIOS里面看是wdc wd2500bevt-60ZCT1（西部数据，SATA).网上流传说可以通过设置IDE兼容模式来解决这个问题，但是天啊，我的BIOS非常简单根本就没有这个选项。我哭了。最后同事问我”那你以前是安装什么系统”，”Vista”，”那你可以直接安装Win7.至少Win7比Vista耗更少资源，因为Vista可以说是XP-&gt;Win7的过渡版本”.不知道同事是安慰我还是事实就是这样，我决定回家还是安装Win7吧。安装Win7确实非常方便.只不过安装完了之后还需要弄一些软件，但是弄这些软件比在Ubuntu下面弄这些软件容易多了。另外就是Win7有的是64bit的，先看看自己的CPU是否是64位，我的是<a href="http://detail.zol.com.cn/214/213591/param.shtml">Core2 Duo T6400</a>是64位处理器
 </p>
 <p>
 我稍微总结了一下对于安装Windows之后需要安装的软件，包括下面这些（不完全，很多东西也是根据个人喜好）：
@@ -176,8 +176,8 @@ NOTE（dirlt@Sat Aug  4 08:24:31 2012）：其实windows安装也还是有很多
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-23 23:12:43 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-08-31 00:34:35 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

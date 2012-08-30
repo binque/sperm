@@ -4,10 +4,9 @@
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
 ** TODO 阅读完Core Java I
 ** TODO 整理blog
-    - http://dirlt.com/blog/?paged=19
-** TODO git stash save/pop
-** TODO python wsgi
+    - http://dirlt.com/blog/?paged=15
 ** TODO http://www.systemswemake.com/
+
 ** TODO pregel
    - http://kowshik.github.com/JPregel/pregel_paper.pdf
    - JPregel @ GitHub http://kowshik.github.com/JPregel/ 
@@ -26,6 +25,4 @@
 ** TODO RSS redplanet
 ** TODO RSS system we make
 ** TODO RSS paper planes
-** TODO 看看怎么能搞起sketchup.
-** TODO 设计过滤规则描述
 ** TODO 对比HBase的get效率。
