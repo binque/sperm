@@ -8,10 +8,19 @@
 ** TODO git stash save/pop
 ** TODO python wsgi
 ** TODO http://www.systemswemake.com/
-** TODO YARN
 ** TODO pregel
+   - http://kowshik.github.com/JPregel/pregel_paper.pdf
+   - JPregel @ GitHub http://kowshik.github.com/JPregel/ 
+   - Pregel: Google’s other data-processing infrastructure  http://www.royans.net/arch/pregel-googles-other-data-processing-infrastructure/
+   - http://www.slideshare.net/shatteredNirvana/pregel-a-system-for-largescale-graph-processing
 ** TODO Percolator
+   - http://research.google.com/pubs/pub36726.html
 ** TODO dremel
+   - http://research.google.com/pubs/pub36632.html
+   - Google Dremel 原理 – 如何能3秒分析1PB http://www.yankay.com/google-dremel-rationale/
+** TODO megastore
+   - Megastore: Providing Scalable, Highly Available Storage for Interactive Services http://research.google.com/pubs/pub36971.html
+
 ** TODO kafka
 ** TODO The anatomy of google
 ** TODO RSS redplanet
@@ -20,4 +29,3 @@
 ** TODO 看看怎么能搞起sketchup.
 ** TODO 设计过滤规则描述
 ** TODO 对比HBase的get效率。
-** TODO 海角七号   
