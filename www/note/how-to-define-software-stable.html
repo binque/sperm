@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>lcov</title>
-<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
-<meta name="title" content="lcov"/>
+<title>如何定义软件稳定</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="如何定义软件稳定"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-30 11:58:13 CST"/>
+<meta name="generated" content="2012-08-30 11:58:17 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -91,26 +91,45 @@
 </div>
 
 <div id="content">
-<h1 class="title">lcov</h1>
+<h1 class="title">如何定义软件稳定</h1>
 
 
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 lcov</a></li>
+<li><a href="#sec-1">1 how-to-define-software-stable</a></li>
 </ul>
 </div>
 </div>
 
 <div id="outline-container-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> lcov</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> how-to-define-software-stable</h2>
 <div class="outline-text-2" id="text-1">
 
-<ul>
-<li>homepage <a href="http://ltp.sourceforge.net/coverage/lcov.php">http://ltp.sourceforge.net/coverage/lcov.php</a>
+
+<p>
+2012-8-30
+</p>
+<p>
+redis作者在自己的文章里面提到了如何定义软件到达了production-ready（我理解就是stable）状态 <a href="http://antirez.com/post/redis-26-sentinel-update.html">http://antirez.com/post/redis-26-sentinel-update.html</a>
+</p>
+<p>
+There are probably much more software engineering books than there should be ;) So despite of the general title of this section my goal here is to state what stable means for me and for the Redis project. After all there are a number of possible metrics, but mine is very simple and in the latest three years worked very reliably.
+</p>
+<p class="verse">
+A Redis branch without active development (major changes to the source code that are not just additions without impacts to what we already have) is stable when the number of critical bugs discovered in the latest 8 weeks is near to zero.<br/>
+<br/>
+In this context a critical bug is a bug that corrupts data, that crashes the server, that creates an inconsistency between master and slave, and that, at the same time, is not triggered by a crazy edge-case, so edge that it is unlikely to run into it involuntarily. <br/>
+</p>
+
+
+<p>
+在作者看来，一个稳定的版本意味着：
+</p><ul>
+<li>没有必要增加新feature
 </li>
-<li>redis test coverage <a href="http://ci.redis.io/coverage26/redis/src/index.html">http://ci.redis.io/coverage26/redis/src/index.html</a>
+<li>在过去8周内没有严重的bug（比如宕机或者是数据损坏等，但是不考虑一些非常极端的case）
 </li>
 </ul>
 
@@ -119,7 +138,7 @@
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-30 11:58:13 CST</p>
+<p class="date">Date: 2012-08-30 11:58:17 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

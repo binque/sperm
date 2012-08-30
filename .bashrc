@@ -917,6 +917,13 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 git config --global color.ui true
 git config --global user.name "dirtysalt"
 git config --global user.email "dirtysalt1987@gmail.com"
+git config --global alias.co checkout
+git config --global alias.br branch
+git config --global alias.ci commit
+git config --global alias.st status
+git config --global alias.unstage 'reset HEAD --'
+git config --global alias.discard 'checkout HEAD --'
+git config --global alias.last 'log -1 HEAD'
 
 alias dp1="ssh -p 16021 -l dp dp1"
 alias hadoop1="ssh -p 16021 -l yunbg hadoop1" # L6o21,.inc10ud

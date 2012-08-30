@@ -234,6 +234,16 @@ e
 有多个slave连接上来的话(SYNC)，那么首先会做background saving然后将rdb文件传送给所有的slave,并且将这段时间的commands也传给slave.
 (可以通过telnet/SYNC来查看传输结果，同时也可以看到master会隔断时间发送PING来做心跳检测).
 
+** sentinel
+http://redis.io/topics/sentinel
+
+sentinel功能是为了解决redis在分布式使用场景中主从automatic failover的情况， 包括下面这几个功能：
+   - Monitoring. Sentinel constantly check if your master and slave instances are working as expected.（监控redis node是否正常工作）
+   - Notification. Sentinel can notify the system administrator, or another computer program, via an API, that something is wrong with one of the monitored Redis instances.（如果node没有正常工作那么可以通知）
+   - Automatic failover. If a master is not working as expected, Sentinel can start a failover process where a slave is promoted to master, the other additional slaves are reconfigured to use the new master, and the applications using the Redis server informed about the new address to use when connecting.（如果master节点没有正常工作的话，可以选择启动新的slave来作为master，完成故障的自动恢复。自己实现了一个agreement protocol来完成选主）
+
+TODO（dirlt)：考虑到redis的代码质量比较高，对于redis的automatic failover实现机制可以好好分析并且阅读代码。
+
 ** 代码分析
 TODO(dirlt):
    - aof.c

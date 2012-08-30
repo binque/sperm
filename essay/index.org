@@ -123,6 +123,7 @@
      - [[file:note/retrospect-2011.org][回顾2011]]
      - [[file:note/communicate-and-relationship.org][交流和关系]]
      - [[file:note/purchase-diamond.org][购买钻戒]]
+     - [[file:note/how-to-define-software-stable.org][如何定义软件稳定]]
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
    - [[file:./note/travel.org][travel]] 要不读书、要不旅行。心和身体， 得有一个在路上。
    - [[file:./note/fun.org][fun]] 搞笑的文字。
