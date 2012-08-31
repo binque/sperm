@@ -26,3 +26,4 @@
 ** TODO RSS system we make
 ** TODO RSS paper planes
 ** TODO 对比HBase的get效率。
+** TODO gmail使用和其他方式对比（需要稳定一段时间）
