@@ -129,7 +129,7 @@
      - [[file:note/take-wedding-photo.org][婚纱摄影经历]]
      - [[file:note/be-careful-when-you-drive.org][开车务必小心]]
      - [[file:note/have-a-nice-sleep-and-straighten-up.org][好好睡一觉，然后振作起来]]
-     - [[file:note/what-can-i-do-when-old.org][以后老了能做什么]]
+     - [[file:note/what-can-i-do-when-old.org][以后老了我能做什么]]
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
    - [[file:./note/travel.org][travel]] 要不读书、要不旅行。心和身体， 得有一个在路上。
    - [[file:./note/fun.org][fun]] 搞笑的文字。
