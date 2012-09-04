@@ -3,8 +3,6 @@
 ** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
 ** TODO 阅读完Core Java I
-** TODO 整理blog
-    - http://dirlt.com/blog/?paged=15
 ** TODO http://www.systemswemake.com/
 
 ** TODO pregel
@@ -22,8 +20,12 @@
 
 ** TODO kafka
 ** TODO The anatomy of google
-** TODO RSS redplanet
 ** TODO RSS system we make
 ** TODO RSS paper planes
 ** TODO 对比HBase的get效率。
 ** TODO gmail使用和其他方式对比（需要稳定一段时间）
+
+** TODO 购车经历
+** TODO 阅读RSS订阅（when free）
+** TODO 整理blog（when free）
+    - http://dirlt.com/blog/?paged=15
