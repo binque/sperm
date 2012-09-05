@@ -1,0 +1,7 @@
+* distributed-system-reading
+   - Distributed Systems Reading List http://dancres.org/reading_list.html
+
+** How to beat the CAP theorem
+http://nathanmarz.com/blog/how-to-beat-the-cap-theorem.html
+
+

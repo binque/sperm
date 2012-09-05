@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="git"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-31 00:34:30 CST"/>
+<meta name="generated" content="2012-09-04 23:41:59 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -256,7 +256,7 @@
 </li>
 <li>git checkout -b &lt;branch&gt; 创建并且切换分支
 </li>
-<li>git branch -d &lt;branch&gt; 删除分支
+<li>git branch -d &lt;branch&gt; 删除分支 / -D &lt;branch&gt; 强制删除分支
 </li>
 <li>git push &lt;repo&gt; &lt;branch&gt; 将本地branch HEAD信息推送到远程repo的branch
 </li>
@@ -271,6 +271,9 @@
 </ul>
 
 
+<p>
+如果合并过来的分支，是当前分支的child的话，那么执行fast-forward合并，否则会执行普通的合并生成一个新的node，这个node是两个分支的共同child。
+</p>
 </div>
 
 </div>
@@ -401,7 +404,7 @@ git-flow主要推行的就是一种开发方式，然后通过工具来配合这
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-31 00:34:30 CST</p>
+<p class="date">Date: 2012-09-04 23:41:59 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

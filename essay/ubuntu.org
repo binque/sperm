@@ -54,7 +54,7 @@ System Settings =》 Details 里面可以设置默认浏览器。至于emacs里�
      - 2) empty trash on exit. 
      - 3) check for new messages at startup. 
      - 4) check for new messages every 10 minutes.     
-   - copies and folders => 1) cc these email addresses: dirtysalt1987@gmail.com
+   - copies and folders => 1) cc these email addresses: dirtysalt1987@gmail.com（如果使用imap模式可以不使用）
    - composition and addressing => 1) start my reply above the quote and place my signature below the quote.
 
 设置签名为
@@ -75,6 +75,8 @@ dirtysalt1987@gmail.com
    1. 一种是用小碎片文件来解决，每个小碎片文件对应一个邮件，但是这样邮件太多的话性能和碎片会成为问题，但是增加和删除都非常方便
    2. 另外就是使用大文件来追加写，然后针对每封邮件进行索引。索引可以保存在内存里面并且定期dump出去，启动时候检查索引是否和文件对应，不对应的话那么可能需要增量做一部分索引。但是这样删除会成为问题，标记删除可能就是最好的办法了。所以需要用户手动或者是通过程序判断磁盘文件大小来触发压缩。
    3. 使用数据库本质上和2是一样的，只不过可以在一定程度上简化代码。在删除方便可能还是使用压缩删除。如果是我自己做的话那么可能考虑使用sqlite来做。单机可以embed,并且通过SQL来进行检索或者是其他操作。
+
+NOTE（dirlt）：其实thunderbird超过一定大小就会自动提醒是否需要压缩
 
 ** 虚拟机
 安装

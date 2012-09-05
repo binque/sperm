@@ -53,12 +53,14 @@ git本地仓库由下面三棵树构成：
    - git branch <branch> 创建分支
    - git checkout <branch> 切换分支
    - git checkout -b <branch> 创建并且切换分支
-   - git branch -d <branch> 删除分支
+   - git branch -d <branch> 删除分支 / -D <branch> 强制删除分支
    - git push <repo> <branch> 将本地branch HEAD信息推送到远程repo的branch
    - git push <repo> :<branch> 将删除分支信息推送。NOTE(dirlt):这个可以这样理解，:之前表示null,将null推到branch相当于清空x。
    - git pull <repo> 将远程repo合并到本地HEAD
    - git merge <branch> 将本地branch进行合并
    - git fetch <repo> <branch> 将远程repo的branch拉到本地但是并不进行任何修改
+
+如果合并过来的分支，是当前分支的child的话，那么执行fast-forward合并，否则会执行普通的合并生成一个新的node，这个node是两个分支的共同child。
 
 *** git标签
 Git使用的标签有两种类型：轻量级的（lightweight）和含附注的（annotated）。轻量级标签就像是个不会变化的分支，实际上它就是个指向特 定提交对象的引用。而含附注标签，实际上是存储在仓库中的一个独立对象，它有自身的校验和信息，包含着标签的名字，电子邮件地址和日期，以及标签说明，标签本身也允许使用 GNU Privacy Guard (GPG) 来签署或验证。一般我们都建议使用含附注型的标签，以便保留相关信息；当然，如果只是临时性加注标签，或者不需要旁注额外信息，用轻量级标签也没问题。
