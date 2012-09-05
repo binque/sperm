@@ -29,3 +29,6 @@
 ** TODO 阅读RSS订阅（when free）
 ** TODO 整理blog（when free）
     - http://dirlt.com/blog/?paged=15
+** TODO 看看过门石，踢脚线，木门价格。然后看看橱柜有什么品牌。
+** TODO review代码。
+** TODO 将umeng.org信息同步到googledocs上面。
