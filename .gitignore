@@ -48,6 +48,7 @@ code/cc/common/test/test_socket
 code/cc/common/test/test_stress_queue
 code/cc/common/test/test_utils
 code/cc/common/test/test_zkclient
+code/cc/common/test/test_lockfree
 code/cc/itachi/test/asock_echo_client
 code/cc/itachi/test/asock_echo_server
 code/cc/itachi/test/echo_client
