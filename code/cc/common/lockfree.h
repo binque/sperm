@@ -51,7 +51,7 @@ class SampleMemoryAllcator {
     return 0;
   }
   
-  void dealloc(Entry* e) {
+  void free(Entry* e) {
     for(;;) {
       Entry* t=const_cast<Entry*>(AtomicGetValue(head_));
       e->next = t;

@@ -8,6 +8,6 @@ typedef common::lockfree::SampleMemoryAllcator<int> IntSampleMemoryAllocator;
 int main() {
   IntSampleMemoryAllocator ma;
   IntSampleMemoryAllocator::Entry* e=ma.alloc();
-  ma.dealloc(e);
+  ma.free(e);
   return 0;
 }
