@@ -36,3 +36,5 @@
 ** TODO lockfree example.
 ** TODO 如何读取本地集群的hadoop内容，以及读取protobuf lzo
 ** TODO 王垠的文章。还是比较有思想的。
+** TODO 对比writable以及protobuf的压缩大小以及效率。
+

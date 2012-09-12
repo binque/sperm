@@ -15,23 +15,29 @@
 
 
 template< typename T >
-T CAS(volatile T& x, T o, T n) {
+T CompareAndSwap(volatile T& x, T n, T o) {
   if(sizeof(x) == 1) {
-    return __arch_compare_and_exchange_val_8_acq(&x, o, n);
+    return __arch_compare_and_exchange_val_8_acq(&x, n, o);
   } else if(sizeof(x) == 2) {
-    return __arch_compare_and_exchange_val_16_acq(&x, o, n);
+    return __arch_compare_and_exchange_val_16_acq(&x, n, o);
   } else if(sizeof(x) == 4) {
-    return __arch_compare_and_exchange_val_32_acq(&x, o, n);
+    return __arch_compare_and_exchange_val_32_acq(&x, n, o);
   } else if(sizeof(x) == 8) {
-    return __arch_compare_and_exchange_val_64_acq(&x, o, n);
+    return __arch_compare_and_exchange_val_64_acq(&x, n, o);
   }
   SPERM_FATAL("unknown size=%zu", sizeof(T));
   return 0;
 }
 
+#ifdef __x86_64__
+#define CompareAndSwapPointer(x,n,o) __arch_compare_and_exchange_val_64_acq(&x,n,o)
+#else
+#define CompareAndSwapPointer(x,n,o) __arch_compare_and_exchange_val_32_acq(&x,n,o)
+#endif
+
 template< typename T >
 T AtomicGetValue(T& x) {
-  return CAS(x, static_cast<T>(0), static_cast<T>(0));
+  return CompareAndSwap(x, static_cast<T>(0), static_cast<T>(0));
 }
 #define AtomicSetValue(x,v) (atomic_exchange_acq(&(x),v))
 #define AtomicInc(x) (atomic_exchange_and_add(&(x),1)+1)
