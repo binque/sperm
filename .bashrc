@@ -830,7 +830,7 @@ complete -o default -F _meta_comp command type which man nice time
 
 export DOC="$HOME/github/sperm/essay"
 export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64/
-export CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar
+export CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:.
 export MANPATH=/usr/local/share/man:/usr/share/man
 
 PATH=$JAVA_HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH
@@ -921,8 +921,7 @@ git config --global alias.co checkout
 git config --global alias.br branch
 git config --global alias.ci commit
 git config --global alias.st status
-git config --global alias.unstage 'reset HEAD --'
-git config --global alias.discard 'checkout HEAD --'
+git config --global alias.unstage 'reset'
 git config --global alias.last 'log -1 HEAD'
 
 alias dp1="ssh -p 16021 -l dp dp1"
