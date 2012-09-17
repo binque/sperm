@@ -20,6 +20,12 @@
 
 ** TODO kafka
 ** TODO The anatomy of google
+<<<<<<< HEAD
+=======
+** TODO RSS system we make
+** TODO RSS paper planes
+** TODO RSS high scalability
+>>>>>>> 891926948e59ae55f9eb6524ae18e5c91118bbbf
 ** TODO 对比HBase的get效率。
 ** TODO gmail使用和其他方式对比（需要稳定一段时间）
 
@@ -27,6 +33,17 @@
 ** TODO 阅读RSS订阅（when free）
 ** TODO 整理blog（when free）
     - http://dirlt.com/blog/?paged=15
+<<<<<<< HEAD
 ** TODO RSS system we make
 ** TODO RSS paper planes
 ** TODO wangyin和云风的blog
+=======
+** TODO 然后看看橱柜有什么品牌，以及地板的品牌。
+** TODO review代码。
+** TODO 是否有比较完整的例子可以参考。
+** TODO lockfree example.
+** TODO 如何读取本地集群的hadoop内容，以及读取protobuf lzo
+** TODO 王垠的文章。还是比较有思想的。
+** TODO 对比writable以及protobuf的压缩大小以及效率。
+
+>>>>>>> 891926948e59ae55f9eb6524ae18e5c91118bbbf

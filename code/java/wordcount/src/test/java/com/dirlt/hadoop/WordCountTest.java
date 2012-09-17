@@ -4,30 +4,39 @@
 
 package com.dirlt.hadoop;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import junit.framework.TestCase;
 
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import org.apache.log4j.Logger;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mrunit.mapreduce.MapReduceDriver;
+import org.junit.Before;
+import org.junit.Test;
 
-public class WordCountTest {
-  private static final Logger LOG  = Logger.getLogger(WordCountTest.class);
-  
-  @Before
-  public void setUp() throws Exception {
-    // TODO(dirlt):
-  }
-  
-  @After
-  public void tearDown() throws Exception {
-    // TODO(dirlt):
-  }
+public class WordCountTest extends TestCase {
+    private Mapper mapper;
+    private Reducer reducer;
+    private MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> driver;
 
-  @Test
-  public void test() throws Exception {
-    // TODO(dirlt):
-  }
+    @Before
+    protected void setUp() throws Exception {
+        super.setUp();
+        mapper = new WordCount.Map();
+        reducer = new WordCount.Reduce();
+        driver = new MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable>(
+                mapper, reducer);
+    }
+
+    @Test
+    public void testCase1() {
+        driver.addInput(new LongWritable(0), new Text("hello"));
+        driver.addInput(new LongWritable(0), new Text("world"));
+        driver.addInput(new LongWritable(0), new Text("hello"));
+        driver.addInput(new LongWritable(0), new Text("world"));
+        driver.addOutput(new Text("hello"), new IntWritable(2));
+        driver.addOutput(new Text("world"), new IntWritable(2));
+        driver.runTest();
+    }
 }

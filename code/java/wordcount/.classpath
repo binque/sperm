@@ -20,7 +20,7 @@
   <classpathentry kind="var" path="M2_REPO/xmlenc/xmlenc/0.52/xmlenc-0.52.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/hadoop/thirdparty/guava/guava/r09-jarjar/guava-r09-jarjar.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-httpclient/commons-httpclient/3.1/commons-httpclient-3.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-codec/commons-codec/1.4/commons-codec-1.4.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-net/commons-net/1.4.1/commons-net-1.4.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/oro/oro/2.0.8/oro-2.0.8.jar"/>
@@ -36,4 +36,6 @@
   <classpathentry kind="var" path="M2_REPO/net/java/dev/jets3t/jets3t/0.6.1/jets3t-0.6.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/hsqldb/hsqldb/1.8.0.7/hsqldb-1.8.0.7.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/eclipse/jdt/core/3.1.1/core-3.1.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/apache/mrunit/mrunit/0.8.0-incubating/mrunit-0.8.0-incubating.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mockito/mockito-all/1.8.5/mockito-all-1.8.5.jar"/>
 </classpath>

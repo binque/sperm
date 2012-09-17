@@ -115,5 +115,61 @@ With or without you
 
 #+END_EXAMPLE
 ** hey jude(beatles)
-file:../images/hey-jude.jpg
+#+BEGIN_EXAMPLE
+hey jude, don't make it bad.
+take a sad song and make it better.
+remember to let her into your heart,
+then you can start to make it better.
+hey jude, don't be afraid.
+you were made to go out and get her.
+the minute you let her under your skin,
+then you begin to make it better.
+and anytime you feel the pain, hey jude, refrain,
+don't carry the world upon your shoulders.
+for well you know that it's a fool who plays it cool
+by making his world a little colder.
+hey jude, don't let me down.
+you have found her, now go and get her.
+remember to let her into your heart,
+then you can start to make it better.
+so let it out and let it in, hey jude, begin,
+you're waiting for someone to perform with.
+and don't you know that it's just you, hey jude, you'll do,
+the movement you need is on your shoulder.
+hey jude, don't make it bad.
+take a sad song and make it better.
+remember to let her under your skin,
+then you'll begin to make it
+better better better better better better, oh.
+da da da da da da, da da da, hey jude...
+#+END_EXAMPLE
 
+** teardrop(massive attack)
+#+BEGIN_EXAMPLE
+love, love is a verb
+love is a doing word
+feathers on my breath
+gentle impulsion
+shakes me makes me lighter
+feathers on my breath
+teardrop on the fire
+feathers on my breath
+in the night of matter
+black flowers blossom
+feathers on my breath
+black flowers blossom
+feathers on my breath
+teardrop on the fire
+feathers on my breath
+water is my eye
+most faithful my love
+feathers on my breath
+teardrop on the fire of a confession
+feathers on my breath
+most faithful my love
+feathers on my breath
+teardrop on the fire
+feathers on my breath
+stumbling a little
+stumbling a little
+#+END_EXAMPLE

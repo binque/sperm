@@ -26,11 +26,11 @@ public class WordCount {
         public void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
             context.write(value, new IntWritable(1));
-            Thread.sleep(1000 * 100); // sleep 100 secs
+            // Thread.sleep(1000 * 100); // sleep 100 secs
         }
     }
 
-    private static class Reduce extends
+    public static class Reduce extends
             Reducer<Text, IntWritable, Text, IntWritable> {
         @Override
         public void reduce(Text key, Iterable<IntWritable> values,
@@ -43,23 +43,36 @@ public class WordCount {
         }
     }
 
+    public static Job configureJob(String[] args) throws IOException {
+        String jobName = "WordCount";
+        String input = null;
+        String output = null;
+        for (String arg : args) {
+            if (arg.startsWith("--jobname=")) {
+                jobName = arg.substring("--jobname=".length());
+            } else if (arg.startsWith("--input=")) {
+                input = arg.substring("--input=".length());
+            } else if (arg.startsWith("--output=")) {
+                output = arg.substring("--output=".length());
+            }
+        }
+        Job job = new Job(new Configuration(), jobName);
+        job.setJarByClass(WordCount.class);
+        job.setMapperClass(Map.class);
+        job.setCombinerClass(Reduce.class);
+        job.setReducerClass(Reduce.class);
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(IntWritable.class);
+        job.setInputFormatClass(TextInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
+        FileInputFormat.setInputPaths(job, new Path(input));
+        FileOutputFormat.setOutputPath(job, new Path(output));
+        return job;
+    }
+
     public static void main(String[] args) {
         try {
-            String jobName = "WordCount";
-            if (args.length > 2) {
-                jobName = args[2];
-            }
-            Job job = new Job(new Configuration(), jobName);
-            job.setJarByClass(WordCount.class);
-            job.setMapperClass(Map.class);
-            job.setCombinerClass(Reduce.class);
-            job.setReducerClass(Reduce.class);
-            job.setMapOutputKeyClass(Text.class);
-            job.setMapOutputValueClass(IntWritable.class);
-            job.setInputFormatClass(TextInputFormat.class);
-            job.setOutputFormatClass(TextOutputFormat.class);
-            FileInputFormat.setInputPaths(job, new Path(args[0]));
-            FileOutputFormat.setOutputPath(job, new Path(args[1]));
+            Job job = configureJob(args);
             job.submit();
             System.exit(job.waitForCompletion(true) ? 0 : 1);
         } catch (Exception e) {
