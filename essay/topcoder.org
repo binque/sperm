@@ -1,0 +1,47 @@
+* topcoder
+** srm556 div2 
+*** pts1000
+考虑一下放置的顺序：
+   - 对于高位的话肯定希望从底牌中最小的一个数，并且这个最小数字越靠后越好。
+   - 这个数字之前的话按照递归的方式进行放置。
+   - 这个数字之后的话只能够全部放在右面，并且是按照原来顺序。
+   - 为什么这个最小数字越靠后越好，是因为这样的话前面就可以构造出更小的数字。
+   
+#+BEGIN_SRC C++
+class LeftRightDigitsGame {
+ public:
+  string minNumber(string);
+  string minNumber2(string,int);
+};
+
+string LeftRightDigitsGame::minNumber(string digits){
+  return minNumber2(digits,0);
+}
+
+string LeftRightDigitsGame::minNumber2(string digits, int level) {
+  int code = 255;
+  int index = -1;
+  for(int i=0;i<digits.size();i++){
+    if(((level == 0) && digits[i]!='0') ||
+       (level!=0)){
+      code = min(code, (int)digits[i]);    
+    }
+  }
+  for(int i=0;i<digits.size();i++){
+    if(digits[i] == code){
+      index = i;
+    }
+  }
+  string s="";
+  s+=code;
+  if(index != 0){    
+    s+=minNumber2(digits.substr(0,index),level+1);
+  }
+  if((index+1)!=digits.size()){
+    s+=digits.substr(index + 1,digits.size() - index -1);
+  }
+  return s; 
+}
+#+END_SRC
+
+
