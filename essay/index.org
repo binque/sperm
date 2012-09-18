@@ -92,6 +92,7 @@
      - [[file:./mapred.org][mapred]] Apache Hadoop项目的分布式计算系统，MapReduce的开源实现。
      - [[file:./zookeeper.org][zookeeper]] Apache Hadoop项目的分布式锁服务，Chubby的开源实现。
      - [[file:oozie.org][oozie]] Apache Hadoop项目的工作流系统，可以将多个map-reduce作业组合到一个逻辑单元中。支持作业之间的相互依赖，同时允许时间以及数据来触发作业。
+   - [[file:dremel.org][dremel]] google针对大数据查询的交互式系统，传说可以在3秒内搞定PB级别的数据。
    
 ** Programming Language and Design Pattern
    - [[file:./prog-lang.org][prog-lang]] including following languages:     
