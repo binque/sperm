@@ -6,7 +6,6 @@
    - 这个数字之前的话按照递归的方式进行放置。
    - 这个数字之后的话只能够全部放在右面，并且是按照原来顺序。
    - 为什么这个最小数字越靠后越好，是因为这样的话前面就可以构造出更小的数字。
-   
 #+BEGIN_SRC C++
 class LeftRightDigitsGame {
  public:
@@ -42,6 +41,5 @@ string LeftRightDigitsGame::minNumber2(string digits, int level) {
   }
   return s; 
 }
+
 #+END_SRC
-
-
