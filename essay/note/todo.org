@@ -3,8 +3,6 @@
 ** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
 ** TODO 阅读完Core Java I
-** TODO http://www.systemswemake.com/
-
 ** TODO pregel
    - http://kowshik.github.com/JPregel/pregel_paper.pdf
    - JPregel @ GitHub http://kowshik.github.com/JPregel/ 
@@ -12,9 +10,6 @@
    - http://www.slideshare.net/shatteredNirvana/pregel-a-system-for-largescale-graph-processing
 ** TODO Percolator
    - http://research.google.com/pubs/pub36726.html
-** TODO dremel
-   - http://research.google.com/pubs/pub36632.html
-   - Google Dremel 原理 – 如何能3秒分析1PB http://www.yankay.com/google-dremel-rationale/
 ** TODO megastore
    - Megastore: Providing Scalable, Highly Available Storage for Interactive Services http://research.google.com/pubs/pub36971.html
 

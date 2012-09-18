@@ -6,6 +6,8 @@
   - author: Sergey Melnik, Andrey Gubarev, Jing Jing Long, Geoffrey Romer, Shiva Shivakumar, Matt Tolton, Theo Vassilakis(Google Inc)
   - date: 2010
 
+这里有篇分析似乎也不错 http://www.yankay.com/google-dremel-rationale/ 作者看得还是比我深入一些。
+
 ** Abstract
    - Dremel is a scalable, interactive ad-hoc query system for analy-sis of read-only nested data. （着重处理只读的嵌套数据，主要针对交互式的ad-hoc查询，并且有良好的可扩展性）
    - By combining multi-level execution trees and columnar data layout, it is capable of running aggrega-tion queries over trillion-row tables in seconds. （秒级处理trillion数据/million million，精髓就是多层树型执行模型，以及数据按照column方式进行存储）
