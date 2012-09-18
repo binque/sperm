@@ -55,6 +55,7 @@
    - [[file:./algorithm.org][algorithm]] 算法还是非常重要的。记录的都是现实中使用到的算法或者是比较有趣的数学问题吧。
    - [[file:./data-mining.org][data-mining]] 了解一些数据挖掘方面的知识还是比较有帮助的。其实我们每天都在不知不觉地进行数据挖掘。
    - [[file:lcov.org][lcov]] the LTP(Linux Testing Project) GCOV extension.用来完成C/C++测试覆盖。
+   - [[file:topcoder.org][topcoder]] 主要都是做offline的，感觉自己线上做题速度不行。因为时间关系可能只是挑一些需要思考但是不会涉及到太多复杂算法的题目。
 
 ** Network Programming
    - [[file:unp.org][unp]] Unix网络编程(Unix Network Programming),W. Richard Stevens的又一神作。笔记里面只是对于TCP原理有比较详细讨论，这部分笔记也包含了TCP Illustrated v1里面和TCP相关的章节内容。对于编程方面也着重TCP socket使用，毕竟在大部分应用场景下面我们选用TCP模型更多，并且TCP里面有很多非常琐碎的知识。
