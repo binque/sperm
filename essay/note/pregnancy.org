@@ -172,7 +172,7 @@ file:../images/8-misunderstandings-of-pregnancy.jpg
 *** 育儿50个小细节
 file:../images/50-tips-for-baby-nursing.jpg
 
-*** 胎儿最害怕的12件事：
+*** 胎儿最害怕的12件事
    1. 怕噪音。
    2. 怕烟酒。
    3. 怕妈妈情绪过度不安。
