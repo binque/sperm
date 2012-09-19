@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="design-reading"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-09-04 23:42:00 CST"/>
+<meta name="generated" content="2012-09-19 08:31:08 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -100,7 +100,8 @@
 <ul>
 <li><a href="#sec-1">1 design-reading</a>
 <ul>
-<li><a href="#sec-1-1">1.1 Suffering-oriented programming</a></li>
+<li><a href="#sec-1-1">1.1 T11的文艺模型</a></li>
+<li><a href="#sec-1-2">1.2 Suffering-oriented programming</a></li>
 </ul>
 </li>
 </ul>
@@ -115,8 +116,27 @@
 </div>
 
 <div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Suffering-oriented programming</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> T11的文艺模型</h3>
 <div class="outline-text-3" id="text-1-1">
+
+<p>当年12306订票系统在春运时候挂掉，引起了IT界的广泛讨论。当时T11就针对这个问题提出了文艺模型。当时自己没有太多感悟，后来同学和我解释一下之后，才感慨颇多。
+</p>
+<p>
+T11的文艺模型主要关心的就是极限吞吐。极限吞吐(sustained throughput)就是为了能够在存在很大压力的时候依然能够保持很高的吞吐。之所谓在很多大压力的时候很多模型会垮掉原因是有多方面的。比如大量连接不活跃但是占用了很多内存，或者如果是多线程模型线程切换耗CPU等。垮掉原因的本质就是因为大压力的时候系统耗费了很多资源在没有必要的地方了。解决办法就是能够提早发现这种情况，然后尽快地将一部分压力去除掉(比如拒绝连接等)，以保证整体系统的可用性。这个就是T11的最主要思想。
+</p>
+<p>
+后来云风一篇关于<a href="http://blog.codingnow.com/2012/02/ring_buffer.html">RingBuffer博文</a> 重新让我思考了这个问题。我重新阅读了一下T11的Kylin代码，主要也是关于内存管理的部分。虽然内存管理部分非常简单，但是也是存在部分策略在里面的。之后T11在微博上也和我提到了这点，就是对于一个复杂点的系统来说，比如存储系统等，如果要实现得好，至少一半以上的工作是在做OS。。无独有偶，就在前几天tencent的一个后台开发总监也提到了这个问题，关于<a href="http://djt.qq.com/article-156-1.html">过载保护</a> 。思想和T11文艺模型是一样的。
+</p>
+<p>
+T11确实是一个看过同时做过很多的人。这是他空间的一篇文章<a href="http://hi.baidu.com/linsd99/blog/item/dbdaef3ce804f3e054e72392.html">列举了架构相关的学习材料</a>。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Suffering-oriented programming</h3>
+<div class="outline-text-3" id="text-1-2">
 
 <p><a href="http://nathanmarz.com/blog/suffering-oriented-programming.html">http://nathanmarz.com/blog/suffering-oriented-programming.html</a>
 </p>
@@ -143,7 +163,7 @@
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-09-04 23:42:00 CST</p>
+<p class="date">Date: 2012-09-19 08:31:08 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

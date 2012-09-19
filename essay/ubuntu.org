@@ -131,6 +131,11 @@ System Settings =》 Universal Access里面的Seeing部分可以用来调整字�
 *** 重启unity
 unity restart &
 
+*** 字符界面启动
+   - 编辑文件/etc/default/grub
+   - GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"修改成GRUB_CMDLINE_LINUX_DEFAULT="quiet splash text"
+   - 运行sudo update-grub
+
 ** 窗口管理器
 *** gnome
 安装：

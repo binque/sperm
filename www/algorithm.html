@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="algorithm"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-09-03 17:42:43 CST"/>
+<meta name="generated" content="2012-09-19 09:17:52 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -103,6 +103,9 @@
 <li><a href="#sec-1-1">1.1 glibc strlen实现分析</a></li>
 <li><a href="#sec-1-2">1.2 一致性hash(Consistent hashing)</a></li>
 <li><a href="#sec-1-3">1.3 树最长距离</a></li>
+<li><a href="#sec-1-4">1.4 rsync的核心算法</a></li>
+<li><a href="#sec-1-5">1.5 开门抽奖问题</a></li>
+<li><a href="#sec-1-6">1.6 simhash算法原理和文档近似判断</a></li>
 </ul>
 </li>
 </ul>
@@ -276,12 +279,126 @@ def TreeDistance(root):
 对于返回元组来说的话(a,b,c)，a表示树的最长距离，b表示左子树的高度，c表示右子树的高度。
 </p>
 </div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> rsync的核心算法</h3>
+<div class="outline-text-3" id="text-1-4">
+
+<ul>
+<li><a href="http://coolshell.cn/articles/7425.html">http://coolshell.cn/articles/7425.html</a>
+</li>
+</ul>
+
+
+<p>
+首先针对dst文件按照block分别求得checksum和md5.其中checksum用来进行弱校验，md5用来进行强校验。所谓弱校验就是如果checksum不等的话那么文件内容必然不相同，强校验就是如果md5相同的话那么文件内容必然相同。但是checksum还有一个好处，就是可以根据[k,k+n)的checksum,很快地计算出[k+1,k+n+1)的checksum.（非常类似于滑动窗口的工作方式）这点对于在src文件中查找相同块非常重要。将每个块的(checksum,md5)传输到源端。
+</p>
+<p>
+源端得到每个块的(checksum,md5)之后，根据checksum作为hashcode插入到hashtable中去。这样源端就了解了目的端现在所有块的情况。然后针对src文件做下面操作：
+</p><ol>
+<li>k=0
+</li>
+<li>读取[k,k+512)字节得到checksum. 注意这个checksum可以很快地计算出来。
+</li>
+<li>如果这个checksum存在于hashtable中，那么说明这个块可能目的端存在，goto 3. 否则说明肯定不存在目的端，goto 5.
+</li>
+<li>比较md5是否相同，如果相同的话那么认为block相同，否则不同。
+</li>
+<li>如果这个checksum不存在于hashtable的话，那么说明肯定不存在目的端，goto 5.
+</li>
+<li>如果全部处理完毕的话那么退出，否则k+=1.
+</li>
+</ol>
+
+<p>这里需要注意就是checksum可以很快地类似于滑动窗口的工作方式计算出来.
+</p>
+<p>
+源端完成了上面这些操作之后，就可以知道那些块目的端是存在的（以及存在于什么地方），自己有那些块是目的端没有的，然后通过传输增量并且文件拼接来达到数据同步的目的。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> 开门抽奖问题</h3>
+<div class="outline-text-3" id="text-1-5">
+
+<p>原题是有三扇门，一扇门后面是一辆汽车，后面两扇门没有东西。主持人首先让你选择一扇门，之后主持人打开一扇后面没有任何东西的门，然后主持人问你是否需要更换你的选择？扩展一下这个问题，如果扩展到N(N&gt;=3)扇门的话，那么之前和之后中奖概率分别是多少？
+</p>
+<p>
+第一步是随机选择那么概率是1/N.但是第二步概率可以这样考虑：
+</p><ol>
+<li>我当前选择中奖几率是1/N,那么在其他doors后面的几率是N-1/N.
+</li>
+<li>主持人打开门之后，如果我坚持当前选择的话，中奖几率是没有变化的。剩余的doors后面几率依然是N-1/N.
+</li>
+<li>而现在剩余的doors只有N-2扇。如果挑选那些剩余doors的话，那么几率是(N-1)/(N*(N-2)).这个几率比1/N要好.
+</li>
+</ol>
+
+<p>这里如果我们不是换成剩余的doors而是重新选择的话，那么几率依然是(N-1)/(N*(N-1)=1/N.和原来几率是一样的没有变化。
+</p>
+<p>
+思考的关键在于，主持人这个行为对你当前选择的概率是没有任何影响的。因为无论如何主持人都可以打开一扇空门出来。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> simhash算法原理和文档近似判断</h3>
+<div class="outline-text-3" id="text-1-6">
+
+<ul>
+<li><a href="http://blog.csdn.net/lgnlgn/article/details/6008498">http://blog.csdn.net/lgnlgn/article/details/6008498</a>
+</li>
+</ul>
+
+
+<p>
+simhash算法针对文档分析得到文档特征的一个向量表示，然后使用这个向量之间的差距就可以作为文档之间的差别大小，可以用来做文档近似判断。
+</p>
+<p>
+simhash算法原理非常简单：
+</p><ol>
+<li>创建f-bit的V向量初始化为0
+</li>
+<li>首先针对文档提取一系列特征C{i}（比如可以抽取比较重要的特征词出现次数等），对于每个特征给定一个权重W{i}
+</li>
+<li>针对每个特征C{i}求出一个f-bit的hash值，遍历hash值每个bit.如果bit=1的话，那么V{i}+=W{i},否则V{i}-=W{i}
+</li>
+<li>如果V{i}&gt;0那么V{i}=1,否则V{i}=0.这个V{i}就作为这个文档的simhash值
+</li>
+</ol>
+
+
+<p>
+可以看到如果simhash之间的bit相差小的话，那么文档之间的相似度就更高，这里没有证明但是可以比较感性地感觉到。两个simhash之间的bit差异个数叫做海明距离。直接比较两个simhash海明距离非常简单，
+</p>
+<p>
+但是现实中有另外一种情况是，我们已经有一组很大的文档集合S以及对应的simhash值，现在我们有一个新来的文档d以及simhash值，我们需要判断在S中是否有和d海明距离小于k的文档。
+</p>
+<p>
+假设S是排好序的个数是N，我们simhash f=64.如果k非常小比如{1,2,3}的话，那么可以枚举和d simhash相差k的所有simhash值，然后再S里面进行检索，时间复杂度在C(64,k)*lgN.但是如果k比较大比如&gt;=10的话，那么我们可以先对S进行分段搜索：
+</p><ol>
+<li>我们对S进行分段，每次取出2^m个元素，我们确保2^m个元素高位有m’相同。因为S排好序所以通常m'很高。
+</li>
+<li>我们首先对于m'个位和d simhash高位判断有多少位存在差异，假设x存在差异.这样我们可以在2^m元素判断m-x差异的元素。
+</li>
+<li>总体思想来说的话就是希望可以缩小搜索集。似乎在算法复杂度上面没有啥改进，可以在实现上改进。
+</li>
+</ol>
+
+<p>不过话说回来，文档近似判断应该k很小在{1,2}左右。C(64,k)={64,2016}应该并不算太大的值吧。
+</p></div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-09-03 17:42:43 CST</p>
+<p class="date">Date: 2012-09-19 09:17:52 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

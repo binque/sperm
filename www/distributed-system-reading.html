@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>distributed-system-reading</title>
-<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="distributed-system-reading"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-09-04 23:42:00 CST"/>
+<meta name="generated" content="2012-09-19 08:31:08 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -101,6 +101,7 @@
 <li><a href="#sec-1">1 distributed-system-reading</a>
 <ul>
 <li><a href="#sec-1-1">1.1 How to beat the CAP theorem</a></li>
+<li><a href="#sec-1-2">1.2 Availability vs. Durability</a></li>
 </ul>
 </li>
 </ul>
@@ -126,14 +127,26 @@
 
 <p><a href="http://nathanmarz.com/blog/how-to-beat-the-cap-theorem.html">http://nathanmarz.com/blog/how-to-beat-the-cap-theorem.html</a>
 </p>
+</div>
 
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Availability vs. Durability</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<p>如果只有一个副本机器A，要是它出故障，则读肯定会失败。要是有多副本机器，A坏了，我还有B和C可以读。写也一样。所以说多副本提高了服务的availability。
+</p>
+<p>
+如果只有一个副本机器A，要是A的硬盘坏了，那数据就丢失了。要是有多个副本机器，则还可以从其他机器上找回来。所以说多副本提高了数据的durability，写完多副本的数据很难会丢失。
+</p>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-09-04 23:42:00 CST</p>
+<p class="date">Date: 2012-09-19 08:31:08 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

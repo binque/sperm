@@ -2,6 +2,10 @@
 #+TITLE: 章炎的主页
 #+OPTIONS: H:3
 
+*放眼未来，自由想象(Open your mind, Open your eyes)*
+
+file:./images/valve-logo.jpg
+
 我叫章炎{dirtysalt}{dirlt}.我是一名软件工程师：
    - 2012.5-now 在友盟{Umeng}的数据平台{DataPlatform}工作，主要是负责统计数据处理。
    - 2008-2012.5 在百度{Baidu}的基础架构部{Infrastructure}工作，主要负责基础组件，开发工具以及分布式系统。
@@ -23,6 +27,7 @@
 感谢xuchaoqian同学提供给我的空间，让我可以在上面把自己写的东西分享出来，他的空间是 http://xuchaoqian.com/ ，他是一位伟大的工程师。同时我也将内容放在了
    - SAE http://dirlt.sinaapp.com/
    - BAE TODO(dirlt)：没有邀请码：（
+
 
 ** Computer System
    - [[file:apue.org][apue]] Unix环境高级编程(Advanced Programming Unix Environment),W. Richard Stevens的神作。笔记里面没有包含书最后的几个部分，比如终端，打印机等，因为我觉得可能大家都不太需要这个东西了。我还尝试将一些跨章节的概念整合到一起，这样比较容易从总体把握Unix编程环境。
@@ -56,6 +61,8 @@
    - [[file:./data-mining.org][data-mining]] 了解一些数据挖掘方面的知识还是比较有帮助的。其实我们每天都在不知不觉地进行数据挖掘。
    - [[file:lcov.org][lcov]] the LTP(Linux Testing Project) GCOV extension.用来完成C/C++测试覆盖。
    - [[file:topcoder.org][topcoder]] 主要都是做offline的，感觉自己线上做题速度不行。因为时间关系可能只是挑一些需要思考但是不会涉及到太多复杂算法的题目。
+   - [[file:web-misc.org][web-misc]] 写/用web东西时候遇到的一些问题。因为自己对于web开发不太了解，所以内容上的话可能显得有点弱智。
+   - [[file:folly.org][folly]] Folly is an open-source C++ library developed and used at Facebook.
 
 ** Network Programming
    - [[file:unp.org][unp]] Unix网络编程(Unix Network Programming),W. Richard Stevens的又一神作。笔记里面只是对于TCP原理有比较详细讨论，这部分笔记也包含了TCP Illustrated v1里面和TCP相关的章节内容。对于编程方面也着重TCP socket使用，毕竟在大部分应用场景下面我们选用TCP模型更多，并且TCP里面有很多非常琐碎的知识。
@@ -133,6 +140,9 @@
      - [[file:note/have-a-nice-sleep-and-straighten-up.org][好好睡一觉，然后振作起来]]
      - [[file:note/what-can-i-do-when-old.org][以后老了我能做什么]]
      - [[file:note/decorate-house.org][装房笔记]]
+     - [[file:note/look-for-house-with-xcq.org][和xcq看房子]]
+     - [[file:note/get-to-know-the-odds-problem.org][初探赔率问题]]
+     - [[file:note/new-era-carmack.org][新时代的卡马克]]
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
    - [[file:./note/travel.org][travel]] 要不读书、要不旅行。心和身体， 得有一个在路上。
    - [[file:./note/fun.org][fun]] 搞笑的文字。

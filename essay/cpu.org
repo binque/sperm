@@ -18,3 +18,9 @@ http://blog.csai.cn/user1/249/archives/2006/6872.html
 
 单处理器内部有很多资源是不会同时使用的，比如浮点逻辑单元FPU与算术逻辑单元ALU。如果线程里面线程A在进行浮点运算，而线程B在进行整数运算的话，两个线程使用超线程技术同时运行，就可以充分利用单处理器的资源了。按照编程术语来说的话，超线程称为并发(Concurrency). 双核心是有两个处理器核心，两份FPU以及ALU以及CU(Control Unit)，在真正执行起来的话也是两个处理器都同时执行。但是它们共享一个缓存，使用同一条总线访问内存，而在这个时候需要串行访问。按照编程术语来说的话，双核称为带有局部冲突的并行(Parallelisim with local contention). 双路CPU就是真正的两个处理器核心以及核心外围设施都相互独立。同样按照编程术语来说的话，双路称为无冲突并行(Parallelism without contention).
 
+** x86 Faces Unexpected RISC Competition
+   - http://www.drdobbs.com/architecture-and-design/231903053
+
+科普性文章。x86是CISC指令集的CPU(AMD也是)。在很早之前RISC和CISC是共存的，RISC性能并行性都比较好，主要用于大型机以及高性能计算方面，而CISC通常只用于桌面和终端系统上。但是随着x86和AMD在CPU性能方面不断地改进以及市场推广，加上GPU对于图形显示方面的加强，RISC似乎失去了永无之地。但是随着移动设备的崛起，突然有一种RISC指令集的CPU异常地适用，就是ARM，优势主要体现在低功耗以及功耗比方面。然后x86也开始关注到了这块市场，推出了Atom处理器，但是在功耗和功耗比方面和ARM依然相差很远。
+
+
