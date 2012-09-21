@@ -10,6 +10,11 @@
 
 hbase支持increment http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html
 
+** 药品
+归脾丸
+金匮肾气丸
+云南绿皮核桃
+
 ** 婚礼喜钱
    - 张闻宇 400
    - 九震 400

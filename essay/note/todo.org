@@ -12,8 +12,13 @@
    - http://research.google.com/pubs/pub36726.html
 ** TODO megastore
    - Megastore: Providing Scalable, Highly Available Storage for Interactive Services http://research.google.com/pubs/pub36971.html
+<<<<<<< HEAD
 ** TODO spanner
    - Google Research Publication: Spanner http://research.google.com/archive/spanner.html
+=======
+** TODO
+   - Google Research Publication: Web Search for a Planet http://research.google.com/archive/googlecluster.html
+>>>>>>> a3e23bee8ea926fdf4c536a7c42688d0a757a7e3
 ** TODO kafka
 ** TODO The anatomy of google
 ** TODO RSS system we make
