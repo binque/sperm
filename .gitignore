@@ -6,6 +6,8 @@
 *.pyc
 *.class
 *.jar
+*.classpath
+*.settings/
 
 .emacs.d/tramp
 .emacs.d/ac-comphist.dat
