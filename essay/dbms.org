@@ -530,7 +530,7 @@ DTD(Document Type Definition).而XML模式(XML Schema)则是另外一种为XML�
 机制实现上也可以使用奇偶校验(但是只能够识别1个bit错误)或者是使用hamming code来做纠错。而磁盘崩溃的话
 可以采用RAID技术来解决。在RAID里面也会使用到奇偶校验或者是hamming code纠错实现。
 
-关于RAID在arstechnica上面阅读了一篇文章，写得非常详细，我也稍微总结了一下 http://dirlt.com/blog/?p=1992
+关于RAID在arstechnica上面阅读了一篇文章，写得非常详细，我也稍微总结了一下 http://dirlt.com/blog/?p=1992 也可以看[[file:raid.org][这里]]
 
 ** 数据元素表示
 TODO(dirlt):

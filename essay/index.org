@@ -85,6 +85,7 @@ file:./images/valve-logo.jpg
    - [[file:./dsgm.org][dsgm]] Document Synchronization based on Google Mail. https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm
    - [[file:./mysql.org][mysql]] 开源关系型数据库。The world's most popular open source database http://www.mysql.com/
    - [[file:./ssd.org][ssd]] solid state disk.固态硬盘。
+   - [[file:raid.org][raid]] Redundant Array of Inexpensive Disk. 廉价磁盘冗余阵列。
 
 ** Distributed System
    - [[file:distributed-system-reading.org][distributed-system-reading]]  关于分布式方面的一些文章以及阅读心得。

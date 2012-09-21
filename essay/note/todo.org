@@ -4,10 +4,6 @@
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
 ** TODO 阅读完Core Java I
 ** TODO pregel
-   - http://kowshik.github.com/JPregel/pregel_paper.pdf
-   - JPregel @ GitHub http://kowshik.github.com/JPregel/ 
-   - Pregel: Google’s other data-processing infrastructure  http://www.royans.net/arch/pregel-googles-other-data-processing-infrastructure/
-   - http://www.slideshare.net/shatteredNirvana/pregel-a-system-for-largescale-graph-processing
 ** TODO Percolator
    - http://research.google.com/pubs/pub36726.html
 ** TODO megastore
@@ -41,3 +37,4 @@
 ** TODO 王垠的文章。还是比较有思想的。harry facebook.
 ** TODO 和shiwen进行数据对接。测试一下线下时间。
 
+** TODO 总结使用lzo，以及多路输入输出工作方式。

@@ -1,0 +1,21 @@
+* pregel
+   - http://kowshik.github.com/JPregel/pregel_paper.pdf
+   - JPregel @ GitHub http://kowshik.github.com/JPregel/ 
+   - Pregel: Google’s other data-processing infrastructure  http://www.royans.net/arch/pregel-googles-other-data-processing-infrastructure/
+   - Pregel: A System for Large-Scale Graph Processing http://www.slideshare.net/shatteredNirvana/pregel-a-system-for-largescale-graph-processing
+
+   - title: Pregel: A System for Large-Scale Graph Processing
+   - authors: {malewicz,austern,ajcbik,dehnert,ilan,naty,gczaj}@google.com
+   - date: 2010
+
+** Abstract
+
+** Introduction
+** Model of Computation
+** The C++ API
+** Implementation
+** Applications
+** Experiments
+** Related Work
+** Conclusion and Future Work
+

@@ -89,6 +89,40 @@ TODO(dirlt):translate it!!!
      -  NameNode - http://localhost:50070/ 
      -  JobTracker - http://localhost:50030/
 
+*** 使用hadoop-lzo
+   - 安装liblzo2库，sudo apt-get install liblzo2-2(liblzo2-dev)
+   - 安装lzop程序，sudo apt-get install lzop
+   - 下载hadoop-lzo. git clone git://github.com/kevinweil/hadoop-lzo.git https://github.com/kevinweil/hadoop-lzo
+   - 编译，ant compile-native tar 
+   - 将结果build/hadoop-lzo-0.4.14的hadoop-lzo-0.4.14.jar复制到 $HADOOP_HOME/lib，将build/hadoop-lzo-0.4.14/lib/native下的文件复制到$HADOOP_HOME/lib/native (native/Linux-amd64-64)
+   - 修改core-site.xml配置
+#+BEGIN_SRC XML
+<property>
+<name>io.compression.codecs</name>    
+<value>org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec</value>
+</property>
+<property>
+<name>io.compression.codec.lzo.class</name>
+<value>com.hadoop.compression.lzo.LzoCodec</value>
+</property>
+#+END_SRC
+
+TODO（dirlt）：对应的hadoop代码如何编写，以及怎么对pb.lzo进行索引。
+
+*** 多路输入
+多路输入分为三种情况，分别是：
+   - 多路hdfs
+   - 多路htable
+   - 多路hdfs和htable混合。
+第三中情况包含前面两种情况，所以下面看看第三种情况如何实现。
+
+TODO（dirlt）：HBase MultiTableInput
+
+
+*** 多路输出
+
+TODO（dirlt）：
+
 ** View
 *** Hadoop即将过时了吗？
 http://www.kuqin.com/database/20120715/322528.html google提出的三个东西都是解决hadoop的软肋，最终目的还是需要解决大数据上面的实时性问题。
