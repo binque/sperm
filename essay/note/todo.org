@@ -12,7 +12,8 @@
    - http://research.google.com/pubs/pub36726.html
 ** TODO megastore
    - Megastore: Providing Scalable, Highly Available Storage for Interactive Services http://research.google.com/pubs/pub36971.html
-
+** TODO spanner
+   - Google Research Publication: Spanner http://research.google.com/archive/spanner.html
 ** TODO kafka
 ** TODO The anatomy of google
 ** TODO RSS system we make
@@ -28,6 +29,7 @@
 ** TODO 然后看看橱柜有什么品牌
 ** TODO RSS system we make
 ** TODO RSS paper planes
+** TODO joel on software.
 ** TODO wangyin和云风的blog
 ** TODO 然后看看橱柜有什么品牌，以及地板的品牌。
 ** TODO review代码。
