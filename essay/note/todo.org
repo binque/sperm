@@ -3,7 +3,6 @@
 ** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
 ** TODO 阅读完Core Java I
-** TODO pregel
 ** TODO Percolator
    - http://research.google.com/pubs/pub36726.html
 ** TODO megastore
@@ -36,5 +35,6 @@
 ** TODO review代码。
 ** TODO 王垠的文章。还是比较有思想的。harry facebook.
 ** TODO 和shiwen进行数据对接。测试一下线下时间。
-
 ** TODO 总结使用lzo，以及多路输入输出工作方式。
+** TODO 整理pregel
+** TODO 网易云阅读整理过来。
