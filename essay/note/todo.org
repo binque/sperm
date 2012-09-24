@@ -1,6 +1,7 @@
 * todo
 ** TODO 总结一下flex/bison是如何使用的
 ** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
+    - http://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
 ** TODO 阅读完Core Java I
 ** TODO Percolator
@@ -9,7 +10,9 @@
    - Megastore: Providing Scalable, Highly Available Storage for Interactive Services http://research.google.com/pubs/pub36971.html
 <<<<<<< HEAD
 ** TODO spanner
+   - http://www.yankay.com/google-spanner%E5%8E%9F%E7%90%86-%E5%85%A8%E7%90%83%E7%BA%A7%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93/
    - Google Research Publication: Spanner http://research.google.com/archive/spanner.html
+   - Spanner——Google的全球化分布式数据库 - Sun Yongyue - 博客园 http://www.cnblogs.com/sunyongyue/archive/2012/09/20/spanner_note.html
 =======
 ** TODO
    - Google Research Publication: Web Search for a Planet http://research.google.com/archive/googlecluster.html
@@ -38,3 +41,5 @@
 ** TODO 总结使用lzo，以及多路输入输出工作方式。
 ** TODO 整理pregel
 ** TODO 网易云阅读整理过来。
+** TODO 罗伯特·西奥迪尼的《影响力》
+** TODO 《娱乐至死》、《乌合之众》、《失控》
