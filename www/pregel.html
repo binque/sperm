@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="pregel"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-09-24 19:28:50 CST"/>
+<meta name="generated" content="2012-09-24 23:09:23 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -108,6 +108,8 @@
 <li><a href="#sec-1-4-1">1.4.1 Message Passing</a></li>
 <li><a href="#sec-1-4-2">1.4.2 Combiners</a></li>
 <li><a href="#sec-1-4-3">1.4.3 Aggregators</a></li>
+<li><a href="#sec-1-4-4">1.4.4 Topology Mutations</a></li>
+<li><a href="#sec-1-4-5">1.4.5 Input and Output</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-5">1.5 Implementation</a></li>
@@ -296,6 +298,8 @@ class Vertex {
 <ul>
 <li>我的理解是直接提供添加和删除vertex的接口，但是需要考虑到有多个节点共同操作的问题。 <b>NOTE（dirlt）：不过我看论文后面也讨论了这个问题</b>
 </li>
+<li>后面倒是说明白了，handler接口仅仅是为了在冲突的时候调用的，而并不是类似于回调的机制。
+</li>
 </ul>
 
 </li>
@@ -326,7 +330,67 @@ class Vertex {
 <h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> Aggregators</h4>
 <div class="outline-text-4" id="text-1-4-3">
 
+<ul>
+<li>Pregel aggregators are a mechanism for global communica-tion, monitoring, and data. Each vertex can provide a value to an aggregator in superstep S, the system combines those values using a reduction operator, and the resulting value is made available to all vertices in superstep S + 1. （通过将S的所有节点数据全部聚合起来，然后在S+1散播给所有的节点）
+<ul>
+<li>Aggregators can be used for statistics. For instance, a sum aggregator applied to the out-degree of each vertex yields the total number of edges in the graph. More complex reduction operators can generate histograms of a statistic.（统计使用，比如计算所有节点的出度，或者是更加复杂的聚合操作可以产生统计指标的直方图等）
+</li>
+<li>Aggregators can also be used for global coordination. For instance, one branch of Compute() can be executed for the supersteps until an and aggregator determines that all ver-tices satisfy some condition, and then another branch can be executed until termination. A min or max aggregator, ap-plied to the vertex ID, can be used to select a vertex to play a distinguished role in an algorithm.（全局协调作用。一个节点可以单独选举出来作为其他作用，比如在Vertex id上面做min/max操作来选择一个节点）
+</li>
+</ul>
 
+</li>
+<li>To define a new aggregator, a user subclasses the pre-defined Aggregator class, and specifies how the aggregated value is initialized from the first input value and how mul-tiple partially aggregated values are reduced to one. Aggre-gation operators should be commutative and associative.（定义一个聚合类非常简单，但是需要注意的是所有input的顺序以及group方式都不确定，和combiner类似，应该满足结合律和交换律）
+</li>
+<li>By default an aggregator only reduces input values from a single superstep, but it is also possible to define a sticky aggregator that uses input values from all supersteps. This is useful, for example, for maintaining a global edge count that is adjusted only when edges are added or removed.（默认的聚合操作是针对一个superstep完成的，如何设置成为sticky bit的话，那么这个聚合操作就可以一直存在收集所有superstep的输入）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4-4" class="outline-4">
+<h4 id="sec-1-4-4"><span class="section-number-4">1.4.4</span> Topology Mutations</h4>
+<div class="outline-text-4" id="text-1-4-4">
+
+<ul>
+<li>Multiple vertices may issue conflicting requests in the same superstep (e.g., two requests to add a vertex V , with dif-ferent initial values). We use two mechanisms to achieve determinism: partial ordering and handlers.（拓扑结构的修改在同一个superstep可能会出现冲突，比如用一个value创建两个不同的节点），我们通过下面两个机制达到确定性：偏序和handlers
+</li>
+<li>所谓偏序就是定义所有操作的顺序：
+<ul>
+<li>As with messages, mutations become effective in the su-perstep after the requests were issued. <b>TODO(dirlt):是什么意思？对于所有的mutations操作都是在request发起之后都会立刻生效。</b>
+</li>
+<li>Within that super-step removals are performed first, with edge removal before vertex removal, since removing a vertex implicitly removes all of its out-edges. Additions follow removals, with ver-tex addition before edge addition,（在一个superstep里面来说，remove首先执行，首先是edge removal，然后是vertex removal，addition后执行，首先是vertex addition，然后是edge addition）
+</li>
+<li>and all mutations precede calls to Compute(). This partial ordering yields determinis-tic results for most conflicts. <b>TODO（dirlt）：这里所说的意思是否指，本次的修改会在下次的compute之前生效。因为按照我们写程序的习惯来说，肯定是一边compute一边计算需要删除和增加哪些顶点和边的）</b>
+</li>
+</ul>
+
+</li>
+<li>The remaining conflicts are resolved by user-defined han-dlers. If there are multiple requests to create the same vertex in the same superstep, then by default the system just picks one arbitrarily, but users with special needs may specify a better conflict resolution policy by defining an appropriate handler method in their Vertex subclass. The same handler mechanism is used to resolve conflicts caused by multiple vertex removal requests, or by multiple edge addition or re-moval requests. We delegate the resolution to handlers to keep the code of Compute() simple, which limits the inter-action between a handler and Compute(), but has not been an issue in practice.（如果依然出现冲突的话，那么系统会选择任意节点处理。但是如果用户指定了handler的话，那么可以由用户自己选择一个节点来处理这个冲突问题。） 
+</li>
+<li>Our coordination mechanism is lazy: global mutations do not require coordination until the point when they are ap-plied. This design choice facilitates stream processing. The intuition is that conflicts involving modification of a vertex V are handled by V itself. （使用懒协调机制，大部分全局修改不需要协调机制只有当交集的时候。这样适合流处理。直觉上面告诉我们，如果对于V修改出现冲突的话，那么应该是V自身进行处理）
+</li>
+<li>Pregel also supports purely local mutations, i.e., a vertex adding or removing its own outgoing edges or removing it-self. Local mutations cannot introduce conflicts and making them immediately effective simplifies distributed program-ming by using an easier sequential programming semantics（对于local修改比如增加出边和减少出边，或者是直接删除自身，因为没有牵扯到冲突所有修改起来非常简单。本地修改也是立刻生效）
+</li>
+</ul>
+
+
+<p>
+<b>TODO（dirlt）：有个问题就是不太明白，对于修改来说到底是立刻生效，还是仅仅是通知master节点，然后下论生效？partial order是强制还是建议的？</b>
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-4-5" class="outline-4">
+<h4 id="sec-1-4-5"><span class="section-number-4">1.4.5</span> Input and Output</h4>
+<div class="outline-text-4" id="text-1-4-5">
+
+<p>定义了常用的输入输出格式，也提供了读写接口来进行扩展。
+</p>
 </div>
 </div>
 
@@ -375,7 +439,7 @@ class Vertex {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-09-24 19:28:50 CST</p>
+<p class="date">Date: 2012-09-24 23:09:23 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
