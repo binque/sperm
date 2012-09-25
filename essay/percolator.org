@@ -1,0 +1,7 @@
+* percolator
+   - link: http://research.google.com/pubs/pub36726.html
+   - title: Large-scale Incremental Processing Using Distributed Transactions and Notifications 
+   - author: dpeng@google.com, fdabek@google.com
+   - date: 2010
+
+
