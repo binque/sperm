@@ -141,8 +141,46 @@ class Vertex {
 
 ** Applications
 *** PageRank
+#+BEGIN_SRC C++
+class PageRankVertex
+    : public Vertex<double, void, double> {
+ public:
+  virtual void Compute(MessageIterator* msgs) {
+    if (superstep() >= 1) {
+      double sum = 0;
+      for (; !msgs->Done(); msgs->Next())
+        sum += msgs->Value();
+      *MutableValue() =
+          0.15 / NumVertices() + 0.85 * sum;
+    }
+    if (superstep() < 30) {
+      const int64 n = GetOutEdgeIterator().size();
+      SendMessageToAllNeighbors(GetValue() / n);
+    } else {
+      VoteToHalt();
+    }
+  }
+};
+#+END_SRC
+使用pregel描述page-rank算法还是相当直观的：
+    - 初始权值为 0.15 / NumVertices()
+    - 另外0.85来自于其他节点的贡献
+    - 下轮迭代将自己的权值叠加到自己的link上面
+    - 迭代30轮
 
 ** Experiments
 ** Related Work
 ** Conclusion and Future Work
+   - Other usability aspects of Pregel motivated by user experience include a set of status pages with detailed information about the progress of Pregel programs, a unittesting framework, and a single-machine mode which helps with rapid prototyping and debugging.（其他可用性上面还有整个pregel的详细运行信息 via HTTP Server，单测框架，用来方便进行原型开发以及debug的单机框架）
+   - The performance, scalability, and fault-tolerance of Pregel are already satisfactory for graphs with billions of vertices. （能够应对10亿规模的节点）
+   - We are investigating techniques for scaling to even larger graphs, such as relaxing the synchronicity of the model to avoid the cost of faster workers having to wait frequently at inter-superstep barriers.（尝试扩展到更大的图计算模型。对于更大的图计算模型的话会在每个superstep耗时过多，可以通过放松强同步这个性质，这样可以使得某些运行很快的worker不必等待）
+   - Currently the entire computation state resides in RAM. We already spill some data to local disk, and will continue in this direction to enable computations on large graphs when terabytes of main memory are not available.（现在每个节点的内容都存放在RAM里面，后续对于更大的数据会通过溢出到磁盘解决）
+   - Assigning vertices to machines to minimize inter-machine communication is a challenge. Partitioning of the input graph based on topology may suffice if the topology cor-responds to the message traffic, but it may not. We would like to devise dynamic re-partitioning mechanisms.（有效减少机器之间进行通信是必要的。虽然通过拓扑来进行partition在消息通信热度正好和拓扑类似的情况下面运行良好，但是也存在一些其他情况不那么匹配。如果允许动态进行re-partition的话或许会有更好的性能）
+   - Pregel is designed for sparse graphs where communica-tion occurs mainly over edges, and we do not expect that focus to change. Although care has been taken to support high fan-out and fan-in traffic, performance will suffer when most vertices continuously send messages to most other ver-tices. However, realistic dense graphs are rare, as are al-gorithms with dense communication over a sparse graph. Some such algorithms can be transformed into more Pregel-friendly variants, for example by using combiners, aggrega-tors, or topology mutations, and of course such computa-tions are difficult for any highly distributed system.（pregel主要关注的是稀疏图算法的处理，而起这个关注点应该是不改变的。虽然考虑到稠密图的处理，但是实际上运行稠密图算法因为消息通信量过大性能依然会存在影响，但是在现实中稠密图以及对应的算法是非常少见的。这些算法通常可以转换成为适合于pregel运行的程序，比如使用combiner以及aggregator，以及拓扑修改，但是无论如何这类算法都是不适合高度分布式的系统）
+
+
+
+
+
+
 
