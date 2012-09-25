@@ -8,6 +8,7 @@
 *.jar
 *.classpath
 *.settings/
+*.project
 
 .emacs.d/tramp
 .emacs.d/ac-comphist.dat
