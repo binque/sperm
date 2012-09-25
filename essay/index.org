@@ -85,6 +85,7 @@ file:./images/valve-logo.jpg
    - [[file:./dsgm.org][dsgm]] Document Synchronization based on Google Mail. https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm
    - [[file:./mysql.org][mysql]] 开源关系型数据库。The world's most popular open source database http://www.mysql.com/
    - [[file:./ssd.org][ssd]] solid state disk.固态硬盘。
+   - [[file:raid.org][raid]] Redundant Array of Inexpensive Disk. 廉价磁盘冗余阵列。
 
 ** Distributed System
    - [[file:distributed-system-reading.org][distributed-system-reading]]  关于分布式方面的一些文章以及阅读心得。
@@ -100,6 +101,7 @@ file:./images/valve-logo.jpg
      - [[file:./zookeeper.org][zookeeper]] Apache Hadoop项目的分布式锁服务，Chubby的开源实现。
      - [[file:oozie.org][oozie]] Apache Hadoop项目的工作流系统，可以将多个map-reduce作业组合到一个逻辑单元中。支持作业之间的相互依赖，同时允许时间以及数据来触发作业。
    - [[file:dremel.org][dremel]] google针对大数据查询的交互式系统，传说可以在3秒内搞定PB级别的数据。
+   - [[file:pregel.org][pregel]] google针对大规模图算法设计的分布式编程框架。
    
 ** Programming Language and Design Pattern
    - [[file:./prog-lang.org][prog-lang]] including following languages:     

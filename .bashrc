@@ -893,7 +893,10 @@ PATH=$HOME/utils/hadoop-0.20.2-cdh3u3/bin:$PATH
 PATH=$HOME/utils/hbase-0.90.4-cdh3u3/bin:$PATH
 PATH=$HOME/utils/oozie-2.3.2-cdh3u3/bin:$PATH
 
+TEXMACS_PATH=$HOME/utils/TeXmacs-1.0.7-static-gnu-linux/
+PATH=$TEXMACS_PATH/bin:$PATH
 
+export TEXMACS_PATH
 export PATH
 export MANPATH
 
@@ -924,5 +927,5 @@ git config --global alias.st status
 git config --global alias.unstage 'reset'
 git config --global alias.last 'log -1 HEAD'
 
-alias dp1="ssh -p 16021 -l dp dp1"
+alias dp1="ssh -p 16021 -l dp dp1" # authorized.
 alias hadoop1="ssh -p 16021 -l yunbg hadoop1" # L6o21,.inc10ud

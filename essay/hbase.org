@@ -7,6 +7,19 @@
    - scan 'test' , { STARTROW=>'xyz' }
    - count 'test'
 
+*** hbase increment
+http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html
+
+*** hbase join
+http://stackoverflow.com/questions/11327316/how-to-join-tables-in-hbase
+
+其实对于join来说无非三种：
+   - sort join 两路排序，之后进行merge。
+   - loop join 没有任何排序，直接循环匹配。
+   - hash join 遍历一路的时候去查另外一路。
+
+对于MR来说，个人认为sort join通常是效率最高的方式，而hash join次之（hbase的read效率不是很高）。
+
 ** View
 *** 业强 2012-08-16 hbase讲座
 file:./images/hbase-architecture.png

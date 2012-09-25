@@ -7,7 +7,11 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hadoop"/>
 <meta name="generator" content="Org-mode"/>
+<<<<<<< HEAD
 <meta name="generated" content="2012-09-20 16:05:41 CST"/>
+=======
+<meta name="generated" content="2012-09-24 12:21:50 CST"/>
+>>>>>>> 405e1c9d9af954e823be6a906a104be3331dab9d
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -106,6 +110,9 @@
 <li><a href="#sec-1-1-2">1.1.2 Hadoop包括哪些组件</a></li>
 <li><a href="#sec-1-1-3">1.1.3 CDH和Apache Hadoop的关系</a></li>
 <li><a href="#sec-1-1-4">1.1.4 搭建单节点集群</a></li>
+<li><a href="#sec-1-1-5">1.1.5 使用hadoop-lzo</a></li>
+<li><a href="#sec-1-1-6">1.1.6 多路输入</a></li>
+<li><a href="#sec-1-1-7">1.1.7 多路输出</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-2">1.2 View</a>
@@ -330,6 +337,82 @@ TODO(dirlt):translate it!!!
 </ul>
 
 
+</div>
+
+</div>
+
+<div id="outline-container-1-1-5" class="outline-4">
+<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> 使用hadoop-lzo</h4>
+<div class="outline-text-4" id="text-1-1-5">
+
+<ul>
+<li>安装liblzo2库，sudo apt-get install liblzo2-2(liblzo2-dev)
+</li>
+<li>安装lzop程序，sudo apt-get install lzop
+</li>
+<li>下载hadoop-lzo. git clone git://github.com/kevinweil/hadoop-lzo.git <a href="https://github.com/kevinweil/hadoop-lzo">https://github.com/kevinweil/hadoop-lzo</a>
+</li>
+<li>编译，ant compile-native tar 
+</li>
+<li>将结果build/hadoop-lzo-0.4.14的hadoop-lzo-0.4.14.jar复制到 $HADOOP_HOME/lib，将build/hadoop-lzo-0.4.14/lib/native下的文件复制到$HADOOP_HOME/lib/native (native/Linux-amd64-64)
+</li>
+<li>修改core-site.xml配置
+</li>
+</ul>
+
+
+
+
+<pre class="src src-XML">&lt;property&gt;
+&lt;name&gt;io.compression.codecs&lt;/name&gt;    
+&lt;value&gt;org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+&lt;name&gt;io.compression.codec.lzo.class&lt;/name&gt;
+&lt;value&gt;com.hadoop.compression.lzo.LzoCodec&lt;/value&gt;
+&lt;/property&gt;
+</pre>
+
+
+<p>
+TODO（dirlt）：对应的hadoop代码如何编写，以及怎么对pb.lzo进行索引。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-6" class="outline-4">
+<h4 id="sec-1-1-6"><span class="section-number-4">1.1.6</span> 多路输入</h4>
+<div class="outline-text-4" id="text-1-1-6">
+
+<p>多路输入分为三种情况，分别是：
+</p><ul>
+<li>多路hdfs
+</li>
+<li>多路htable
+</li>
+<li>多路hdfs和htable混合。
+</li>
+</ul>
+
+<p>第三中情况包含前面两种情况，所以下面看看第三种情况如何实现。
+</p>
+<p>
+TODO（dirlt）：HBase MultiTableInput
+</p>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-7" class="outline-4">
+<h4 id="sec-1-1-7"><span class="section-number-4">1.1.7</span> 多路输出</h4>
+<div class="outline-text-4" id="text-1-1-7">
+
+
+<p>
+TODO（dirlt）：
+</p>
 </div>
 </div>
 
@@ -653,8 +736,13 @@ RAID cards, redundant power supplies and other per-component reliability feature
 </div>
 
 <div id="postamble">
+<<<<<<< HEAD
 <p class="date">Date: 2012-09-20 16:05:41 CST</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
+=======
+<p class="date">Date: 2012-09-24 12:21:50 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
+>>>>>>> 405e1c9d9af954e823be6a906a104be3331dab9d
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>
