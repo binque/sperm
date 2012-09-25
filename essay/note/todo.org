@@ -12,8 +12,8 @@
    - http://www.yankay.com/google-spanner%E5%8E%9F%E7%90%86-%E5%85%A8%E7%90%83%E7%BA%A7%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93/
    - Google Research Publication: Spanner http://research.google.com/archive/spanner.html
    - Spanner——Google的全球化分布式数据库 - Sun Yongyue - 博客园 http://www.cnblogs.com/sunyongyue/archive/2012/09/20/spanner_note.html
-** TODO
-   - Google Research Publication: Web Search for a Planet http://research.google.com/archive/googlecluster.html
+** TODO Google Research Publication: Web Search for a Planet
+   - http://research.google.com/archive/googlecluster.html
 ** TODO kafka
 ** TODO The anatomy of google
 ** TODO RSS system we make
