@@ -25,7 +25,7 @@
    - 所了解的设计模式有哪些？解释一下facade,flyweight,visitor和adapter模式。
    - 进程和线程区别是什么？（API上，调度上，共享和同步上，实现上).
 
-** 数据结构和算法：
+** 数据结构和算法
    - int atoi(const char*)编写
    - hashtable的实现方式？冲突处理有哪些？
    - 二叉树每个节点都有value，一个子树的和等于这个子树所有节点value之和。找到和最大的子树以及对应的值。

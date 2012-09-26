@@ -119,16 +119,15 @@ file:./images/valve-logo.jpg
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
    - [[file:note/fun.org][挺搞笑的]]
    - [[file:note/excerpt.org][网络摘抄]] 
-   - [[file:note/lyric.org][lyric]] 时候歌词也是可以打动人的。
-   - [[file:note/movie.org][movie]] 电影的一些经典台词和对白。
-   - [[file:./note/travel.org][travel]] 要不读书、要不旅行。心和身体， 得有一个在路上。
-   - [[file:./note/pregnancy.org][pregnancy]] 怀孕需要注意的一些事情。
-   - [[file:note/health.org][health]] 拥有健康的身体才能够更好地享受生活和工作。
+   - [[file:note/lyric.org][歌词]] 
+   - [[file:note/movie.org][电影]] 
+   - [[file:note/travel.org][旅行]] 要不读书、要不旅行。心和身体， 得有一个在路上。
+   - [[file:note/pregnancy.org][怀孕]] 做爸爸妈妈需要注意的一些事情。
+   - [[file:note/health.org][健康]] 拥有健康的身体才能够更好地享受生活和工作。
    - [[file:note/book.org][书籍]] 自己看过的一些书，可能不太好分类所以全部放在这里了。
    - [[file:note/recipe.org][菜谱]] 是谁说的，活着就是为了更好的吃：）
    - [[file:note/interview-problems.org][面试问题]] 作为面试官最痛苦的事情就是找不到面试题目。
    - [[file:note/house.org][住房问题]] 在天朝这是一个大问题。
-
    - [[file:note/struggle-with-ubuntu.org][折腾Ubuntu]]
    - [[file:note/switch-back-to-windows.org][切换回windows]]
    - [[file:note/purchase-compaq-notebook.org][购买compqa笔记本]]
@@ -136,7 +135,7 @@ file:./images/valve-logo.jpg
    - [[file:./note/baidu-bit-shanghai-route.org][百度BIT上海行程]]
    - [[file:./note/retrospect-2009.org][回顾2009]]
    - [[file:./note/graduate-final-report.org][研究生答辩]]
-   - [[file:./note/talk-with-luoyan.org][和罗琰的谈话]]
+   - [[file:./note/talk-with-luoyan.org][和ly的谈话]]
    - [[file:./note/cola-and-water.org][可乐和矿泉水]] 散文处女作
    - [[file:./note/get-marriage-identity.org][领证经历]]
    - [[file:./note/purchase-mba.org][购买MacBookAir]]
