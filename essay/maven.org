@@ -278,6 +278,13 @@ mvn install 会将项目生成的构件安装到本地Maven仓库，mvn deploy �
    - Apache Archiva
 NOTE(dirlt):自己维护了一下公司内部的Apache Archive看起来似乎使用并不麻烦。
 
+nexus有下面几种repo：
+   - Host Repo(直接放在这台机器),
+   - Proxy Repo(可以将其他Repo转发过来),可以将多个proxy repo集合起来，这样在settings.xml里面只需要写一个repo.
+   - Group Repo(可以集合不同Repo成为一个独立Repo),
+   - Virtual Repo(???)
+另外如果自己将一些pom直接copy到某个repo下面的话，nexus不能够索引到，这个时候需要右击这个repo选择Update Index.(nexus依赖索引知道文件分布)
+
 ** maven常用操作
 TODO(dirlt):add more and add more comprehensive description.
 NOTE(dirlt):似乎这些命令和maven生命周期非常相似。

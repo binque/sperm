@@ -7,11 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="ubuntu"/>
 <meta name="generator" content="Org-mode"/>
-<<<<<<< HEAD
-<meta name="generated" content="2012-09-20 16:05:25 CST"/>
-=======
-<meta name="generated" content="2012-09-24 12:21:46 CST"/>
->>>>>>> 405e1c9d9af954e823be6a906a104be3331dab9d
+<meta name="generated" content="2012-09-26 13:43:15 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -151,7 +147,13 @@
 <ul>
 <li><a href="#sec-1-8-1">1.8.1 amarok循环播放</a></li>
 <li><a href="#sec-1-8-2">1.8.2 deb安装文件列表</a></li>
-<li><a href="#sec-1-8-3">1.8.3 deb包管理</a></li>
+<li><a href="#sec-1-8-3">1.8.3 deb和rpm包转换</a></li>
+<li><a href="#sec-1-8-4">1.8.4 安装deb</a></li>
+<li><a href="#sec-1-8-5">1.8.5 bash的tab自动补全</a></li>
+<li><a href="#sec-1-8-6">1.8.6 加快ssh登陆</a></li>
+<li><a href="#sec-1-8-7">1.8.7 建立ssh信任关系</a></li>
+<li><a href="#sec-1-8-8">1.8.8 简化ssh登陆</a></li>
+<li><a href="#sec-1-8-9">1.8.9 为vmware linux虚拟机增加磁盘空间</a></li>
 </ul>
 </li>
 </ul>
@@ -662,7 +664,6 @@ NOTE（dirlt）：其实thunderbird超过一定大小就会自动提醒是否需
 </ul>
 
 
-
 </div>
 
 <div id="outline-container-1-8-1" class="outline-4">
@@ -692,15 +693,9 @@ doc存放位置通常在/usr/share/doc/&lt;package&gt;/下面。
 </div>
 
 <div id="outline-container-1-8-3" class="outline-4">
-<h4 id="sec-1-8-3"><span class="section-number-4">1.8.3</span> deb包管理</h4>
+<h4 id="sec-1-8-3"><span class="section-number-4">1.8.3</span> deb和rpm包转换</h4>
 <div class="outline-text-4" id="text-1-8-3">
 
-
-<hr/>
-
-<p>
-<b>deb和rpm包转换</b>
-</p>
 <ul>
 <li>安装alien
 </li>
@@ -728,14 +723,169 @@ doc存放位置通常在/usr/share/doc/&lt;package&gt;/下面。
 <p>
 甚至可以直接调用alien -i test.rpm直接安装而不需要转换。
 </p>
+</div>
 
-<hr/>
+</div>
 
-<p>
-<b>安装deb</b>
-</p>
+<div id="outline-container-1-8-4" class="outline-4">
+<h4 id="sec-1-8-4"><span class="section-number-4">1.8.4</span> 安装deb</h4>
+<div class="outline-text-4" id="text-1-8-4">
+
+
 <p>
 sudo dpkg -i test.deb
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-8-5" class="outline-4">
+<h4 id="sec-1-8-5"><span class="section-number-4">1.8.5</span> bash的tab自动补全</h4>
+<div class="outline-text-4" id="text-1-8-5">
+
+<ul>
+<li>sudo apt-get install bash-completion
+</li>
+</ul>
+
+
+<p>
+但是我觉得这个自动补全有点不太好的就是，比如我cd ~/.ssh/想自动补全的话，我不仅仅是希望能够补全目录(虽然cd参数只能够是目录),我还希望可以显示文件(比如我想知道这个目录下面是否有Makefile或者是pom.xml)，这样就可以快速判断某个文件是否在目录下面。不然我只能调回命令行开头，切换成为cat,然后跳回去使用两次tab进行自动补全(cat能够显示文件).
+</p>
+<p>
+这个自动补全配置文件在/etc/bash_completion下面。阅读代码发现可能是和file_dir这个函数相关。调用时候使用file_dir -d的话只会显示目录，而file_dir的话就会显示所有。所以最简单的做法就是将file_dir -d全部替换成为file_dir. done!!!
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-8-6" class="outline-4">
+<h4 id="sec-1-8-6"><span class="section-number-4">1.8.6</span> 加快ssh登陆</h4>
+<div class="outline-text-4" id="text-1-8-6">
+
+<p>对于服务器的话可以修改/etc/ssh/sshd_config
+</p>
+
+
+<pre class="example">UseDNS no 
+
+</pre>
+
+<p>
+对于客户端的话可以修改/etc/ssh/ssh_config
+</p>
+
+
+<pre class="example">GSSAPIAuthentication no
+GSSAPIDelegateCredentials no 
+</pre>
+
+
+<p>
+<b>TODO(dirlt):具体为什么? sorry I have no idea!!!</b>
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-8-7" class="outline-4">
+<h4 id="sec-1-8-7"><span class="section-number-4">1.8.7</span> 建立ssh信任关系</h4>
+<div class="outline-text-4" id="text-1-8-7">
+
+<p>关于sshd机器之间的信任关系，很多文章都有介绍。大致方法就是：
+</p><ol>
+<li>在自己机器上面ssh-keygen生成~/.ssh/id_rsa{.pub}.其中.pub文件是公钥
+</li>
+<li>然后将id_rsa.pub内容copy到另外机器下面的~/.ssh/authorized_keys里面(注意chmod 600)
+</li>
+<li>接着本地的.pub文件就可以删除
+</li>
+</ol>
+
+
+<p>
+我猜想大致工作过程应该是这样的：
+</p><ol>
+<li>在ssh建立连接的时候，本地ssh-client会读取~/.ssh/id_rsa内容
+</li>
+<li>建立好连接之后会将rsa内容发给对端机器，对端机器针对authorized_keys进行验证
+</li>
+<li>如果验证OK的话那么就认为是信任对方的。
+</li>
+</ol>
+
+<p>但是具体这些文件都是可以配置的，关于这个配置可以man ssh_config(client) / man sshd_config(server). 今天遇到一个问题就出在/etc/sshd_config里面对于认证文件修改了，不是放在authorized_keys里面而是放在cloud_keys里面!!!
+</p>
+<p>
+对于这种东西我觉得还是使用默认的比较好，convention over configuration!!!
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-8-8" class="outline-4">
+<h4 id="sec-1-8-8"><span class="section-number-4">1.8.8</span> 简化ssh登陆</h4>
+<div class="outline-text-4" id="text-1-8-8">
+
+<p>简化ssh登陆第一个方式就是去除密码输出，这个可以通过配置信任关系完成。
+</p>
+<p>
+简化ssh登陆第二个方式就是可以针对hostname,user以及port做别名，这个可以在~/.ssh/config里面配置
+</p>
+
+
+<pre class="example">dirlt@dirlt-virtual-machine:~/.ssh$ cat config
+Host git
+Port 16024
+HostName git.fm
+User dirtysalt
+</pre>
+
+<p>
+这样之后通过ssh git的话就相当于ssh -l dirtysalt -p 16021 git.fm.非常方便。
+</p>
+<p>
+<b>NOTE（dirlt）：实际上第二点这个对于scp也是很必要的，因为scp没有办法指定工作端口只能使用默认的22</b>
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-8-9" class="outline-4">
+<h4 id="sec-1-8-9"><span class="section-number-4">1.8.9</span> 为vmware linux虚拟机增加磁盘空间</h4>
+<div class="outline-text-4" id="text-1-8-9">
+
+<p>今天感觉自己的磁盘空间好像有点不够了，大部分数据都是在$HOME下面的，需要增加磁盘空间。
+</p>
+<p>
+使用vmware disk expand似乎不太好用，虽然磁盘空间增大了，但是df -h发现识别的硬盘大小还是一样（可能需要重新格式化才行）：（。
+</p>
+<p>
+另外一个办法，就是在vmware下面再增加一个disk. 128G,识别为/dev/sdb。然后在linux下面
+</p><ol>
+<li>fdisk为/dev/sdb创建分区，partition number=1.
+</li>
+<li>partprobe /dev/sdb1 （？具体什么用途我也不太清楚，inform OS partition table changed)
+</li>
+<li>mkfs.ext4 /dev/sdb1 格式化文件系统
+</li>
+</ol>
+
+<p>产生这个硬盘之后，可以首先将自己的$HOME重命名，然后mount /dev/sdb1 $HOME.
+</p>
+<p>
+接着将原来数据copy过去，最好使用cp -r .*这样可以copy隐藏文件。然后需要chown owner:owner .* -R来修改权限（因为这个步骤通常是root操作的）。然后将原来的数据删除即可。
+</p>
+<p>
+之后为了自动挂载，修改/etc/fstab
+</p>
+
+
+<pre class="example">/dev/sdb1 $HOME ext4 defaults 0 0
+</pre>
+
+<p>
+NOTE(dirlt):这里对于0 0不太清楚是什么意思，只是知道分别是dumps以及fsck check order. :(
 </p>
 </div>
 </div>
@@ -744,13 +894,8 @@ sudo dpkg -i test.deb
 </div>
 
 <div id="postamble">
-<<<<<<< HEAD
-<p class="date">Date: 2012-09-20 16:05:25 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
-=======
-<p class="date">Date: 2012-09-24 12:21:46 CST</p>
+<p class="date">Date: 2012-09-26 13:43:15 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
->>>>>>> 405e1c9d9af954e823be6a906a104be3331dab9d
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

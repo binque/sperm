@@ -23,8 +23,6 @@
 ** TODO gmail使用和其他方式对比（需要稳定一段时间）
 ** TODO 购车经历
 ** TODO 阅读RSS订阅（when free）
-** TODO 整理blog（when free）
-    - http://dirlt.com/blog/?paged=6
 ** TODO 然后看看橱柜有什么品牌
 ** TODO RSS system we make
 ** TODO RSS paper planes

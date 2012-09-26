@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hdfs"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-23 23:12:25 CST"/>
+<meta name="generated" content="2012-09-26 13:43:20 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -133,6 +133,11 @@
 </ul>
 </li>
 <li><a href="#sec-1-1-5">1.1.5 FUTURE WORK</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-2">1.2 API</a>
+<ul>
+<li><a href="#sec-1-2-1">1.2.1 file system</a></li>
 </ul>
 </li>
 </ul>
@@ -670,6 +675,43 @@ Whenever a read client or a block scanner detects a corrupt block, it notifies t
 </li>
 </ul>
 
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> API</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+</div>
+
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> file system</h4>
+<div class="outline-text-4" id="text-1-2-1">
+
+<p>因为hdfs本质上是一个文件系统，只不过这个文件系统是应用层面上的。获得这个文件系统之后很多操作就很明了了，因为很多概念是可以直接从linux文件系统借鉴过来的。
+</p><ol>
+<li>首先获取HDFS配置。
+</li>
+<li>然后根据配置创建FileSystem.这个是一个通用接口可以替换成为本地文件。
+</li>
+<li>FileSystem提供了一系列访问方法。
+</li>
+</ol>
+
+
+
+
+<pre class="src src-Java">Configuration conf=new Configuration();
+FileSystem hdfs=FileSystem.get(conf);
+</pre>
+
+
+
+
 </div>
 </div>
 </div>
@@ -677,8 +719,8 @@ Whenever a read client or a block scanner detects a corrupt block, it notifies t
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-23 23:12:25 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-09-26 13:43:20 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

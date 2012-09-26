@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="maven"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-08-23 23:12:00 CST"/>
+<meta name="generated" content="2012-09-26 13:43:17 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -666,6 +666,21 @@ drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 xml-apis
 </ul>
 
 <p>NOTE(dirlt):自己维护了一下公司内部的Apache Archive看起来似乎使用并不麻烦。
+</p>
+<p>
+nexus有下面几种repo：
+</p><ul>
+<li>Host Repo(直接放在这台机器),
+</li>
+<li>Proxy Repo(可以将其他Repo转发过来),可以将多个proxy repo集合起来，这样在settings.xml里面只需要写一个repo.
+</li>
+<li>Group Repo(可以集合不同Repo成为一个独立Repo),
+</li>
+<li>Virtual Repo(???)
+</li>
+</ul>
+
+<p>另外如果自己将一些pom直接copy到某个repo下面的话，nexus不能够索引到，这个时候需要右击这个repo选择Update Index.(nexus依赖索引知道文件分布)
 </p>
 </div>
 </div>
@@ -1443,8 +1458,8 @@ under the License.
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-08-23 23:12:00 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-09-26 13:43:17 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

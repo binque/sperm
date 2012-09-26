@@ -1,4 +1,5 @@
 * lyric
+#+TITLE: 歌词
 ** rolling in th deep(adele)
 #+BEGIN_EXAMPLE
 There's a fire starting in my heart

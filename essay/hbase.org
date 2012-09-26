@@ -6,6 +6,7 @@
    - scan 'test' , { COLUMN=>['cf:url'] }
    - scan 'test' , { STARTROW=>'xyz' }
    - count 'test'
+   - create 'test', { NAME=>'cf' }
 
 *** hbase increment
 http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html
@@ -57,8 +58,30 @@ https://github.com/stumbleupon/asynchbase
    - 但是在MR里面，拿我们现在的HourlyProcedure来说，每次get都是一个同步过程，一定要取回结果才能够进行下一步的操作。整个MR框架就限制了异步client的作用。
    - asynchbase现在使用的场景应该是OpenTSDB，因为没有MR框架限制，所以异步client可以工作很好。
 
+** API
+*** create table
+#+BEGIN_SRC Java
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.util.Bytes;
+import java.util.Date;
 
-
-
-
-
+public class App  {
+  public static void main( String[] args ) throws java.io.IOException {
+    Configuration conf=HBaseConfiguration.create();
+    // create table.
+    HBaseAdmin hbase=new HBaseAdmin(conf);
+    HTableDescriptor desc=new HTableDescriptor("TEST");
+    desc.addFamily(new HColumnDescriptor(Bytes.toBytes("personal")));
+    desc.addFamily(new HColumnDescriptor(Bytes.toBytes("account")));
+    hbase.createTable(desc);
+  }
+}
+#+END_SRC
