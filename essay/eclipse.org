@@ -9,6 +9,12 @@
    - 格式化 C+S+F
    - 注释 C+S+C
    - 切换声明 F3
-   - 跳回 Alt+L
+   - 跳回 Alt+(<-) 跳前Alt+(->)   
    - 切换编辑Tab Ctrl+PageUp/Down
-   - 
+   - 跳行 Ctrl+L
+   - 大纲 Ctrl+O
+   - 跳转编辑Tab Ctrl+E
+   - 定位错误 Ctrl+.
+   - 上个编辑位置 Ctrl+Q
+   - 类型浏览器 Ctrl+Shift+T
+   - 资源浏览器 Ctrl+Shift+R
