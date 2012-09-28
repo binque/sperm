@@ -72,3 +72,9 @@ Let’s walk through an application execution sequence (steps are illustrated in
    - Once the application is complete, and all necessary work has been finished, the ApplicationMaster deregisters with the ResourceManager and shuts down, allowing its own container to be repurposed.（任务完成之后AM通知RM注销并且释放所持有的Container）
 
 file:./images/yarnflow.png
+
+*** Apache Mesos (Twitter Open Source Open House)
+https://speakerdeck.com/u/benh/p/apache-mesos-twitter-open-source-open-house
+
+和YARN类似的资源调度层。
+

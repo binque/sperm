@@ -118,9 +118,7 @@ TODO（dirlt）：对应的hadoop代码如何编写，以及怎么对pb.lzo进�
 
 TODO（dirlt）：HBase MultiTableInput
 
-
 *** 多路输出
-
 TODO（dirlt）：
 
 ** View
