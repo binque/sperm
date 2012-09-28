@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hbase"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-09-26 13:43:20 CST"/>
+<meta name="generated" content="2012-09-28 13:49:17 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -107,15 +107,21 @@
 <li><a href="#sec-1-1-3">1.1.3 hbase join</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-2">1.2 View</a>
+<li><a href="#sec-1-2">1.2 Experiment</a>
 <ul>
-<li><a href="#sec-1-2-1">1.2.1 业强 2012-08-16 hbase讲座</a></li>
-<li><a href="#sec-1-2-2">1.2.2 asynchbase</a></li>
+<li><a href="#sec-1-2-1">1.2.1 hbase的kv大小限制</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-3">1.3 API</a>
+<li><a href="#sec-1-3">1.3 View</a>
 <ul>
-<li><a href="#sec-1-3-1">1.3.1 create table</a></li>
+<li><a href="#sec-1-3-1">1.3.1 业强 2012-08-16 hbase讲座</a></li>
+<li><a href="#sec-1-3-2">1.3.2 asynchbase</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-4">1.4 API</a>
+<ul>
+<li><a href="#sec-1-4-1">1.4.1 create table</a></li>
+<li><a href="#sec-1-4-2">1.4.2 use python</a></li>
 </ul>
 </li>
 </ul>
@@ -154,6 +160,8 @@
 <li>count 'test'
 </li>
 <li>create 'test', { NAME=&gt;'cf' }
+</li>
+<li>get 'test', {COLUMN = &gt; ['cf:url']}
 </li>
 </ul>
 
@@ -199,15 +207,137 @@
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> View</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Experiment</h3>
 <div class="outline-text-3" id="text-1-2">
 
 
 </div>
 
 <div id="outline-container-1-2-1" class="outline-4">
-<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> 业强 2012-08-16 hbase讲座</h4>
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> hbase的kv大小限制</h4>
 <div class="outline-text-4" id="text-1-2-1">
+
+<p>下面代码可以进行检测
+</p>
+
+
+<pre class="src src-Java">package com.umeng.dp.helper;
+
+import java.io.IOException;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.util.Bytes;
+
+// dirlt: we should know what's the max size of hbase value.
+// turns out max size is 10M. 
+// refers to the HTable::validatePut this method.
+public class TestMaxSizeOfHBaseValue {
+    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #ffff00;">"CF"</span>);
+    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #ffff00;">"CL"</span>);
+    private final static String kTableName = <span style="color: #ffff00;">"test.temporary"</span>;
+
+    private Configuration conf_ = null;
+
+    public TestMaxSizeOfHBaseValue(Configuration conf) {
+        conf_ = conf;
+    }
+
+    public void run() throws IOException {
+        HBaseAdmin admin = new HBaseAdmin(conf_);
+        if (admin.isTableAvailable(kTableName)) {
+            admin.disableTable(kTableName);
+            admin.deleteTable(kTableName);
+        }
+        HTableDescriptor dp = new HTableDescriptor(kTableName);
+        dp.addFamily(new HColumnDescriptor(kByteColumnFamily));
+        admin.createTable(dp);
+        HTable table = new HTable(kTableName);
+        int size = 2048;
+        while(true){
+            byte[] value = new byte[size-1];
+            Put put = new Put(Bytes.toBytes(<span style="color: #ffff00;">"row"</span>));
+            put.add(kByteColumnFamily, kByteColumn, value);
+            try {
+                table.put(put);
+            }catch(IllegalArgumentException e) {
+                e.printStackTrace();
+                break;
+            }
+            System.out.println(<span style="color: #ffff00;">"value size = "</span>+ size +<span style="color: #ffff00;">", succeed"</span>);
+            if(size &gt;= 8 * 1024 * 1024) {
+                break;
+            }
+            size *= 2;
+        }
+        table.close();
+        admin.disableTable(kTableName);
+        admin.deleteTable(kTableName);
+    }
+
+    public static void main(String[] args) throws IOException {
+        Configuration conf = HBaseConfiguration.create();
+        TestMaxSizeOfHBaseValue test = new TestMaxSizeOfHBaseValue(conf);
+        test.run();
+    }
+}
+</pre>
+
+<p>
+对于默认配置的集群是8M。其实跟进table.put这个方法的话，可以发现实际上在validatePut这里进行了验证。
+</p>
+
+
+
+<pre class="src src-Java">// validate for well-formedness
+private void validatePut(final Put put) throws IllegalArgumentException{
+  if (put.isEmpty()) {
+    throw new IllegalArgumentException(<span style="color: #ffff00;">"No columns to insert"</span>);
+  }
+  if (maxKeyValueSize &gt; 0) {
+    for (List&lt;KeyValue&gt; list : put.getFamilyMap().values()) {
+      for (KeyValue kv : list) {
+        if (kv.getLength() &gt; maxKeyValueSize) {
+          throw new IllegalArgumentException(<span style="color: #ffff00;">"KeyValue size too large"</span>);
+        }
+      }
+    }
+  }
+}
+</pre>
+
+
+<p>
+这里maxKeyValueSize是从配置文件里面读取出来的。
+</p>
+
+
+<pre class="src src-Java">this.maxKeyValueSize = conf.getInt(<span style="color: #ffff00;">"hbase.client.keyvalue.maxsize"</span>, -1);
+</pre>
+
+<p>
+因此可以修改hbase.client.keyvalue.maxsize来修改大小。从名字上看这个大小应该是在client端进行限制的，个人推测在server端应该是没有大小限制的。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> View</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> 业强 2012-08-16 hbase讲座</h4>
+<div class="outline-text-4" id="text-1-3-1">
 
 <p><img src="./images/hbase-architecture.png"  alt="./images/hbase-architecture.png" />
 </p>
@@ -255,9 +385,9 @@ scan过程大致是这样的：
 
 </div>
 
-<div id="outline-container-1-2-2" class="outline-4">
-<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> asynchbase</h4>
-<div class="outline-text-4" id="text-1-2-2">
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> asynchbase</h4>
+<div class="outline-text-4" id="text-1-3-2">
 
 <p><a href="https://github.com/stumbleupon/asynchbase">https://github.com/stumbleupon/asynchbase</a>
 </p>
@@ -286,16 +416,16 @@ scan过程大致是这样的：
 
 </div>
 
-<div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> API</h3>
-<div class="outline-text-3" id="text-1-3">
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> API</h3>
+<div class="outline-text-3" id="text-1-4">
 
 
 </div>
 
-<div id="outline-container-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> create table</h4>
-<div class="outline-text-4" id="text-1-3-1">
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> create table</h4>
+<div class="outline-text-4" id="text-1-4-1">
 
 
 
@@ -325,6 +455,106 @@ public class App  {
 }
 </pre>
 
+
+</div>
+
+</div>
+
+<div id="outline-container-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> use python</h4>
+<div class="outline-text-4" id="text-1-4-2">
+
+<p>使用python来访问hbase确实可以很大地提高开发效率，但是通过thrift server来进行中转的话对于性能还是存在影响的，因此比较适合测试。
+</p><ul>
+<li>首先需要启动thrift server。hbase-deamon.sh start thrift
+</li>
+<li>然后安装happybase。pip install happybase github: <a href="https://github.com/wbolster/happybase">https://github.com/wbolster/happybase</a> doc: <a href="http://happybase.readthedocs.org/en/latest/index.html">http://happybase.readthedocs.org/en/latest/index.html</a>
+</li>
+</ul>
+
+<p>使用起来还是比较简单的，documentation里面的说明也非常详细。
+</p>
+
+
+
+<pre class="src src-Python">#!/usr/bin/env python
+#coding:utf-8
+#Copyright (C) dirlt
+
+import happybase
+
+# create connection.
+connection = happybase.Connection('localhost', autoconnect = False)
+connection.open()
+
+# create table.
+kTableName = 'for-test'
+kColumnFamily = 'cf'
+
+if(kTableName in connection.tables()):
+    connection.disable_table('for-test')
+    connection.delete_table('for-test')
+connection.create_table(kTableName, {kColumnFamily:{}})
+table = connection.table(kTableName)
+
+# put data.
+table.put('row1', {kColumnFamily+':c1':'value1'})
+
+# get data.
+row = table.row('row1')
+assert(row[kColumnFamily + ':c1'] == 'value1')
+</pre>
+
+
+
+<hr/>
+<p>
+<b>NOTE（dirlt）：发现还是存在一些不兼容的thrift协议，比如使用scan似乎就存在问题</b>
+</p>
+
+
+
+<pre class="src src-Python">#!/usr/bin/env python
+#coding:utf-8
+#Copyright (C) dirlt
+
+import happybase
+
+# create connection.
+connection = happybase.Connection('localhost', autoconnect = False)
+connection.open()
+
+print connection.tables()
+
+table = connection.table('for-test')
+iters = table.scan()
+
+for k,v in iters:
+    print k,v
+
+</pre>
+
+
+<p>
+出现了下面这些问题：
+</p>
+
+
+<pre class="example">Traceback (most recent call last):
+  File "./hbase.py", line 20, in &lt;module&gt;
+    for k,v in iters:
+  File "/usr/local/lib/python2.7/dist-packages/happybase/api.py", line 567, in scan
+    scan_id = client.scannerOpenWithScan(self.name, scan)
+  File "/usr/local/lib/python2.7/dist-packages/happybase/hbase/Hbase.py", line 1716, in scannerOpenWithScan
+    return self.recv_scannerOpenWithScan()
+  File "/usr/local/lib/python2.7/dist-packages/happybase/hbase/Hbase.py", line 1733, in recv_scannerOpenWithScan
+    raise x
+thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
+</pre>
+
+
+
+
 </div>
 </div>
 </div>
@@ -332,7 +562,7 @@ public class App  {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-09-26 13:43:20 CST</p>
+<p class="date">Date: 2012-09-28 13:49:17 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

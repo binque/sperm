@@ -41,6 +41,15 @@ def toLocal(s):
 如果字符编码错误的话，那么返回的就是invalid argument的错误，同样会存在一定错误机率（但是不大）。出现错误几率的原因就是这些码点，使用
 gb2312可以正常解释，使用utf8也可以正常解释。
 
+--------------------
+NOTE（dirlt）：最近修改饭团系统的时候，使用sqlitedb还出现了字符编码问题。系统似乎默认使用ascii来进行编码解码，可以修改系统默认的编码解码方式为utf8。
+#+BEGIN_SRC Python
+import sys
+if(sys.getdefaultencoding() !='utf8'):
+  reload(sys)
+  sys.setdefaultencoding('utf8')
+#+END_SRC
+
 ** wsgi
 wsgi(web server gateway interface)定义了一个webserver的标准编程接口，对于coder来说只需要实现这个接口，然后可以选择外部其他的framework（比如gunicore），就可以将webserver运行起来了。下面是一个参考代码
 #+BEGIN_SRC Python

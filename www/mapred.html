@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="mapred"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-09-20 16:05:37 CST"/>
+<meta name="generated" content="2012-09-28 13:49:16 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -105,6 +105,12 @@
 <li><a href="#sec-1-1-1">1.1.1 Introducing Apache Hadoop YARN</a></li>
 <li><a href="#sec-1-1-2">1.1.2 Apache Hadoop YARN – Background and an Overview</a></li>
 <li><a href="#sec-1-1-3">1.1.3 Apache Hadoop YARN – Concepts and Applications</a></li>
+<li><a href="#sec-1-1-4">1.1.4 Apache Mesos (Twitter Open Source Open House)</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-2">1.2 Experiment</a>
+<ul>
+<li><a href="#sec-1-2-1">1.2.1 验证多路输入正确性</a></li>
 </ul>
 </li>
 </ul>
@@ -292,15 +298,246 @@ Let’s walk through an application execution sequence (steps are illustrated in
 
 <p>
 <img src="./images/yarnflow.png"  alt="./images/yarnflow.png" />
-</p></div>
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-4" class="outline-4">
+<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> Apache Mesos (Twitter Open Source Open House)</h4>
+<div class="outline-text-4" id="text-1-1-4">
+
+<p><a href="https://speakerdeck.com/u/benh/p/apache-mesos-twitter-open-source-open-house">https://speakerdeck.com/u/benh/p/apache-mesos-twitter-open-source-open-house</a>
+</p>
+<p>
+和YARN类似的资源调度层。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Experiment</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+</div>
+
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> 验证多路输入正确性</h4>
+<div class="outline-text-4" id="text-1-2-1">
+
+<p>多路输入包括从多路hbase以及多路hdfs输入，下面是一个验证程序，可以在上面修改确认是否OK。大致思路如下：
+</p><ul>
+<li>编写hbase以及hdfs对应的mapper
+</li>
+<li>构造两个htable以及hdfs file
+</li>
+<li>mapper效果就是将内容直接转发出去
+</li>
+<li>reducer将输出结果写入到hdfs文件
+</li>
+<li>设置1个reducer这样可以容易地验证结果。
+</li>
+</ul>
+
+
+
+
+
+<pre class="src src-Java">package com.umeng.dp.helper;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
+import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
+import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
+import org.apache.hadoop.hbase.mapreduce.TableMapper;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.util.GenericOptionsParser;
+
+public class TestHBaseInputAndHDFSInputMR {
+    public static final String kInTableName1 = <span style="color: #ffff00;">"test.temporary.in1"</span>;
+    public static final String kInTableName2 = <span style="color: #ffff00;">"test.temporary.in2"</span>;
+    public static final String kInFileName1 = <span style="color: #ffff00;">"/tmp/test.temporary.in1"</span>;
+    public static final String kInFileName2 = <span style="color: #ffff00;">"/tmp/test.temporary.in2"</span>;
+    public static final String kOutFileName = <span style="color: #ffff00;">"/tmp/test.temporary.out"</span>;
+    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #ffff00;">"CF"</span>);
+    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #ffff00;">"CL"</span>);
+
+    public static class FMapper extends Mapper&lt;LongWritable, Text, Text, Text&gt; {
+        @Override
+        protected void map(LongWritable key, Text value, Context context)
+                throws IOException, InterruptedException {
+            context.write(new Text(<span style="color: #ffff00;">"0"</span>),
+                    new Text(<span style="color: #ffff00;">"file mapper value="</span> + value.toString()));
+        }
+    }
+
+    public static class TMapper extends TableMapper&lt;Text, Text&gt; {
+        @Override
+        protected void map(ImmutableBytesWritable key, Result result,
+                Context context) throws IOException, InterruptedException {
+            context.write(
+                    new Text(<span style="color: #ffff00;">"0"</span>),
+                    new Text(<span style="color: #ffff00;">"table mapper key = "</span>
+                            + Bytes.toString(key.get())
+                            + <span style="color: #ffff00;">", value="</span>
+                            + Bytes.toString(result.getValue(kByteColumnFamily,
+                                    kByteColumn))));
+        }
+    }
+
+    public static class TMapper2 extends TMapper {
+    }
+
+    public static class FTReducer extends
+            Reducer&lt;Text, Text, NullWritable, Text&gt; {
+        @Override
+        protected void reduce(Text key, Iterable&lt;Text&gt; values, Context context)
+                throws IOException, InterruptedException {
+            for (Text v : values) {
+                context.write(null, v);
+            }
+        }
+    }
+
+    public static void createTable(String name, Configuration conf)
+            throws IOException {
+        HBaseAdmin admin = new HBaseAdmin(conf);
+        if (admin.isTableAvailable(name)) {
+            admin.disableTable(name);
+            admin.deleteTable(name);
+        }
+        HTableDescriptor dp = new HTableDescriptor(name);
+        dp.addFamily(new HColumnDescriptor(kByteColumnFamily));
+        admin.createTable(dp);
+
+        HTable table = new HTable(name);
+        Put put = new Put(Bytes.toBytes(name + <span style="color: #ffff00;">".rowkey"</span>));
+        put.add(kByteColumnFamily, kByteColumn, Bytes.toBytes(name + <span style="color: #ffff00;">".tvalue"</span>));
+        table.put(put);
+        table.close();
+    }
+
+    public static void createFile(String name, Configuration conf)
+            throws IOException {
+        FileSystem fs = FileSystem.get(conf);
+        Path p = new Path(name);
+        if (fs.exists(p)) {
+            fs.delete(p, true);
+        }
+        FSDataOutputStream fos = fs.create(p);
+        fos.writeBytes(name + <span style="color: #ffff00;">".fvalue\n"</span>);
+        fos.close();
+        fs.close();
+    }
+
+    public static void deleteFile(String name, Configuration conf)
+            throws IOException {
+        FileSystem fs = FileSystem.get(conf);
+        Path p = new Path(name);
+        if (fs.exists(p)) {
+            fs.delete(p, true);
+        }
+        fs.close();
+    }
+
+    public static Job configureJob(Configuration conf, String[] args)
+            throws IOException {
+         // fill htable some data.
+         createTable(kInTableName1, conf);
+         createTable(kInTableName2, conf);
+         // write hdfs some data.
+         createFile(kInFileName1, conf);
+         createFile(kInFileName2, conf);
+        // delete out
+        deleteFile(kOutFileName, conf);
+
+        String jobName = <span style="color: #ffff00;">"TestHBaseInputAndHDFSInputMR#"</span>
+                + new SimpleDateFormat(<span style="color: #ffff00;">"yyyyMMddHHmmss"</span>).format(new Date());
+        // setup environment.
+        Job job = new Job(conf);
+        job.setJobName(jobName);
+        job.setJarByClass(TestHBaseInputAndHDFSInputMR.class);
+
+        // mapper option.
+        Scan scan = new Scan();
+        scan.setCaching(500); // 1 is the default in Scan, which will be bad for
+                              // MapReduce jobs
+                              // TableMapReduceUtil.initTableMapperJob(kInTableName1,
+                              // scan,
+        TableMapReduceUtil.initTableMapperJob(kInTableName1, scan,
+                TMapper.class, Text.class, Text.class, job);
+        // simplest way.
+        MultipleInputs.addInputPath(job, new Path(kInTableName1),
+                TableInputFormat.class, TMapper.class);
+
+        MultipleInputs.addInputPath(job, new Path(kInFileName1),
+                TextInputFormat.class, FMapper.class);
+        MultipleInputs.addInputPath(job, new Path(kInFileName2),
+                TextInputFormat.class, FMapper.class);
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(Text.class);
+        // reducer option.
+        job.setReducerClass(Reducer.class);
+        job.setOutputKeyClass(NullWritable.class);
+        job.setOutputValueClass(Text.class);
+        job.setNumReduceTasks(1); // just one reducer.
+        // output option.
+        job.setOutputFormatClass(TextOutputFormat.class);
+        TextOutputFormat.setOutputPath(job, new Path(kOutFileName));
+        return job;
+    }
+
+    public static void main(String[] args) {
+        try {
+            Configuration conf = HBaseConfiguration.create();
+            args = new GenericOptionsParser(conf, args).getRemainingArgs();
+            Job job = configureJob(conf, args);
+            job.submit();
+            System.exit(job.waitForCompletion(true) ? 0 : 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+</pre>
+
+
+</div>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-09-20 16:05:37 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-09-28 13:49:16 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

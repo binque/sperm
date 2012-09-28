@@ -78,3 +78,195 @@ https://speakerdeck.com/u/benh/p/apache-mesos-twitter-open-source-open-house
 
 和YARN类似的资源调度层。
 
+** Experiment
+*** 验证多路输入正确性
+多路输入包括从多路hbase以及多路hdfs输入，下面是一个验证程序，可以在上面修改确认是否OK。大致思路如下：
+   - 编写hbase以及hdfs对应的mapper
+   - 构造两个htable以及hdfs file
+   - mapper效果就是将内容直接转发出去
+   - reducer将输出结果写入到hdfs文件
+   - 设置1个reducer这样可以容易地验证结果。
+
+#+BEGIN_SRC Java
+package com.umeng.dp.helper;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.HTable;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
+import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
+import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
+import org.apache.hadoop.hbase.mapreduce.TableMapper;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.util.GenericOptionsParser;
+
+public class TestHBaseInputAndHDFSInputMR {
+    public static final String kInTableName1 = "test.temporary.in1";
+    public static final String kInTableName2 = "test.temporary.in2";
+    public static final String kInFileName1 = "/tmp/test.temporary.in1";
+    public static final String kInFileName2 = "/tmp/test.temporary.in2";
+    public static final String kOutFileName = "/tmp/test.temporary.out";
+    private final static byte[] kByteColumnFamily = Bytes.toBytes("CF");
+    private final static byte[] kByteColumn = Bytes.toBytes("CL");
+
+    public static class FMapper extends Mapper<LongWritable, Text, Text, Text> {
+        @Override
+        protected void map(LongWritable key, Text value, Context context)
+                throws IOException, InterruptedException {
+            context.write(new Text("0"),
+                    new Text("file mapper value=" + value.toString()));
+        }
+    }
+
+    public static class TMapper extends TableMapper<Text, Text> {
+        @Override
+        protected void map(ImmutableBytesWritable key, Result result,
+                Context context) throws IOException, InterruptedException {
+            context.write(
+                    new Text("0"),
+                    new Text("table mapper key = "
+                            + Bytes.toString(key.get())
+                            + ", value="
+                            + Bytes.toString(result.getValue(kByteColumnFamily,
+                                    kByteColumn))));
+        }
+    }
+
+    public static class TMapper2 extends TMapper {
+    }
+
+    public static class FTReducer extends
+            Reducer<Text, Text, NullWritable, Text> {
+        @Override
+        protected void reduce(Text key, Iterable<Text> values, Context context)
+                throws IOException, InterruptedException {
+            for (Text v : values) {
+                context.write(null, v);
+            }
+        }
+    }
+
+    public static void createTable(String name, Configuration conf)
+            throws IOException {
+        HBaseAdmin admin = new HBaseAdmin(conf);
+        if (admin.isTableAvailable(name)) {
+            admin.disableTable(name);
+            admin.deleteTable(name);
+        }
+        HTableDescriptor dp = new HTableDescriptor(name);
+        dp.addFamily(new HColumnDescriptor(kByteColumnFamily));
+        admin.createTable(dp);
+
+        HTable table = new HTable(name);
+        Put put = new Put(Bytes.toBytes(name + ".rowkey"));
+        put.add(kByteColumnFamily, kByteColumn, Bytes.toBytes(name + ".tvalue"));
+        table.put(put);
+        table.close();
+    }
+
+    public static void createFile(String name, Configuration conf)
+            throws IOException {
+        FileSystem fs = FileSystem.get(conf);
+        Path p = new Path(name);
+        if (fs.exists(p)) {
+            fs.delete(p, true);
+        }
+        FSDataOutputStream fos = fs.create(p);
+        fos.writeBytes(name + ".fvalue\n");
+        fos.close();
+        fs.close();
+    }
+
+    public static void deleteFile(String name, Configuration conf)
+            throws IOException {
+        FileSystem fs = FileSystem.get(conf);
+        Path p = new Path(name);
+        if (fs.exists(p)) {
+            fs.delete(p, true);
+        }
+        fs.close();
+    }
+
+    public static Job configureJob(Configuration conf, String[] args)
+            throws IOException {
+         // fill htable some data.
+         createTable(kInTableName1, conf);
+         createTable(kInTableName2, conf);
+         // write hdfs some data.
+         createFile(kInFileName1, conf);
+         createFile(kInFileName2, conf);
+        // delete out
+        deleteFile(kOutFileName, conf);
+
+        String jobName = "TestHBaseInputAndHDFSInputMR#"
+                + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        // setup environment.
+        Job job = new Job(conf);
+        job.setJobName(jobName);
+        job.setJarByClass(TestHBaseInputAndHDFSInputMR.class);
+
+        // mapper option.
+        Scan scan = new Scan();
+        scan.setCaching(500); // 1 is the default in Scan, which will be bad for
+                              // MapReduce jobs
+                              // TableMapReduceUtil.initTableMapperJob(kInTableName1,
+                              // scan,
+        TableMapReduceUtil.initTableMapperJob(kInTableName1, scan,
+                TMapper.class, Text.class, Text.class, job);
+        // simplest way.
+        MultipleInputs.addInputPath(job, new Path(kInTableName1),
+                TableInputFormat.class, TMapper.class);
+        
+        MultipleInputs.addInputPath(job, new Path(kInFileName1),
+                TextInputFormat.class, FMapper.class);
+        MultipleInputs.addInputPath(job, new Path(kInFileName2),
+                TextInputFormat.class, FMapper.class);
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(Text.class);
+        // reducer option.
+        job.setReducerClass(Reducer.class);
+        job.setOutputKeyClass(NullWritable.class);
+        job.setOutputValueClass(Text.class);
+        job.setNumReduceTasks(1); // just one reducer.
+        // output option.
+        job.setOutputFormatClass(TextOutputFormat.class);
+        TextOutputFormat.setOutputPath(job, new Path(kOutFileName));
+        return job;
+    }
+
+    public static void main(String[] args) {
+        try {
+            Configuration conf = HBaseConfiguration.create();
+            args = new GenericOptionsParser(conf, args).getRemainingArgs();
+            Job job = configureJob(conf, args);
+            job.submit();
+            System.exit(job.waitForCompletion(true) ? 0 : 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+#+END_SRC
+
