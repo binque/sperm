@@ -78,7 +78,7 @@ https://speakerdeck.com/u/benh/p/apache-mesos-twitter-open-source-open-house
 
 和YARN类似的资源调度层。
 
-** Experiment
+** Usage
 *** 验证多路输入正确性
 多路输入包括从多路hbase以及多路hdfs输入，下面是一个验证程序，可以在上面修改确认是否OK。大致思路如下：
    - 编写hbase以及hdfs对应的mapper
@@ -86,6 +86,7 @@ https://speakerdeck.com/u/benh/p/apache-mesos-twitter-open-source-open-house
    - mapper效果就是将内容直接转发出去
    - reducer将输出结果写入到hdfs文件
    - 设置1个reducer这样可以容易地验证结果。
+*NOTE（dirlt）：现在似乎只能够实现多个hdfs，1个htable作为输入*
 
 #+BEGIN_SRC Java
 package com.umeng.dp.helper;
@@ -270,3 +271,160 @@ public class TestHBaseInputAndHDFSInputMR {
 }
 #+END_SRC
 
+*** 验证多路输出正确性
+多路输出包括输出到hdfs和htable，下面是一个验证程序。大致似乎是这样的：
+   - 构造一个输入文件
+   - 从这个文件读取内容并且在mapper里面写到file和table里面
+   - 没有设置任何reducer
+*NOTE（dirlt）：似乎只是支持1个htable，和1个hdfs的目录。但是hdfs每个输出文件会有一个前缀用来进行区分*
+
+#+BEGIN_EXAMPLE
+[dirlt@umeng-ubuntu-pc] > hadoop fs -ls /tmp/test/temporary.out/
+12/10/08 16:59:00 INFO security.UserGroupInformation: JAAS Configuration already set up for Hadoop, not re-installing.
+Found 4 items
+-rw-r--r--   1 dirlt supergroup          0 2012-10-08 16:58 /tmp/test/temporary.out/_SUCCESS
+drwxr-xr-x   - dirlt supergroup          0 2012-10-08 16:57 /tmp/test/temporary.out/_logs
+-rw-r--r--   1 dirlt supergroup         35 2012-10-08 16:57 /tmp/test/temporary.out/f-m-00000
+-rw-r--r--   1 dirlt supergroup          0 2012-10-08 16:57 /tmp/test/temporary.out/part-m-00000
+#+END_EXAMPLE
+可以看到在mapper输出里面，以f来作为前缀而没有使用part来作为前缀作为输出（虽然存在part这个文件，但是我们没有使用context进行输出）
+
+#+BEGIN_SRC Java
+package com.umeng.dp.mapreduce;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.mapreduce.TableOutputFormat;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.util.GenericOptionsParser;
+
+public class TestHBaseOutputAndHDFSOutputMR {
+    public static final String kInputFileName = "/tmp/test/temporary.in";
+    public static final String kOutputTableName = "test.temporary.out";
+    public static final String kOutputFileName = "/tmp/test/temporary.out";
+    private final static byte[] kByteColumnFamily = Bytes.toBytes("CF");
+    private final static byte[] kByteColumn = Bytes.toBytes("CL");
+    
+    public static void createTable(String name, Configuration conf)
+            throws IOException {
+        HBaseAdmin admin = new HBaseAdmin(conf);
+        if (admin.isTableAvailable(name)) {
+            admin.disableTable(name);
+            admin.deleteTable(name);
+        }
+        HTableDescriptor dp = new HTableDescriptor(name);
+        dp.addFamily(new HColumnDescriptor(kByteColumnFamily));
+        admin.createTable(dp);
+        admin.close();
+    }
+    
+    public static void createFile(String name, Configuration conf)
+            throws IOException {
+        FileSystem fs = FileSystem.get(conf);
+        Path p = new Path(name);
+        if (fs.exists(p)) {
+            fs.delete(p, true);
+        }
+        FSDataOutputStream fos = fs.create(p);
+        fos.writeBytes(name + ".fvalue\n");
+        fos.close();
+        fs.close();
+    }
+    
+    public static void deleteFile(String name, Configuration conf)
+            throws IOException {
+        FileSystem fs = FileSystem.get(conf);
+        Path p = new Path(name);
+        if (fs.exists(p)) {
+            fs.delete(p, true);
+        }
+        fs.close();
+    }
+    
+    public static class XMap extends Mapper<LongWritable, Text, NullWritable, NullWritable > {
+        private MultipleOutputs<NullWritable, NullWritable> mos = null;
+        @Override
+        public void setup(Context ctx) throws IOException, InterruptedException {
+            super.setup(ctx);
+            mos = new MultipleOutputs<NullWritable, NullWritable>(ctx);
+        }
+        
+        @Override
+        public void map(LongWritable k, Text v, Context ctx) throws IOException, InterruptedException {
+            mos.write("f", new Text("fkey"), v);
+            mos.write("f2", new Text("fkey"), v);
+            Put put = new Put(Bytes.toBytes("tkey"));
+            put.add(kByteColumnFamily, kByteColumn, v.getBytes());
+            mos.write("t", null, put);
+        }
+        
+        @Override
+        public void cleanup(Context ctx) throws IOException, InterruptedException {
+            super.cleanup(ctx);
+            mos.close();           
+        }
+    }
+    
+    public static Job configureJob(Configuration conf, String[] args)
+            throws IOException {
+        createTable(kOutputTableName,conf);
+        deleteFile(kOutputFileName, conf);
+        createFile(kInputFileName, conf);
+        
+        String jobName = "TestHBaseOutputAndHDFSOutputMR#"
+                + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        // setup environment.
+        Job job = new Job(conf);
+        job.setJobName(jobName);
+        job.setJarByClass(TestHBaseOutputAndHDFSOutputMR.class);        
+        job.setMapperClass(TestHBaseOutputAndHDFSOutputMR.XMap.class);
+        FileInputFormat.setInputPaths(job, new Path(kInputFileName));
+        
+        job.setOutputKeyClass(NullWritable.class);
+        job.setOutputValueClass(NullWritable.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
+        
+        MultipleOutputs.addNamedOutput(job, "f", TextOutputFormat.class, Text.class, Text.class);
+        MultipleOutputs.addNamedOutput(job, "f2", TextOutputFormat.class, Text.class, Text.class);
+        MultipleOutputs.addNamedOutput(job, "t", TableOutputFormat.class, NullWritable.class, Put.class);
+        FileOutputFormat.setOutputPath(job, new Path(kOutputFileName));
+        job.getConfiguration().set(TableOutputFormat.OUTPUT_TABLE, kOutputTableName);
+        
+        job.setNumReduceTasks(0);
+        return job;
+    }
+
+    public static void main(String[] args) {
+        try {
+            Configuration conf = HBaseConfiguration.create();
+            args = new GenericOptionsParser(conf, args).getRemainingArgs();
+            Job job = configureJob(conf, args);
+            job.submit();
+            System.exit(job.waitForCompletion(true) ? 0 : 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+#+END_SRC
