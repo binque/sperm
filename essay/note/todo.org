@@ -38,4 +38,5 @@
 ** TODO 《娱乐至死》、《乌合之众》、《失控》
 ** TODO steve jobs
 ** TODO 老婆健身计划以及怀孕
+** TODO pperf代替oprofile的东西。
 ** TODO gfs2(Colossus)
