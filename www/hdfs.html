@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hdfs"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-09-29 11:09:46 CST"/>
+<meta name="generated" content="2012-10-08 17:23:01 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -135,9 +135,10 @@
 <li><a href="#sec-1-1-5">1.1.5 FUTURE WORK</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-2">1.2 API</a>
+<li><a href="#sec-1-2">1.2 Usage</a>
 <ul>
-<li><a href="#sec-1-2-1">1.2.1 file system</a></li>
+<li><a href="#sec-1-2-1">1.2.1 file system API</a></li>
+<li><a href="#sec-1-2-2">1.2.2 Filesystem Corruption and Missing Blocks</a></li>
 </ul>
 </li>
 </ul>
@@ -682,14 +683,14 @@ Whenever a read client or a block scanner detects a corrupt block, it notifies t
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> API</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Usage</h3>
 <div class="outline-text-3" id="text-1-2">
 
 
 </div>
 
 <div id="outline-container-1-2-1" class="outline-4">
-<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> file system</h4>
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> file system API</h4>
 <div class="outline-text-4" id="text-1-2-1">
 
 <p>因为hdfs本质上是一个文件系统，只不过这个文件系统是应用层面上的。获得这个文件系统之后很多操作就很明了了，因为很多概念是可以直接从linux文件系统借鉴过来的。
@@ -710,8 +711,109 @@ FileSystem hdfs=FileSystem.get(conf);
 </pre>
 
 
+</div>
+
+</div>
+
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> Filesystem Corruption and Missing Blocks</h4>
+<div class="outline-text-4" id="text-1-2-2">
+
+<ul>
+<li>HadoopRecovery &lt; Storage &lt; TWiki <a href="https://www.opensciencegrid.org/bin/view/Storage/HadoopRecovery">https://www.opensciencegrid.org/bin/view/Storage/HadoopRecovery</a>
+</li>
+<li>HadoopOperations &lt; Storage &lt; TWiki <a href="https://www.opensciencegrid.org/bin/view/Storage/HadoopOperations">https://www.opensciencegrid.org/bin/view/Storage/HadoopOperations</a>
+</li>
+</ul>
+
+<p>如果hdfs文件系统出现损坏的话，可以在webpage上面看到报警提示
+</p>
+<p>
+<img src="./images/hdfs-filesystem-corruption-and-missing-blocks.png"  alt="./images/hdfs-filesystem-corruption-and-missing-blocks.png" />
+</p>
+<p>
+或者可以通过运行命令hadoop dfsadmin -report看到系统状况
+</p>
 
 
+<pre class="example">dp@dp1:~$ hadoop dfsadmin -report
+Configured Capacity: 487173353816064 (443.08 TB)
+Present Capacity: 466468596971008 (424.25 TB)
+DFS Remaining: 288401443913728 (262.3 TB)
+DFS Used: 178067153057280 (161.95 TB)
+DFS Used%: 38.17%
+Under replicated blocks: 1
+Blocks with corrupt replicas: 1
+Missing blocks: 1
+</pre>
+
+
+<p>
+按照提示可以运行hadoop fsck来检查整个文件系统。首先使用hadoop fsck /察看整个文件系统的状态如何。如果某个文件出现问题的话那么会报告
+</p>
+
+
+<pre class="example">/hbase/.corrupt/dp18.umeng.com%3A60020.1349065853563: CORRUPT block blk_6229461233186357508
+/hbase/.corrupt/dp18.umeng.com%3A60020.1349065853563:  Under replicated blk_6229461233186357508_18529950. Target Replicas is 3 but found 1 replica(s).
+</pre>
+
+<p>
+说明文件/hbase/.corrupt/dp18.umeng.com%3A60020.1349065853563存在问题。
+</p>
+<p>
+我们可以进一步察看这个文件的状态。使用下面的命令 hadoop fsck <i>hbase</i>.corrupt/dp18.umeng.com%3A60020.1349065853563 -files -locations -blocks -racks
+</p>
+
+
+<pre class="example">dp@dp2:~$ hadoop fsck /hbase/.corrupt/dp18.umeng.com%3A60020.1349065853563 -files -locations -blocks -racks
+FSCK started by dp (auth:SIMPLE) from /10.18.10.55 for path /hbase/.corrupt/dp18.umeng.com%3A60020.1349065853563 at Mon Oct 08 15:17:07 CST 2012
+/hbase/.corrupt/dp18.umeng.com%3A60020.1349065853563 66050 bytes, 1 block(s): 
+/hbase/.corrupt/dp18.umeng.com%3A60020.1349065853563: CORRUPT block blk_6229461233186357508
+ Under replicated blk_6229461233186357508_18529950. Target Replicas is 3 but found 1 replica(s).
+0. blk_6229461233186357508_18529950 len=66050 repl=1 [/default-rack/10.18.10.71:50010]
+
+Status: CORRUPT
+ Total size:    66050 B
+ Total dirs:    0
+ Total files:   1
+ Total blocks (validated):      1 (avg. block size 66050 B)
+  ********************************
+  CORRUPT FILES:        1
+  CORRUPT BLOCKS:       1
+  ********************************
+ Minimally replicated blocks:   1 (100.0 %)
+ Over-replicated blocks:        0 (0.0 %)
+ Under-replicated blocks:       1 (100.0 %)
+ Mis-replicated blocks:         0 (0.0 %)
+ Default replication factor:    3
+ Average block replication:     1.0
+ Corrupt blocks:                1
+ Missing replicas:              2 (200.0 %)
+ Number of data-nodes:          29
+ Number of racks:               1
+FSCK ended at Mon Oct 08 15:17:07 CST 2012 in 1 milliseconds
+
+
+The filesystem under path '/hbase/.corrupt/dp18.umeng.com%3A60020.1349065853563' is CORRUPT
+
+</pre>
+
+
+
+<hr/>
+
+<p>
+默认情况下面如果hdfs发现某个block under replicated的话，会自动对这个block做replication的，直到replicaion factor达到需求。但是有时候hdfs也会stuck住。
+除了重启的话，也可以试试上面链接提到的方法。
+</p><ul>
+<li>首先将这个文件的rep factor设置为1，hadoop fs -setrep 1 &lt;file&gt;
+</li>
+<li>然后将这个文件的rep factor修改回3，hadoop fs -setrep 3 &lt;file&gt;
+</li>
+</ul>
+
+<p><b>NOTE（dirlt）：不过很悲剧的是，即使我按照这个方法，这个block似乎也没有回复到指定的factor上面。等着重启看看效果吧</b>
+</p>
 </div>
 </div>
 </div>
@@ -719,8 +821,8 @@ FileSystem hdfs=FileSystem.get(conf);
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-09-29 11:09:46 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-10-08 17:23:01 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>
