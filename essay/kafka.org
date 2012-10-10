@@ -1,0 +1,4 @@
+* kafka
+   - Apache Kafka http://incubator.apache.org/kafka/
+   - Apache Kafka 设计架构 http://incubator.apache.org/kafka/design.html
+

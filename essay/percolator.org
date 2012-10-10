@@ -4,4 +4,177 @@
    - author: dpeng@google.com, fdabek@google.com
    - date: 2010
 
+** Abstract
+TODO(dirlt):
 
+** Introduction
+   - Consider the task of building an index of the web that can be used to answer search queries. The indexing sys- tem starts by crawling every page on the web and pro- cessing them while maintaining a set of invariants on the index.（在indexing system里需要维护索引一些不变量）
+   - It’s easy to maintain invariants since MapReduce limits the paral-lelism of the computation; all documents finish one pro-cessing step before starting the next. （这种不变量的维护使用mapreduce非常好解决，因为mapreduce是一种顺序处理的模型，通过一系列mapreduce串联在一起可以解决这个问题）
+   - It’s not sufficient to run the MapReduces over just the new pages since, for example, there are links between the new pages and the rest of the web. The MapReduces must be run again over the entire repository, that is, over both the new pages and the old pages.（但是mapreduce不能够处理增量的页面，而必须重新处理整个repository）
+   - Given enough computing resources, MapReduce’s scalability makes this approach feasible, and, in fact, Google’s web search index was produced in this way prior to the work described here. However, reprocessing the entire web discards the work done in earlier runs and makes latency proportional to the size of the repository, rather than the size of an update.（虽然在google里面mapreduce的规模足够处理按照上面的方式进行运行，并且事实上google之前就是这么完成的。但是重新运行整个repo相当于将原来的工作直接丢弃，并且运行时间和整个repo成比例）
+   - The indexing system could store the repository in a DBMS and update individual documents while using transactions to maintain invariants. However, existing DBMSs can’t handle the sheer volume of data: Google’s indexing system stores tens of petabytes across thou-sands of machines .（可以将repo存放在dbms里面然后使用事务来保证不变量，但是dbms不能够承受住google的PB规模的数据）
+   - Distributed storage systems like Bigtable can scale to the size of our repository but don’t provide tools to help programmers maintain data invariants in the face of concurrent updates.（而bigtable虽然可以扩展到支撑这些数据，但是却没有提供功能来维护不变量）
+   - An ideal data processing system for the task of main-taining the web search index would be optimized for in-cremental processing; （我们需要的就是一个增量处理系统）
+     - that is, it would allow us to main-tain a very large repository of documents and update it efficiently as each new document was crawled. 
+     - Given that the system will be processing many small updates concurrently, an ideal system would also provide mech- anisms for maintaining invariants despite concurrent up-dates and for keeping track of which updates have been processed.（对于这个增量系统需要提供的机制包括下面两个，这也是percolator主要关注的两个方面：1）提供机制来维护不变量 2）能够追踪那些updates已经被处理过）
+
+
+--------------------
+
+The remainder of this paper describes a particular in-cremental processing system: Percolator. 
+   - Percolator pro-vides the user with random access to a multi-PB reposi-tory. Random access allows us to process documents in-dividually, avoiding the global scans of the repository that MapReduce requires. To achieve high throughput, many threads on many machines need to transform the repository concurrently, so Percolator provides ACID-compliant transactions to make it easier for programmers to reason about the state of the repository; we currently implement snapshot isolation semantics.（提供随即访问PB级别repo的能力，允许对数据进行随机访问。为了达到高并发在多个机器上面使用多个线程同时对repo进行更新，因此percolator也提供了ACID兼容的事务实现来满足维持不变量这个需求，事务实现是snapshot isolation的语义） *TODO（dirlt）：snapshot isolation wikipedia？*
+   - In addition to reasoning about concurrency, program-mers of an incremental system need to keep track of the state of the incremental computation. To assist them in this task, Percolator provides observers: pieces of code that are invoked by the system whenever a user-specified column changes. Percolator applications are structured as a series of observers; each observer completes a task and creates more work for “downstream” observers by writing to the table. An external process triggers the first observer in the chain by writing initial data into the table.（为了能够追踪到哪些修改，percolator提供了observer，就是event-driven意思。percolator提供会监控哪些cell存在变化，如果存在变化就会调用关注这些cell的observer。这种效应是会不断触发的。而第一个触发通常是通过外部程序修改table来启动的）
+   - Percolator was built specifically for incremental pro-cessing and is not intended to supplant existing solutions for most data processing tasks. Computations where the result can’t be broken down into small updates (sorting a file, for example) are better handled by MapReduce. Also, the computation should have strong consistency requirements; otherwise, Bigtable is sufficient. Finally, the computation should be very large in some dimen-sion (total data size, CPU required for transformation, etc.); smaller computations not suited to MapReduce or Bigtable can be handled by traditional DBMSs.（percolator并不是要代替现有一些数据处理解决方案。如果计算不能够拆分成为小的update的话那么最好依然使用MR来完成，如果计算不要求强一致性的话那么使用bigtable来作为存储也是足够的，如果计算规模本身就不大的话那么使用传统的DBMS也是可以搞定的）
+     
+** Design
+   - Percolator provides two main abstractions for per-forming incremental processing at large scale: （为增量处理提供了两种抽象）
+     - ACID transactions over a random-access repository and （在随机访问的repo上面提供了满足ACID的事务）
+     - ob-servers, a way to organize an incremental computation.（用来组织增量计算的observer）
+   - A Percolator system consists of three binaries that run on every machine in the cluster: a Percolator worker, a Bigtable tablet server, and a GFS chunkserver.（在每个计算机器上面都会运行percolator worker，worker是application但是底层使用了percolator library）   
+file:./images/percolator-dependencies.png
+   - The system also depends on two small services: the timestamp oracle and the lightweight lock service. The timestamp oracle pro-vides strictly increasing timestamps: a property required for correct operation of the snapshot isolation protocol. Workers use the lightweight lock service to make the search for dirty notifications more efficient.（系统还依赖两个service，timestamp oracle以及lock service）
+     - timestamp oracle主要就是为了提供timestamp snapshot isolation保证的，分配递增的timestamp
+     - lock service能够更有效地让查找dirty cell（所谓dirty cell就是说那些修改了但是却没有调用对应的observer的cell）
+   - The design of Percolator was influenced by the re-quirement to run at massive scales and the lack of a requirement for extremely low latency. （percolator设计需求是为了能够在大规模的机器上面运行但是不用考虑过低的延迟）
+     - Relaxed latency requirements let us take, for example, a lazy approach to cleaning up locks left behind by transactions running on failed machines. This lazy, simple-to-implement ap-proach potentially delays transaction commit by tens of seconds. （对于延迟的放松可以使得使用一种lazy的方式来清理之前失败的事务，通常会导致其他事务延迟分钟左右）
+     - This delay would not be acceptable in a DBMS running OLTP tasks, but it is tolerable in an incremental processing system building an index of the web.（这种延迟对于在DBMS上面运行OLTP的人物是不能够接受的）
+     - Percola-tor has no central location for transaction management; in particular, it lacks a global deadlock detector. This in-creases the latency of conflicting transactions but allows the system to scale to thousands of machines.（percolator没有中央位置来管理事务，尤其是没有全局死锁检测器 *TODO（dirlt）：会发生死锁吗？* 但是这种设计可以扩展到上千台机器）
+
+
+*** Bigtable overview
+percolator API封装了对于bigtable的访问，但是和bigtable api非常类似。封装主要原因一方面是底层可以更好地优化bigtable访问模式，另外主要的一方面是为了能够在bigtable上面实现multirow transactions，通过在原来的table schema上面增加了几个辅助的column：
+| Column   | Use                                                                                    |
+|----------+----------------------------------------------------------------------------------------|
+| c:lock   | An uncommitted transaction is writing this cell; contains the location of primary lock |
+| c:write  | Committed data present; stores the Bigtable timestamp of the data                      |
+| c:data   | Stores the data itself                                                                 |
+| c:notify | Hint: observers may need to run                                                        |
+| c:ack O  | Observer “O” has run ; stores start timestamp of successful last run                   | 
+这里稍微提前解释一下每个column的含义：（这个后面在阅读到percolator transaction pseudo code时候就会理解）
+   - lock // 哪个writer拿到了这个cell的lock
+   - write // 写入数据的时间（和bigtable本身提供的timestamp区分开）
+   - date // 写入的数据
+   - notify // 这个cell是否已经ditry，是否需要运行对应的observer
+   - ack_O // observer O上次成功运行的时间
+
+
+*** Transactions
+下面是使用percolator transactions功能一个example code
+#+BEGIN_SRC C++
+bool UpdateDocument(Document doc) {
+  Transaction t(&cluster);
+  t.Set(doc.url(), "contents", "document", doc.contents());
+  int hash = Hash(doc.contents());
+  // dups table maps hash → canonical URL
+  string canonical;
+  if (!t.Get(hash, "canonical-url", "dups", &canonical)) {
+    // No canonical yet; write myself in
+    t.Set(hash, "canonical-url", "dups", doc.url());
+  } // else this document already exists, ignore new copy
+  return t.Commit();
+}
+#+END_SRC
+还是非常简洁的，事务都是通过Transaction封装，只有三个简单的方法Get/Set/Commit。这里的Set并不会立刻写table，而是在Commit时候才会发起真正的写，这个在使用的时候需要注意。
+
+*TODO（dirlt）：timestamp snapshot isolation？理解这个语义还是比较重要的，因为按照这种语义实现的逻辑和我们想象的还不太一样* 
+
+Snapshot isolation does not provide serializability，这个问题以下面的pseduo code来说明还是比较清楚的：
+   - 假设T1（1），T2（2）分别在1，2时刻发起了事务，cell原有数据为10
+   - T1准备写cell数据为30，而T2准备读取cell数据。
+   - 但是T1写cell数据时刻为3，因此只有在3时候以后在才会在cell上面加lock
+   - 而T2在2时刻读取cell时候发现没有lock，那么直接读取到了数据10
+整个过程，按照我们的理解：既然T1首先发起了，那么T2读取的数据应该是30才对。但是如果按照这种逻辑来说，整个读的延迟就非常大了，而"The main advantage of snapshot isolation over a serializable proto-col is more efficient reads.". 
+其实"Snapshot isolation pro-tects against write-write conflicts: if transactions A and B, running concurrently, write to the same cell, at most one will commit. " 主要还是为了解决write-write conflicts。下图就是一个解决了ww conflict的例子：
+file:./images/percolator-write-write-conflicts.png
+
+
+下面是Transaction具体实现，关于一些说明会以注释的形式标记在代码上面。 *TODO（dirlt）：似乎还是有挺多问题的* ：
+   - 为什么在Get需要使用bigtable::StartRowTransaction? 
+   - BackoffAndMaybeCleanupLock如何实现？
+   - 为什么需要选择一个primary write？primary在prewrite里面为其他write提供了lock信息。
+   - 为什么在Commit里面也需要使用bigtable::StartRowTransaction？
+   - 为什么在Commit里面还要检查一次p.col+lock是否存在？
+#+BEGIN_SRC C++
+class Transaction {
+  struct Write { Row row; Column col; string value; };
+  vector<Write> writes ;
+  int start ts ;
+  Transaction() : start ts (oracle.GetTimestamp()) {} // 初始化会从oracle获得一个timestamp，表明这个transaction对应的时间。
+  void Set(Write w) { writes .push back(w); } // 所有的写都会缓存下来，而不是立刻写入table
+  bool Get(Row row, Column c, string* value) {
+    while (true) {
+      bigtable::Txn T = bigtable::StartRowTransaction(row); // TODO(dirlt):??
+      // Check for locks that signal concurrent writes.
+      if (T.Read(row, c+"lock", [0, start ts ])) { // 如果在这个timestamp之前存在lock,说明在这个ts之前肯定存在commit但是还没有提交成功（可能在运行，也可能直接fail）
+        // There is a pending lock; try to clean it and wait
+        BackoffAndMaybeCleanupLock(row, c); // 对于这个pending lock，我们会选择等待，或者可能是删除。
+        continue;
+      }
+      // Find the latest write below our start timestamp.
+      latest write = T.Read(row, c+"write", [0, start ts ]); // 说明之前的commit以前提交完成，那么看最近一次的write是在什么时候。所谓最近是指写入的时间是后面的commit_ts.
+      if (!latest write.found()) return false; // no data
+      int data ts = latest write.start timestamp(); // 然后最近写入write的发起时间，也就是start_ts.这个需要结合后面的prewrite和commit来理解。
+      *value = T.Read(row, c+"data", [data ts, data ts]);
+      return true;
+    }
+  }
+  // Prewrite tries to lock cell w, returning false in case of conflict.
+  bool Prewrite(Write w, Write primary) { 
+    Column c = w.col;
+    bigtable::Txn T = bigtable::StartRowTransaction(w.row);
+    // Abort on writes after our start timestamp . . .
+    if (T.Read(w.row, c+"write", [start ts , INFINITY])) return false; // start_ts之后是否有新的提交。如果存在新的提交的话，这就意味这本次T的失败。
+    //. . . or locks at any timestamp.
+    if (T.Read(w.row, c+"lock", [0, INFINITY])) return false; // 如果这个cell被lock的话，那么意味着本地T也是失败的。注意这里对lock时间没有任何限制。
+    T.Write(w.row, c+"data", start ts , w.value); // 写入数据，注意这里的时间戳是start_ts
+    T.Write(w.row, c+"lock", start ts , // 写入lock，内容是primary row和col
+            {primary.row, primary.col});
+    // The primary’s location.
+    return T.Commit(); 
+  }
+  bool Commit() {
+    Write primary = writes [0];
+    vector<Write> secondaries(writes .begin()+1, writes .end());
+    if (!Prewrite(primary, primary)) return false;
+    for (Write w : secondaries)
+      if (!Prewrite(w, primary)) return false;
+    int commit ts = oracle .GetTimestamp(); // 预先写入内容之后准备进行提交，提交时间为commit_ts
+    // Commit primary first.
+    Write p = primary;
+    bigtable::Txn T = bigtable::StartRowTransaction(p.row);
+    if (!T.Read(p.row, p.col+"lock", [start ts , start ts ])) // 重新检查之前的锁是否还在？NOTE（dirlt）：这个是否判断lock被cleanup掉了？
+      return false;     
+    // 之后提交数据，修改write时间并且将lock清除掉。
+    // aborted while working
+    T.Write(p.row, p.col+"write", commit ts,
+            start ts ); // Pointer to data written at start ts .
+    T.Erase(p.row, p.col+"lock", commit ts);
+    if (!T.Commit()) return false;
+    // commit point
+    // Second phase: write out write records for secondary cells.
+    for (Write w : secondaries) {
+      bigtable::Write(w.row, w.col+"write", commit ts, start ts );
+      bigtable::Erase(w.row, w.col+"lock", commit ts);
+    }
+    return true;
+  }
+} // class Transaction
+#+END_SRC
+
+*** Timestamps
+   - The timestamp oracle is a server that hands out times-tamps in strictly increasing order. Since every transaction requires contacting the timestamp oracle twice, this ser-vice must scale well. （因为每个transaction都需要和oracle通信两次，所以扩展性是非常重要的）
+   - The oracle periodically allocates a range of timestamps by writing the highest allocated timestamp to stable storage; given an allocated range of timestamps, the oracle can satisfy future requests strictly from memory. If the oracle restarts, the timestamps will
+jump forward to the maximum allocated timestamp (but will never go backwards).（oracle每次都会分配一个范围的timestamp，然后将这个最高的timestamp记录下来。这样如果下次oracle重启的话直接从最大的编号开始分配即可。这种分配方式保证了递增但是没有保证连续）
+   - To save RPC overhead (at the cost of increasing transaction latency) each Percolator worker batches timestamp requests across transactions by maintaining only one pending RPC to the oracle. As the oracle becomes more loaded, the batching naturally increases to compensate. Batching increases the scalabil-ity of the oracle but does not affect the timestamp guar-antees. （同时为了减少RPC overhead，对于ts的请求会进行batch。 *TODO（dirlt）：注意这里说的是worker进行batch，but how？* ）
+   - Our oracle serves around 2 million timestamps per second from a single machine.（单个机器可以支撑到2millions/s请求）
+
+*** Notifications
+   - In Percolator, the user writes code (“observers”) to be triggered by changes to the ta-ble, and we link all the observers into a binary running alongside every tablet server in the system. Each ob-server registers a function and a set of columns with Per-colator, and Percolator invokes the function after data is written to one of those columns in any row.（observer在实现上是link进入worker的binary里面的。observer会将一个function和一组columns关联起来，如果column内容变化的话就会触发observer）
+   - Percolator applications are structured as a series of ob-servers; each observer completes a task and creates more work for “downstream” observers by writing to the table. （percolator应用程序实际上就是注册一些系列的observer，每个observer会完成一些小任务修改一些cell。而这些修改会触发其他的observer）
+   - In our indexing system, a MapReduce loads crawled doc-uments into Percolator by running loader transactions, which trigger the document processor transaction to in-dex the document (parse, extract links, etc.). The docu-ment processor transaction triggers further transactions like clustering. The clustering transaction, in turn, trig-gers transactions to export changed document clusters to the serving system.（在google的indexing system里面，外部存在一个mapreduce程序将抓取的页面写入到bigtable里面，如果修改的话那么percolator会触发相应的的动作）
+   - Notifications are similar to database triggers or events in active databases , but unlike database triggers, they cannot be used to maintain database invariants. In particular, the triggered observer runs in a separate trans-action from the triggering write, so the triggering write and the triggered observer’s writes are not atomic. No-tifications are intended to help structure an incremental computation rather than to help maintain data integrity.（notifaction本身和数据库的触发器非常类似，但是它的作用仅仅是为了提供增量处理这个机制而并不是为了帮助维护数据一致性）
+
+*** Discussion
+** Evaluation
+** Related Work
+** Conclusion and Future Work

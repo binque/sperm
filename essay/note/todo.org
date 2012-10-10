@@ -14,7 +14,6 @@
    - Spanner——Google的全球化分布式数据库 - Sun Yongyue - 博客园 http://www.cnblogs.com/sunyongyue/archive/2012/09/20/spanner_note.html
 ** TODO Google Research Publication: Web Search for a Planet
    - http://research.google.com/archive/googlecluster.html
-** TODO kafka
 ** TODO The anatomy of google
 ** TODO RSS system we make
 ** TODO RSS paper planes
@@ -22,8 +21,6 @@
 ** TODO 对比HBase的get效率。
 ** TODO gmail使用和其他方式对比（需要稳定一段时间）
 ** TODO 阅读RSS订阅（when free）
-** TODO RSS system we make
-** TODO RSS paper planes
 ** TODO joel on software.
 ** TODO wangyin和云风的blog
 ** TODO 王垠的文章。还是比较有思想的。harry facebook.
