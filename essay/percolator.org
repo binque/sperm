@@ -91,11 +91,7 @@ file:./images/percolator-write-write-conflicts.png
 
 
 下面是Transaction具体实现，关于一些说明会以注释的形式标记在代码上面。 *TODO（dirlt）：似乎还是有挺多问题的* ：
-   - 为什么在Get需要使用bigtable::StartRowTransaction? 
    - BackoffAndMaybeCleanupLock如何实现？
-   - 为什么需要选择一个primary write？primary在prewrite里面为其他write提供了lock信息。
-   - 为什么在Commit里面也需要使用bigtable::StartRowTransaction？
-   - 为什么在Commit里面还要检查一次p.col+lock是否存在？
 #+BEGIN_SRC C++
 class Transaction {
   struct Write { Row row; Column col; string value; };
@@ -144,15 +140,14 @@ class Transaction {
     // Commit primary first.
     Write p = primary;
     bigtable::Txn T = bigtable::StartRowTransaction(p.row);
-    if (!T.Read(p.row, p.col+"lock", [start ts , start ts ])) // 重新检查之前的锁是否还在？NOTE（dirlt）：这个是否判断lock被cleanup掉了？
+    if (!T.Read(p.row, p.col+"lock", [start ts , start ts ])) // 重新检查之前的锁是否还在？如果还在的话那么写入数据并且删除掉锁。这个必须是一个事务操作，而这个点就是commit point
       return false;     
     // 之后提交数据，修改write时间并且将lock清除掉。
     // aborted while working
     T.Write(p.row, p.col+"write", commit ts,
             start ts ); // Pointer to data written at start ts .
     T.Erase(p.row, p.col+"lock", commit ts);
-    if (!T.Commit()) return false;
-    // commit point
+    if (!T.Commit()) return false;  // commit point
     // Second phase: write out write records for secondary cells.
     for (Write w : secondaries) {
       bigtable::Write(w.row, w.col+"write", commit ts, start ts );
@@ -162,6 +157,8 @@ class Transaction {
   }
 } // class Transaction
 #+END_SRC
+
+*TODO（dirlt）：page5-page6这个部分的异常处理没有看懂！！！WTF！*
 
 *** Timestamps
    - The timestamp oracle is a server that hands out times-tamps in strictly increasing order. Since every transaction requires contacting the timestamp oracle twice, this ser-vice must scale well. （因为每个transaction都需要和oracle通信两次，所以扩展性是非常重要的）
