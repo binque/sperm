@@ -4,4 +4,15 @@
    - author: dpeng@google.com, fdabek@google.com
    - date: 2010
 
+** Abstract
+   - Updating an index of the web as documents are crawled requires continuously transforming a large repository of existing documents as new documents ar-rive. This task is one example of a class of data pro-cessing tasks that transform a large repository of data via small, independent mutations. These tasks lie in a gap between the capabilities of existing infrastructure.(主要解决的问题就是，在非常大的base repository上面有少量的mutation应该如何进行处理？就现有的基础设施并没有很好地解决这个问题）
+   - Databases do not meet the storage or throughput require-ments of these tasks: Google’s indexing system stores tens of petabytes of data and processes billions of up-dates per day on thousands of machines. （存储大小以及吞吐量并不适合使用db。g的索引系统存储了pb级别的数据，并且每天需要在上千机器上面完成处理工作）
+   - MapReduce and other batch-processing systems cannot process small up-dates individually as they rely on creating large batches for efficiency.（而mapreduce属于批处理系统，不能够单独处理这些小的更新）
+   - We have built Percolator, a system for incrementally processing updates to a large data set, and deployed it to create the Google web search index. （percolator能够处理大数据集合下面的增量修改，并且现在已经使用在google的搜索引擎上面了）
+   - By replacing a batch-based indexing system with an indexing system based on incremental processing using Percolator, we process the same number of documents per day, while reducing the average age of documents in Google search results by 50%.（每天处理相同量数据的documents，但是每个文档的平均年龄减少了50%。这个平均年龄应该是指从crawl下来到进入index system的时间？） *TODO（dirlt）：这个我就不知道如何理解了，既然每天能够处理相同数据的文档，为什么年龄会减少呢？按照道理说应该是一样的才对*
+
+
+
+
+
 
