@@ -103,6 +103,8 @@ file:./images/valve-logo.jpg
    - [[file:dremel.org][dremel]] google针对大数据查询的交互式系统，传说可以在3秒内搞定PB级别的数据。
    - [[file:pregel.org][pregel]] google针对大规模图算法设计的分布式编程框架。
    - [[file:percolator.org][percolator]] google的增量数据处理分布式系统。
+   - [[file:storm.org][storm]] twitter的分布式实时流式处理系统。这个在实现baidu in-house的分布式实时流式计算系统的时候也做过调研，但是当时不是很深入。
+   - [[file:kafka.org][kafka]] apache的分布式消息系统。似乎在高可用性方面还有很多事情需要做。
    
 ** Programming Language and Design Pattern
    - [[file:./prog-lang.org][prog-lang]] including following languages:     
