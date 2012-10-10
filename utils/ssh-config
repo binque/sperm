@@ -1,0 +1,11 @@
+Host hadoop1
+Port 16021
+
+# nexus.
+Host 122.11.52.227
+Port 16021
+
+Host dp1
+Port 16021
+
+
