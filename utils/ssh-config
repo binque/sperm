@@ -1,0 +1,7 @@
+Host hadoop1
+Port 16021
+
+Host dp1
+Port 16021
+
+

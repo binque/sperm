@@ -17,6 +17,7 @@
 .emacs.d/.session
 .emacs.d/anything-c-adaptive-history
 .emacs.d/org-clock-save.el
+utils/.emacs.d
 
 essay/images/.DS_Store
 
