@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hbase"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-11 07:05:41 CST"/>
+<meta name="generated" content="2012-10-12 17:44:17 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -104,6 +104,7 @@
 <ul>
 <li><a href="#sec-1-1-1">1.1.1 业强 2012-08-16 hbase讲座</a></li>
 <li><a href="#sec-1-1-2">1.1.2 asynchbase</a></li>
+<li><a href="#sec-1-1-3">1.1.3 HBase Write Path</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-2">1.2 Usage</a>
@@ -210,6 +211,29 @@ scan过程大致是这样的：
 <li>asynchbase现在使用的场景应该是OpenTSDB，因为没有MR框架限制，所以异步client可以工作很好。
 </li>
 </ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> HBase Write Path</h4>
+<div class="outline-text-4" id="text-1-1-3">
+
+<p><a href="http://www.cloudera.com/blog/2012/06/hbase-write-path/">http://www.cloudera.com/blog/2012/06/hbase-write-path/</a>
+</p>
+<p>
+At first, it locates the address of the region server hosting the -ROOT- region from the ZooKeeper quorum.  From the root region server, the client finds out the location of the region server hosting the -META- region.（首先从Zookeeper里面找到-ROOT- region所在的region server，然后在找到对应的-META- region所在的region server，最后找到数据所在的region server。 <b>TODO（dirlt）：问题是-ROOT-和-META-里面是怎么组织数据的呢，怎么来帮助定位的？</b> ）
+</p>
+<p>
+写入的Write Ahead Log存放在/hbase/.logs下面，文件路径是 <i>hbase</i>.logs/&lt;host&gt;,&lt;port&gt;,&lt;startcode&gt;，文件名称/hbase/.logs/&lt;host&gt;,&lt;port&gt;,&lt;startcode&gt;/&lt;host&gt;%2C&lt;port&gt;%2C&lt;startcode&gt;.&lt;timestamp&gt;
+</p>
+
+
+<pre class="example">/hbase/.logs/srv.example.com,60020,1254173957298
+/hbase/.logs/srv.example.com,60020,1254173957298/srv.example.com%2C60020%2C125417395
+</pre>
 
 
 </div>
@@ -538,7 +562,7 @@ thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-10-11 07:05:41 CST</p>
+<p class="date">Date: 2012-10-12 17:44:17 CST</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

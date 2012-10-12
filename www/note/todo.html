@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="todo"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-11 07:05:44 CST"/>
+<meta name="generated" content="2012-10-12 17:44:19 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -103,26 +103,27 @@
 <li><a href="#sec-1-1">1.1 总结一下flex/bison是如何使用的</a></li>
 <li><a href="#sec-1-2">1.2 了解几种DB Riak,CouchDB,CouchBase,MemSQL</a></li>
 <li><a href="#sec-1-3">1.3 阅读完Core Java I</a></li>
-<li><a href="#sec-1-4">1.4 Percolator</a></li>
+<li><a href="#sec-1-4">1.4 理解percolator的multirow transaction的实现方式！觉得还是比较值得研究的。</a></li>
 <li><a href="#sec-1-5">1.5 megastore</a></li>
 <li><a href="#sec-1-6">1.6 spanner</a></li>
 <li><a href="#sec-1-7">1.7 Google Research Publication: Web Search for a Planet</a></li>
-<li><a href="#sec-1-8">1.8 The anatomy of google</a></li>
-<li><a href="#sec-1-9">1.9 RSS system we make</a></li>
-<li><a href="#sec-1-10">1.10 RSS paper planes</a></li>
-<li><a href="#sec-1-11">1.11 RSS high scalability</a></li>
-<li><a href="#sec-1-12">1.12 对比HBase的get效率。</a></li>
-<li><a href="#sec-1-13">1.13 gmail使用和其他方式对比（需要稳定一段时间）</a></li>
-<li><a href="#sec-1-14">1.14 阅读RSS订阅（when free）</a></li>
-<li><a href="#sec-1-15">1.15 joel on software.</a></li>
-<li><a href="#sec-1-16">1.16 wangyin和云风的blog</a></li>
-<li><a href="#sec-1-17">1.17 王垠的文章。还是比较有思想的。harry facebook.</a></li>
-<li><a href="#sec-1-18">1.18 罗伯特·西奥迪尼的《影响力》</a></li>
-<li><a href="#sec-1-19">1.19 《娱乐至死》、《乌合之众》、《失控》</a></li>
-<li><a href="#sec-1-20">1.20 steve jobs</a></li>
-<li><a href="#sec-1-21">1.21 老婆健身计划以及怀孕</a></li>
-<li><a href="#sec-1-22">1.22 perf代替oprofile的东西。</a></li>
-<li><a href="#sec-1-23">1.23 gfs2(Colossus)</a></li>
+<li><a href="#sec-1-8">1.8 dynamo, cassandra,</a></li>
+<li><a href="#sec-1-9">1.9 The anatomy of google</a></li>
+<li><a href="#sec-1-10">1.10 RSS system we make</a></li>
+<li><a href="#sec-1-11">1.11 RSS paper planes</a></li>
+<li><a href="#sec-1-12">1.12 RSS high scalability</a></li>
+<li><a href="#sec-1-13">1.13 对比HBase的get效率。</a></li>
+<li><a href="#sec-1-14">1.14 gmail使用和其他方式对比（需要稳定一段时间）</a></li>
+<li><a href="#sec-1-15">1.15 阅读RSS订阅（when free）</a></li>
+<li><a href="#sec-1-16">1.16 joel on software.</a></li>
+<li><a href="#sec-1-17">1.17 wangyin和云风的blog</a></li>
+<li><a href="#sec-1-18">1.18 王垠的文章。还是比较有思想的。harry facebook.</a></li>
+<li><a href="#sec-1-19">1.19 罗伯特·西奥迪尼的《影响力》</a></li>
+<li><a href="#sec-1-20">1.20 《娱乐至死》、《乌合之众》、《失控》</a></li>
+<li><a href="#sec-1-21">1.21 steve jobs</a></li>
+<li><a href="#sec-1-22">1.22 老婆健身计划以及怀孕</a></li>
+<li><a href="#sec-1-23">1.23 perf代替oprofile的东西。</a></li>
+<li><a href="#sec-1-24">1.24 gfs2(Colossus)</a></li>
 </ul>
 </li>
 </ul>
@@ -168,13 +169,8 @@
 </div>
 
 <div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> <span class="todo TODO">TODO</span> Percolator</h3>
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> <span class="todo TODO">TODO</span> 理解percolator的multirow transaction的实现方式！觉得还是比较值得研究的。</h3>
 <div class="outline-text-3" id="text-1-4">
-
-<ul>
-<li><a href="http://research.google.com/pubs/pub36726.html">http://research.google.com/pubs/pub36726.html</a>
-</li>
-</ul>
 
 </div>
 
@@ -224,7 +220,7 @@
 </div>
 
 <div id="outline-container-1-8" class="outline-3">
-<h3 id="sec-1-8"><span class="section-number-3">1.8</span> <span class="todo TODO">TODO</span> The anatomy of google</h3>
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> <span class="todo TODO">TODO</span> dynamo, cassandra,</h3>
 <div class="outline-text-3" id="text-1-8">
 
 </div>
@@ -232,7 +228,7 @@
 </div>
 
 <div id="outline-container-1-9" class="outline-3">
-<h3 id="sec-1-9"><span class="section-number-3">1.9</span> <span class="todo TODO">TODO</span> RSS system we make</h3>
+<h3 id="sec-1-9"><span class="section-number-3">1.9</span> <span class="todo TODO">TODO</span> The anatomy of google</h3>
 <div class="outline-text-3" id="text-1-9">
 
 </div>
@@ -240,7 +236,7 @@
 </div>
 
 <div id="outline-container-1-10" class="outline-3">
-<h3 id="sec-1-10"><span class="section-number-3">1.10</span> <span class="todo TODO">TODO</span> RSS paper planes</h3>
+<h3 id="sec-1-10"><span class="section-number-3">1.10</span> <span class="todo TODO">TODO</span> RSS system we make</h3>
 <div class="outline-text-3" id="text-1-10">
 
 </div>
@@ -248,7 +244,7 @@
 </div>
 
 <div id="outline-container-1-11" class="outline-3">
-<h3 id="sec-1-11"><span class="section-number-3">1.11</span> <span class="todo TODO">TODO</span> RSS high scalability</h3>
+<h3 id="sec-1-11"><span class="section-number-3">1.11</span> <span class="todo TODO">TODO</span> RSS paper planes</h3>
 <div class="outline-text-3" id="text-1-11">
 
 </div>
@@ -256,7 +252,7 @@
 </div>
 
 <div id="outline-container-1-12" class="outline-3">
-<h3 id="sec-1-12"><span class="section-number-3">1.12</span> <span class="todo TODO">TODO</span> 对比HBase的get效率。</h3>
+<h3 id="sec-1-12"><span class="section-number-3">1.12</span> <span class="todo TODO">TODO</span> RSS high scalability</h3>
 <div class="outline-text-3" id="text-1-12">
 
 </div>
@@ -264,7 +260,7 @@
 </div>
 
 <div id="outline-container-1-13" class="outline-3">
-<h3 id="sec-1-13"><span class="section-number-3">1.13</span> <span class="todo TODO">TODO</span> gmail使用和其他方式对比（需要稳定一段时间）</h3>
+<h3 id="sec-1-13"><span class="section-number-3">1.13</span> <span class="todo TODO">TODO</span> 对比HBase的get效率。</h3>
 <div class="outline-text-3" id="text-1-13">
 
 </div>
@@ -272,7 +268,7 @@
 </div>
 
 <div id="outline-container-1-14" class="outline-3">
-<h3 id="sec-1-14"><span class="section-number-3">1.14</span> <span class="todo TODO">TODO</span> 阅读RSS订阅（when free）</h3>
+<h3 id="sec-1-14"><span class="section-number-3">1.14</span> <span class="todo TODO">TODO</span> gmail使用和其他方式对比（需要稳定一段时间）</h3>
 <div class="outline-text-3" id="text-1-14">
 
 </div>
@@ -280,7 +276,7 @@
 </div>
 
 <div id="outline-container-1-15" class="outline-3">
-<h3 id="sec-1-15"><span class="section-number-3">1.15</span> <span class="todo TODO">TODO</span> joel on software.</h3>
+<h3 id="sec-1-15"><span class="section-number-3">1.15</span> <span class="todo TODO">TODO</span> 阅读RSS订阅（when free）</h3>
 <div class="outline-text-3" id="text-1-15">
 
 </div>
@@ -288,7 +284,7 @@
 </div>
 
 <div id="outline-container-1-16" class="outline-3">
-<h3 id="sec-1-16"><span class="section-number-3">1.16</span> <span class="todo TODO">TODO</span> wangyin和云风的blog</h3>
+<h3 id="sec-1-16"><span class="section-number-3">1.16</span> <span class="todo TODO">TODO</span> joel on software.</h3>
 <div class="outline-text-3" id="text-1-16">
 
 </div>
@@ -296,7 +292,7 @@
 </div>
 
 <div id="outline-container-1-17" class="outline-3">
-<h3 id="sec-1-17"><span class="section-number-3">1.17</span> <span class="todo TODO">TODO</span> 王垠的文章。还是比较有思想的。harry facebook.</h3>
+<h3 id="sec-1-17"><span class="section-number-3">1.17</span> <span class="todo TODO">TODO</span> wangyin和云风的blog</h3>
 <div class="outline-text-3" id="text-1-17">
 
 </div>
@@ -304,7 +300,7 @@
 </div>
 
 <div id="outline-container-1-18" class="outline-3">
-<h3 id="sec-1-18"><span class="section-number-3">1.18</span> <span class="todo TODO">TODO</span> 罗伯特·西奥迪尼的《影响力》</h3>
+<h3 id="sec-1-18"><span class="section-number-3">1.18</span> <span class="todo TODO">TODO</span> 王垠的文章。还是比较有思想的。harry facebook.</h3>
 <div class="outline-text-3" id="text-1-18">
 
 </div>
@@ -312,7 +308,7 @@
 </div>
 
 <div id="outline-container-1-19" class="outline-3">
-<h3 id="sec-1-19"><span class="section-number-3">1.19</span> <span class="todo TODO">TODO</span> 《娱乐至死》、《乌合之众》、《失控》</h3>
+<h3 id="sec-1-19"><span class="section-number-3">1.19</span> <span class="todo TODO">TODO</span> 罗伯特·西奥迪尼的《影响力》</h3>
 <div class="outline-text-3" id="text-1-19">
 
 </div>
@@ -320,7 +316,7 @@
 </div>
 
 <div id="outline-container-1-20" class="outline-3">
-<h3 id="sec-1-20"><span class="section-number-3">1.20</span> <span class="todo TODO">TODO</span> steve jobs</h3>
+<h3 id="sec-1-20"><span class="section-number-3">1.20</span> <span class="todo TODO">TODO</span> 《娱乐至死》、《乌合之众》、《失控》</h3>
 <div class="outline-text-3" id="text-1-20">
 
 </div>
@@ -328,7 +324,7 @@
 </div>
 
 <div id="outline-container-1-21" class="outline-3">
-<h3 id="sec-1-21"><span class="section-number-3">1.21</span> <span class="todo TODO">TODO</span> 老婆健身计划以及怀孕</h3>
+<h3 id="sec-1-21"><span class="section-number-3">1.21</span> <span class="todo TODO">TODO</span> steve jobs</h3>
 <div class="outline-text-3" id="text-1-21">
 
 </div>
@@ -336,8 +332,16 @@
 </div>
 
 <div id="outline-container-1-22" class="outline-3">
-<h3 id="sec-1-22"><span class="section-number-3">1.22</span> <span class="todo TODO">TODO</span> perf代替oprofile的东西。</h3>
+<h3 id="sec-1-22"><span class="section-number-3">1.22</span> <span class="todo TODO">TODO</span> 老婆健身计划以及怀孕</h3>
 <div class="outline-text-3" id="text-1-22">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-23" class="outline-3">
+<h3 id="sec-1-23"><span class="section-number-3">1.23</span> <span class="todo TODO">TODO</span> perf代替oprofile的东西。</h3>
+<div class="outline-text-3" id="text-1-23">
 
 <ul>
 <li>linux perf
@@ -348,9 +352,9 @@
 
 </div>
 
-<div id="outline-container-1-23" class="outline-3">
-<h3 id="sec-1-23"><span class="section-number-3">1.23</span> <span class="todo TODO">TODO</span> gfs2(Colossus)</h3>
-<div class="outline-text-3" id="text-1-23">
+<div id="outline-container-1-24" class="outline-3">
+<h3 id="sec-1-24"><span class="section-number-3">1.24</span> <span class="todo TODO">TODO</span> gfs2(Colossus)</h3>
+<div class="outline-text-3" id="text-1-24">
 
 </div>
 </div>
@@ -358,7 +362,7 @@
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-10-11 07:05:44 CST</p>
+<p class="date">Date: 2012-10-12 17:44:19 CST</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
