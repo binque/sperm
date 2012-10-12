@@ -4,8 +4,7 @@
     - http://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
 ** TODO 阅读完Core Java I
-** TODO Percolator
-   - http://research.google.com/pubs/pub36726.html
+** TODO 理解percolator的multirow transaction的实现方式！觉得还是比较值得研究的。 
 ** TODO megastore
    - Megastore: Providing Scalable, Highly Available Storage for Interactive Services http://research.google.com/pubs/pub36971.html
 ** TODO spanner
@@ -14,6 +13,7 @@
    - Spanner——Google的全球化分布式数据库 - Sun Yongyue - 博客园 http://www.cnblogs.com/sunyongyue/archive/2012/09/20/spanner_note.html
 ** TODO Google Research Publication: Web Search for a Planet
    - http://research.google.com/archive/googlecluster.html
+** TODO dynamo, cassandra, 
 ** TODO The anatomy of google
 ** TODO RSS system we make
 ** TODO RSS paper planes

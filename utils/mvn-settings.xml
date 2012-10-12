@@ -115,13 +115,13 @@ under the License.
       <password>dp1234</password>      
     </server>
 
-    <server comment="release repository uri">
+    <server>
       <id>releases</id>
       <username>dp</username>
       <password>dp1234</password>      
     </server>
 
-    <server comment="snapshot repository uri">
+    <server>
       <id>snapshots</id>
       <username>dp</username>
       <password>dp1234</password>      

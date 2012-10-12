@@ -18,8 +18,12 @@ sudo rm -rf /etc/hosts
 sudo ln -s $BINDIR/hosts /etc/hosts
 
 echo "[$PROGNAME]installing ssh-config..."
-sudo rm -rf $HOME/.ssh/config
-sudo ln -s $BINDIR/ssh-config $HOME/.ssh/config
+rm -rf $HOME/.ssh/config
+ln -s $BINDIR/ssh-config $HOME/.ssh/config
+
+echo "[$PROGNAME]installing mvn-settings.xml..."
+rm -rf $HOME/.m2/settings.xml
+ln -s $BINDIR/mvn-settings.xml $HOME/.m2/settings.xml
 
 echo "[$PROGNAME]installing .bash_profile"
 rm -rf $HOME/.bash_profile
