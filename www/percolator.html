@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="percolator"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-11 07:05:37 CST"/>
+<meta name="generated" content="2012-10-11 21:34:55 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -293,7 +293,6 @@ The remainder of this paper describes a particular in-cremental processing syste
 </ul>
 
 
-
 </div>
 
 </div>
@@ -323,9 +322,64 @@ The remainder of this paper describes a particular in-cremental processing syste
 <p>
 还是非常简洁的，事务都是通过Transaction封装，只有三个简单的方法Get/Set/Commit。这里的Set并不会立刻写table，而是在Commit时候才会发起真正的写，这个在使用的时候需要注意。
 </p>
+
+<hr/>
 <p>
 <b>TODO（dirlt）：timestamp snapshot isolation？理解这个语义还是比较重要的，因为按照这种语义实现的逻辑和我们想象的还不太一样？</b>
 </p>
+<p>
+关于snapshot isolation wikipedia上有专门的页面介绍 Snapshot isolation - Wikipedia, the free encyclopedia <a href="http://en.wikipedia.org/wiki/Snapshot_isolation">http://en.wikipedia.org/wiki/Snapshot_isolation</a>
+</p>
+
+
+<p class="verse">
+In databases, and transaction processing (transaction management), snapshot isolation is a guarantee that all reads made in a transaction will see a consistent snapshot of the database (in practice it reads the last committed values that existed at the time it started), and the transaction itself will successfully commit only if no updates it has made conflict with any concurrent updates made since that snapshot.<br/>
+</p>
+
+
+<p>
+<b>所谓snapshot isolation就是事务能够读取到某个database snapshot的数据，并且这个事务能够成功提交如果在这个事务处理的时候，没有其他事务同时或者是已经更新了这个事务将要修改的数据。</b>
+</p>
+
+
+
+<p class="verse">
+The main reason for its adoption is that it allows better performance than serializability, yet still avoids most of the concurrency anomalies that serializability avoids (but not always all). In practice snapshot isolation is implemented within multiversion concurrency control (MVCC), where generational values of each data item (versions) are maintained: MVCC is a common way to increase concurrency and performance by generating a new version of a database object each time the object is written, and allowing transactions' read operations of several last relevant versions (of each object). <br/>
+</p>
+
+
+<p>
+采用snapshot isolation而不是serialiability，是因为使用这种方法可以获得更好的读性能，并且避免了大部分并发异常，通常使用MVCC来实现。
+</p>
+
+
+
+<p class="verse">
+In a write skew anomaly, two transactions (T1 and T2) concurrently read an overlapping data set (e.g. values V1 and V2), concurrently make disjoint updates (e.g. T1 updates V1, T2 updates V2), and finally concurrently commit, neither having seen the update performed by the other. Were the system serializable, such an anomaly would be impossible, as either T1 or T2 would have to occur "first", and be visible to the other. In contrast, snapshot isolation permits write skew anomalies.<br/>
+<br/>
+As a concrete example, imagine V1 and V2 are two balances held by a single person, Phil. The bank will allow either V1 or V2 to run a deficit, provided the total held in both is never negative (i.e. V1 + V2 ≥ 0). Both balances are currently $100. Phil initiates two transactions concurrently, T1 withdrawing $200 from V1, and T2 withdrawing $200 from V2.<br/>
+<br/>
+If the database guaranteed serializable transactions, the simplest way of coding T1 is to deduct $200 from V1, and then verify that V1 + V2 ≥ 0 still holds, aborting if not. T2 similarly deducts $200 from V2 and then verifies V1 + V2 ≥ 0. Since the transactions must serialize, either T1 happens first, leaving V1 = -$100, V2 = $100, and preventing T2 from succeeding (since V1 + (V2 - $200) is now -$200), or T2 happens first and similarly prevents T1 from committing.<br/>
+<br/>
+Under snapshot isolation, however, T1 and T2 operate on private snapshots of the database: each deducts $200 from an account, and then verifies that the new total is zero, using the other account value that held when the snapshot was taken. Since neither update conflicts, both commit successfully, leaving V1 = V2 = -$100, and V1 + V2 = -$200.<br/>
+</p>
+
+
+<p>
+write skew的意思是指，如果两个事务同时写两个不同变量（但是这两个变量之间存在某种重叠的话），那么snapshot isolation是没有办法限定write顺序的，这就是写偏序的意思。上面还举了一个例子，V1，V2是两个变量但是存在一定的关联，如果出现write skew的话那么就会存在一定的问题，这种情况只能够使用串行化来解决。
+</p>
+
+<p>
+wikipedia最后面还提到了使用snapshot isolation转换成为serializability的实现方式，并且PostgreSQL里面就已经这么实现了。
+</p>
+<p class="verse">
+With additional communication between transactions, the anomalies that snapshot isolation normally allows can be blocked by aborting one of the transactions involved, turning a snapshot isolation implementation into a full serializability guarantee[8]. This implementation of serializability is well-suited to multiversion concurrency control databases, and has been adopted in PostgreSQL 9.1[6], where it is referred to as "Serializable Snapshot Isolation", abbreviated to SSI. When used consistently, this eliminates the need for the above workarounds. The downside over snapshot isolation is an increase in aborted transactions. This can perform better or worse than snapshot isolation with the above workarounds, depending on workload.<br/>
+</p>
+
+
+
+<hr/>
+
 <p>
 <b>TODO（dirlt）：事务失败如何处理？如果是因为和server断开的话，那么就应该重新尝试。相反如果是因为其他transaction造成冲突的话，那么是否重试就应该根据应用来判断了。感觉这种增量处理还是没有MR简洁</b>
 </p>
@@ -386,6 +440,8 @@ Snapshot isolation does not provide serializability，这个问题以下面的ps
     bigtable::Txn T = bigtable::StartRowTransaction(w.row);
     // Abort on writes after our start timestamp . . .
     if (T.Read(w.row, c+<span style="color: #ffff00;">"write"</span>, [start ts , INFINITY])) return false; // start_ts&#20043;&#21518;&#26159;&#21542;&#26377;&#26032;&#30340;&#25552;&#20132;&#12290;&#22914;&#26524;&#23384;&#22312;&#26032;&#30340;&#25552;&#20132;&#30340;&#35805;&#65292;&#36825;&#23601;&#24847;&#21619;&#36825;&#26412;&#27425;T&#30340;&#22833;&#36133;&#12290;
+    // &#36825;&#20010;&#22320;&#26041;&#38750;&#24120;&#37325;&#35201;&#65292;&#22240;&#20026;&#25105;&#20204;&#35835;&#21462;&#30340;&#25968;&#25454;&#26159;start_ts&#20043;&#21069;&#30340;&#25968;&#25454;&#65292;&#22240;&#27492;&#22914;&#26524;start_ts&#20043;&#21518;&#23384;&#22312;&#25968;&#25454;&#20889;&#20837;&#30340;&#35805;&#65292;&#37027;&#20040;&#35828;&#26126;&#23384;&#22312;&#22810;&#20010;&#20107;&#29289;&#27491;&#22312;&#25552;&#20132;
+    // &#26159;write-write conflicts.
     //. . . or locks at any timestamp.
     if (T.Read(w.row, c+<span style="color: #ffff00;">"lock"</span>, [0, INFINITY])) return false; // &#22914;&#26524;&#36825;&#20010;cell&#34987;lock&#30340;&#35805;&#65292;&#37027;&#20040;&#24847;&#21619;&#30528;&#26412;&#22320;T&#20063;&#26159;&#22833;&#36133;&#30340;&#12290;&#27880;&#24847;&#36825;&#37324;&#23545;lock&#26102;&#38388;&#27809;&#26377;&#20219;&#20309;&#38480;&#21046;&#12290;
     T.Write(w.row, c+<span style="color: #ffff00;">"data"</span>, start ts , w.value); // &#20889;&#20837;&#25968;&#25454;&#65292;&#27880;&#24847;&#36825;&#37324;&#30340;&#26102;&#38388;&#25139;&#26159;start_ts
@@ -544,8 +600,8 @@ Snapshot isolation does not provide serializability，这个问题以下面的ps
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-10-11 07:05:37 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-10-11 21:34:55 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

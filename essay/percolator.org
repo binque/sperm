@@ -61,7 +61,6 @@ percolator API封装了对于bigtable的访问，但是和bigtable api非常类�
    - notify // 这个cell是否已经ditry，是否需要运行对应的observer
    - ack_O // observer O上次成功运行的时间
 
-
 *** Transactions
 下面是使用percolator transactions功能一个example code
 #+BEGIN_SRC C++
@@ -80,7 +79,44 @@ bool UpdateDocument(Document doc) {
 #+END_SRC
 还是非常简洁的，事务都是通过Transaction封装，只有三个简单的方法Get/Set/Commit。这里的Set并不会立刻写table，而是在Commit时候才会发起真正的写，这个在使用的时候需要注意。
 
+--------------------
 *TODO（dirlt）：timestamp snapshot isolation？理解这个语义还是比较重要的，因为按照这种语义实现的逻辑和我们想象的还不太一样？*
+
+关于snapshot isolation wikipedia上有专门的页面介绍 Snapshot isolation - Wikipedia, the free encyclopedia http://en.wikipedia.org/wiki/Snapshot_isolation
+
+
+#+BEGIN_VERSE
+In databases, and transaction processing (transaction management), snapshot isolation is a guarantee that all reads made in a transaction will see a consistent snapshot of the database (in practice it reads the last committed values that existed at the time it started), and the transaction itself will successfully commit only if no updates it has made conflict with any concurrent updates made since that snapshot.
+#+END_VERSE
+*所谓snapshot isolation就是事务能够读取到某个database snapshot的数据，并且这个事务能够成功提交如果在这个事务处理的时候，没有其他事务同时或者是已经更新了这个事务将要修改的数据。*
+
+
+
+#+BEGIN_VERSE
+The main reason for its adoption is that it allows better performance than serializability, yet still avoids most of the concurrency anomalies that serializability avoids (but not always all). In practice snapshot isolation is implemented within multiversion concurrency control (MVCC), where generational values of each data item (versions) are maintained: MVCC is a common way to increase concurrency and performance by generating a new version of a database object each time the object is written, and allowing transactions' read operations of several last relevant versions (of each object). 
+#+END_VERSE
+采用snapshot isolation而不是serialiability，是因为使用这种方法可以获得更好的读性能，并且避免了大部分并发异常，通常使用MVCC来实现。
+
+
+
+#+BEGIN_VERSE
+In a write skew anomaly, two transactions (T1 and T2) concurrently read an overlapping data set (e.g. values V1 and V2), concurrently make disjoint updates (e.g. T1 updates V1, T2 updates V2), and finally concurrently commit, neither having seen the update performed by the other. Were the system serializable, such an anomaly would be impossible, as either T1 or T2 would have to occur "first", and be visible to the other. In contrast, snapshot isolation permits write skew anomalies.
+
+As a concrete example, imagine V1 and V2 are two balances held by a single person, Phil. The bank will allow either V1 or V2 to run a deficit, provided the total held in both is never negative (i.e. V1 + V2 ≥ 0). Both balances are currently $100. Phil initiates two transactions concurrently, T1 withdrawing $200 from V1, and T2 withdrawing $200 from V2.
+
+If the database guaranteed serializable transactions, the simplest way of coding T1 is to deduct $200 from V1, and then verify that V1 + V2 ≥ 0 still holds, aborting if not. T2 similarly deducts $200 from V2 and then verifies V1 + V2 ≥ 0. Since the transactions must serialize, either T1 happens first, leaving V1 = -$100, V2 = $100, and preventing T2 from succeeding (since V1 + (V2 - $200) is now -$200), or T2 happens first and similarly prevents T1 from committing.
+
+Under snapshot isolation, however, T1 and T2 operate on private snapshots of the database: each deducts $200 from an account, and then verifies that the new total is zero, using the other account value that held when the snapshot was taken. Since neither update conflicts, both commit successfully, leaving V1 = V2 = -$100, and V1 + V2 = -$200.
+#+END_VERSE
+write skew的意思是指，如果两个事务同时写两个不同变量（但是这两个变量之间存在某种重叠的话），那么snapshot isolation是没有办法限定write顺序的，这就是写偏序的意思。上面还举了一个例子，V1，V2是两个变量但是存在一定的关联，如果出现write skew的话那么就会存在一定的问题，这种情况只能够使用串行化来解决。
+
+
+wikipedia最后面还提到了使用snapshot isolation转换成为serializability的实现方式，并且PostgreSQL里面就已经这么实现了。
+#+BEGIN_VERSE
+With additional communication between transactions, the anomalies that snapshot isolation normally allows can be blocked by aborting one of the transactions involved, turning a snapshot isolation implementation into a full serializability guarantee[8]. This implementation of serializability is well-suited to multiversion concurrency control databases, and has been adopted in PostgreSQL 9.1[6], where it is referred to as "Serializable Snapshot Isolation", abbreviated to SSI. When used consistently, this eliminates the need for the above workarounds. The downside over snapshot isolation is an increase in aborted transactions. This can perform better or worse than snapshot isolation with the above workarounds, depending on workload.
+#+END_VERSE
+
+--------------------
 
 *TODO（dirlt）：事务失败如何处理？如果是因为和server断开的话，那么就应该重新尝试。相反如果是因为其他transaction造成冲突的话，那么是否重试就应该根据应用来判断了。感觉这种增量处理还是没有MR简洁*
 
@@ -126,6 +162,8 @@ class Transaction {
     bigtable::Txn T = bigtable::StartRowTransaction(w.row);
     // Abort on writes after our start timestamp . . .
     if (T.Read(w.row, c+"write", [start ts , INFINITY])) return false; // start_ts之后是否有新的提交。如果存在新的提交的话，这就意味这本次T的失败。
+    // 这个地方非常重要，因为我们读取的数据是start_ts之前的数据，因此如果start_ts之后存在数据写入的话，那么说明存在多个事物正在提交
+    // 是write-write conflicts.
     //. . . or locks at any timestamp.
     if (T.Read(w.row, c+"lock", [0, INFINITY])) return false; // 如果这个cell被lock的话，那么意味着本地T也是失败的。注意这里对lock时间没有任何限制。
     T.Write(w.row, c+"data", start ts , w.value); // 写入数据，注意这里的时间戳是start_ts
