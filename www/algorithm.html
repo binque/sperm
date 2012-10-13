@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="algorithm"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-12 18:25:58 CST"/>
+<meta name="generated" content="2012-10-13 09:55:49 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -106,6 +106,7 @@
 <li><a href="#sec-1-4">1.4 rsync的核心算法</a></li>
 <li><a href="#sec-1-5">1.5 开门抽奖问题</a></li>
 <li><a href="#sec-1-6">1.6 simhash算法原理和文档近似判断</a></li>
+<li><a href="#sec-1-7">1.7 等概率选取未知长度的链表中的元素</a></li>
 </ul>
 </li>
 </ul>
@@ -392,14 +393,47 @@ simhash算法原理非常简单：
 </ol>
 
 <p>不过话说回来，文档近似判断应该k很小在{1,2}左右。C(64,k)={64,2016}应该并不算太大的值吧。
-</p></div>
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> 等概率选取未知长度的链表中的元素</h3>
+<div class="outline-text-3" id="text-1-7">
+
+<p>要求是只能够遍历这个链表一次。下面是代码， <b>注意这里的wanted会不断地被更新</b> 
+</p>
+
+
+<pre class="src src-C++">int nmatch = 0;
+for ( p=list; p!=NULL; p=p-&gt;next ){
+    if ( rand() % ++nmatch == 0 ){
+        wanted = p;
+    }
+} 
+</pre>
+
+
+<p>
+这个问题可以如此考虑，假设长度为n，那么最后一个元素被选出（选中）的概率为1/n，然后我们考虑倒数第二个元素选出的概率
+</p><ul>
+<li>倒数第二个元素必须被 <b>选中</b> ，概率为1/(n-1)
+</li>
+<li>并且确保倒数第一个元素没有被 <b>选中</b> 。因为最后一个选中概率为1/n，所以最后一个元素不被选中概率为(n-1)/n
+</li>
+</ul>
+
+<p>因此倒数第二个元素被选出的概率为 1/(n-1) * (n-1)/n = 1/n. 同理计算对于每一个元素的概率都是 1/n.
+</p>
+</div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-10-12 18:25:58 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-10-13 09:55:49 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>
