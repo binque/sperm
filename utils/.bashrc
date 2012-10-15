@@ -903,12 +903,6 @@ PATH=$TEXMACS_PATH/bin:$PATH
 export TEXMACS_PATH
 
 export GOROOT=$HOME/utils/go
-export GOARCH=amd64
-export GOOS=linux
-if [ $MAC == 1 ]
-then
-    export GOOS=darwin
-fi
 PATH=$GOROOT/bin:$PATH
 
 export PATH
