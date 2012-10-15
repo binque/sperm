@@ -33,7 +33,7 @@ TARGETS="2utf8 cxxindent \
 oprof mysqldb syslog \
 local-install org2twiki \
  gc pom-create vpn-umeng vpn-gfw \
-rhs pcrypt einstall uinstall"
+rhs gds pcrypt einstall uinstall"
 
 INSTALLDIR=$HOME/utils/bin
 if [ ! -d $INSTALLDIR ]

@@ -904,6 +904,8 @@ export TEXMACS_PATH
 
 export GOROOT=$HOME/utils/go
 PATH=$GOROOT/bin:$PATH
+GOPATH=$HOME/go/
+export GOPATH
 
 export PATH
 export MANPATH
