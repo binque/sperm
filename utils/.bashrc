@@ -900,8 +900,17 @@ PATH=$HOME/utils/oozie-2.3.2-cdh3u3/bin:$PATH
 
 TEXMACS_PATH=$HOME/utils/TeXmacs-1.0.7-static-gnu-linux/
 PATH=$TEXMACS_PATH/bin:$PATH
-
 export TEXMACS_PATH
+
+export GOROOT=$HOME/utils/go
+export GOARCH=amd64
+export GOOS=linux
+if [ $MAC == 1 ]
+then
+    export GOOS=darwin
+fi
+PATH=$GOROOT/bin:$PATH
+
 export PATH
 export MANPATH
 
@@ -913,6 +922,7 @@ alias ed="emacs"
 
 # default value of oozie url.
 export OOZIE_URL="http://localhost:11000/oozie" 
+
 
 if [ $MAC == 1 ]
 then
