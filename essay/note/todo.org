@@ -22,8 +22,6 @@
 ** TODO gmail使用和其他方式对比（需要稳定一段时间）
 ** TODO 阅读RSS订阅（when free）
 ** TODO joel on software.
-** TODO wangyin和云风的blog
-** TODO 王垠的文章。还是比较有思想的。harry facebook.
 ** TODO 罗伯特·西奥迪尼的《影响力》
 ** TODO 《娱乐至死》、《乌合之众》、《失控》
 ** TODO steve jobs
