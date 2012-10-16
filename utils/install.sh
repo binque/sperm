@@ -21,6 +21,7 @@ ln -s $BINDIR/id_rsa.pub $HOME/.ssh/id_rsa.pub
 echo "[$PROGNAME]installing id_rsa..."
 rm -rf $HOME/.ssh/id_rsa
 ln -s $BINDIR/id_rsa $HOME/.ssh/id_rsa
+chmod 600 $HOME/.ssh/id_rsa
 
 mkdir -p $HOME/.m2
 echo "[$PROGNAME]installing mvn-settings.xml..."
