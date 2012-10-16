@@ -32,3 +32,5 @@
    - linux perf
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
+** TODO 快速编写MR
+** TODO 宁夏黑枸杞
