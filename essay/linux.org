@@ -276,7 +276,7 @@ vm.swappiness = 0
    - OVERCOMMIT_NEVER=2 用户一次申请内存的大小不允许超过<可用内存>的大小。关于这个<可用内存>的大小计算可以看下面overcommit_ration这个参数，可以上面两种所说的可用内存不太一样。
 
 *** /proc/sys/vm/overcommit_ratio
-如果overcommit_memory值为2的话，那么这个参数决定了系统的<可用内存>的大小。计算方式是 (Physical-RAM-Size) - ratio / 100 + (Swap-Size).
+如果overcommit_memory值为2的话，那么这个参数决定了系统的<可用内存>的大小。计算方式是 (Physical-RAM-Size) * ratio / 100 + (Swap-Size).
 #+BEGIN_EXAMPLE
 dirlt@dirlt-virtual-machine:~/github/sperm/essay$ free -m
              total       used       free     shared    buffers     cached
