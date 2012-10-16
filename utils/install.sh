@@ -32,7 +32,7 @@ echo "[$PROGNAME]installing .bash_profile"
 rm -rf $HOME/.bash_profile
 ln -s $BINDIR/.bashrc $HOME/.bash_profile
 
-TARGETS=".bashrc .emacs .emacs.d .vpn-umeng-shijihulian .vpn-umeng-zhaowei"
+TARGETS=".bashrc .emacs .emacs.d .vpn-umeng-shijihulian"
 for target in $TARGETS
 do
   echo "[$PROGNAME]installing $target..."
