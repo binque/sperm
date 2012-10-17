@@ -32,7 +32,7 @@ echo "[$PROGNAME]installing .bash_profile"
 rm -rf $HOME/.bash_profile
 ln -s $BINDIR/.bashrc $HOME/.bash_profile
 
-TARGETS=".bashrc .emacs .emacs.d .vpn-umeng-shijihulian"
+TARGETS=".bashrc .emacs .emacs.d .vpn-umeng-shijihulian .vpn-umeng-shijihulian2"
 for target in $TARGETS
 do
   echo "[$PROGNAME]installing $target..."
@@ -43,7 +43,7 @@ done
 TARGETS="2utf8 cxxindent \
 oprof mysqldb syslog \
 local-install org2twiki \
- gc pom-create vpn-umeng vpn-gfw \
+ gc pom-create vpn-umeng vpn-umeng2 vpn-gfw \
 rhs gds pcrypt einstall uinstall"
 
 INSTALLDIR=$HOME/utils/bin

@@ -1,0 +1,16 @@
+#!/bin/bash
+function start() {
+    echo "cd $HOME/.vpn-umeng-shijihulian2 && sudo openvpn --daemon --config client.conf"
+    cd $HOME/.vpn-umeng-shijihulian2 && sudo openvpn --daemon --config client.conf
+}
+
+function stop() {
+    for pid in `ps aux | grep "openvpn --daemon --config client.conf" | grep -v "grep" | awk '{print $2;}'`
+    do
+        echo "sudo kill -9 $pid of 'openvpn --daemon --config client.conf"
+        sudo kill -9 $pid
+    done
+}
+
+stop
+start
