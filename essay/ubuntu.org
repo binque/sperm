@@ -222,6 +222,8 @@ unity restart &
    - sudo apt-get install mercurial
    - sudo apt-get install golang-go
    - sudo apt-get install kchmviewer # chm阅读
+   - sudo apt-get install flex
+
 *** amarok循环播放
 在amarok的右下角有task progression的图标，选择repeat track即可。
 

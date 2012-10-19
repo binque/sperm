@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="mapred"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-12 18:25:05 CST"/>
+<meta name="generated" content="2012-10-19 17:18:39 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -112,6 +112,11 @@
 <ul>
 <li><a href="#sec-1-2-1">1.2.1 验证多路输入正确性</a></li>
 <li><a href="#sec-1-2-2">1.2.2 验证多路输出正确性</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-3">1.3 Source Analysis</a>
+<ul>
+<li><a href="#sec-1-3-1">1.3.1 task如何向tasktracker进行定时汇报</a></li>
 </ul>
 </li>
 </ul>
@@ -383,20 +388,20 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
 public class TestHBaseInputAndHDFSInputMR {
-    public static final String kInTableName1 = <span style="color: #ffff00;">"test.temporary.in1"</span>;
-    public static final String kInTableName2 = <span style="color: #ffff00;">"test.temporary.in2"</span>;
-    public static final String kInFileName1 = <span style="color: #ffff00;">"/tmp/test.temporary.in1"</span>;
-    public static final String kInFileName2 = <span style="color: #ffff00;">"/tmp/test.temporary.in2"</span>;
-    public static final String kOutFileName = <span style="color: #ffff00;">"/tmp/test.temporary.out"</span>;
-    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #ffff00;">"CF"</span>);
-    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #ffff00;">"CL"</span>);
+    public static final String kInTableName1 = <span style="color: #00ffff; font-style: italic;">"test.temporary.in1"</span>;
+    public static final String kInTableName2 = <span style="color: #00ffff; font-style: italic;">"test.temporary.in2"</span>;
+    public static final String kInFileName1 = <span style="color: #00ffff; font-style: italic;">"/tmp/test.temporary.in1"</span>;
+    public static final String kInFileName2 = <span style="color: #00ffff; font-style: italic;">"/tmp/test.temporary.in2"</span>;
+    public static final String kOutFileName = <span style="color: #00ffff; font-style: italic;">"/tmp/test.temporary.out"</span>;
+    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CF"</span>);
+    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CL"</span>);
 
     public static class FMapper extends Mapper&lt;LongWritable, Text, Text, Text&gt; {
         @Override
         protected void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
-            context.write(new Text(<span style="color: #ffff00;">"0"</span>),
-                    new Text(<span style="color: #ffff00;">"file mapper value="</span> + value.toString()));
+            context.write(new Text(<span style="color: #00ffff; font-style: italic;">"0"</span>),
+                    new Text(<span style="color: #00ffff; font-style: italic;">"file mapper value="</span> + value.toString()));
         }
     }
 
@@ -405,10 +410,10 @@ public class TestHBaseInputAndHDFSInputMR {
         protected void map(ImmutableBytesWritable key, Result result,
                 Context context) throws IOException, InterruptedException {
             context.write(
-                    new Text(<span style="color: #ffff00;">"0"</span>),
-                    new Text(<span style="color: #ffff00;">"table mapper key = "</span>
+                    new Text(<span style="color: #00ffff; font-style: italic;">"0"</span>),
+                    new Text(<span style="color: #00ffff; font-style: italic;">"table mapper key = "</span>
                             + Bytes.toString(key.get())
-                            + <span style="color: #ffff00;">", value="</span>
+                            + <span style="color: #00ffff; font-style: italic;">", value="</span>
                             + Bytes.toString(result.getValue(kByteColumnFamily,
                                     kByteColumn))));
         }
@@ -440,8 +445,8 @@ public class TestHBaseInputAndHDFSInputMR {
         admin.createTable(dp);
 
         HTable table = new HTable(name);
-        Put put = new Put(Bytes.toBytes(name + <span style="color: #ffff00;">".rowkey"</span>));
-        put.add(kByteColumnFamily, kByteColumn, Bytes.toBytes(name + <span style="color: #ffff00;">".tvalue"</span>));
+        Put put = new Put(Bytes.toBytes(name + <span style="color: #00ffff; font-style: italic;">".rowkey"</span>));
+        put.add(kByteColumnFamily, kByteColumn, Bytes.toBytes(name + <span style="color: #00ffff; font-style: italic;">".tvalue"</span>));
         table.put(put);
         table.close();
     }
@@ -454,7 +459,7 @@ public class TestHBaseInputAndHDFSInputMR {
             fs.delete(p, true);
         }
         FSDataOutputStream fos = fs.create(p);
-        fos.writeBytes(name + <span style="color: #ffff00;">".fvalue\n"</span>);
+        fos.writeBytes(name + <span style="color: #00ffff; font-style: italic;">".fvalue\n"</span>);
         fos.close();
         fs.close();
     }
@@ -480,8 +485,8 @@ public class TestHBaseInputAndHDFSInputMR {
         // delete out
         deleteFile(kOutFileName, conf);
 
-        String jobName = <span style="color: #ffff00;">"TestHBaseInputAndHDFSInputMR#"</span>
-                + new SimpleDateFormat(<span style="color: #ffff00;">"yyyyMMddHHmmss"</span>).format(new Date());
+        String jobName = <span style="color: #00ffff; font-style: italic;">"TestHBaseInputAndHDFSInputMR#"</span>
+                + new SimpleDateFormat(<span style="color: #00ffff; font-style: italic;">"yyyyMMddHHmmss"</span>).format(new Date());
         // setup environment.
         Job job = new Job(conf);
         job.setJobName(jobName);
@@ -549,7 +554,15 @@ public class TestHBaseInputAndHDFSInputMR {
 </li>
 </ul>
 
-<p><b>NOTE（dirlt）：似乎只是支持1个htable，和1个hdfs的目录。但是hdfs每个输出文件会有一个前缀用来进行区分</b>
+
+<p>
+<b>NOTE（dirlt）：似乎只是支持1个htable，和1个hdfs的目录。但是hdfs每个输出文件会有一个前缀用来进行区分</b>
+</p>
+<p>
+<b>NOTE（dirlt）：支持多个htable，并且write(String namedOutput, K key, V value, String baseOutputPath) 这个函数支持写到不同的目录下面。当使用这个函数调用的话，那么不会像之前的方式每个文件使用不同的前缀</b>
+</p>
+<p>
+<b>NOTE（dirlt）：所以对于多路输出方面的话，完全可以做到多个htable以及多个hdfs目录的输出</b>
 </p>
 
 
@@ -569,7 +582,7 @@ drwxr-xr-x   - dirlt supergroup          0 2012-10-08 16:57 /tmp/test/temporary.
 
 
 
-<pre class="src src-Java">package com.umeng.dp.mapreduce;
+<pre class="src src-Java">package com.umeng.dp.offline;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -584,6 +597,8 @@ import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
+import org.apache.hadoop.hbase.mapreduce.MultiTableOutputFormat;
 import org.apache.hadoop.hbase.mapreduce.TableOutputFormat;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.io.LongWritable;
@@ -598,11 +613,12 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
 public class TestHBaseOutputAndHDFSOutputMR {
-    public static final String kInputFileName = <span style="color: #ffff00;">"/tmp/test/temporary.in"</span>;
-    public static final String kOutputTableName = <span style="color: #ffff00;">"test.temporary.out"</span>;
-    public static final String kOutputFileName = <span style="color: #ffff00;">"/tmp/test/temporary.out"</span>;
-    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #ffff00;">"CF"</span>);
-    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #ffff00;">"CL"</span>);
+    public static final String kInputFileName = <span style="color: #00ffff; font-style: italic;">"/tmp/test/temporary.in"</span>;
+    public static final String kOutputTableName = <span style="color: #00ffff; font-style: italic;">"test.temporary.out"</span>;
+    public static final String kOutputTableName2 = <span style="color: #00ffff; font-style: italic;">"test.temporary.out2"</span>;
+    public static final String kOutputFileName = <span style="color: #00ffff; font-style: italic;">"/tmp/test/temporary.out"</span>;
+    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CF"</span>);
+    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CL"</span>);
 
     public static void createTable(String name, Configuration conf)
             throws IOException {
@@ -625,7 +641,7 @@ public class TestHBaseOutputAndHDFSOutputMR {
             fs.delete(p, true);
         }
         FSDataOutputStream fos = fs.create(p);
-        fos.writeBytes(name + <span style="color: #ffff00;">".fvalue\n"</span>);
+        fos.writeBytes(name + <span style="color: #00ffff; font-style: italic;">".fvalue\n"</span>);
         fos.close();
         fs.close();
     }
@@ -650,11 +666,12 @@ public class TestHBaseOutputAndHDFSOutputMR {
 
         @Override
         public void map(LongWritable k, Text v, Context ctx) throws IOException, InterruptedException {
-            mos.write(<span style="color: #ffff00;">"f"</span>, new Text(<span style="color: #ffff00;">"fkey"</span>), v);
-            mos.write(<span style="color: #ffff00;">"f2"</span>, new Text(<span style="color: #ffff00;">"fkey"</span>), v);
-            Put put = new Put(Bytes.toBytes(<span style="color: #ffff00;">"tkey"</span>));
+            mos.write(<span style="color: #00ffff; font-style: italic;">"f"</span>, new Text(<span style="color: #00ffff; font-style: italic;">"fkey"</span>), v);
+            mos.write(<span style="color: #00ffff; font-style: italic;">"f2"</span>, new Text(<span style="color: #00ffff; font-style: italic;">"fkey"</span>), v);
+            Put put = new Put(Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"tkey"</span>));
             put.add(kByteColumnFamily, kByteColumn, v.getBytes());
-            mos.write(<span style="color: #ffff00;">"t"</span>, null, put);
+            mos.write(<span style="color: #00ffff; font-style: italic;">"t"</span>, new ImmutableBytesWritable(Bytes.toBytes(kOutputTableName)), put);
+            mos.write(<span style="color: #00ffff; font-style: italic;">"t"</span>, new ImmutableBytesWritable(Bytes.toBytes(kOutputTableName2)), put);
         }
 
         @Override
@@ -667,11 +684,12 @@ public class TestHBaseOutputAndHDFSOutputMR {
     public static Job configureJob(Configuration conf, String[] args)
             throws IOException {
         createTable(kOutputTableName,conf);
+        createTable(kOutputTableName2,conf);
         deleteFile(kOutputFileName, conf);
         createFile(kInputFileName, conf);
 
-        String jobName = <span style="color: #ffff00;">"TestHBaseOutputAndHDFSOutputMR#"</span>
-                + new SimpleDateFormat(<span style="color: #ffff00;">"yyyyMMddHHmmss"</span>).format(new Date());
+        String jobName = <span style="color: #00ffff; font-style: italic;">"TestHBaseOutputAndHDFSOutputMR#"</span>
+                + new SimpleDateFormat(<span style="color: #00ffff; font-style: italic;">"yyyyMMddHHmmss"</span>).format(new Date());
         // setup environment.
         Job job = new Job(conf);
         job.setJobName(jobName);
@@ -679,15 +697,11 @@ public class TestHBaseOutputAndHDFSOutputMR {
         job.setMapperClass(TestHBaseOutputAndHDFSOutputMR.XMap.class);
         FileInputFormat.setInputPaths(job, new Path(kInputFileName));
 
-        job.setOutputKeyClass(NullWritable.class);
-        job.setOutputValueClass(NullWritable.class);
-        job.setOutputFormatClass(TextOutputFormat.class);
-
-        MultipleOutputs.addNamedOutput(job, <span style="color: #ffff00;">"f"</span>, TextOutputFormat.class, Text.class, Text.class);
-        MultipleOutputs.addNamedOutput(job, <span style="color: #ffff00;">"f2"</span>, TextOutputFormat.class, Text.class, Text.class);
-        MultipleOutputs.addNamedOutput(job, <span style="color: #ffff00;">"t"</span>, TableOutputFormat.class, NullWritable.class, Put.class);
-        FileOutputFormat.setOutputPath(job, new Path(kOutputFileName));
-        job.getConfiguration().set(TableOutputFormat.OUTPUT_TABLE, kOutputTableName);
+        MultipleOutputs.addNamedOutput(job, <span style="color: #00ffff; font-style: italic;">"f"</span>, TextOutputFormat.class, Text.class, Text.class);
+        MultipleOutputs.addNamedOutput(job, <span style="color: #00ffff; font-style: italic;">"f2"</span>, TextOutputFormat.class, Text.class, Text.class);
+        MultipleOutputs.addNamedOutput(job, <span style="color: #00ffff; font-style: italic;">"t"</span>, MultiTableOutputFormat.class, ImmutableBytesWritable.class, Put.class);
+        MultipleOutputs.addNamedOutput(job, <span style="color: #00ffff; font-style: italic;">"t2"</span>, MultiTableOutputFormat.class, ImmutableBytesWritable.class, Put.class);
+        FileOutputFormat.setOutputPath(job, new Path(kOutputFileName));        
 
         job.setNumReduceTasks(0);
         return job;
@@ -708,6 +722,176 @@ public class TestHBaseOutputAndHDFSOutputMR {
 
 </pre>
 
+
+<p>
+但是上面这种方式实际上并不太好进行测试。一种可以测试的方法就是MultipleOutputs进行mock，修改其write的方法将结果缓存起来。
+</p>
+
+<hr/>
+
+<p>
+但是如果我们只是输出到多个表的话，还是可以使用mrunit来进行测试的，下面是如果只有htable输出的情况，这样更加方面做ut
+</p>
+
+
+<pre class="src src-Java">package com.umeng.dp.offline;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import junit.framework.TestCase;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.client.HBaseAdmin;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
+import org.apache.hadoop.hbase.mapreduce.MultiTableOutputFormat;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.util.GenericOptionsParser;
+
+public class TestHBaseOutputAndHDFSOutputMR extends TestCase {
+    public static final String kInputFileName = <span style="color: #00ffff; font-style: italic;">"/tmp/test/temporary.in"</span>;
+    public static final String kOutputTableName = <span style="color: #00ffff; font-style: italic;">"test.temporary.out"</span>;
+    public static final String kOutputTableName2 = <span style="color: #00ffff; font-style: italic;">"test.temporary.out2"</span>;
+    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CF"</span>);
+    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CL"</span>);
+
+    public static void createTable(String name, Configuration conf)
+            throws IOException {
+        HBaseAdmin admin = new HBaseAdmin(conf);
+        if (admin.isTableAvailable(name)) {
+            admin.disableTable(name);
+            admin.deleteTable(name);
+        }
+        HTableDescriptor dp = new HTableDescriptor(name);
+        dp.addFamily(new HColumnDescriptor(kByteColumnFamily));
+        admin.createTable(dp);
+        admin.close();
+    }
+
+    public static void createFile(String name, Configuration conf)
+            throws IOException {
+        FileSystem fs = FileSystem.get(conf);
+        Path p = new Path(name);
+        if (fs.exists(p)) {
+            fs.delete(p, true);
+        }
+        FSDataOutputStream fos = fs.create(p);
+        fos.writeBytes(name + <span style="color: #00ffff; font-style: italic;">".fvalue\n"</span>);
+        fos.close();
+        fs.close();
+    }
+
+    public static void deleteFile(String name, Configuration conf)
+            throws IOException {
+        FileSystem fs = FileSystem.get(conf);
+        Path p = new Path(name);
+        if (fs.exists(p)) {
+            fs.delete(p, true);
+        }
+        fs.close();
+    }
+
+    public static class XMap extends Mapper&lt;LongWritable, Text, ImmutableBytesWritable, Put &gt; {
+        @Override
+        public void setup(Context ctx) throws IOException, InterruptedException {
+            super.setup(ctx);
+        }
+
+        @Override
+        public void map(LongWritable k, Text v, Context ctx) throws IOException, InterruptedException {            
+            Put put = new Put(Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"tkey"</span>));
+            put.add(kByteColumnFamily, kByteColumn, v.getBytes());
+            ctx.write(new ImmutableBytesWritable(Bytes.toBytes(kOutputTableName)), put);
+            ctx.write(new ImmutableBytesWritable(Bytes.toBytes(kOutputTableName2)), put);
+        }
+
+        @Override
+        public void cleanup(Context ctx) throws IOException, InterruptedException {
+            super.cleanup(ctx);   
+        }
+    }
+
+    public static Job configureJob(Configuration conf, String[] args)
+            throws IOException {
+        createTable(kOutputTableName,conf);
+        createTable(kOutputTableName2,conf);
+        createFile(kInputFileName, conf);
+
+        String jobName = <span style="color: #00ffff; font-style: italic;">"TestHBaseOutputAndHDFSOutputMR#"</span>
+                + new SimpleDateFormat(<span style="color: #00ffff; font-style: italic;">"yyyyMMddHHmmss"</span>).format(new Date());
+        // setup environment.
+        Job job = new Job(conf);
+        job.setJobName(jobName);
+        job.setJarByClass(TestHBaseOutputAndHDFSOutputMR.class);        
+        job.setMapperClass(TestHBaseOutputAndHDFSOutputMR.XMap.class);
+        FileInputFormat.setInputPaths(job, new Path(kInputFileName));
+        job.setOutputFormatClass(MultiTableOutputFormat.class);               
+        job.setNumReduceTasks(0);
+        return job;
+    }
+
+    public static void main(String[] args) {
+        try {
+            Configuration conf = HBaseConfiguration.create();
+            args = new GenericOptionsParser(conf, args).getRemainingArgs();
+            Job job = configureJob(conf, args);
+            job.submit();
+            System.exit(job.waitForCompletion(true) ? 0 : 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+</pre>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Source Analysis</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> task如何向tasktracker进行定时汇报</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+<ul>
+<li>task不管是mapper还是reducer，和mr框架相关的内容都包含在了Context里面。
+</li>
+<li>Context初始化里面需要传入一个Reporter类，这个类主要用来和tasktracker汇报信息。Reporter本身是一个抽象类，一个具体实现类有TaskReporter
+</li>
+<li>TaskReporter本身实现了一个run方法，代码里面可以看到在和tasktracker通信。如果任务每个完成的话，那么会不断检查sendProgress这个标志位，这个标志位也被progress方法设置.
+</li>
+<li>在MapTask以及ReduceTask里面的run方法，首先会创建reporter对象并且启动（startCommunicationThread），然后执行具体的map或者是reduce过程。（runNewMapper/runNewReducer） ，最后回到了Context.run
+</li>
+<li>在Context.run里面本质工作是在不断地读取kv然后交给appcode来进行处理，在每次调用nextKeyValue里面，实际上调用了report.progress方法。
+</li>
+</ul>
+
+<p>简单地来说，有单独的汇报线程，然后在mapper以及reducer里面每次读取一个kv的话都会调用progress，之后汇报线程就可以向tasktracker汇报状态。因此如果自己某个任务耗时过长的话，可以调用context.progress().
+</p>
 </div>
 </div>
 </div>
@@ -715,8 +899,8 @@ public class TestHBaseOutputAndHDFSOutputMR {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-10-12 18:25:05 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-10-19 17:18:39 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

@@ -63,6 +63,7 @@ file:./images/valve-logo.jpg
    - [[file:topcoder.org][topcoder]] 主要都是做offline的，感觉自己线上做题速度不行。因为时间关系可能只是挑一些需要思考但是不会涉及到太多复杂算法的题目。
    - [[file:web-misc.org][web-misc]] 写/用web东西时候遇到的一些问题。因为自己对于web开发不太了解，所以内容上的话可能显得有点弱智。
    - [[file:folly.org][folly]] Folly is an open-source C++ library developed and used at Facebook.
+   - [[file:flex-bison.org][flex-bison]] 可以用来书写词法和语法分析器，bison支持的语法是LALR（1）。
 
 ** Network Programming
    - [[file:unp.org][unp]] Unix网络编程(Unix Network Programming),W. Richard Stevens的又一神作。笔记里面只是对于TCP原理有比较详细讨论，这部分笔记也包含了TCP Illustrated v1里面和TCP相关的章节内容。对于编程方面也着重TCP socket使用，毕竟在大部分应用场景下面我们选用TCP模型更多，并且TCP里面有很多非常琐碎的知识。
