@@ -117,13 +117,11 @@ file:./images/valve-logo.jpg
    - [[file:design-reading.org][design-reading]] 关于设计方面的一些文章以及阅读心得。
 
 ** Note
-   - [[file:./note/diary.org][diary]] 记录日常的事情以及自己的想法。提醒一下，其内容可能过于琐碎或者是无聊：）
    - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
    - [[file:note/fun.org][挺搞笑的]]
    - [[file:note/excerpt.org][网络摘抄]] 
    - [[file:note/lyric.org][歌词]] 
    - [[file:note/movie.org][电影]] 
-   - [[file:note/travel.org][旅行]] 要不读书、要不旅行。心和身体， 得有一个在路上。
    - [[file:note/pregnancy.org][怀孕]] 做爸爸妈妈需要注意的一些事情。
    - [[file:note/health.org][健康]] 拥有健康的身体才能够更好地享受生活和工作。
    - [[file:note/book.org][书籍]] 自己看过的一些书，可能不太好分类所以全部放在这里了。

@@ -124,6 +124,37 @@ System Settings =》 Universal Access里面的Seeing部分可以用来调整字�
 
 参考链接 http://ltek.dyndns.org/wordpress/?p=282
 
+** 网络
+*** 绑定静态IP
+修改/etc/network/interfaces
+#+BEGIN_EXAMPLE
+auto eth0
+iface eth0 inet static
+address 10.18.102.200
+netmask 255.255.255.0
+gateway 10.18.102.254
+#+END_EXAMPLE
+
+修改/etc/resolve.conf
+#+BEGIN_EXAMPLE
+nameserver 208.67.222.222
+nameserver 202.106.0.20
+nameserver 219.232.48.62
+nameserver 210.52.149.2
+#+END_EXAMPLE
+
+修改/etc/nsswitch.conf
+#+BEGIN_EXAMPLE
+hosts:          files dns
+networks:       files
+#+END_EXAMPLE
+
+然后重启网络
+#+BEGIN_EXAMPLE
+sudo /etc/init.d/networking restart
+#+END_EXAMPLE
+*NOTE(dirlt):可能需要重启两次*
+
 ** 系统管理
 *** 重启机器
 似乎Ubuntu下面限制用户进行重启，所以要重启的话可以执行sudo reboot.

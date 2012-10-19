@@ -52,10 +52,12 @@ At first, it locates the address of the region server hosting the -ROOT- region 
    - scan 'test'
    - scan 'test' , { LIMIT=>10 }
    - scan 'test' , { COLUMN=>['cf:url'] }
-   - scan 'test' , { STARTROW=>'xyz' }
+   - scan 'test' , { STARTROW=>'xyz' , ENDROW=>'uvw' }
    - count 'test'
    - create 'test', { NAME=>'cf' }
    - get 'test', {COLUMN = > ['cf:url']}
+
+如果需要输入二进制的话，可以使用\x1e这样的方式表示，但是务必使用". 比如"stat:abc\x1exyz"
 
 *** hbase increment
 http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html

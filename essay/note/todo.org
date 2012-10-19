@@ -22,8 +22,6 @@
 ** TODO gmail使用和其他方式对比（需要稳定一段时间）
 ** TODO 阅读RSS订阅（when free）
 ** TODO joel on software.
-** TODO wangyin和云风的blog
-** TODO 王垠的文章。还是比较有思想的。harry facebook.
 ** TODO 罗伯特·西奥迪尼的《影响力》
 ** TODO 《娱乐至死》、《乌合之众》、《失控》
 ** TODO steve jobs
@@ -33,9 +31,5 @@
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
 ** TODO 快速编写MR
-** TODO 宁夏黑枸杞
-** TODO task如何向jobtracker进行定时汇报
+** TODO systemtap.
 
-** TODO 修改segmentation代码
-** TODO 跑会姐的任务
-** TODO 和叶工讨论增加os字段以及upgradeCnt写入AppUserStat
