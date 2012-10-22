@@ -939,4 +939,4 @@ git config --global alias.unstage 'reset'
 git config --global alias.last 'log -1 HEAD'
 
 alias dp1="ssh -p 16021 -l dp dp1" # authorized.
-alias hadoop1="ssh -p 16021 -l yunbg hadoop1" # L6o21,.inc10ud
+alias hadoop1="ssh -p 16021 -l yunbg hadoop1" # authorized.

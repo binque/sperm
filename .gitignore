@@ -9,6 +9,7 @@
 *.classpath
 *.settings/
 *.project
+*.sconsign.dblite
 
 .emacs.d/tramp
 .emacs.d/ac-comphist.dat
@@ -34,7 +35,6 @@ code/py/pcrypt/pcrypt.png
 code/py/pcrypt/pcrypt.py.ok
 
 
-code/cc/.sconsign.dblite
 code/cc/astyle/test/test_astyle
 code/cc/bench/t_cond
 code/cc/bench/t_lock
@@ -62,6 +62,7 @@ code/cc/itachi/test/test_net_handler
 code/cc/sasuke/test/rpc_client
 code/cc/sasuke/test/rpc_server
 code/cc/sasuke/test/test_zmq
+code/cc/nasty/test/test_parser
 
 code/java/*/target
 

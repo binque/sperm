@@ -7,15 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hbase"/>
 <meta name="generator" content="Org-mode"/>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<meta name="generated" content="2012-10-12 07:04:14 CST"/>
-=======
-<meta name="generated" content="2012-10-12 18:25:36 CST"/>
->>>>>>> 5d7ae72fa08ab3da2d17356b29349adf522b5563
-=======
-<meta name="generated" content="2012-10-13 09:55:46 CST"/>
->>>>>>> bd013f7fcc4686367fbe0d48188021016ec19d6f
+<meta name="generated" content="2012-10-22 23:25:33 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -267,7 +259,7 @@ At first, it locates the address of the region server hosting the -ROOT- region 
 </li>
 <li>scan 'test' , { COLUMN=&gt;['cf:url'] }
 </li>
-<li>scan 'test' , { STARTROW=&gt;'xyz' }
+<li>scan 'test' , { STARTROW=&gt;'xyz' , ENDROW=&gt;'uvw' }
 </li>
 <li>count 'test'
 </li>
@@ -278,6 +270,9 @@ At first, it locates the address of the region server hosting the -ROOT- region 
 </ul>
 
 
+<p>
+如果需要输入二进制的话，可以使用\x1e这样的方式表示，但是务必使用". 比如"stat:abc\x1exyz"
+</p>
 </div>
 
 </div>
@@ -342,9 +337,9 @@ import org.apache.hadoop.hbase.util.Bytes;
 // turns out max size is 10M. 
 // refers to the HTable::validatePut this method.
 public class TestMaxSizeOfHBaseValue {
-    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #ffff00;">"CF"</span>);
-    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #ffff00;">"CL"</span>);
-    private final static String kTableName = <span style="color: #ffff00;">"test.temporary"</span>;
+    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CF"</span>);
+    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CL"</span>);
+    private final static String kTableName = <span style="color: #00ffff; font-style: italic;">"test.temporary"</span>;
 
     private Configuration conf_ = null;
 
@@ -365,7 +360,7 @@ public class TestMaxSizeOfHBaseValue {
         int size = 2048;
         while(true){
             byte[] value = new byte[size-1];
-            Put put = new Put(Bytes.toBytes(<span style="color: #ffff00;">"row"</span>));
+            Put put = new Put(Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"row"</span>));
             put.add(kByteColumnFamily, kByteColumn, value);
             try {
                 table.put(put);
@@ -373,7 +368,7 @@ public class TestMaxSizeOfHBaseValue {
                 e.printStackTrace();
                 break;
             }
-            System.out.println(<span style="color: #ffff00;">"value size = "</span>+ size +<span style="color: #ffff00;">", succeed"</span>);
+            System.out.println(<span style="color: #00ffff; font-style: italic;">"value size = "</span>+ size +<span style="color: #00ffff; font-style: italic;">", succeed"</span>);
             if(size &gt;= 8 * 1024 * 1024) {
                 break;
             }
@@ -401,13 +396,13 @@ public class TestMaxSizeOfHBaseValue {
 <pre class="src src-Java">// validate for well-formedness
 private void validatePut(final Put put) throws IllegalArgumentException{
   if (put.isEmpty()) {
-    throw new IllegalArgumentException(<span style="color: #ffff00;">"No columns to insert"</span>);
+    throw new IllegalArgumentException(<span style="color: #00ffff; font-style: italic;">"No columns to insert"</span>);
   }
   if (maxKeyValueSize &gt; 0) {
     for (List&lt;KeyValue&gt; list : put.getFamilyMap().values()) {
       for (KeyValue kv : list) {
         if (kv.getLength() &gt; maxKeyValueSize) {
-          throw new IllegalArgumentException(<span style="color: #ffff00;">"KeyValue size too large"</span>);
+          throw new IllegalArgumentException(<span style="color: #00ffff; font-style: italic;">"KeyValue size too large"</span>);
         }
       }
     }
@@ -421,7 +416,7 @@ private void validatePut(final Put put) throws IllegalArgumentException{
 </p>
 
 
-<pre class="src src-Java">this.maxKeyValueSize = conf.getInt(<span style="color: #ffff00;">"hbase.client.keyvalue.maxsize"</span>, -1);
+<pre class="src src-Java">this.maxKeyValueSize = conf.getInt(<span style="color: #00ffff; font-style: italic;">"hbase.client.keyvalue.maxsize"</span>, -1);
 </pre>
 
 <p>
@@ -455,9 +450,9 @@ public class App  {
     Configuration conf=HBaseConfiguration.create();
     // create table.
     HBaseAdmin hbase=new HBaseAdmin(conf);
-    HTableDescriptor desc=new HTableDescriptor(<span style="color: #ffff00;">"TEST"</span>);
-    desc.addFamily(new HColumnDescriptor(Bytes.toBytes(<span style="color: #ffff00;">"personal"</span>)));
-    desc.addFamily(new HColumnDescriptor(Bytes.toBytes(<span style="color: #ffff00;">"account"</span>)));
+    HTableDescriptor desc=new HTableDescriptor(<span style="color: #00ffff; font-style: italic;">"TEST"</span>);
+    desc.addFamily(new HColumnDescriptor(Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"personal"</span>)));
+    desc.addFamily(new HColumnDescriptor(Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"account"</span>)));
     hbase.createTable(desc);
   }
 }
@@ -570,18 +565,8 @@ thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
 </div>
 
 <div id="postamble">
-<<<<<<< HEAD
-<<<<<<< HEAD
-<p class="date">Date: 2012-10-12 07:04:14 CST</p>
+<p class="date">Date: 2012-10-22 23:25:33 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
-=======
-<p class="date">Date: 2012-10-12 18:25:36 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
->>>>>>> 5d7ae72fa08ab3da2d17356b29349adf522b5563
-=======
-<p class="date">Date: 2012-10-13 09:55:46 CST</p>
-<p class="creator">Org version 7.8.02 with Emacs version 23</p>
->>>>>>> bd013f7fcc4686367fbe0d48188021016ec19d6f
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

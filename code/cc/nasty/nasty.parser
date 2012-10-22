@@ -1,0 +1,54 @@
+%{
+
+#include <cstdio>
+#include <string>
+#include "common/logger_inl.h"
+#include "nasty/nasty.h"
+using namespace sperm::nasty;
+
+union YYSTYPE;
+struct YYLTYPE;
+int yylex(YYSTYPE* yylval, YYLTYPE* yylloc, void* scanner, Parser* parser);
+void yyerror(YYLTYPE* yylloc, void* scanner, Parser* parser, const char* msg);
+
+%}
+
+%union {
+sperm::nasty::Atom* atom_;
+sperm::nasty::Expr* expr_;
+}
+
+%token <atom_> LBRACE RBRACE ID DBL INT RS SR
+%type <atom_> atom
+%type <expr_> expr
+%defines
+%locations
+%output "nasty.y.cc"
+%define api.pure
+%lex-param {void* scanner}
+%lex-param {Parser* parser}
+%parse-param {void* scanner}
+%parse-param {Parser* parser}
+
+%start expr
+
+%%
+expr : expr atom { $1->AppendAtom($2); $$ = $1; }
+| atom { $$ = new Expr(); $$->AppendAtom($1); parser->setExpr($$); }
+;
+
+atom : LBRACE expr RBRACE { $$ = new Atom($2); }
+| ID  
+| DBL
+| INT
+| RS
+| SR
+;
+
+
+%%
+
+void yyerror(YYLTYPE* yylloc, void* scanner, Parser* parser, const char* msg) {
+  SPERM_FATAL("parse file(%s:%d:%d-%d:%d) failed(%s)", parser->f().c_str(), yylloc->first_line, yylloc->first_column, 
+    yylloc->last_line, yylloc->last_column, msg);
+}

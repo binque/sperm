@@ -24,9 +24,14 @@ env=Environment(CPPPATH=['.'],
                 CXXFLAGS='-W -Wall -g -Werror -O2 -DDEBUG -fPIC -DASTYLE_LIB')
 env.StaticLibrary('astyle/astyle',Glob('astyle/*.cc')+Glob('astyle/*.cpp'))
 
+# --------------------nasty--------------------
+env=Environment(CPPPATH=['.'])
+env.StaticLibrary('nasty/nasty',Glob('nasty/*.cc'))
+
 SConscript(['common/test/SConstruct',
             'sasuke/test/SConstruct',
             'itachi/test/SConstruct',
             'bench/SConstruct',
-            'astyle/test/SConstruct'])
+            'astyle/test/SConstruct',
+            'nasty/test/SConstruct'])
 
