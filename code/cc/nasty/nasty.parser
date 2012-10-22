@@ -1,0 +1,61 @@
+%{
+
+#include <cstdio>
+#include <string>
+#include "nasty.h"
+using namespace sperm::nasty;
+
+union YYSTYPE;
+struct YYLTYPE;
+int yylex(YYSTYPE* yylval, YYLTYPE* yylloc, void* scanner, Parser* parser);
+void yyerror(YYLTYPE* yylloc, void* scanner, Parser* parser, const char* msg);
+
+%}
+
+%union {
+Token* token;
+}
+
+%token LBRACE RBRACE ID DBL INT RS SR
+%defines
+%locations
+%output "nasty.y.cc"
+%define api.pure
+%verbose
+%lex-param {void* scanner}
+%lex-param {Parser* parser}
+%parse-param {void* scanner}
+%parse-param {Parser* parser}
+
+%start program 
+
+%%
+program : stmts 
+;
+
+
+stmts : stmts stmt
+|  stmt
+;
+
+
+stmt : LBRACE atoms RBRACE
+;
+
+atoms : atoms atom 
+| atom
+;
+
+atom : ID
+| DBL
+| INT
+| RS
+| SR
+;
+
+
+%%
+
+void yyerror(YYLTYPE* yylloc, void* scanner, Parser* parser, const char* msg) {
+  fprintf(stderr,"[ERROR]%s", msg);
+}
