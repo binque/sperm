@@ -2,7 +2,8 @@
 
 #include <cstdio>
 #include <string>
-#include "nasty.h"
+#include "common/logger_inl.h"
+#include "nasty/nasty.h"
 using namespace sperm::nasty;
 
 union YYSTYPE;
@@ -13,10 +14,13 @@ void yyerror(YYLTYPE* yylloc, void* scanner, Parser* parser, const char* msg);
 %}
 
 %union {
-Token* token;
+sperm::nasty::Atom* atom_;
+sperm::nasty::Expr* expr_;
 }
 
-%token LBRACE RBRACE ID DBL INT RS SR
+%token <atom_> LBRACE RBRACE ID DBL INT RS SR
+%type <atom_> atom
+%type <expr_> expr
 %defines
 %locations
 %output "nasty.y.cc"
@@ -27,26 +31,15 @@ Token* token;
 %parse-param {void* scanner}
 %parse-param {Parser* parser}
 
-%start program 
+%start expr
 
 %%
-program : stmts 
+expr : expr atom { $1->AppendAtom($2); $$ = $1; }
+| atom { $$ = new Expr(); $$->AppendAtom($1); parser->setExpr($$); }
 ;
 
-
-stmts : stmts stmt
-|  stmt
-;
-
-
-stmt : LBRACE atoms RBRACE
-;
-
-atoms : atoms atom 
-| atom
-;
-
-atom : ID
+atom : LBRACE expr RBRACE { $$ = new Atom($2); }
+| ID  
 | DBL
 | INT
 | RS
@@ -57,5 +50,6 @@ atom : ID
 %%
 
 void yyerror(YYLTYPE* yylloc, void* scanner, Parser* parser, const char* msg) {
-  fprintf(stderr,"[ERROR]%s", msg);
+  SPERM_FATAL("parse file(%s:%d:%d-%d:%d) failed(%s)", parser->f().c_str(), yylloc->first_line, yylloc->first_column, 
+    yylloc->last_line, yylloc->last_column, msg);
 }
