@@ -1,3 +1,129 @@
 * flex-bison
 我们可以通过设计一个小型语言来说明如何使用flex+bison。当然为了简化问题，这个小型语言使用lisp结构进行表示，所以词法和文法都非常简单。
+具体代码可以看 https://github.com/dirtysalt/sperm/tree/master/code/cc/nasty 
+
+相对于简单地使用flex+bison而言，这个例子使用了一些选项来获得额外的功能，包括：
+   - 可重入分析器
+   - 追踪位置信息
+   - 指定输出文件
+
+*NOTE（dirlt）：自己搞了编译器前端也比较久了，觉得前端的语法应该尽可能地简单，比如scheme*
+
+** 词法分析
+下面是nasty的词法分析文件nasty.lexer
+#+BEGIN_EXAMPLE
+%{
+
+#include <string>
+#include "common/logger_inl.h"
+#include "nasty/nasty.h"
+using namespace sperm::nasty;
+#include "nasty/nasty.y.hh"
+
+#define SaveAtom(type) do {\
+SPERM_DEBUG("got '%s'", yytext);\
+yylval->atom_ = new(std::nothrow) Atom(type, yytext, yyleng, yylloc->first_line, yylloc->first_column);\
+}while(0)
+
+#define YY_DECL int yylex(YYSTYPE* yylval_param, YYLTYPE* yylloc_param, yyscan_t yyscanner, Parser* parser)
+
+%}
+
+%option 8bit
+%option reentrant
+%option bison-bridge
+%option bison-locations
+%option noyywrap
+%option warn
+%option nodefault
+%option header-file="nasty.l.hh"
+%option outfile="nasty.l.cc"
+  
+C [a-zA-Z_!@#$%^&*+-/<>:~]
+D [0-9]
+   
+%%
+"(" { SPERM_DEBUG("got '('"); return LBRACE; }
+")" { SPERM_DEBUG("got ')'"); return RBRACE; }
+\"(\\.|[^\\"])*\" { SaveAtom(Atom::SR); return SR; }
+{C}({C}|{D})* { SaveAtom(Atom::ID); return ID; }
+{D}+\.{D}* { SaveAtom(Atom::DBL); return DBL; }
+{D}+ { SaveAtom(Atom::INT); return INT; }
+[ \t\n] {}
+. yyterminate();
+
+%%
+#+END_EXAMPLE
+
+** 语法分析
+下面是nasty的语法分析文件nasty.parser *NOTE(dirlt):错误恢复是一件非常麻烦的事情，这里只是简单地处理忽略这个问题。对于nasty来说，因为语法非常简单，所以基本不会存在语法错误。*
+#+BEGIN_EXAMPLE
+%{
+
+#include <cstdio>
+#include <string>
+#include "common/logger_inl.h"
+#include "nasty/nasty.h"
+using namespace sperm::nasty;
+
+union YYSTYPE;
+struct YYLTYPE;
+int yylex(YYSTYPE* yylval, YYLTYPE* yylloc, void* scanner, Parser* parser);
+void yyerror(YYLTYPE* yylloc, void* scanner, Parser* parser, const char* msg);
+
+%}
+
+%union {
+sperm::nasty::Atom* atom_;
+sperm::nasty::Expr* expr_;
+}
+
+%token <atom_> LBRACE RBRACE ID DBL INT SR
+%type <atom_> atom
+%type <expr_> expr
+%defines
+%locations
+%output "nasty.y.cc"
+%define api.pure
+%lex-param {void* scanner}
+%lex-param {Parser* parser}
+%parse-param {void* scanner}
+%parse-param {Parser* parser}
+
+%start program
+
+%%
+program : expr { parser->setExpr($1); }
+;
+
+expr : expr atom { $1->appendAtom($2); $$ = $1; }
+| atom { $$ = new(std::nothrow) Expr(); $$->appendAtom($1); }
+;
+
+atom : LBRACE expr RBRACE { SPERM_DEBUG("match (...)"); $$ = new(std::nothrow) Atom($2); }
+| ID { SPERM_DEBUG("match ID"); $$ = $1; }
+| DBL { SPERM_DEBUG("match DBL"); $$ = $1; }
+| INT { SPERM_DEBUG("match INT"); $$ = $1; }
+| SR { SPERM_DEBUG("match SR"); $$ = $1; }
+;
+
+
+%%
+
+void yyerror(YYLTYPE* yylloc, void* scanner, Parser* parser, const char* msg) {
+  SPERM_FATAL("parse file(%s:%d:%d-%d:%d) failed(%s)", parser->f().c_str(), yylloc->first_line, yylloc->first_column, 
+    yylloc->last_line, yylloc->last_column, msg);
+}
+
+#+END_EXAMPLE
+
+** Makefile
+#+BEGIN_EXAMPLE
+all:nasty.l.cc nasty.l.hh nasty.y.cc nasty.y.hh
+nasty.l.hh nasty.l.cc:nasty.lexer
+	flex nasty.lexer
+nasty.y.hh nasty.y.cc:nasty.parser
+	bison nasty.parser
+#+END_EXAMPLE
+
 
