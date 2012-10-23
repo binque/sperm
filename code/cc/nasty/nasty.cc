@@ -2,6 +2,7 @@
  * Copyright (C) dirlt
  */
 
+#include <sstream>
 #include "common/logger_inl.h"
 #include "nasty/nasty.h"
 #include "nasty/nasty.y.hh"
@@ -18,19 +19,19 @@ void Parser::free() {
 }
 
 Parser::~Parser() {
-  free();  
+  free();
 }
 
 Expr* Parser::run() {
   yyscan_t scanner;
   yylex_init(&scanner);
   FILE* fin = fopen(f_.c_str(), "rb");
-  if(fin==0) { // nothing warning.
-    SPERM_WARNING("open(%s) failed(%s)",f_.c_str(), SERRNO);
+  if(fin == 0) {
+    SPERM_WARNING("open(%s) failed(%s)", f_.c_str(), SERRNO);
     return 0;
   }
-  yyset_in(fin, scanner);  
-  if(yyparse(scanner, this)!=0) {
+  yyset_in(fin, scanner);
+  if(yyparse(scanner, this) != 0) {
     free();
     fclose(fin);
     return 0;
@@ -38,19 +39,57 @@ Expr* Parser::run() {
   return ex_;
 }
 
-void Expr::AppendAtom(Atom* at) {
-  es_.push_back(at);
+void Expr::appendAtom(Atom* at) {
+  as_.push_back(at);
 }
 
 Expr::~Expr() {
-  for(size_t i=0;i<es_.size();i++){
-    delete es_[i];
+  for(size_t i = 0; i < as_.size(); i++) {
+    delete as_[i];
+  }
+}
+
+static inline void repeat(std::ostream& os, int indent, char c) {
+  for(int i = 0; i < indent; i++) {
+    os << c;
+  }
+}
+
+std::string Expr::toString() const {
+  std::ostringstream oss ;
+  int lbrace = 0;
+  write(oss, 0, lbrace);
+  return oss.str();
+}
+
+void Expr::write(std::ostream& os, int indent, int& lbrace) const {
+  for(size_t i = 0; i < as_.size(); i++) {
+    as_[i]->write(os, indent, lbrace);
+    if((i + 1) != as_.size()) {
+      os << '\n';
+    }
   }
 }
 
 Atom::~Atom() {
   delete ex_;
   ex_ = 0;
+}
+
+void Atom::write(std::ostream& os, int indent, int& lbrace) const {
+  if(type_ == EX) {
+    lbrace += 1;
+    ex_ -> write(os, indent + 1, lbrace);
+    os << ')';
+  } else {
+    repeat(os, indent, ' ');
+    if(lbrace != 0) {
+      os << static_cast<char>(8); // backspace
+    }
+    repeat(os, lbrace, '(');
+    lbrace = 0;
+    os << s_;
+  }
 }
 
 } // namespace nasty

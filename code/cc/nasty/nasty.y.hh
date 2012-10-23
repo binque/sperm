@@ -42,8 +42,7 @@
      ID = 260,
      DBL = 261,
      INT = 262,
-     RS = 263,
-     SR = 264
+     SR = 263
    };
 #endif
 
@@ -62,7 +61,7 @@ sperm::nasty::Expr* expr_;
 
 
 /* Line 2068 of yacc.c  */
-#line 66 "nasty.y.hh"
+#line 65 "nasty.y.hh"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

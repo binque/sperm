@@ -18,7 +18,7 @@ sperm::nasty::Atom* atom_;
 sperm::nasty::Expr* expr_;
 }
 
-%token <atom_> LBRACE RBRACE ID DBL INT RS SR
+%token <atom_> LBRACE RBRACE ID DBL INT SR
 %type <atom_> atom
 %type <expr_> expr
 %defines
@@ -30,19 +30,21 @@ sperm::nasty::Expr* expr_;
 %parse-param {void* scanner}
 %parse-param {Parser* parser}
 
-%start expr
+%start program
 
 %%
-expr : expr atom { $1->AppendAtom($2); $$ = $1; }
-| atom { $$ = new Expr(); $$->AppendAtom($1); parser->setExpr($$); }
+program : expr { parser->setExpr($1); }
 ;
 
-atom : LBRACE expr RBRACE { $$ = new Atom($2); }
-| ID  
-| DBL
-| INT
-| RS
-| SR
+expr : expr atom { $1->appendAtom($2); $$ = $1; }
+| atom { $$ = new(std::nothrow) Expr(); $$->appendAtom($1); }
+;
+
+atom : LBRACE expr RBRACE { SPERM_DEBUG("match (...)"); $$ = new(std::nothrow) Atom($2); }
+| ID { SPERM_DEBUG("match ID"); $$ = $1; }
+| DBL { SPERM_DEBUG("match DBL"); $$ = $1; }
+| INT { SPERM_DEBUG("match INT"); $$ = $1; }
+| SR { SPERM_DEBUG("match SR"); $$ = $1; }
 ;
 
 

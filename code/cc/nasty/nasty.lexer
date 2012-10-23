@@ -1,11 +1,13 @@
 %{
 
 #include <string>
+#include "common/logger_inl.h"
 #include "nasty/nasty.h"
 using namespace sperm::nasty;
 #include "nasty/nasty.y.hh"  
 
 #define SaveAtom(type) do {\
+SPERM_DEBUG("got '%s'", yytext);\
 yylval->atom_ = new(std::nothrow) Atom(type, yytext, yyleng, yylloc->first_line, yylloc->first_column);\
 }while(0)
 
@@ -23,13 +25,12 @@ yylval->atom_ = new(std::nothrow) Atom(type, yytext, yyleng, yylloc->first_line,
 %option header-file="nasty.l.hh"
 %option outfile="nasty.l.cc"
   
-C [a-zA-Z_]
+C [a-zA-Z_!@#$%^&*+-/<>:~]
 D [0-9]
    
 %%
-"(" { return LBRACE; }
-")" { return RBRACE; }
-'[^']+' { SaveAtom(Atom::RS); return RS; }
+"(" { SPERM_DEBUG("got '('"); return LBRACE; }
+")" { SPERM_DEBUG("got ')'"); return RBRACE; }
 \"(\\.|[^\\"])*\"	{ SaveAtom(Atom::SR); return SR; }
 {C}({C}|{D})* { SaveAtom(Atom::ID); return ID; }
 {D}+\.{D}* { SaveAtom(Atom::DBL); return DBL; }

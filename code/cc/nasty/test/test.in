@@ -1,2 +1,5 @@
-(hello "world" no)
-(yes 12345 right)
+"hello"
+12.357
+129
+(hello world (no why))
+(echo "fuck")

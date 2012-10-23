@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <ostream>
 
 namespace sperm {
 namespace nasty {
@@ -15,9 +16,9 @@ class Expr;
 class Atom;
 
 class Parser {
- public:
+public:
   Parser(const char* f) :
-      f_(f), ex_(0) {   
+    f_(f), ex_(0) {
   }
   const std::string& f() const {
     return f_;
@@ -27,27 +28,30 @@ class Parser {
     ex_ = ex;
   }
   ~Parser();
- private:
+private:
   void free();
   std::string f_;
   Expr* ex_;
 }; // class Parser
 
-class Expr {  
- public:  
-  const std::vector< Atom* >& es() const {
-    return es_;
+class Expr {
+public:
+  const std::vector< Atom* >& as() const {
+    return as_;
   }
-  void AppendAtom(Atom* at);
+  void appendAtom(Atom* at);
   ~Expr();
- private:  
-  std::vector< Atom* > es_;
+  std::string toString() const ;
+private:
+  friend class Atom;
+  friend class Parser;
+  void write(std::ostream& os, int indent, int& lbrace) const;
+  std::vector< Atom* > as_;
 }; // class Expr
 
 class Atom {
- public:
+public:
   enum {
-    RS,
     SR,
     ID,
     DBL,
@@ -56,15 +60,18 @@ class Atom {
   };
   Atom(int type, const char* text, int leng,
        int line, int column):
-      type_(type), s_(text, leng),
-      line_(line), column_(column),
-      ex_(0) {
+    type_(type), s_(text, leng),
+    line_(line), column_(column),
+    ex_(0) {
   }
   Atom(Expr* ex):
-      type_(EX), ex_(ex) {
+    type_(EX), ex_(ex) {
   }
   ~Atom();
- private:
+private:
+  friend class Expr;
+  friend class Parser;
+  void write(std::ostream& os, int indent, int& lbrace) const;
   int type_;
   std::string s_;
   int line_;

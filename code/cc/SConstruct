@@ -25,7 +25,8 @@ env=Environment(CPPPATH=['.'],
 env.StaticLibrary('astyle/astyle',Glob('astyle/*.cc')+Glob('astyle/*.cpp'))
 
 # --------------------nasty--------------------
-env=Environment(CPPPATH=['.'])
+env=Environment(CPPPATH=['.'],
+                CXXFLAGS='-W -Wall -g -Werror -Wno-unused-parameter -Wno-unused-function -O2 -DDEBUG -fPIC')
 env.StaticLibrary('nasty/nasty',Glob('nasty/*.cc'))
 
 SConscript(['common/test/SConstruct',
