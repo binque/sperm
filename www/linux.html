@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="linux"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-12 18:25:07 CST"/>
+<meta name="generated" content="2012-10-22 23:25:30 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -712,7 +712,7 @@ vm.swappiness = 0
 <h4 id="sec-1-1-13"><span class="section-number-4">1.1.13</span> /proc/sys/vm/overcommit_ratio</h4>
 <div class="outline-text-4" id="text-1-1-13">
 
-<p>如果overcommit_memory值为2的话，那么这个参数决定了系统的&lt;可用内存&gt;的大小。计算方式是 (Physical-RAM-Size) - ratio / 100 + (Swap-Size).
+<p>如果overcommit_memory值为2的话，那么这个参数决定了系统的&lt;可用内存&gt;的大小。计算方式是 (Physical-RAM-Size) * ratio / 100 + (Swap-Size).
 </p>
 
 
@@ -3465,8 +3465,8 @@ TODO(dirlt):后续可能需要学习如何使用autobench分布式测试，因�
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-10-12 18:25:07 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-10-22 23:25:30 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

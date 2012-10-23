@@ -1,5 +1,4 @@
 * todo
-** TODO 总结一下flex/bison是如何使用的
 ** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
     - http://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
@@ -18,14 +17,9 @@
 ** TODO RSS system we make
 ** TODO RSS paper planes
 ** TODO RSS high scalability
-** TODO 对比HBase的get效率。
-** TODO gmail使用和其他方式对比（需要稳定一段时间）
 ** TODO 阅读RSS订阅（when free）
 ** TODO joel on software.
-** TODO wangyin和云风的blog
-** TODO 王垠的文章。还是比较有思想的。harry facebook.
-** TODO 罗伯特·西奥迪尼的《影响力》
-** TODO 《娱乐至死》、《乌合之众》、《失控》
+** TODO 罗伯特·西奥迪尼的《影响力》《娱乐至死》、《乌合之众》、《失控》
 ** TODO steve jobs
 ** TODO 老婆健身计划以及怀孕
 ** TODO perf代替oprofile的东西。
@@ -33,9 +27,6 @@
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
 ** TODO 快速编写MR
-** TODO 宁夏黑枸杞
-** TODO task如何向jobtracker进行定时汇报
-
-** TODO 修改segmentation代码
-** TODO 跑会姐的任务
-** TODO 和叶工讨论增加os字段以及upgradeCnt写入AppUserStat
+** TODO systemtap.
+** TODO 总结一下flex/bison是如何使用的
+** TODO netbsd/plan9

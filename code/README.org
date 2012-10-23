@@ -8,12 +8,15 @@
    - sudo apt-get install libgoogle-perftools-dev
    - sudo apt-get install google-perftools   
    - sudo apt-get install python-imaging
+   - sudo apt-get install flex
+   - sudo apt-get install bison
 * cc
    - common // some common code.
    - sasuke // a half-async-half-sync rpc implementation based on zeromq.(http://www.zeromq.org/)
    - itachi // a asynchronous programming framework based on libev.(http://software.schmorp.de/pkg/libev.html)
    - bench // benchmark for system call performance.
    - astyle // C/C++/Java language code formatter.(http://astyle.sourceforge.net/astyle.html)
+   - nasty // lisp-like language frontend used flex + bison.
 
 * py
    - common // some common code.

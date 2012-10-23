@@ -208,7 +208,7 @@ under the License.
         <repository>
           <id>umeng.public</id>
           <name>Umeng Public Maven Repository</name>
-          <url>http://122.11.52.227:8088/nexus/content/groups/public/</url>
+          <url>http://nexus:8088/nexus/content/groups/public/</url>
           <releases><enabled>true</enabled></releases>
           <snapshots><enabled>true</enabled></snapshots>
         </repository>
@@ -244,7 +244,7 @@ under the License.
         <pluginRepository>
           <id>umeng.public</id>
           <name>Umeng Public Maven Repository</name>
-          <url>http://122.11.52.227:8088/nexus/content/groups/public</url>
+          <url>http://nexus:8088/nexus/content/groups/public</url>
           <releases><enabled>true</enabled></releases>
           <snapshots><enabled>true</enabled></snapshots>
         </pluginRepository>

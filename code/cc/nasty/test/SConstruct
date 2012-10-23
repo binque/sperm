@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+#coding:gbk
+#Copyright (C) dirlt
+
+import os
+env=Environment(CPPPATH=['../../'],
+                CXXFLAGS='-W -Wall -g -Werror -O2 -DDEBUG -fPIC',
+                LIBPATH=['../',
+                         '../../common'],
+                LIBS=['nasty',
+                      'common'])
+env.Program('test_parser',
+            ['test_parser.cc'])

@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>flex-bison</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="flex-bison"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2012-10-23 09:02:50 CST"/>
+<meta name="author" content="dirtysalt"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">flex-bison</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 flex-bison</a>
+<ul>
+<li><a href="#sec-1-1">1.1 词法分析</a></li>
+<li><a href="#sec-1-2">1.2 语法分析</a></li>
+<li><a href="#sec-1-3">1.3 Makefile</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> flex-bison</h2>
+<div class="outline-text-2" id="text-1">
+
+<p>我们可以通过设计一个小型语言来说明如何使用flex+bison。当然为了简化问题，这个小型语言使用lisp结构进行表示，所以词法和文法都非常简单。
+具体代码可以看 <a href="https://github.com/dirtysalt/sperm/tree/master/code/cc/nasty">https://github.com/dirtysalt/sperm/tree/master/code/cc/nasty</a> 
+</p>
+<p>
+相对于简单地使用flex+bison而言，这个例子使用了一些选项来获得额外的功能，包括：
+</p><ul>
+<li>可重入分析器
+</li>
+<li>追踪位置信息
+</li>
+<li>指定输出文件
+</li>
+</ul>
+
+
+<p>
+<b>NOTE（dirlt）：自己搞了编译器前端也比较久了，觉得前端的语法应该尽可能地简单，比如scheme</b>
+</p>
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 词法分析</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p>下面是nasty的词法分析文件nasty.lexer
+</p>
+
+
+<pre class="example">%{
+
+#include &lt;string&gt;
+#include "common/logger_inl.h"
+#include "nasty/nasty.h"
+using namespace sperm::nasty;
+#include "nasty/nasty.y.hh"
+
+#define SaveAtom(type) do {\
+SPERM_DEBUG("got '%s'", yytext);\
+yylval-&gt;atom_ = new(std::nothrow) Atom(type, yytext, yyleng, yylloc-&gt;first_line, yylloc-&gt;first_column);\
+}while(0)
+
+#define YY_DECL int yylex(YYSTYPE* yylval_param, YYLTYPE* yylloc_param, yyscan_t yyscanner, Parser* parser)
+
+%}
+
+%option 8bit
+%option reentrant
+%option bison-bridge
+%option bison-locations
+%option noyywrap
+%option warn
+%option nodefault
+%option header-file="nasty.l.hh"
+%option outfile="nasty.l.cc"
+  
+C [a-zA-Z_!@#$%^&amp;*+-/&lt;&gt;:~]
+D [0-9]
+   
+%%
+"(" { SPERM_DEBUG("got '('"); return LBRACE; }
+")" { SPERM_DEBUG("got ')'"); return RBRACE; }
+\"(\\.|[^\\"])*\" { SaveAtom(Atom::SR); return SR; }
+{C}({C}|{D})* { SaveAtom(Atom::ID); return ID; }
+{D}+\.{D}* { SaveAtom(Atom::DBL); return DBL; }
+{D}+ { SaveAtom(Atom::INT); return INT; }
+[ \t\n] {}
+. yyterminate();
+
+%%
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 语法分析</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<p>下面是nasty的语法分析文件nasty.parser <b>NOTE(dirlt):错误恢复是一件非常麻烦的事情，这里只是简单地处理忽略这个问题。对于nasty来说，因为语法非常简单，所以基本不会存在语法错误。</b>
+</p>
+
+
+<pre class="example">%{
+
+#include &lt;cstdio&gt;
+#include &lt;string&gt;
+#include "common/logger_inl.h"
+#include "nasty/nasty.h"
+using namespace sperm::nasty;
+
+union YYSTYPE;
+struct YYLTYPE;
+int yylex(YYSTYPE* yylval, YYLTYPE* yylloc, void* scanner, Parser* parser);
+void yyerror(YYLTYPE* yylloc, void* scanner, Parser* parser, const char* msg);
+
+%}
+
+%union {
+sperm::nasty::Atom* atom_;
+sperm::nasty::Expr* expr_;
+}
+
+%token &lt;atom_&gt; LBRACE RBRACE ID DBL INT SR
+%type &lt;atom_&gt; atom
+%type &lt;expr_&gt; expr
+%defines
+%locations
+%output "nasty.y.cc"
+%define api.pure
+%lex-param {void* scanner}
+%lex-param {Parser* parser}
+%parse-param {void* scanner}
+%parse-param {Parser* parser}
+
+%start program
+
+%%
+program : expr { parser-&gt;setExpr($1); }
+;
+
+expr : expr atom { $1-&gt;appendAtom($2); $$ = $1; }
+| atom { $$ = new(std::nothrow) Expr(); $$-&gt;appendAtom($1); }
+;
+
+atom : LBRACE expr RBRACE { SPERM_DEBUG("match (...)"); $$ = new(std::nothrow) Atom($2); }
+| ID { SPERM_DEBUG("match ID"); $$ = $1; }
+| DBL { SPERM_DEBUG("match DBL"); $$ = $1; }
+| INT { SPERM_DEBUG("match INT"); $$ = $1; }
+| SR { SPERM_DEBUG("match SR"); $$ = $1; }
+;
+
+
+%%
+
+void yyerror(YYLTYPE* yylloc, void* scanner, Parser* parser, const char* msg) {
+  SPERM_FATAL("parse file(%s:%d:%d-%d:%d) failed(%s)", parser-&gt;f().c_str(), yylloc-&gt;first_line, yylloc-&gt;first_column, 
+    yylloc-&gt;last_line, yylloc-&gt;last_column, msg);
+}
+
+</pre>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Makefile</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+
+
+<pre class="example">all:nasty.l.cc nasty.l.hh nasty.y.cc nasty.y.hh
+nasty.l.hh nasty.l.cc:nasty.lexer
+        flex nasty.lexer
+nasty.y.hh nasty.y.cc:nasty.parser
+        bison nasty.parser
+</pre>
+
+
+
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2012-10-23 09:02:50 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>
+<html><body>
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F54a700ad7035f6e485eaf2300641e7e9' type='text/javascript'%3E%3C/script%3E"));
+</script></body></html>
