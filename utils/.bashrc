@@ -941,3 +941,4 @@ git config --global alias.last 'log -1 HEAD'
 alias dp1="ssh -p 16021 -l dp dp1" # authorized.
 alias hadoop1="ssh -p 16021 -l yunbg hadoop1" # authorized.
 alias nexus="ssh -p 16021 -l yunbg nexus" # authorized.
+alias hudson="ssh -l ceshi hudson" # authorized.

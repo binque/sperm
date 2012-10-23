@@ -5,9 +5,7 @@
 import os
 env=Environment(CPPPATH=['../../'],
                 CXXFLAGS='-W -Wall -g -Werror -O2 -DDEBUG -fPIC',
-                LIBPATH=['../',
-                         '../../common'],
-                LIBS=['nasty',
-                      'common'])
+                LIBPATH=['../'],
+                LIBS=['nasty'])
 env.Program('test_parser',
             ['test_parser.cc'])

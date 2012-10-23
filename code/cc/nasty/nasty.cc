@@ -82,10 +82,7 @@ void Atom::write(std::ostream& os, int indent, int& lbrace) const {
     ex_ -> write(os, indent + 1, lbrace);
     os << ')';
   } else {
-    repeat(os, indent, ' ');
-    if(lbrace != 0) {
-      os << static_cast<char>(8); // backspace
-    }
+    repeat(os, (lbrace != 0) ? indent-1 : indent, ' ');
     repeat(os, lbrace, '(');
     lbrace = 0;
     os << s_;
