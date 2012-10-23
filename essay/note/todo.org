@@ -34,3 +34,8 @@
 ** TODO oceanbase
 ** TODO 快速编写MR
 ** TODO 宁夏黑枸杞
+** TODO task如何向jobtracker进行定时汇报
+
+** TODO 修改segmentation代码
+** TODO 跑会姐的任务
+** TODO 和叶工讨论增加os字段以及upgradeCnt写入AppUserStat
