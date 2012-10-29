@@ -152,3 +152,47 @@ for i in range(0,book.nsheets):
         print ''
 #+END_SRC
 
+
+** datetime/tiemstamp
+时间戳相对UTC而不是相对于本地时区， seconds since 1970-01-01 00:00:00 UTC. 效果相当于date +%s
+#+BEGIN_SRC Python
+from datetime import datetime
+import calendar
+import time
+def convertDateTimeToTimeStamp(s):
+    dt = datetime.strptime(s,'%Y-%m-%d %H:%M:%S')
+    return calendar.timegm(dt.timetuple())
+    
+def convertTimeStampToDateTime(ts):
+    # in seconds.
+    dt = datetime.utcfromtimestamp(ts)
+    return dt.strftime('%Y-%m-%d %H:%M:%S')
+
+def convertTimeStampToDateTime2(ts):
+    # in seconds.
+    st = time.gmtime(ts)
+    return time.strftime('%Y-%m-%d %H:%M:%S',st)
+
+ts = convertDateTimeToTimeStamp('2012-10-12 16:00:00')
+print convertTimeStampToDateTime(ts)
+print convertTimeStampToDateTime2(ts)
+#+END_SRC
+
+下面代码相对本地时区
+#+BEGIN_SRC Python
+import time
+def convertDateTimeToTimeStamp(s):
+    st = time.strptime(s,'%Y-%m-%d %H:%M:%S')
+    return time.mktime(st)
+
+def convertTimeStampToDateTime(ts):
+    # in seconds.
+    st = time.localtime(ts)
+    return time.strftime('%Y-%m-%d %H:%M:%S',st)
+
+ts = convertDateTimeToTimeStamp('2012-10-12 16:00:00')
+print convertTimeStampToDateTime(ts)
+#+END_SRC
+
+*NOTE（dirlt）：感觉这个部分的API十分混乱*
+

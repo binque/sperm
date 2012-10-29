@@ -296,6 +296,13 @@ dirlt@dirlt-virtual-machine:~/github/sperm/essay$ cat /proc/sys/vm/overcommit_ra
 *** /proc/sys/vm/dirty_*
 这几个参数主要是用来控制脏页刷回磁盘策略。关于脏页刷回磁盘的过程可以参看"文件IO/write"一节。
 
+*** /proc/sys/vm/drop_caches
+    可以用来释放kernel保存的buffers和cached memory，buffers保存的是目录以及文件的inode，cached memory保存的是操作文件时候使用的pagecache
+   - 0 // 释放cached memory
+   - 1 // 释放buffers
+   - 2 // 释放两者
+为了防止数据丢失，可以在修改这个文件之前先调用sync强制写盘
+
 *** /proc/cpuinfo
 *** /proc/crypto
 系统上已安装的内核使用的密码算法及每个算法的详细信息列表
@@ -1940,9 +1947,4 @@ TODO(dirlt): http://iptraf.seul.org/
    - screen创建一个新会话
    - 在会话里面执行命令
    - C-a d从这个会话里面detach出来
-   - screen -s <session> 可以重新attach上这个会话。
-
-
-
-
-     
+   - screen -s <session> 可以重新attach上这个会话

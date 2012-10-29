@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="linux"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-22 23:25:30 CST"/>
+<meta name="generated" content="2012-10-29 20:39:01 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -128,13 +128,14 @@
 <li><a href="#sec-1-1-13">1.1.13 /proc/sys/vm/overcommit_ratio</a></li>
 <li><a href="#sec-1-1-14">1.1.14 /proc/sys/vm/swappiness</a></li>
 <li><a href="#sec-1-1-15">1.1.15 /proc/sys/vm/dirty_*</a></li>
-<li><a href="#sec-1-1-16">1.1.16 /proc/cpuinfo</a></li>
-<li><a href="#sec-1-1-17">1.1.17 /proc/crypto</a></li>
-<li><a href="#sec-1-1-18">1.1.18 /proc/loadavg</a></li>
-<li><a href="#sec-1-1-19">1.1.19 /proc/locks</a></li>
-<li><a href="#sec-1-1-20">1.1.20 /proc/slabinfo</a></li>
-<li><a href="#sec-1-1-21">1.1.21 /proc/vmstat</a></li>
-<li><a href="#sec-1-1-22">1.1.22 /proc/zoneinfo</a></li>
+<li><a href="#sec-1-1-16">1.1.16 /proc/sys/vm/drop_caches</a></li>
+<li><a href="#sec-1-1-17">1.1.17 /proc/cpuinfo</a></li>
+<li><a href="#sec-1-1-18">1.1.18 /proc/crypto</a></li>
+<li><a href="#sec-1-1-19">1.1.19 /proc/loadavg</a></li>
+<li><a href="#sec-1-1-20">1.1.20 /proc/locks</a></li>
+<li><a href="#sec-1-1-21">1.1.21 /proc/slabinfo</a></li>
+<li><a href="#sec-1-1-22">1.1.22 /proc/vmstat</a></li>
+<li><a href="#sec-1-1-23">1.1.23 /proc/zoneinfo</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-2">1.2 vmlinuz</a></li>
@@ -755,16 +756,36 @@ dirlt@dirlt-virtual-machine:~/github/sperm/essay$ cat /proc/sys/vm/overcommit_ra
 </div>
 
 <div id="outline-container-1-1-16" class="outline-4">
-<h4 id="sec-1-1-16"><span class="section-number-4">1.1.16</span> /proc/cpuinfo</h4>
+<h4 id="sec-1-1-16"><span class="section-number-4">1.1.16</span> /proc/sys/vm/drop_caches</h4>
 <div class="outline-text-4" id="text-1-1-16">
 
+<p>    可以用来释放kernel保存的buffers和cached memory，buffers保存的是目录以及文件的inode，cached memory保存的是操作文件时候使用的pagecache
+</p><ul>
+<li>0 // 释放cached memory
+</li>
+<li>1 // 释放buffers
+</li>
+<li>2 // 释放两者
+</li>
+</ul>
+
+<p>为了防止数据丢失，可以在修改这个文件之前先调用sync强制写盘
+</p>
 </div>
 
 </div>
 
 <div id="outline-container-1-1-17" class="outline-4">
-<h4 id="sec-1-1-17"><span class="section-number-4">1.1.17</span> /proc/crypto</h4>
+<h4 id="sec-1-1-17"><span class="section-number-4">1.1.17</span> /proc/cpuinfo</h4>
 <div class="outline-text-4" id="text-1-1-17">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-18" class="outline-4">
+<h4 id="sec-1-1-18"><span class="section-number-4">1.1.18</span> /proc/crypto</h4>
+<div class="outline-text-4" id="text-1-1-18">
 
 <p>系统上已安装的内核使用的密码算法及每个算法的详细信息列表
 </p>
@@ -890,9 +911,9 @@ digestsize   : 4
 
 </div>
 
-<div id="outline-container-1-1-18" class="outline-4">
-<h4 id="sec-1-1-18"><span class="section-number-4">1.1.18</span> /proc/loadavg</h4>
-<div class="outline-text-4" id="text-1-1-18">
+<div id="outline-container-1-1-19" class="outline-4">
+<h4 id="sec-1-1-19"><span class="section-number-4">1.1.19</span> /proc/loadavg</h4>
+<div class="outline-text-4" id="text-1-1-19">
 
 <p>保存关于CPU和磁盘I/O的负载平均值，其前三列分别表示每1秒钟、每5秒钟及每15秒的负载平均值，类似于uptime命令输出的相关信息；第四列是由斜线隔开的两个数值，前者表示当前正由内核调度的实体（进程和线程）的数目，后者表示系统当前存活的内核调度实体的数目；第五列表示此文件被查看前最近一个由内核创建的进程的PID.
 </p>
@@ -907,9 +928,9 @@ digestsize   : 4
 
 </div>
 
-<div id="outline-container-1-1-19" class="outline-4">
-<h4 id="sec-1-1-19"><span class="section-number-4">1.1.19</span> /proc/locks</h4>
-<div class="outline-text-4" id="text-1-1-19">
+<div id="outline-container-1-1-20" class="outline-4">
+<h4 id="sec-1-1-20"><span class="section-number-4">1.1.20</span> /proc/locks</h4>
+<div class="outline-text-4" id="text-1-1-20">
 
 <p>保存当前由内核锁定的文件的相关信息，包含内核内部的调试数据；每个锁定占据一行，且具有一个惟一的编号；如下输出信息中每行的第二列表示当前锁定使用的锁定类别，POSIX表示目前较新类型的文件锁，由lockf系统调用产生，FLOCK是传统的UNIX文件锁，由flock系统调用产生；第三列也通常由两种类型，ADVISORY表示不允许其他用户锁定此文件，但允许读取，MANDATORY表示此文件锁定期间不允许其他用户任何形式的访问；
 </p>
@@ -955,9 +976,9 @@ digestsize   : 4
 
 </div>
 
-<div id="outline-container-1-1-20" class="outline-4">
-<h4 id="sec-1-1-20"><span class="section-number-4">1.1.20</span> /proc/slabinfo</h4>
-<div class="outline-text-4" id="text-1-1-20">
+<div id="outline-container-1-1-21" class="outline-4">
+<h4 id="sec-1-1-21"><span class="section-number-4">1.1.21</span> /proc/slabinfo</h4>
+<div class="outline-text-4" id="text-1-1-21">
 
 <p>在内核中频繁使用的对象（如inode、dentry等）都有自己的cache，即slab pool，而/proc/slabinfo文件列出了这些对象相关slap的信息；详情可以参见内核文档中slapinfo的手册页；
 </p>
@@ -1077,9 +1098,9 @@ kmem_cache_node      128    128     64   64    1 : tunables    0    0    0 : sla
 
 </div>
 
-<div id="outline-container-1-1-21" class="outline-4">
-<h4 id="sec-1-1-21"><span class="section-number-4">1.1.21</span> /proc/vmstat</h4>
-<div class="outline-text-4" id="text-1-1-21">
+<div id="outline-container-1-1-22" class="outline-4">
+<h4 id="sec-1-1-22"><span class="section-number-4">1.1.22</span> /proc/vmstat</h4>
+<div class="outline-text-4" id="text-1-1-22">
 
 <p>当前系统虚拟内存的多种统计数据，信息量可能会比较大，这因系统而有所不同，可读性较好；
 </p>
@@ -1190,9 +1211,9 @@ thp_split 0
 
 </div>
 
-<div id="outline-container-1-1-22" class="outline-4">
-<h4 id="sec-1-1-22"><span class="section-number-4">1.1.22</span> /proc/zoneinfo</h4>
-<div class="outline-text-4" id="text-1-1-22">
+<div id="outline-container-1-1-23" class="outline-4">
+<h4 id="sec-1-1-23"><span class="section-number-4">1.1.23</span> /proc/zoneinfo</h4>
+<div class="outline-text-4" id="text-1-1-23">
 
 <p>内存区域（zone）的详细信息列表
 </p>
@@ -3448,14 +3469,9 @@ TODO(dirlt):后续可能需要学习如何使用autobench分布式测试，因�
 </li>
 <li>C-a d从这个会话里面detach出来
 </li>
-<li>screen -s &lt;session&gt; 可以重新attach上这个会话。
+<li>screen -s &lt;session&gt; 可以重新attach上这个会话
 </li>
 </ul>
-
-
-
-
-
 
 </div>
 </div>
@@ -3465,7 +3481,7 @@ TODO(dirlt):后续可能需要学习如何使用autobench分布式测试，因�
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-10-22 23:25:30 CST</p>
+<p class="date">Date: 2012-10-29 20:39:01 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

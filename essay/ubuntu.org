@@ -278,6 +278,7 @@ sudo dpkg -i test.deb
    1. 在自己机器上面ssh-keygen生成~/.ssh/id_rsa{.pub}.其中.pub文件是公钥
    2. 然后将id_rsa.pub内容copy到另外机器下面的~/.ssh/authorized_keys里面(注意chmod 600)
    3. 接着本地的.pub文件就可以删除
+*NOTE（dirlt）：这个密钥是可以在不同机器上面使用的，也就是说你只需要生成一次即可*
 
 我猜想大致工作过程应该是这样的：
    1. 在ssh建立连接的时候，本地ssh-client会读取~/.ssh/id_rsa内容
@@ -286,6 +287,13 @@ sudo dpkg -i test.deb
 但是具体这些文件都是可以配置的，关于这个配置可以man ssh_config(client) / man sshd_config(server). 今天遇到一个问题就出在/etc/sshd_config里面对于认证文件修改了，不是放在authorized_keys里面而是放在cloud_keys里面!!!
 
 对于这种东西我觉得还是使用默认的比较好，convention over configuration!!!
+
+--------------------
+
+如果登陆过程中出现 "Agent admitted failure to sign using the key" 的话，可以尝试下面的命令
+#+BEGIN_EXAMPLE
+ssh-add   ~/.ssh/id_rsa
+#+END_EXAMPLE
 
 *** 简化ssh登陆
 简化ssh登陆第一个方式就是去除密码输出，这个可以通过配置信任关系完成。

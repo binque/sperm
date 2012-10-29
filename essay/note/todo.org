@@ -31,4 +31,7 @@
 ** TODO netbsd/plan9
 ** TODO 爱乐维
 ** TODO maven3切换到maven2
-
+** TODO 固封螺丝
+** TODO 数据平台改造
+** TODO 下一代计算平台的设计
+** TODO 将分支内容合并过来，包括操作系统版本处理等。
