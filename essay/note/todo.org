@@ -28,7 +28,6 @@
 ** TODO oceanbase
 ** TODO 快速编写MR
 ** TODO systemtap.
-** TODO 总结一下flex/bison是如何使用的
 ** TODO netbsd/plan9
 ** TODO 爱乐维
 ** TODO maven3切换到maven2
