@@ -153,7 +153,7 @@ networks:       files
 #+BEGIN_EXAMPLE
 sudo /etc/init.d/networking restart
 #+END_EXAMPLE
-*NOTE(dirlt):可能需要重启两次*
+*NOTE(dirlt):可能需要重启多次*
 
 ** 系统管理
 *** 重启机器
