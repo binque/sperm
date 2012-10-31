@@ -1947,9 +1947,4 @@ TODO(dirlt): http://iptraf.seul.org/
    - screen创建一个新会话
    - 在会话里面执行命令
    - C-a d从这个会话里面detach出来
-   - screen -s <session> 可以重新attach上这个会话。
-
-
-
-
-     
+   - screen -s <session> 可以重新attach上这个会话
