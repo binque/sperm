@@ -3,7 +3,6 @@
     - http://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
 ** TODO 阅读完Core Java I
-** TODO 理解percolator的multirow transaction的实现方式！觉得还是比较值得研究的。 
 ** TODO megastore
    - Megastore: Providing Scalable, Highly Available Storage for Interactive Services http://research.google.com/pubs/pub36971.html
 ** TODO spanner
