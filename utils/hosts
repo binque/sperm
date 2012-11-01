@@ -23,6 +23,7 @@ ff02::3	ip6-allhosts
 122.11.52.244	github.umeng.com
 122.11.52.226	hadoop1
 211.151.139.253	dp1
+10.18.10.55 dp2
 122.11.52.227 nexus
 10.18.103.251 hudson
 

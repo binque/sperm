@@ -19,7 +19,6 @@
    - nasty // lisp-like language frontend used flex + bison.
 
 * py
-   - common // some common code.
    - dsgm // Documentation Synchronize based on Google Mail. http://dirlt.com/dsgm.html
    - pcrypt // encryption into picture.
 
