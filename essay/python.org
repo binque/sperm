@@ -152,7 +152,6 @@ for i in range(0,book.nsheets):
         print ''
 #+END_SRC
 
-
 ** datetime/tiemstamp
 时间戳相对UTC而不是相对于本地时区， seconds since 1970-01-01 00:00:00 UTC. 效果相当于date +%s
 #+BEGIN_SRC Python

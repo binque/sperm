@@ -1279,10 +1279,14 @@ TODO(dirlt): http://sourceware.org/systemtap/
 TODO(dirlt): https://latencytop.org/
 
 *** iotop
-TODO(dirlt):
+可以用来观察单独进程的IO使用状况
+
+TODO（dirlt）：
 
 *** htop
-TODO(dirlt):
+可以认为是top的升级版本，个人感觉比top好用很多
+
+TODO（dirlt）：
 
 *** cssh
 TODO(dirlt):
