@@ -301,6 +301,8 @@ dirlt@dirlt-virtual-machine:~/github/sperm/essay$ cat /proc/sys/vm/overcommit_ra
 为了防止数据丢失，可以在修改这个文件之前先调用sync强制写盘
 
 *** /proc/sys/vm/panic_on_oom
+   - OOM Killer - linux-mm.org Wiki http://linux-mm.org/OOM_Killer
+
 This enables or disables panic on out-of-memory feature.
 
 If this is set to 0, the kernel will kill some rogue process, called oom_killer.  Usually, oom_killer can kill rogue processes and system will survive.
@@ -312,7 +314,6 @@ If this is set to 2, the kernel panics compulsorily even on the above-mentioned.
 The default value is 0. 1 and 2 are for failover of clustering. Please select either according to your policy of failover.
 
 *NOTE(dirlt):对于1，2不是很理解，可能是用于分布式集群Linux系统上面的策略*
-
 
 *** /proc/cpuinfo
 *** /proc/crypto
