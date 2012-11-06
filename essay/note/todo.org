@@ -46,5 +46,5 @@
 ** TODO ntp等问题
 ** TODO 编写如何提交调度
 ** TODO mac休眠
-** TODO 优化sqlite的写性能
 
+** TODO dfscopylog是否可以重入？
