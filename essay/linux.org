@@ -152,7 +152,6 @@ Filename                                Type            Size    Used    Priority
 /dev/sda5                               partition       4103164 1423572 -1
 #+END_EXAMPLE
 
-
 *** /proc/cmdline
 在启动时传递至内核的相关参数信息，这些信息通常由lilo或grub等启动管理工具进行传递；
 #+BEGIN_EXAMPLE
@@ -175,8 +174,6 @@ BOOT_IMAGE=/boot/vmlinuz-3.2.0-27-generic root=UUID=b25db1c7-e694-4eed-8d11-ea33
 [dirlt@umeng-ubuntu-pc] > cat /proc/version
 Linux version 3.2.0-27-generic (buildd@allspice) (gcc version 4.6.3 (Ubuntu/Linaro 4.6.3-1ubuntu5) ) #43-Ubuntu SMP Fri Jul 6 14:25:57 UTC 2012
 #+END_EXAMPLE
-
-
 
 
 *** /proc/mounts
@@ -302,6 +299,20 @@ dirlt@dirlt-virtual-machine:~/github/sperm/essay$ cat /proc/sys/vm/overcommit_ra
    - 1 // 释放buffers
    - 2 // 释放两者
 为了防止数据丢失，可以在修改这个文件之前先调用sync强制写盘
+
+*** /proc/sys/vm/panic_on_oom
+This enables or disables panic on out-of-memory feature.
+
+If this is set to 0, the kernel will kill some rogue process, called oom_killer.  Usually, oom_killer can kill rogue processes and system will survive.
+
+If this is set to 1, the kernel panics when out-of-memory happens. However, if a process limits using nodes by mempolicy/cpusets, and those nodes become memory exhaustion status, one process may be killed by oom-killer. No panic occurs in this case. Because other nodes' memory may be free. This means system total status may be not fatal yet.
+
+If this is set to 2, the kernel panics compulsorily even on the above-mentioned.
+
+The default value is 0. 1 and 2 are for failover of clustering. Please select either according to your policy of failover.
+
+*NOTE(dirlt):对于1，2不是很理解，可能是用于分布式集群Linux系统上面的策略*
+
 
 *** /proc/cpuinfo
 *** /proc/crypto
@@ -1952,3 +1963,39 @@ TODO(dirlt): http://iptraf.seul.org/
    - 在会话里面执行命令
    - C-a d从这个会话里面detach出来
    - screen -s <session> 可以重新attach上这个会话
+
+*** ps(process snapshot)
+进程状态有下面几种：
+   - D    uninterruptible sleep (usually IO) 
+   - R    running or runnable (on run queue)
+   - S    interruptible sleep (waiting for an event to complete)
+   - T    stopped, either by a job control signal or because it is being traced.
+   - W    paging (not valid since the 2.6.xx kernel)
+   - X    dead (should never be seen)
+   - Z    defunct ("zombie") process, terminated but not reaped by its parent.
+   - <    high-priority (not nice to other users)
+   - N    low-priority (nice to other users)
+   - L    has pages locked into memory (for real-time and custom IO)
+   - s    is a session leader
+   - l    is multi-threaded (using CLONE_THREAD, like NPTL pthreads do)
+   - +    is in the foreground process group.
+
+--------------------
+
+在使用ubuntu的apt-get时候，可能会出现一些异常的状况，我们直接终止了apt-get。但是这个时候apt-get软件本身出于一个不正常的状态，
+导致之后不能够启动apt-get。如果观察进程的话会出现下面一些可疑的进程
+#+BEGIN_EXAMPLE
+dp@dp1:~$ ps aux | grep "apt"
+root      3587  0.0  0.0  36148 22800 ?        Ds   Oct08   0:00 /usr/bin/dpkg --status-fd 50 --unpack --auto-deconfigure /var/cache/apt/archives/sgml-data_2.0.4_all.deb
+root      9579  0.0  0.0  35992 22744 ?        Ds   Oct19   0:00 /usr/bin/dpkg --status-fd 50 --unpack --auto-deconfigure /var/cache/apt/archives/iftop_0.17-16_amd64.deb
+root     25957  0.0  0.0  36120 22796 ?        Ds   Nov05   0:00 /usr/bin/dpkg --status-fd 50 --unpack --auto-deconfigure /var/cache/apt/archives/iftop_0.17-16_amd64.deb /var/cache/apt/archives/iotop_0.4-1_all.deb
+dp       30586  0.0  0.0   7628  1020 pts/2    S+   08:59   0:00 grep --color=auto apt
+#+END_EXAMPLE
+这些进程的父进程都是init进程，并且状态是uninterruptible sleep，给kill -9也没有办法终止，唯一的办法只能reboot机器来解决这个问题。关于这个问题可以看stackoverflow上面的解答 How to stop 'uninterruptible' process on Linux? - Stack Overflow http://stackoverflow.com/questions/767551/how-to-stop-uninterruptible-process-on-linux
+   - Simple answer: you cannot. Longer answer: the uninterruptable sleep means the process will not be woken up by signals. It can be only woken up by what it's waiting for. When I get such situations eg. with CD-ROM, I usually reset the computer by using suspend-to-disk and resuming.
+   - The D state basically means that the process is waiting for disk I/O, or other block I/O that can't be interrupted. Sometimes this means the kernel or device is feverishly trying to read a bad block (especially from an optical disk). Sometimes it means there's something else. The process cannot be killed until it gets out of the D state. Find out what it is waiting for and fix that. The easy way is to reboot. Sometimes removing the disk in question helps, but that can be rather dangerous: unfixable catastrophic hardware failure if you don't know what you're doing (read: smoke coming out).
+
+
+
+
+

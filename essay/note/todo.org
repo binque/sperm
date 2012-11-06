@@ -40,11 +40,8 @@
 ** TODO 查询过年飞机
 ** TODO 独单租房可能在年前
 ** TODO 找中医并且调理身体
-** TODO 调度器任务
-** TODO 时间戳对于hbase和hdfs影响
-   
+** TODO 时间戳对于hbase和hdfs影响 
 ** TODO ntp等问题
-** TODO 编写如何提交调度
 ** TODO mac休眠
-** TODO 优化sqlite的写性能
-
+** TODO 调度器增加分页，查询（分页），以及强制成功选项，修改任务界面
+** TODO 暖风机辐射和功率

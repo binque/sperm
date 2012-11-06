@@ -533,16 +533,156 @@ maven会自动将父项目的pom.xml包含进来。NOTE(dirlt):实际上可以�
 
 ** maven常用插件
 *** maven-compiler-plugin
-TODO(dirlt):
+编译器插件
+#+BEGIN_SRC XML
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+#+END_SRC
 
-*** maven-jar-plugin
-TODO(dirlt):
+*** maven-surefire-plugin
+单元测试插件
+#+BEGIN_SRC XML
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.10</version>
+        <configuration>
+          <argLine>-Djava.library.path=lib/Linux-amd64-64</argLine>
+          <useFile>false</useFile>
+          <!--
+              <redirectTestOutputToFile>true</redirectTestOutputToFile>
+          -->
+        </configuration>
+      </plugin>
+#+END_SRC
+
+*** maven-assembly-plugin
+打包插件
+#+BEGIN_SRC XML
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+            <phase>package</phase> <!-- bind to the packaging phase -->
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+#+END_SRC
+
+*** build-helper-maven-plugin
+辅助插件
+#+BEGIN_SRC XML
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>generate-sources</phase>
+            <goals><goal>add-source</goal></goals>
+            <configuration>
+              <sources>
+                <source>src/main/gen-java</source>
+                <source>src/main/resources</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+#+END_SRC
+
+*** maven-antrun-plugin
+ant脚本插件
+#+BEGIN_SRC XML
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <configuration>
+              <tasks>
+                <mkdir dir="src/main/gen-java"/>
+                <exec executable="protoc">
+                  <arg value="--java_out=src/main/gen-java"/>
+                  <arg value="src/main/protobuf/ua_log.proto"/>
+                </exec>
+              </tasks>
+              <sourceRoot>src/main/gen-java</sourceRoot>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+#+END_SRC
+
+*** cobertura-maven-plugin
+测试覆盖率插件
+#+BEGIN_SRC 
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.5.2</version>
+        <configuration>
+          <instrumentation>
+          </instrumentation>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+#+END_SRC
+<instrumentation>标签用于codehaus插入桩代码设置，其中包括：
+   - <includes></includes> 比如，你想指定统计某些类的覆盖率，添加于此
+   - <excludes></excludes> 比如，你想不统计某些类的覆盖率，添加于此
+   - <ignores><ignores> 比如，你不想在源码中插入桩代码，添加于此
+
+如果希望结果以xml展示的话，需要添加下面代码
+#+BEGIN_SRC XML
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.5.2</version>
+        <configuration>
+          <formats>
+            <format>html</format>
+            <format>xml</format>
+          </formats>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+#+END_SRC
 
 ** .m2/settings.xml
 里面有几个地方值得一提：
    - 我们使用了nexus来搭建个人maven服务器，对于umeng.public将很多外网的repo都做了proxy并且进行了group
    - 我们只需要使用umeng.public来作为依赖以及插件的repo即可，非常方便。
    - 这里存在存在releases和snapshots的id server.主要是为了部署使用的。
+   - 这里使用了nexus自定义域名，需要自己修改/etc/hosts来添加对应的ip。
 
 NOTE(dirlt):网上有很多教程如何搭建nexus maven服务器，对于企业开发的话这样的单独服务器还是非常需要的。
 
@@ -664,13 +804,13 @@ under the License.
       <password>dp1234</password>      
     </server>
 
-    <server comment="release repository uri">
+    <server>
       <id>releases</id>
       <username>dp</username>
       <password>dp1234</password>      
     </server>
 
-    <server comment="snapshot repository uri">
+    <server>
       <id>snapshots</id>
       <username>dp</username>
       <password>dp1234</password>      
@@ -757,7 +897,7 @@ under the License.
         <repository>
           <id>umeng.public</id>
           <name>Umeng Public Maven Repository</name>
-          <url>http://118.194.160.11:8088/nexus/content/groups/public/</url>
+          <url>http://nexus:8088/nexus/content/groups/public/</url>
           <releases><enabled>true</enabled></releases>
           <snapshots><enabled>true</enabled></snapshots>
         </repository>
@@ -793,7 +933,7 @@ under the License.
         <pluginRepository>
           <id>umeng.public</id>
           <name>Umeng Public Maven Repository</name>
-          <url>http://118.194.160.11:8088/nexus/content/groups/public</url>
+          <url>http://nexus:8088/nexus/content/groups/public</url>
           <releases><enabled>true</enabled></releases>
           <snapshots><enabled>true</enabled></snapshots>
         </pluginRepository>
