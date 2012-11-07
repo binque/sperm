@@ -1,0 +1,16 @@
+#!/bin/bash
+function start() {
+    echo "ssh -qTfnN -D 7070 shiwen@shiwen-aws"    
+    ssh -qTfnN -D 7070 shiwen@shiwen-aws
+}
+
+function stop() {
+    for pid in `ps aux | grep "ssh -qTfnN -D 7070 shiwen@shiwen-aws" | grep -v "grep" | awk '{print $2;}'`    
+    do
+        echo "kill -9 $pid of 'ssh -qTfnN -D 7070 shiwen@shiwen-aws'"
+        kill -9 $pid
+    done
+}
+
+stop
+start
