@@ -25,8 +25,8 @@
    - mountstatus 文件系统挂载信息
    - net 网络信息
    - numa_maps NUMA的内存映射 ???
-   - oom_adj 出现OOM时进程被kill的权值。
-   - oom_score 出现OOM时进程被kill的分值。
+   - oom_adj 出现OOM时进程被kill的权值。范围从[-17,15],越小意味着越不容易被kill。
+   - oom_score 出现OOM时进程被kill的分值，就是每个进程计算出来的badness。badness越高越容易被kill。
    - pagemap 内存映像(二进制),类似于core
    - personality ??
    - root 根文件系统路径
@@ -51,6 +51,53 @@ TODO:
 
 **** maps
 当前进程关联到的每个可执行文件和库文件在内存中的映射区域及其访问权限所组成的列表
+#+BEGIN_EXAMPLE
+00400000-004e0000 r-xp 00000000 08:01 4456452                            /bin/bash
+006df000-006e0000 r--p 000df000 08:01 4456452                            /bin/bash
+006e0000-006e9000 rw-p 000e0000 08:01 4456452                            /bin/bash
+006e9000-006ef000 rw-p 00000000 00:00 0 
+02411000-024ac000 rw-p 00000000 00:00 0                                  [heap]
+7f81aa605000-7f81aa611000 r-xp 00000000 08:01 5770912                    /lib/x86_64-linux-gnu/libnss_files-2.15.so
+7f81aa611000-7f81aa810000 ---p 0000c000 08:01 5770912                    /lib/x86_64-linux-gnu/libnss_files-2.15.so
+7f81aa810000-7f81aa811000 r--p 0000b000 08:01 5770912                    /lib/x86_64-linux-gnu/libnss_files-2.15.so
+7f81aa811000-7f81aa812000 rw-p 0000c000 08:01 5770912                    /lib/x86_64-linux-gnu/libnss_files-2.15.so
+7f81aa812000-7f81aa81c000 r-xp 00000000 08:01 5770916                    /lib/x86_64-linux-gnu/libnss_nis-2.15.so
+7f81aa81c000-7f81aaa1c000 ---p 0000a000 08:01 5770916                    /lib/x86_64-linux-gnu/libnss_nis-2.15.so
+7f81aaa1c000-7f81aaa1d000 r--p 0000a000 08:01 5770916                    /lib/x86_64-linux-gnu/libnss_nis-2.15.so
+7f81aaa1d000-7f81aaa1e000 rw-p 0000b000 08:01 5770916                    /lib/x86_64-linux-gnu/libnss_nis-2.15.so
+7f81aaa1e000-7f81aaa35000 r-xp 00000000 08:01 5770906                    /lib/x86_64-linux-gnu/libnsl-2.15.so
+7f81aaa35000-7f81aac34000 ---p 00017000 08:01 5770906                    /lib/x86_64-linux-gnu/libnsl-2.15.so
+7f81aac34000-7f81aac35000 r--p 00016000 08:01 5770906                    /lib/x86_64-linux-gnu/libnsl-2.15.so
+7f81aac35000-7f81aac36000 rw-p 00017000 08:01 5770906                    /lib/x86_64-linux-gnu/libnsl-2.15.so
+7f81aac36000-7f81aac38000 rw-p 00000000 00:00 0 
+7f81aac38000-7f81aac40000 r-xp 00000000 08:01 5770908                    /lib/x86_64-linux-gnu/libnss_compat-2.15.so
+7f81aac40000-7f81aae3f000 ---p 00008000 08:01 5770908                    /lib/x86_64-linux-gnu/libnss_compat-2.15.so
+7f81aae3f000-7f81aae40000 r--p 00007000 08:01 5770908                    /lib/x86_64-linux-gnu/libnss_compat-2.15.so
+7f81aae40000-7f81aae41000 rw-p 00008000 08:01 5770908                    /lib/x86_64-linux-gnu/libnss_compat-2.15.so
+7f81aae41000-7f81ab524000 r--p 00000000 08:01 2628153                    /usr/lib/locale/locale-archive
+7f81ab524000-7f81ab6d7000 r-xp 00000000 08:01 5770861                    /lib/x86_64-linux-gnu/libc-2.15.so
+7f81ab6d7000-7f81ab8d6000 ---p 001b3000 08:01 5770861                    /lib/x86_64-linux-gnu/libc-2.15.so
+7f81ab8d6000-7f81ab8da000 r--p 001b2000 08:01 5770861                    /lib/x86_64-linux-gnu/libc-2.15.so
+7f81ab8da000-7f81ab8dc000 rw-p 001b6000 08:01 5770861                    /lib/x86_64-linux-gnu/libc-2.15.so
+7f81ab8dc000-7f81ab8e1000 rw-p 00000000 00:00 0 
+7f81ab8e1000-7f81ab8e3000 r-xp 00000000 08:01 5770874                    /lib/x86_64-linux-gnu/libdl-2.15.so
+7f81ab8e3000-7f81abae3000 ---p 00002000 08:01 5770874                    /lib/x86_64-linux-gnu/libdl-2.15.so
+7f81abae3000-7f81abae4000 r--p 00002000 08:01 5770874                    /lib/x86_64-linux-gnu/libdl-2.15.so
+7f81abae4000-7f81abae5000 rw-p 00003000 08:01 5770874                    /lib/x86_64-linux-gnu/libdl-2.15.so
+7f81abae5000-7f81abb07000 r-xp 00000000 08:01 5770958                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7f81abb07000-7f81abd07000 ---p 00022000 08:01 5770958                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7f81abd07000-7f81abd0b000 r--p 00022000 08:01 5770958                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7f81abd0b000-7f81abd0c000 rw-p 00026000 08:01 5770958                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7f81abd0c000-7f81abd2e000 r-xp 00000000 08:01 5770841                    /lib/x86_64-linux-gnu/ld-2.15.so
+7f81abf12000-7f81abf15000 rw-p 00000000 00:00 0 
+7f81abf25000-7f81abf2c000 r--s 00000000 08:01 2884820                    /usr/lib/x86_64-linux-gnu/gconv/gconv-modules.cache
+7f81abf2c000-7f81abf2e000 rw-p 00000000 00:00 0 
+7f81abf2e000-7f81abf2f000 r--p 00022000 08:01 5770841                    /lib/x86_64-linux-gnu/ld-2.15.so
+7f81abf2f000-7f81abf31000 rw-p 00023000 08:01 5770841                    /lib/x86_64-linux-gnu/ld-2.15.so
+7fffccd69000-7fffccd8a000 rw-p 00000000 00:00 0                          [stack]
+7fffccdff000-7fffcce00000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+#+END_EXAMPLE
 
 **** mount
 TODO:
@@ -269,8 +316,11 @@ vm.swappiness = 0
 *** /proc/sys/vm/overcommit_memory
 所谓的overcommit是过量使用的意思。
    - OVERCOMMIT_GUESS=0 用户申请内存的时候，系统会判断剩余的内存有多少。如果不够的话那么就会失败。这种方式是比较保守的，因为有时候比如用户申请1G内存但是可能只是会使用其中1K.
+     - Heuristic overcommit handling. Obvious overcommits of address space are refused. Used for a typical system. It ensures a seriously wild allocation fails while allowing overcommit to reduce swap usage. root is allowed to allocate slighly more memory in this mode. This is the default.
    - OVERCOMMIT_ALWAYS=1 用户申请内存的时候，系统不进行任何检查认为内存足够使用，直到使用内存超过可用内存。
+     - Always overcommit. Appropriate for some scientific applications.
    - OVERCOMMIT_NEVER=2 用户一次申请内存的大小不允许超过<可用内存>的大小。关于这个<可用内存>的大小计算可以看下面overcommit_ration这个参数，可以上面两种所说的可用内存不太一样。
+     - Don't overcommit. The total address space commit for the system is not permitted to exceed swap + a configurable percentage (default is 50) of physical RAM. Depending on the percentage you use, in most situations this means a process will not be killed while accessing pages but will receive errors on memory allocation as appropriate.
 
 *** /proc/sys/vm/overcommit_ratio
 如果overcommit_memory值为2的话，那么这个参数决定了系统的<可用内存>的大小。计算方式是 (Physical-RAM-Size) * ratio / 100 + (Swap-Size).
@@ -302,7 +352,18 @@ dirlt@dirlt-virtual-machine:~/github/sperm/essay$ cat /proc/sys/vm/overcommit_ra
 
 *** /proc/sys/vm/panic_on_oom
    - OOM Killer - linux-mm.org Wiki http://linux-mm.org/OOM_Killer
-
+   - Taming the OOM killer [LWN.net] http://lwn.net/Articles/317814/
+     - /proc/sys/vm/oom_victim 通过在这个地方指定名字来优先kill
+     - OOM control group (cgroup) 通过将process划分到某个group为这个group制定权值
+     - mem_notify 如果出现OOM情况的话可以通知到userspace
+     - cgroup OOM notifier 允许某个task来监控一群tasks，如果出现OOM的话会通知这个task
+     - /dev/mem_notify 这个设备文件上面包含内存事件，task可以poll这个文件来获取通知
+   - Linux 的 Out-of-Memory (OOM) Killer - DBA Notes http://www.dbanotes.net/database/linux_outofmemory_oom_killer.html 
+   - OOM killer "Out of Memory: Killed process" SOLUTIONS / SUMMARY http://www.redaht.com/archives/redhat-list/2007-August/msg00060.html   
+     - 情况主要是在32位机器下面LowMem不够使用出现OOM的情况。 *TODO（dirlt）：不太清楚这个LowMem是物理还是虚拟内存*
+   - LinuxDevCenter.com: When Linux Runs Out of Memory http://linuxdevcenter.com/lpt/a/6808
+   - Respite from the OOM killer [LWN.net] http://lwn.net/Articles/104179/  *NOTE（dirlt）：似乎overcommit_memory设置成为2也不能够完全避免OOM*
+     
 This enables or disables panic on out-of-memory feature.
 
 If this is set to 0, the kernel will kill some rogue process, called oom_killer.  Usually, oom_killer can kill rogue processes and system will survive.
@@ -1996,7 +2057,5 @@ dp       30586  0.0  0.0   7628  1020 pts/2    S+   08:59   0:00 grep --color=au
    - Simple answer: you cannot. Longer answer: the uninterruptable sleep means the process will not be woken up by signals. It can be only woken up by what it's waiting for. When I get such situations eg. with CD-ROM, I usually reset the computer by using suspend-to-disk and resuming.
    - The D state basically means that the process is waiting for disk I/O, or other block I/O that can't be interrupted. Sometimes this means the kernel or device is feverishly trying to read a bad block (especially from an optical disk). Sometimes it means there's something else. The process cannot be killed until it gets out of the D state. Find out what it is waiting for and fix that. The easy way is to reboot. Sometimes removing the disk in question helps, but that can be rather dangerous: unfixable catastrophic hardware failure if you don't know what you're doing (read: smoke coming out).
 
-
-
-
-
+*** ulimit
+TODO(dirlt):

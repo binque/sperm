@@ -14,6 +14,7 @@ echo "[$PROGNAME]installing ssh-config..."
 rm -rf $HOME/.ssh/config
 ln -s $BINDIR/ssh-config $HOME/.ssh/config
 
+# private key.
 echo "[$PROGNAME]installing id_rsa.pub..."
 rm -rf $HOME/.ssh/id_rsa.pub
 ln -s $BINDIR/id_rsa.pub $HOME/.ssh/id_rsa.pub
@@ -23,6 +24,16 @@ rm -rf $HOME/.ssh/id_rsa
 ln -s $BINDIR/id_rsa $HOME/.ssh/id_rsa
 chmod 600 $HOME/.ssh/id_rsa
 
+echo "[$PROGNAME]installing aws_rsa.pub..."
+rm -rf $HOME/.ssh/aws_rsa.pub
+ln -s $BINDIR/aws_rsa.pub $HOME/.ssh/aws_rsa.pub
+
+echo "[$PROGNAME]installing aws_rsa..."
+rm -rf $HOME/.ssh/aws_rsa
+ln -s $BINDIR/aws_rsa $HOME/.ssh/aws_rsa
+chmod 600 $HOME/.ssh/aws_rsa
+
+# maven settings.
 mkdir -p $HOME/.m2
 echo "[$PROGNAME]installing mvn-settings.xml..."
 rm -rf $HOME/.m2/settings.xml
@@ -43,7 +54,7 @@ done
 TARGETS="2utf8 cxxindent \
 oprof mysqldb syslog \
 local-install org2twiki \
- gc pom-create vpn-umeng vpn-umeng2 vpn-gfw \
+ gc pom-create vpn-umeng vpn-umeng2 vpn-dirlt-com vpn-shiwen-aws \
 rhs gds pcrypt einstall uinstall"
 
 INSTALLDIR=$HOME/utils/bin

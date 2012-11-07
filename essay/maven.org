@@ -635,7 +635,7 @@ ant脚本插件
 
 *** cobertura-maven-plugin
 测试覆盖率插件
-#+BEGIN_SRC 
+#+BEGIN_SRC XML
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>

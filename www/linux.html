@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="linux"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-06 07:22:35 CST"/>
+<meta name="generated" content="2012-11-07 14:16:49 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -129,13 +129,14 @@
 <li><a href="#sec-1-1-14">1.1.14 /proc/sys/vm/swappiness</a></li>
 <li><a href="#sec-1-1-15">1.1.15 /proc/sys/vm/dirty_*</a></li>
 <li><a href="#sec-1-1-16">1.1.16 /proc/sys/vm/drop_caches</a></li>
-<li><a href="#sec-1-1-17">1.1.17 /proc/cpuinfo</a></li>
-<li><a href="#sec-1-1-18">1.1.18 /proc/crypto</a></li>
-<li><a href="#sec-1-1-19">1.1.19 /proc/loadavg</a></li>
-<li><a href="#sec-1-1-20">1.1.20 /proc/locks</a></li>
-<li><a href="#sec-1-1-21">1.1.21 /proc/slabinfo</a></li>
-<li><a href="#sec-1-1-22">1.1.22 /proc/vmstat</a></li>
-<li><a href="#sec-1-1-23">1.1.23 /proc/zoneinfo</a></li>
+<li><a href="#sec-1-1-17">1.1.17 /proc/sys/vm/panic_on_oom</a></li>
+<li><a href="#sec-1-1-18">1.1.18 /proc/cpuinfo</a></li>
+<li><a href="#sec-1-1-19">1.1.19 /proc/crypto</a></li>
+<li><a href="#sec-1-1-20">1.1.20 /proc/loadavg</a></li>
+<li><a href="#sec-1-1-21">1.1.21 /proc/locks</a></li>
+<li><a href="#sec-1-1-22">1.1.22 /proc/slabinfo</a></li>
+<li><a href="#sec-1-1-23">1.1.23 /proc/vmstat</a></li>
+<li><a href="#sec-1-1-24">1.1.24 /proc/zoneinfo</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-2">1.2 vmlinuz</a></li>
@@ -186,6 +187,8 @@
 <li><a href="#sec-1-3-41-1">1.3.41.1 使用screen启动后台任务</a></li>
 </ul>
 </li>
+<li><a href="#sec-1-3-42">1.3.42 ps(process snapshot)</a></li>
+<li><a href="#sec-1-3-43">1.3.43 ulimit</a></li>
 </ul>
 </li>
 </ul>
@@ -257,9 +260,9 @@
 </li>
 <li>numa_maps NUMA的内存映射 ???
 </li>
-<li>oom_adj 出现OOM时进程被kill的权值。
+<li>oom_adj 出现OOM时进程被kill的权值。范围从[-17,15],越小意味着越不容易被kill。
 </li>
-<li>oom_score 出现OOM时进程被kill的分值。
+<li>oom_score 出现OOM时进程被kill的分值，就是每个进程计算出来的badness。badness越高越容易被kill。
 </li>
 <li>pagemap 内存映像(二进制),类似于core
 </li>
@@ -327,6 +330,56 @@
 
 <p>当前进程关联到的每个可执行文件和库文件在内存中的映射区域及其访问权限所组成的列表
 </p>
+
+
+<pre class="example">00400000-004e0000 r-xp 00000000 08:01 4456452                            /bin/bash
+006df000-006e0000 r--p 000df000 08:01 4456452                            /bin/bash
+006e0000-006e9000 rw-p 000e0000 08:01 4456452                            /bin/bash
+006e9000-006ef000 rw-p 00000000 00:00 0 
+02411000-024ac000 rw-p 00000000 00:00 0                                  [heap]
+7f81aa605000-7f81aa611000 r-xp 00000000 08:01 5770912                    /lib/x86_64-linux-gnu/libnss_files-2.15.so
+7f81aa611000-7f81aa810000 ---p 0000c000 08:01 5770912                    /lib/x86_64-linux-gnu/libnss_files-2.15.so
+7f81aa810000-7f81aa811000 r--p 0000b000 08:01 5770912                    /lib/x86_64-linux-gnu/libnss_files-2.15.so
+7f81aa811000-7f81aa812000 rw-p 0000c000 08:01 5770912                    /lib/x86_64-linux-gnu/libnss_files-2.15.so
+7f81aa812000-7f81aa81c000 r-xp 00000000 08:01 5770916                    /lib/x86_64-linux-gnu/libnss_nis-2.15.so
+7f81aa81c000-7f81aaa1c000 ---p 0000a000 08:01 5770916                    /lib/x86_64-linux-gnu/libnss_nis-2.15.so
+7f81aaa1c000-7f81aaa1d000 r--p 0000a000 08:01 5770916                    /lib/x86_64-linux-gnu/libnss_nis-2.15.so
+7f81aaa1d000-7f81aaa1e000 rw-p 0000b000 08:01 5770916                    /lib/x86_64-linux-gnu/libnss_nis-2.15.so
+7f81aaa1e000-7f81aaa35000 r-xp 00000000 08:01 5770906                    /lib/x86_64-linux-gnu/libnsl-2.15.so
+7f81aaa35000-7f81aac34000 ---p 00017000 08:01 5770906                    /lib/x86_64-linux-gnu/libnsl-2.15.so
+7f81aac34000-7f81aac35000 r--p 00016000 08:01 5770906                    /lib/x86_64-linux-gnu/libnsl-2.15.so
+7f81aac35000-7f81aac36000 rw-p 00017000 08:01 5770906                    /lib/x86_64-linux-gnu/libnsl-2.15.so
+7f81aac36000-7f81aac38000 rw-p 00000000 00:00 0 
+7f81aac38000-7f81aac40000 r-xp 00000000 08:01 5770908                    /lib/x86_64-linux-gnu/libnss_compat-2.15.so
+7f81aac40000-7f81aae3f000 ---p 00008000 08:01 5770908                    /lib/x86_64-linux-gnu/libnss_compat-2.15.so
+7f81aae3f000-7f81aae40000 r--p 00007000 08:01 5770908                    /lib/x86_64-linux-gnu/libnss_compat-2.15.so
+7f81aae40000-7f81aae41000 rw-p 00008000 08:01 5770908                    /lib/x86_64-linux-gnu/libnss_compat-2.15.so
+7f81aae41000-7f81ab524000 r--p 00000000 08:01 2628153                    /usr/lib/locale/locale-archive
+7f81ab524000-7f81ab6d7000 r-xp 00000000 08:01 5770861                    /lib/x86_64-linux-gnu/libc-2.15.so
+7f81ab6d7000-7f81ab8d6000 ---p 001b3000 08:01 5770861                    /lib/x86_64-linux-gnu/libc-2.15.so
+7f81ab8d6000-7f81ab8da000 r--p 001b2000 08:01 5770861                    /lib/x86_64-linux-gnu/libc-2.15.so
+7f81ab8da000-7f81ab8dc000 rw-p 001b6000 08:01 5770861                    /lib/x86_64-linux-gnu/libc-2.15.so
+7f81ab8dc000-7f81ab8e1000 rw-p 00000000 00:00 0 
+7f81ab8e1000-7f81ab8e3000 r-xp 00000000 08:01 5770874                    /lib/x86_64-linux-gnu/libdl-2.15.so
+7f81ab8e3000-7f81abae3000 ---p 00002000 08:01 5770874                    /lib/x86_64-linux-gnu/libdl-2.15.so
+7f81abae3000-7f81abae4000 r--p 00002000 08:01 5770874                    /lib/x86_64-linux-gnu/libdl-2.15.so
+7f81abae4000-7f81abae5000 rw-p 00003000 08:01 5770874                    /lib/x86_64-linux-gnu/libdl-2.15.so
+7f81abae5000-7f81abb07000 r-xp 00000000 08:01 5770958                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7f81abb07000-7f81abd07000 ---p 00022000 08:01 5770958                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7f81abd07000-7f81abd0b000 r--p 00022000 08:01 5770958                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7f81abd0b000-7f81abd0c000 rw-p 00026000 08:01 5770958                    /lib/x86_64-linux-gnu/libtinfo.so.5.9
+7f81abd0c000-7f81abd2e000 r-xp 00000000 08:01 5770841                    /lib/x86_64-linux-gnu/ld-2.15.so
+7f81abf12000-7f81abf15000 rw-p 00000000 00:00 0 
+7f81abf25000-7f81abf2c000 r--s 00000000 08:01 2884820                    /usr/lib/x86_64-linux-gnu/gconv/gconv-modules.cache
+7f81abf2c000-7f81abf2e000 rw-p 00000000 00:00 0 
+7f81abf2e000-7f81abf2f000 r--p 00022000 08:01 5770841                    /lib/x86_64-linux-gnu/ld-2.15.so
+7f81abf2f000-7f81abf31000 rw-p 00023000 08:01 5770841                    /lib/x86_64-linux-gnu/ld-2.15.so
+7fffccd69000-7fffccd8a000 rw-p 00000000 00:00 0                          [stack]
+7fffccdff000-7fffcce00000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+</pre>
+
+
 </div>
 
 </div>
@@ -496,7 +549,6 @@ Filename                                Type            Size    Used    Priority
 </pre>
 
 
-
 </div>
 
 </div>
@@ -548,8 +600,6 @@ BOOT_IMAGE=/boot/vmlinuz-3.2.0-27-generic root=UUID=b25db1c7-e694-4eed-8d11-ea33
 <pre class="example">[dirlt@umeng-ubuntu-pc] &gt; cat /proc/version
 Linux version 3.2.0-27-generic (buildd@allspice) (gcc version 4.6.3 (Ubuntu/Linaro 4.6.3-1ubuntu5) ) #43-Ubuntu SMP Fri Jul 6 14:25:57 UTC 2012
 </pre>
-
-
 
 
 
@@ -697,10 +747,25 @@ vm.swappiness = 0
 <p>所谓的overcommit是过量使用的意思。
 </p><ul>
 <li>OVERCOMMIT_GUESS=0 用户申请内存的时候，系统会判断剩余的内存有多少。如果不够的话那么就会失败。这种方式是比较保守的，因为有时候比如用户申请1G内存但是可能只是会使用其中1K.
+<ul>
+<li>Heuristic overcommit handling. Obvious overcommits of address space are refused. Used for a typical system. It ensures a seriously wild allocation fails while allowing overcommit to reduce swap usage. root is allowed to allocate slighly more memory in this mode. This is the default.
+</li>
+</ul>
+
 </li>
 <li>OVERCOMMIT_ALWAYS=1 用户申请内存的时候，系统不进行任何检查认为内存足够使用，直到使用内存超过可用内存。
+<ul>
+<li>Always overcommit. Appropriate for some scientific applications.
+</li>
+</ul>
+
 </li>
 <li>OVERCOMMIT_NEVER=2 用户一次申请内存的大小不允许超过&lt;可用内存&gt;的大小。关于这个&lt;可用内存&gt;的大小计算可以看下面overcommit_ration这个参数，可以上面两种所说的可用内存不太一样。
+<ul>
+<li>Don't overcommit. The total address space commit for the system is not permitted to exceed swap + a configurable percentage (default is 50) of physical RAM. Depending on the percentage you use, in most situations this means a process will not be killed while accessing pages but will receive errors on memory allocation as appropriate.
+</li>
+</ul>
+
 </li>
 </ul>
 
@@ -776,16 +841,76 @@ dirlt@dirlt-virtual-machine:~/github/sperm/essay$ cat /proc/sys/vm/overcommit_ra
 </div>
 
 <div id="outline-container-1-1-17" class="outline-4">
-<h4 id="sec-1-1-17"><span class="section-number-4">1.1.17</span> /proc/cpuinfo</h4>
+<h4 id="sec-1-1-17"><span class="section-number-4">1.1.17</span> /proc/sys/vm/panic_on_oom</h4>
 <div class="outline-text-4" id="text-1-1-17">
 
+<ul>
+<li>OOM Killer - linux-mm.org Wiki <a href="http://linux-mm.org/OOM_Killer">http://linux-mm.org/OOM_Killer</a>
+</li>
+<li>Taming the OOM killer [LWN.net] <a href="http://lwn.net/Articles/317814/">http://lwn.net/Articles/317814/</a>
+<ul>
+<li>/proc/sys/vm/oom_victim 通过在这个地方指定名字来优先kill
+</li>
+<li>OOM control group (cgroup) 通过将process划分到某个group为这个group制定权值
+</li>
+<li>mem_notify 如果出现OOM情况的话可以通知到userspace
+</li>
+<li>cgroup OOM notifier 允许某个task来监控一群tasks，如果出现OOM的话会通知这个task
+</li>
+<li>/dev/mem_notify 这个设备文件上面包含内存事件，task可以poll这个文件来获取通知
+</li>
+</ul>
+
+</li>
+<li>Linux 的 Out-of-Memory (OOM) Killer - DBA Notes <a href="http://www.dbanotes.net/database/linux_outofmemory_oom_killer.html">http://www.dbanotes.net/database/linux_outofmemory_oom_killer.html</a> 
+</li>
+<li>OOM killer "Out of Memory: Killed process" SOLUTIONS / SUMMARY <a href="http://www.redaht.com/archives/redhat-list/2007-August/msg00060.html">http://www.redaht.com/archives/redhat-list/2007-August/msg00060.html</a>   
+<ul>
+<li>情况主要是在32位机器下面LowMem不够使用出现OOM的情况。 <b>TODO（dirlt）：不太清楚这个LowMem是物理还是虚拟内存</b>
+</li>
+</ul>
+
+</li>
+<li>LinuxDevCenter.com: When Linux Runs Out of Memory <a href="http://linuxdevcenter.com/lpt/a/6808">http://linuxdevcenter.com/lpt/a/6808</a>
+</li>
+<li>Respite from the OOM killer [LWN.net] <a href="http://lwn.net/Articles/104179/">http://lwn.net/Articles/104179/</a>  <b>NOTE（dirlt）：似乎overcommit_memory设置成为2也不能够完全避免OOM</b>
+</li>
+</ul>
+
+
+<p>     
+This enables or disables panic on out-of-memory feature.
+</p>
+<p>
+If this is set to 0, the kernel will kill some rogue process, called oom_killer.  Usually, oom_killer can kill rogue processes and system will survive.
+</p>
+<p>
+If this is set to 1, the kernel panics when out-of-memory happens. However, if a process limits using nodes by mempolicy/cpusets, and those nodes become memory exhaustion status, one process may be killed by oom-killer. No panic occurs in this case. Because other nodes' memory may be free. This means system total status may be not fatal yet.
+</p>
+<p>
+If this is set to 2, the kernel panics compulsorily even on the above-mentioned.
+</p>
+<p>
+The default value is 0. 1 and 2 are for failover of clustering. Please select either according to your policy of failover.
+</p>
+<p>
+<b>NOTE(dirlt):对于1，2不是很理解，可能是用于分布式集群Linux系统上面的策略</b>
+</p>
 </div>
 
 </div>
 
 <div id="outline-container-1-1-18" class="outline-4">
-<h4 id="sec-1-1-18"><span class="section-number-4">1.1.18</span> /proc/crypto</h4>
+<h4 id="sec-1-1-18"><span class="section-number-4">1.1.18</span> /proc/cpuinfo</h4>
 <div class="outline-text-4" id="text-1-1-18">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-19" class="outline-4">
+<h4 id="sec-1-1-19"><span class="section-number-4">1.1.19</span> /proc/crypto</h4>
+<div class="outline-text-4" id="text-1-1-19">
 
 <p>系统上已安装的内核使用的密码算法及每个算法的详细信息列表
 </p>
@@ -911,9 +1036,9 @@ digestsize   : 4
 
 </div>
 
-<div id="outline-container-1-1-19" class="outline-4">
-<h4 id="sec-1-1-19"><span class="section-number-4">1.1.19</span> /proc/loadavg</h4>
-<div class="outline-text-4" id="text-1-1-19">
+<div id="outline-container-1-1-20" class="outline-4">
+<h4 id="sec-1-1-20"><span class="section-number-4">1.1.20</span> /proc/loadavg</h4>
+<div class="outline-text-4" id="text-1-1-20">
 
 <p>保存关于CPU和磁盘I/O的负载平均值，其前三列分别表示每1秒钟、每5秒钟及每15秒的负载平均值，类似于uptime命令输出的相关信息；第四列是由斜线隔开的两个数值，前者表示当前正由内核调度的实体（进程和线程）的数目，后者表示系统当前存活的内核调度实体的数目；第五列表示此文件被查看前最近一个由内核创建的进程的PID.
 </p>
@@ -928,9 +1053,9 @@ digestsize   : 4
 
 </div>
 
-<div id="outline-container-1-1-20" class="outline-4">
-<h4 id="sec-1-1-20"><span class="section-number-4">1.1.20</span> /proc/locks</h4>
-<div class="outline-text-4" id="text-1-1-20">
+<div id="outline-container-1-1-21" class="outline-4">
+<h4 id="sec-1-1-21"><span class="section-number-4">1.1.21</span> /proc/locks</h4>
+<div class="outline-text-4" id="text-1-1-21">
 
 <p>保存当前由内核锁定的文件的相关信息，包含内核内部的调试数据；每个锁定占据一行，且具有一个惟一的编号；如下输出信息中每行的第二列表示当前锁定使用的锁定类别，POSIX表示目前较新类型的文件锁，由lockf系统调用产生，FLOCK是传统的UNIX文件锁，由flock系统调用产生；第三列也通常由两种类型，ADVISORY表示不允许其他用户锁定此文件，但允许读取，MANDATORY表示此文件锁定期间不允许其他用户任何形式的访问；
 </p>
@@ -976,9 +1101,9 @@ digestsize   : 4
 
 </div>
 
-<div id="outline-container-1-1-21" class="outline-4">
-<h4 id="sec-1-1-21"><span class="section-number-4">1.1.21</span> /proc/slabinfo</h4>
-<div class="outline-text-4" id="text-1-1-21">
+<div id="outline-container-1-1-22" class="outline-4">
+<h4 id="sec-1-1-22"><span class="section-number-4">1.1.22</span> /proc/slabinfo</h4>
+<div class="outline-text-4" id="text-1-1-22">
 
 <p>在内核中频繁使用的对象（如inode、dentry等）都有自己的cache，即slab pool，而/proc/slabinfo文件列出了这些对象相关slap的信息；详情可以参见内核文档中slapinfo的手册页；
 </p>
@@ -1098,9 +1223,9 @@ kmem_cache_node      128    128     64   64    1 : tunables    0    0    0 : sla
 
 </div>
 
-<div id="outline-container-1-1-22" class="outline-4">
-<h4 id="sec-1-1-22"><span class="section-number-4">1.1.22</span> /proc/vmstat</h4>
-<div class="outline-text-4" id="text-1-1-22">
+<div id="outline-container-1-1-23" class="outline-4">
+<h4 id="sec-1-1-23"><span class="section-number-4">1.1.23</span> /proc/vmstat</h4>
+<div class="outline-text-4" id="text-1-1-23">
 
 <p>当前系统虚拟内存的多种统计数据，信息量可能会比较大，这因系统而有所不同，可读性较好；
 </p>
@@ -1211,9 +1336,9 @@ thp_split 0
 
 </div>
 
-<div id="outline-container-1-1-23" class="outline-4">
-<h4 id="sec-1-1-23"><span class="section-number-4">1.1.23</span> /proc/zoneinfo</h4>
-<div class="outline-text-4" id="text-1-1-23">
+<div id="outline-container-1-1-24" class="outline-4">
+<h4 id="sec-1-1-24"><span class="section-number-4">1.1.24</span> /proc/zoneinfo</h4>
+<div class="outline-text-4" id="text-1-1-24">
 
 <p>内存区域（zone）的详细信息列表
 </p>
@@ -3479,15 +3604,90 @@ TODO(dirlt):后续可能需要学习如何使用autobench分布式测试，因�
 </li>
 </ul>
 
+
 </div>
 </div>
+
+</div>
+
+<div id="outline-container-1-3-42" class="outline-4">
+<h4 id="sec-1-3-42"><span class="section-number-4">1.3.42</span> ps(process snapshot)</h4>
+<div class="outline-text-4" id="text-1-3-42">
+
+<p>进程状态有下面几种：
+</p><ul>
+<li>D    uninterruptible sleep (usually IO) 
+</li>
+<li>R    running or runnable (on run queue)
+</li>
+<li>S    interruptible sleep (waiting for an event to complete)
+</li>
+<li>T    stopped, either by a job control signal or because it is being traced.
+</li>
+<li>W    paging (not valid since the 2.6.xx kernel)
+</li>
+<li>X    dead (should never be seen)
+</li>
+<li>Z    defunct ("zombie") process, terminated but not reaped by its parent.
+</li>
+<li>&lt;    high-priority (not nice to other users)
+</li>
+<li>N    low-priority (nice to other users)
+</li>
+<li>L    has pages locked into memory (for real-time and custom IO)
+</li>
+<li>s    is a session leader
+</li>
+<li>l    is multi-threaded (using CLONE_THREAD, like NPTL pthreads do)
+</li>
+<li>+    is in the foreground process group.
+</li>
+</ul>
+
+
+
+<hr/>
+
+<p>
+在使用ubuntu的apt-get时候，可能会出现一些异常的状况，我们直接终止了apt-get。但是这个时候apt-get软件本身出于一个不正常的状态，
+导致之后不能够启动apt-get。如果观察进程的话会出现下面一些可疑的进程
+</p>
+
+
+<pre class="example">dp@dp1:~$ ps aux | grep "apt"
+root      3587  0.0  0.0  36148 22800 ?        Ds   Oct08   0:00 /usr/bin/dpkg --status-fd 50 --unpack --auto-deconfigure /var/cache/apt/archives/sgml-data_2.0.4_all.deb
+root      9579  0.0  0.0  35992 22744 ?        Ds   Oct19   0:00 /usr/bin/dpkg --status-fd 50 --unpack --auto-deconfigure /var/cache/apt/archives/iftop_0.17-16_amd64.deb
+root     25957  0.0  0.0  36120 22796 ?        Ds   Nov05   0:00 /usr/bin/dpkg --status-fd 50 --unpack --auto-deconfigure /var/cache/apt/archives/iftop_0.17-16_amd64.deb /var/cache/apt/archives/iotop_0.4-1_all.deb
+dp       30586  0.0  0.0   7628  1020 pts/2    S+   08:59   0:00 grep --color=auto apt
+</pre>
+
+<p>
+这些进程的父进程都是init进程，并且状态是uninterruptible sleep，给kill -9也没有办法终止，唯一的办法只能reboot机器来解决这个问题。关于这个问题可以看stackoverflow上面的解答 How to stop 'uninterruptible' process on Linux? - Stack Overflow <a href="http://stackoverflow.com/questions/767551/how-to-stop-uninterruptible-process-on-linux">http://stackoverflow.com/questions/767551/how-to-stop-uninterruptible-process-on-linux</a>
+</p><ul>
+<li>Simple answer: you cannot. Longer answer: the uninterruptable sleep means the process will not be woken up by signals. It can be only woken up by what it's waiting for. When I get such situations eg. with CD-ROM, I usually reset the computer by using suspend-to-disk and resuming.
+</li>
+<li>The D state basically means that the process is waiting for disk I/O, or other block I/O that can't be interrupted. Sometimes this means the kernel or device is feverishly trying to read a bad block (especially from an optical disk). Sometimes it means there's something else. The process cannot be killed until it gets out of the D state. Find out what it is waiting for and fix that. The easy way is to reboot. Sometimes removing the disk in question helps, but that can be rather dangerous: unfixable catastrophic hardware failure if you don't know what you're doing (read: smoke coming out).
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-43" class="outline-4">
+<h4 id="sec-1-3-43"><span class="section-number-4">1.3.43</span> ulimit</h4>
+<div class="outline-text-4" id="text-1-3-43">
+
+<p>TODO(dirlt):
+</p></div>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-06 07:22:35 CST</p>
+<p class="date">Date: 2012-11-07 14:16:49 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
