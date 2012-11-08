@@ -42,3 +42,9 @@
 ** TODO mac休眠
 
 
+
+** TODO 分辨率展示情况
+   - http://github.umeng.com/dp/dp-comproc/issues/46#issuecomment-5836
+     
+
+** TODO 玫瑰和大嘴猴

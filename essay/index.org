@@ -28,7 +28,6 @@ file:./images/valve-logo.jpg
    - SAE http://dirlt.sinaapp.com/
    - BAE TODO(dirlt)：没有邀请码：（
 
-
 ** Computer System
    - [[file:apue.org][apue]] Unix环境高级编程(Advanced Programming Unix Environment),W. Richard Stevens的神作。笔记里面没有包含书最后的几个部分，比如终端，打印机等，因为我觉得可能大家都不太需要这个东西了。我还尝试将一些跨章节的概念整合到一起，这样比较容易从总体把握Unix编程环境。
    - [[file:simd.org][simd]] SIMD(Single Instruction Muitple Data)单指令多数据。这个笔记其实是Intel Reference Manual中关于SIMD指令的总结。里面包含了一些理解SIMD指令需要的知识，以及对SIMD指令进行了分类。遗憾的是里面没有什么过多的例子，毕竟这个是结合场景来使用的。
@@ -150,7 +149,6 @@ file:./images/valve-logo.jpg
    - [[file:note/retrospect-2011.org][回顾2011]]
    - [[file:note/communicate-and-relationship.org][交流和关系]]
    - [[file:note/purchase-diamond.org][购买钻戒]]
-   - [[file:note/how-to-define-software-stable.org][如何定义软件稳定]]
    - [[file:note/take-wedding-photo.org][婚纱摄影经历]]
    - [[file:note/be-careful-when-you-drive.org][开车务必小心]]
    - [[file:note/have-a-nice-sleep-and-straighten-up.org][好好睡一觉，然后振作起来]]
