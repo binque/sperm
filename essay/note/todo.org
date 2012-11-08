@@ -28,9 +28,7 @@
 ** TODO 快速编写MR
 ** TODO systemtap.
 ** TODO netbsd/plan9
-** TODO 爱乐维
 ** TODO maven3切换到maven2
-** TODO 固封螺丝
 ** TODO 数据平台改造，编写如何实现的具体步骤
 ** TODO 详细说明分群任务
 ** TODO installhistory的改造跟进
@@ -42,5 +40,5 @@
 ** TODO 时间戳对于hbase和hdfs影响 
 ** TODO ntp等问题
 ** TODO mac休眠
-** TODO 暖风机辐射和功率
+
 
