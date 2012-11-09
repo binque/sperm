@@ -40,11 +40,7 @@
 ** TODO 时间戳对于hbase和hdfs影响 
 ** TODO ntp等问题
 ** TODO mac休眠
-
-
-
 ** TODO 分辨率展示情况
    - http://github.umeng.com/dp/dp-comproc/issues/46#issuecomment-5836
-     
-
-** TODO 玫瑰和大嘴猴
+    
+** TODO 29玫瑰
