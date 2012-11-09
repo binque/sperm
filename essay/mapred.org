@@ -565,8 +565,6 @@ public class TestHBaseOutputAndHDFSOutputMR extends TestCase {
 
 #+END_SRC
 
-
-
 ** Source Analysis
 *** task如何向tasktracker进行定时汇报
    - task不管是mapper还是reducer，和mr框架相关的内容都包含在了Context里面。

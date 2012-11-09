@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="linux"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-07 22:22:05 CST"/>
+<meta name="generated" content="2012-11-09 22:13:42 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -100,7 +100,7 @@
 <ul>
 <li><a href="#sec-1">1 linux</a>
 <ul>
-<li><a href="#sec-1-1">1.1 proc文件系统</a>
+<li><a href="#sec-1-1">1.1 proc filesystem</a>
 <ul>
 <li><a href="#sec-1-1-1">1.1.1 <i>proc/&lt;pid&gt;</i></a>
 <ul>
@@ -124,7 +124,11 @@
 <li><a href="#sec-1-1-9">1.1.9 /proc/modules</a></li>
 <li><a href="#sec-1-1-10">1.1.10 /proc/diskstats</a></li>
 <li><a href="#sec-1-1-11">1.1.11 /proc/sys</a></li>
-<li><a href="#sec-1-1-12">1.1.12 /proc/sys/vm/overcommit_memory</a></li>
+<li><a href="#sec-1-1-12">1.1.12 /proc/sys/vm/overcommit_memory</a>
+<ul>
+<li><a href="#sec-1-1-12-1">1.1.12.1 一次修改成为2的经历</a></li>
+</ul>
+</li>
 <li><a href="#sec-1-1-13">1.1.13 /proc/sys/vm/overcommit_ratio</a></li>
 <li><a href="#sec-1-1-14">1.1.14 /proc/sys/vm/swappiness</a></li>
 <li><a href="#sec-1-1-15">1.1.15 /proc/sys/vm/dirty_*</a></li>
@@ -139,56 +143,65 @@
 <li><a href="#sec-1-1-24">1.1.24 /proc/zoneinfo</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-2">1.2 vmlinuz</a></li>
-<li><a href="#sec-1-3">1.3 系统工具</a>
+<li><a href="#sec-1-2">1.2 system utility</a>
 <ul>
-<li><a href="#sec-1-3-1">1.3.1 mpstat</a></li>
-<li><a href="#sec-1-3-2">1.3.2 vmstat</a></li>
-<li><a href="#sec-1-3-3">1.3.3 free</a></li>
-<li><a href="#sec-1-3-4">1.3.4 dmesg</a></li>
-<li><a href="#sec-1-3-5">1.3.5 taskset</a></li>
-<li><a href="#sec-1-3-6">1.3.6 lsof</a></li>
-<li><a href="#sec-1-3-7">1.3.7 quota</a></li>
-<li><a href="#sec-1-3-8">1.3.8 crontab</a></li>
-<li><a href="#sec-1-3-9">1.3.9 hdparm</a></li>
-<li><a href="#sec-1-3-10">1.3.10 nmon</a></li>
-<li><a href="#sec-1-3-11">1.3.11 pmap</a></li>
-<li><a href="#sec-1-3-12">1.3.12 strace</a></li>
-<li><a href="#sec-1-3-13">1.3.13 uptime</a></li>
-<li><a href="#sec-1-3-14">1.3.14 top</a></li>
-<li><a href="#sec-1-3-15">1.3.15 pmap</a></li>
-<li><a href="#sec-1-3-16">1.3.16 iostat</a></li>
-<li><a href="#sec-1-3-17">1.3.17 blockdev</a></li>
-<li><a href="#sec-1-3-18">1.3.18 systemtap</a></li>
-<li><a href="#sec-1-3-19">1.3.19 latencytop</a></li>
-<li><a href="#sec-1-3-20">1.3.20 iotop</a></li>
-<li><a href="#sec-1-3-21">1.3.21 htop</a></li>
-<li><a href="#sec-1-3-22">1.3.22 cssh</a></li>
-<li><a href="#sec-1-3-23">1.3.23 dstat</a></li>
-<li><a href="#sec-1-3-24">1.3.24 slurm</a></li>
-<li><a href="#sec-1-3-25">1.3.25 sar</a></li>
-<li><a href="#sec-1-3-26">1.3.26 netstat</a></li>
-<li><a href="#sec-1-3-27">1.3.27 ifconfig</a></li>
-<li><a href="#sec-1-3-28">1.3.28 /sbin/ip</a></li>
-<li><a href="#sec-1-3-29">1.3.29 ping</a></li>
-<li><a href="#sec-1-3-30">1.3.30 route</a></li>
-<li><a href="#sec-1-3-31">1.3.31 tcpdump</a></li>
-<li><a href="#sec-1-3-32">1.3.32 httperf</a></li>
-<li><a href="#sec-1-3-33">1.3.33 ab</a></li>
-<li><a href="#sec-1-3-34">1.3.34 autobench</a></li>
-<li><a href="#sec-1-3-35">1.3.35 iftop</a></li>
-<li><a href="#sec-1-3-36">1.3.36 iftraf</a></li>
-<li><a href="#sec-1-3-37">1.3.37 rsync</a></li>
-<li><a href="#sec-1-3-38">1.3.38 ttyload</a></li>
-<li><a href="#sec-1-3-39">1.3.39 iodump</a></li>
-<li><a href="#sec-1-3-40">1.3.40 iopp</a></li>
-<li><a href="#sec-1-3-41">1.3.41 screen</a>
+<li><a href="#sec-1-2-1">1.2.1 mpstat</a></li>
+<li><a href="#sec-1-2-2">1.2.2 vmstat</a></li>
+<li><a href="#sec-1-2-3">1.2.3 free</a></li>
+<li><a href="#sec-1-2-4">1.2.4 dmesg</a></li>
+<li><a href="#sec-1-2-5">1.2.5 taskset</a></li>
+<li><a href="#sec-1-2-6">1.2.6 lsof</a></li>
+<li><a href="#sec-1-2-7">1.2.7 quota</a></li>
+<li><a href="#sec-1-2-8">1.2.8 crontab</a></li>
+<li><a href="#sec-1-2-9">1.2.9 hdparm</a></li>
+<li><a href="#sec-1-2-10">1.2.10 nmon</a></li>
+<li><a href="#sec-1-2-11">1.2.11 pmap</a></li>
+<li><a href="#sec-1-2-12">1.2.12 strace</a></li>
+<li><a href="#sec-1-2-13">1.2.13 uptime</a></li>
+<li><a href="#sec-1-2-14">1.2.14 top</a></li>
+<li><a href="#sec-1-2-15">1.2.15 pmap</a></li>
+<li><a href="#sec-1-2-16">1.2.16 iostat</a></li>
+<li><a href="#sec-1-2-17">1.2.17 blockdev</a></li>
+<li><a href="#sec-1-2-18">1.2.18 systemtap</a></li>
+<li><a href="#sec-1-2-19">1.2.19 latencytop</a></li>
+<li><a href="#sec-1-2-20">1.2.20 iotop</a></li>
+<li><a href="#sec-1-2-21">1.2.21 htop</a></li>
+<li><a href="#sec-1-2-22">1.2.22 cssh</a></li>
+<li><a href="#sec-1-2-23">1.2.23 dstat</a></li>
+<li><a href="#sec-1-2-24">1.2.24 slurm</a></li>
+<li><a href="#sec-1-2-25">1.2.25 sar</a></li>
+<li><a href="#sec-1-2-26">1.2.26 netstat</a></li>
+<li><a href="#sec-1-2-27">1.2.27 ifconfig</a></li>
+<li><a href="#sec-1-2-28">1.2.28 /sbin/ip</a></li>
+<li><a href="#sec-1-2-29">1.2.29 ping</a></li>
+<li><a href="#sec-1-2-30">1.2.30 route</a></li>
+<li><a href="#sec-1-2-31">1.2.31 tcpdump</a></li>
+<li><a href="#sec-1-2-32">1.2.32 httperf</a></li>
+<li><a href="#sec-1-2-33">1.2.33 ab</a></li>
+<li><a href="#sec-1-2-34">1.2.34 autobench</a></li>
+<li><a href="#sec-1-2-35">1.2.35 iftop</a></li>
+<li><a href="#sec-1-2-36">1.2.36 iftraf</a></li>
+<li><a href="#sec-1-2-37">1.2.37 rsync</a></li>
+<li><a href="#sec-1-2-38">1.2.38 ttyload</a></li>
+<li><a href="#sec-1-2-39">1.2.39 iodump</a></li>
+<li><a href="#sec-1-2-40">1.2.40 iopp</a></li>
+<li><a href="#sec-1-2-41">1.2.41 screen</a>
 <ul>
-<li><a href="#sec-1-3-41-1">1.3.41.1 使用screen启动后台任务</a></li>
+<li><a href="#sec-1-2-41-1">1.2.41.1 使用screen启动后台任务</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-3-42">1.3.42 ps(process snapshot)</a></li>
-<li><a href="#sec-1-3-43">1.3.43 ulimit</a></li>
+<li><a href="#sec-1-2-42">1.2.42 ps(process snapshot)</a></li>
+<li><a href="#sec-1-2-43">1.2.43 ulimit</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-3">1.3 kernel</a>
+<ul>
+<li><a href="#sec-1-3-1">1.3.1 vmlinuz</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-4">1.4 application</a>
+<ul>
+<li><a href="#sec-1-4-1">1.4.1 返回值</a></li>
 </ul>
 </li>
 </ul>
@@ -206,7 +219,7 @@
 </div>
 
 <div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> proc文件系统</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> proc filesystem</h3>
 <div class="outline-text-3" id="text-1-1">
 
 
@@ -602,7 +615,6 @@ Linux version 3.2.0-27-generic (buildd@allspice) (gcc version 4.6.3 (Ubuntu/Lina
 </pre>
 
 
-
 </div>
 
 </div>
@@ -770,6 +782,150 @@ vm.swappiness = 0
 </ul>
 
 
+
+</div>
+
+<div id="outline-container-1-1-12-1" class="outline-5">
+<h5 id="sec-1-1-12-1"><span class="section-number-5">1.1.12.1</span> 一次修改成为2的经历</h5>
+<div class="outline-text-5" id="text-1-1-12-1">
+
+<p>下午将dp3的overcommit_memory参数修改成为2之后，首先出现的问题就是不能够再执行任何shell命令了，错误是fork can't allocate enough memory,就是fork没有那么多的内存可用。然后推出会话之后没有办法再登陆dp3了。这个主要是因为jvm应该基本上占用满了物理内存，而overcommit_ration=0.5,并且没有swap空间，所以没有办法allocate更多的memory了。
+</p>
+<p>
+从/var/log/syslog里面可以看到，修改了这个参数之后，很多程序受到影响(ganglia挂掉了，cron不能够fork出进程了，init也不能够分配出更多的tty，导致我们没有办法登陆上去）在ganglia里面看到内存以及CPU使用都是一条直线，不是因为系统稳定而是因为gmond挂掉了。
+</p>
+
+
+<pre class="example">Nov  8 18:07:04 dp3 /usr/sbin/gmond[1664]: [PYTHON] Can't call the metric handler function for [diskstat_sdd_reads] in the python module [diskstat].#012
+Nov  8 18:07:04 dp3 /usr/sbin/gmond[1664]: [PYTHON] Can't call the metric handler function for [diskstat_sdd_writes] in the python module [diskstat].#012
+Nov  8 18:07:28 dp3 console-kit-daemon[1760]: WARNING: Error writing state file: No space left on device
+Nov  8 18:07:28 dp3 console-kit-daemon[1760]: WARNING: Cannot write to file /var/run/ConsoleKit/database~
+Nov  8 18:07:28 dp3 console-kit-daemon[1760]: WARNING: Unable to spawn /usr/lib/ConsoleKit/run-session.d/pam-foreground-compat.ck: Failed to fork (Cannot allocate memory)
+Nov  8 18:07:28 dp3 console-kit-daemon[1760]: WARNING: Error writing state file: No space left on device
+Nov  8 18:07:28 dp3 console-kit-daemon[1760]: WARNING: Cannot write to file /var/run/ConsoleKit/database~
+Nov  8 18:07:28 dp3 console-kit-daemon[1760]: WARNING: Cannot unlink /var/run/ConsoleKit/database: No such file or directory
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: slurpfile() open() error on file /proc/stat: Too many open files
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: update_file() got an error from slurpfile() reading /proc/stat
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: slurpfile() open() error on file /proc/stat: Too many open files
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: update_file() got an error from slurpfile() reading /proc/stat
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: slurpfile() open() error on file /proc/stat: Too many open files
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: update_file() got an error from slurpfile() reading /proc/stat
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: slurpfile() open() error on file /proc/stat: Too many open files
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: update_file() got an error from slurpfile() reading /proc/stat
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: slurpfile() open() error on file /proc/stat: Too many open files
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: update_file() got an error from slurpfile() reading /proc/stat
+Nov  8 18:08:12 dp3 kernel: [4319715.969327] gmond[1664]: segfault at ffffffffffffffff ip 00007f52e0066f34 sp 00007fff4e428620 error 4 in libganglia-3.1.2.so.0.0.0[7f52e0060000+13000]
+Nov  8 18:10:01 dp3 cron[1637]: (CRON) error (can't fork)
+Nov  8 18:13:53 dp3 init: tty1 main process (2341) terminated with status 1
+Nov  8 18:13:53 dp3 init: tty1 main process ended, respawning
+Nov  8 18:13:53 dp3 init: Temporary process spawn error: Cannot allocate memory
+
+</pre>
+
+
+
+<p>
+而在hadoop的datanode日志里面，有下面这些错误（只是给出部分exception):
+</p>
+
+
+<pre class="example">2012-11-08 18:07:01,283 ERROR org.apache.hadoop.hdfs.server.datanode.DataNode: DatanodeRegistration(10.18.10.56:50010, storageID=DS-1599419066-10.18.10.47-50010-1329122718923, infoPort=50075, ipcPort=50020):DataXceiver
+java.io.EOFException: while trying to read 65557 bytes
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.readToBuf(BlockReceiver.java:290)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.readNextPacket(BlockReceiver.java:334)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.receivePacket(BlockReceiver.java:398)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.receiveBlock(BlockReceiver.java:577)
+
+        at org.apache.hadoop.hdfs.server.datanode.DataXceiver.writeBlock(DataXceiver.java:480)
+        at org.apache.hadoop.hdfs.server.datanode.DataXceiver.run(DataXceiver.java:171)
+2012-11-08 18:07:02,163 ERROR org.apache.hadoop.hdfs.server.datanode.DataNode: DatanodeRegistration(10.18.10.56:50010, storageID=DS-1599419066-10.18.10.47-50010-1329122718923, infoPort=50075, ipcPort=50020):DataXceiverServer: Exiting due to:java.lang.OutOfMemoryError: unable to create new native thread
+        at java.lang.Thread.start0(Native Method)
+        at java.lang.Thread.start(Thread.java:640)
+        at org.apache.hadoop.hdfs.server.datanode.DataXceiverServer.run(DataXceiverServer.java:131)
+        at java.lang.Thread.run(Thread.java:662)
+
+
+2012-11-08 18:07:04,964 ERROR org.apache.hadoop.hdfs.server.datanode.DataNode: DatanodeRegistration(10.18.10.56:50010, storageID=DS-1599419066-10.18.10.47-50010-1329122718923, infoPort=50075, ipcPort=50020):DataXceiver
+java.io.InterruptedIOException: Interruped while waiting for IO on channel java.nio.channels.SocketChannel[closed]. 0 millis timeout left.
+        at org.apache.hadoop.net.SocketIOWithTimeout$SelectorPool.select(SocketIOWithTimeout.java:349)
+        at org.apache.hadoop.net.SocketIOWithTimeout.doIO(SocketIOWithTimeout.java:157)
+        at org.apache.hadoop.net.SocketInputStream.read(SocketInputStream.java:155)
+        at org.apache.hadoop.net.SocketInputStream.read(SocketInputStream.java:128)
+        at java.io.BufferedInputStream.read1(BufferedInputStream.java:256)
+        at java.io.BufferedInputStream.read(BufferedInputStream.java:317)
+        at java.io.DataInputStream.read(DataInputStream.java:132)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.readToBuf(BlockReceiver.java:287)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.readNextPacket(BlockReceiver.java:334)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.receivePacket(BlockReceiver.java:398)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.receiveBlock(BlockReceiver.java:577)
+
+        at org.apache.hadoop.hdfs.server.datanode.DataXceiver.writeBlock(DataXceiver.java:480)
+        at org.apache.hadoop.hdfs.server.datanode.DataXceiver.run(DataXceiver.java:171)
+
+2012-11-08 18:07:04,965 INFO org.apache.hadoop.hdfs.server.datanode.DataNode: PacketResponder blk_-1079258682690587867_32990729 1 Exception java.io.EOFException
+        at java.io.DataInputStream.readFully(DataInputStream.java:180)
+        at java.io.DataInputStream.readLong(DataInputStream.java:399)
+        at org.apache.hadoop.hdfs.protocol.DataTransferProtocol$PipelineAck.readFields(DataTransferProtocol.java:120)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver$PacketResponder.run(BlockReceiver.java:937)
+        at java.lang.Thread.run(Thread.java:662)
+
+2012-11-08 18:07:05,057 INFO org.apache.hadoop.hdfs.server.datanode.DataNode: PacketResponder blk_1523791863488769175_32972264 1 Exception java.nio.channels.ClosedChannelException
+        at sun.nio.ch.SocketChannelImpl.ensureWriteOpen(SocketChannelImpl.java:133)
+        at sun.nio.ch.SocketChannelImpl.write(SocketChannelImpl.java:324)
+        at org.apache.hadoop.net.SocketOutputStream$Writer.performIO(SocketOutputStream.java:55)
+        at org.apache.hadoop.net.SocketIOWithTimeout.doIO(SocketIOWithTimeout.java:142)
+        at org.apache.hadoop.net.SocketOutputStream.write(SocketOutputStream.java:146)
+        at org.apache.hadoop.net.SocketOutputStream.write(SocketOutputStream.java:107)
+        at java.io.BufferedOutputStream.flushBuffer(BufferedOutputStream.java:65)
+        at java.io.BufferedOutputStream.flush(BufferedOutputStream.java:123)
+        at java.io.DataOutputStream.flush(DataOutputStream.java:106)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver$PacketResponder.run(BlockReceiver.java:1047)
+        at java.lang.Thread.run(Thread.java:662)
+
+2012-11-08 18:07:04,972 ERROR org.apache.hadoop.hdfs.server.datanode.DataNode: DatanodeRegistration(10.18.10.56:50010, storageID=DS-1599419066-10.18.10.47-50010-1329122718923, infoPort=5
+0075, ipcPort=50020):DataXceiver
+java.io.IOException: Interrupted receiveBlock
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.receiveBlock(BlockReceiver.java:622)
+        at org.apache.hadoop.hdfs.server.datanode.DataXceiver.writeBlock(DataXceiver.java:480)
+        at org.apache.hadoop.hdfs.server.datanode.DataXceiver.run(DataXceiver.java:171)
+
+2012-11-08 18:08:02,003 INFO org.apache.hadoop.hdfs.server.datanode.DataNode: Waiting for threadgroup to exit, active threads is 1
+2012-11-08 18:08:02,025 WARN org.apache.hadoop.util.Shell: Could not get disk usage information
+java.io.IOException: Cannot run program "du": java.io.IOException: error=12, Cannot allocate memory
+        at java.lang.ProcessBuilder.start(ProcessBuilder.java:460)
+        at org.apache.hadoop.util.Shell.runCommand(Shell.java:200)
+        at org.apache.hadoop.util.Shell.run(Shell.java:182)
+        at org.apache.hadoop.fs.DU.access$200(DU.java:29)
+        at org.apache.hadoop.fs.DU$DURefreshThread.run(DU.java:84)
+        at java.lang.Thread.run(Thread.java:662)
+Caused by: java.io.IOException: java.io.IOException: error=12, Cannot allocate memory
+        at java.lang.UNIXProcess.&lt;init&gt;(UNIXProcess.java:148)
+        at java.lang.ProcessImpl.start(ProcessImpl.java:65)
+        at java.lang.ProcessBuilder.start(ProcessBuilder.java:453)
+
+</pre>
+
+
+<p>
+接着之后就一直打印下面日志hang住了
+</p>
+
+
+<pre class="example">2012-11-08 18:08:52,015 INFO org.apache.hadoop.hdfs.server.datanode.DataNode: Waiting for threadgroup to exit, active threads is 1
+
+</pre>
+
+
+<p>
+hdfs web页面上面显示dead node,但是实际上这个datanode进程还存活。原因估计也是因为不能够分配足够的内存出现这些问题的吧。
+</p>
+<p>
+最后可以登陆上去的原因，我猜想应该是datanode挂掉了，上面的regionserver暂时没有分配内存所以有足够的内存空间，init可以开辟tty。
+</p>
+<p>
+现在已经将这个值调整成为原来的值，也就是0。索性的是，在这个期间，这个修改对于线上的任务执行没有什么影响。
+</p>
+</div>
 </div>
 
 </div>
@@ -1553,31 +1709,15 @@ Node 0, zone   Normal
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> vmlinuz</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> system utility</h3>
 <div class="outline-text-3" id="text-1-2">
 
-<p>vmlinuz是可引导的、压缩的内核。“vm”代表“Virtual Memory”。Linux 支持虚拟内存，不像老的操作系统比如DOS有640KB内存的限制。Linux能够使用硬盘空间作为虚拟内存，因此得名“vm”。vmlinuz是可执行的Linux内核，它位于/boot/vmlinuz，它一般是一个软链接。vmlinux是未压缩的内核，vmlinuz是vmlinux的压缩文件。
-</p>
-<p>
-vmlinuz的建立有两种方式。一是编译内核时通过“make zImage”创建，然后通过：“cp /usr/src/linux-2.4/arch/i386/linux/boot/zImage /boot/vmlinuz”产生。zImage适用于小内核的情况，它的存在是为了向后的兼容性。二是内核编译时通过命令make bzImage创建，然后通过：“cp /usr/src/linux-2.4/arch/i386/linux/boot/bzImage /boot/vmlinuz”产生。bzImage是压缩的内核映像，需要注意，bzImage不是用bzip2压缩的，bzImage中的bz容易引起误解，bz表示“big zImage”。 bzImage中的b是“big”意思。
-</p>
-<p>
-zImage(vmlinuz)和bzImage(vmlinuz)都是用gzip压缩的。它们不仅是一个压缩文件，而且在这两个文件的开头部分内嵌有gzip解压缩代码。所以你不能用gunzip 或 gzip –dc解包vmlinuz。内核文件中包含一个微型的gzip用于解压缩内核并引导它。两者的不同之处在于，老的zImage解压缩内核到低端内存(第一个640K)，bzImage解压缩内核到高端内存(1M以上)。如果内核比较小，那么可以采用zImage 或bzImage之一，两种方式引导的系统运行时是相同的。大的内核采用bzImage，不能采用zImage。
-</p>
-</div>
 
 </div>
 
-<div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 系统工具</h3>
-<div class="outline-text-3" id="text-1-3">
-
-
-</div>
-
-<div id="outline-container-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> mpstat</h4>
-<div class="outline-text-4" id="text-1-3-1">
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> mpstat</h4>
+<div class="outline-text-4" id="text-1-2-1">
 
 <p>mpstat - Report processors related statistics.
 </p>
@@ -1644,9 +1784,9 @@ Linux 2.6.9_5-10-0-1 (tc-cm-et18.tc.baidu.com)  2011年09月20日
 
 </div>
 
-<div id="outline-container-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> vmstat</h4>
-<div class="outline-text-4" id="text-1-3-2">
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> vmstat</h4>
+<div class="outline-text-4" id="text-1-2-2">
 
 
 
@@ -1793,9 +1933,9 @@ nfs_write_data               69     69    704     23
 
 </div>
 
-<div id="outline-container-1-3-3" class="outline-4">
-<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> free</h4>
-<div class="outline-text-4" id="text-1-3-3">
+<div id="outline-container-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> free</h4>
+<div class="outline-text-4" id="text-1-2-3">
 
 
 
@@ -1838,9 +1978,9 @@ Total:     9212084    4519868    4692216
 
 </div>
 
-<div id="outline-container-1-3-4" class="outline-4">
-<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> dmesg</h4>
-<div class="outline-text-4" id="text-1-3-4">
+<div id="outline-container-1-2-4" class="outline-4">
+<h4 id="sec-1-2-4"><span class="section-number-4">1.2.4</span> dmesg</h4>
+<div class="outline-text-4" id="text-1-2-4">
 
 <p>能够察看开机时启动信息(启动信息保存在/var/log/dmesg文件里)
 </p>
@@ -1867,9 +2007,9 @@ BIOS-provided physical RAM map:
 
 </div>
 
-<div id="outline-container-1-3-5" class="outline-4">
-<h4 id="sec-1-3-5"><span class="section-number-4">1.3.5</span> taskset</h4>
-<div class="outline-text-4" id="text-1-3-5">
+<div id="outline-container-1-2-5" class="outline-4">
+<h4 id="sec-1-2-5"><span class="section-number-4">1.2.5</span> taskset</h4>
+<div class="outline-text-4" id="text-1-2-5">
 
 <p>可以用来获取和修改进程的CPU亲和性。
 </p><ul>
@@ -1902,9 +2042,9 @@ affinity is useful only in certain applications.
 
 </div>
 
-<div id="outline-container-1-3-6" class="outline-4">
-<h4 id="sec-1-3-6"><span class="section-number-4">1.3.6</span> lsof</h4>
-<div class="outline-text-4" id="text-1-3-6">
+<div id="outline-container-1-2-6" class="outline-4">
+<h4 id="sec-1-2-6"><span class="section-number-4">1.2.6</span> lsof</h4>
+<div class="outline-text-4" id="text-1-2-6">
 
 <p>TODO(zhangyan04):
 </p>
@@ -1912,9 +2052,9 @@ affinity is useful only in certain applications.
 
 </div>
 
-<div id="outline-container-1-3-7" class="outline-4">
-<h4 id="sec-1-3-7"><span class="section-number-4">1.3.7</span> quota</h4>
-<div class="outline-text-4" id="text-1-3-7">
+<div id="outline-container-1-2-7" class="outline-4">
+<h4 id="sec-1-2-7"><span class="section-number-4">1.2.7</span> quota</h4>
+<div class="outline-text-4" id="text-1-2-7">
 
 <p><a href="http://blog.itpub.net/post/7184/488931">http://blog.itpub.net/post/7184/488931</a>
 </p>
@@ -1999,9 +2139,9 @@ Filesystem blocks soft hard inodes soft hard
 
 </div>
 
-<div id="outline-container-1-3-8" class="outline-4">
-<h4 id="sec-1-3-8"><span class="section-number-4">1.3.8</span> crontab</h4>
-<div class="outline-text-4" id="text-1-3-8">
+<div id="outline-container-1-2-8" class="outline-4">
+<h4 id="sec-1-2-8"><span class="section-number-4">1.2.8</span> crontab</h4>
+<div class="outline-text-4" id="text-1-2-8">
 
 <p>crontab就是为了能够使得工作自动化在特定的时间或者是时间间隔执行特定的程序。crontab -e就可以编辑crontab配置文件，默认是vim编辑器。crontab配置文件里面可以像shell一样定义变量，之后就是任务描述，每一个任务分为6个字段: minute hour day month week command
 </p><ol>
@@ -2045,9 +2185,9 @@ Filesystem blocks soft hard inodes soft hard
 
 </div>
 
-<div id="outline-container-1-3-9" class="outline-4">
-<h4 id="sec-1-3-9"><span class="section-number-4">1.3.9</span> hdparm</h4>
-<div class="outline-text-4" id="text-1-3-9">
+<div id="outline-container-1-2-9" class="outline-4">
+<h4 id="sec-1-2-9"><span class="section-number-4">1.2.9</span> hdparm</h4>
+<div class="outline-text-4" id="text-1-2-9">
 
 <p>hdparm - get/set hard disk parameters
 </p>
@@ -2085,9 +2225,9 @@ TODO(dirlt):好多选项都不太清楚是什么意思.
 
 </div>
 
-<div id="outline-container-1-3-10" class="outline-4">
-<h4 id="sec-1-3-10"><span class="section-number-4">1.3.10</span> nmon</h4>
-<div class="outline-text-4" id="text-1-3-10">
+<div id="outline-container-1-2-10" class="outline-4">
+<h4 id="sec-1-2-10"><span class="section-number-4">1.2.10</span> nmon</h4>
+<div class="outline-text-4" id="text-1-2-10">
 
 <p><a href="http://nmon.sourceforge.net/pmwiki.php">http://nmon.sourceforge.net/pmwiki.php</a> Nigel's performance Monitor for Linux
 </p>
@@ -2098,9 +2238,9 @@ TODO(dirlt):
 
 </div>
 
-<div id="outline-container-1-3-11" class="outline-4">
-<h4 id="sec-1-3-11"><span class="section-number-4">1.3.11</span> pmap</h4>
-<div class="outline-text-4" id="text-1-3-11">
+<div id="outline-container-1-2-11" class="outline-4">
+<h4 id="sec-1-2-11"><span class="section-number-4">1.2.11</span> pmap</h4>
+<div class="outline-text-4" id="text-1-2-11">
 
 <p>TODO(dirlt):
 </p>
@@ -2108,9 +2248,9 @@ TODO(dirlt):
 
 </div>
 
-<div id="outline-container-1-3-12" class="outline-4">
-<h4 id="sec-1-3-12"><span class="section-number-4">1.3.12</span> strace</h4>
-<div class="outline-text-4" id="text-1-3-12">
+<div id="outline-container-1-2-12" class="outline-4">
+<h4 id="sec-1-2-12"><span class="section-number-4">1.2.12</span> strace</h4>
+<div class="outline-text-4" id="text-1-2-12">
 
 <p>TODO(dirlt):
 </p>
@@ -2118,9 +2258,9 @@ TODO(dirlt):
 
 </div>
 
-<div id="outline-container-1-3-13" class="outline-4">
-<h4 id="sec-1-3-13"><span class="section-number-4">1.3.13</span> uptime</h4>
-<div class="outline-text-4" id="text-1-3-13">
+<div id="outline-container-1-2-13" class="outline-4">
+<h4 id="sec-1-2-13"><span class="section-number-4">1.2.13</span> uptime</h4>
+<div class="outline-text-4" id="text-1-2-13">
 
 <p>TODO(dirlt):
 </p>
@@ -2128,9 +2268,9 @@ TODO(dirlt):
 
 </div>
 
-<div id="outline-container-1-3-14" class="outline-4">
-<h4 id="sec-1-3-14"><span class="section-number-4">1.3.14</span> top</h4>
-<div class="outline-text-4" id="text-1-3-14">
+<div id="outline-container-1-2-14" class="outline-4">
+<h4 id="sec-1-2-14"><span class="section-number-4">1.2.14</span> top</h4>
+<div class="outline-text-4" id="text-1-2-14">
 
 <p>TODO(dirlt):
 </p>
@@ -2138,9 +2278,9 @@ TODO(dirlt):
 
 </div>
 
-<div id="outline-container-1-3-15" class="outline-4">
-<h4 id="sec-1-3-15"><span class="section-number-4">1.3.15</span> pmap</h4>
-<div class="outline-text-4" id="text-1-3-15">
+<div id="outline-container-1-2-15" class="outline-4">
+<h4 id="sec-1-2-15"><span class="section-number-4">1.2.15</span> pmap</h4>
+<div class="outline-text-4" id="text-1-2-15">
 
 <p>TODO(dirlt)
 </p>
@@ -2148,9 +2288,9 @@ TODO(dirlt):
 
 </div>
 
-<div id="outline-container-1-3-16" class="outline-4">
-<h4 id="sec-1-3-16"><span class="section-number-4">1.3.16</span> iostat</h4>
-<div class="outline-text-4" id="text-1-3-16">
+<div id="outline-container-1-2-16" class="outline-4">
+<h4 id="sec-1-2-16"><span class="section-number-4">1.2.16</span> iostat</h4>
+<div class="outline-text-4" id="text-1-2-16">
 
 <p>iostat主要用来观察io设备的负载情况的。首先我们看看iostat的样例输出
 </p>
@@ -2293,9 +2433,9 @@ sda               0.00     0.00    0.00    0.00     0.00     0.00     0.00     0
 
 </div>
 
-<div id="outline-container-1-3-17" class="outline-4">
-<h4 id="sec-1-3-17"><span class="section-number-4">1.3.17</span> blockdev</h4>
-<div class="outline-text-4" id="text-1-3-17">
+<div id="outline-container-1-2-17" class="outline-4">
+<h4 id="sec-1-2-17"><span class="section-number-4">1.2.17</span> blockdev</h4>
+<div class="outline-text-4" id="text-1-2-17">
 
 <p>TODO(dirlt):
 </p>
@@ -2303,9 +2443,9 @@ sda               0.00     0.00    0.00    0.00     0.00     0.00     0.00     0
 
 </div>
 
-<div id="outline-container-1-3-18" class="outline-4">
-<h4 id="sec-1-3-18"><span class="section-number-4">1.3.18</span> systemtap</h4>
-<div class="outline-text-4" id="text-1-3-18">
+<div id="outline-container-1-2-18" class="outline-4">
+<h4 id="sec-1-2-18"><span class="section-number-4">1.2.18</span> systemtap</h4>
+<div class="outline-text-4" id="text-1-2-18">
 
 <p>TODO(dirlt): <a href="http://sourceware.org/systemtap/">http://sourceware.org/systemtap/</a>
 </p>
@@ -2313,9 +2453,9 @@ sda               0.00     0.00    0.00    0.00     0.00     0.00     0.00     0
 
 </div>
 
-<div id="outline-container-1-3-19" class="outline-4">
-<h4 id="sec-1-3-19"><span class="section-number-4">1.3.19</span> latencytop</h4>
-<div class="outline-text-4" id="text-1-3-19">
+<div id="outline-container-1-2-19" class="outline-4">
+<h4 id="sec-1-2-19"><span class="section-number-4">1.2.19</span> latencytop</h4>
+<div class="outline-text-4" id="text-1-2-19">
 
 <p>TODO(dirlt): <a href="https://latencytop.org/">https://latencytop.org/</a>
 </p>
@@ -2323,9 +2463,9 @@ sda               0.00     0.00    0.00    0.00     0.00     0.00     0.00     0
 
 </div>
 
-<div id="outline-container-1-3-20" class="outline-4">
-<h4 id="sec-1-3-20"><span class="section-number-4">1.3.20</span> iotop</h4>
-<div class="outline-text-4" id="text-1-3-20">
+<div id="outline-container-1-2-20" class="outline-4">
+<h4 id="sec-1-2-20"><span class="section-number-4">1.2.20</span> iotop</h4>
+<div class="outline-text-4" id="text-1-2-20">
 
 <p>可以用来观察单独进程的IO使用状况
 </p>
@@ -2336,9 +2476,9 @@ TODO（dirlt）：
 
 </div>
 
-<div id="outline-container-1-3-21" class="outline-4">
-<h4 id="sec-1-3-21"><span class="section-number-4">1.3.21</span> htop</h4>
-<div class="outline-text-4" id="text-1-3-21">
+<div id="outline-container-1-2-21" class="outline-4">
+<h4 id="sec-1-2-21"><span class="section-number-4">1.2.21</span> htop</h4>
+<div class="outline-text-4" id="text-1-2-21">
 
 <p>可以认为是top的升级版本，个人感觉比top好用很多
 </p>
@@ -2349,9 +2489,9 @@ TODO（dirlt）：
 
 </div>
 
-<div id="outline-container-1-3-22" class="outline-4">
-<h4 id="sec-1-3-22"><span class="section-number-4">1.3.22</span> cssh</h4>
-<div class="outline-text-4" id="text-1-3-22">
+<div id="outline-container-1-2-22" class="outline-4">
+<h4 id="sec-1-2-22"><span class="section-number-4">1.2.22</span> cssh</h4>
+<div class="outline-text-4" id="text-1-2-22">
 
 <p>TODO(dirlt):
 </p>
@@ -2359,9 +2499,9 @@ TODO（dirlt）：
 
 </div>
 
-<div id="outline-container-1-3-23" class="outline-4">
-<h4 id="sec-1-3-23"><span class="section-number-4">1.3.23</span> dstat</h4>
-<div class="outline-text-4" id="text-1-3-23">
+<div id="outline-container-1-2-23" class="outline-4">
+<h4 id="sec-1-2-23"><span class="section-number-4">1.2.23</span> dstat</h4>
+<div class="outline-text-4" id="text-1-2-23">
 
 <p>TODO(dirlt): <a href="http://dag.wieers.com/rpm/packages/dstat/">http://dag.wieers.com/rpm/packages/dstat/</a>
 </p>
@@ -2369,9 +2509,9 @@ TODO（dirlt）：
 
 </div>
 
-<div id="outline-container-1-3-24" class="outline-4">
-<h4 id="sec-1-3-24"><span class="section-number-4">1.3.24</span> slurm</h4>
-<div class="outline-text-4" id="text-1-3-24">
+<div id="outline-container-1-2-24" class="outline-4">
+<h4 id="sec-1-2-24"><span class="section-number-4">1.2.24</span> slurm</h4>
+<div class="outline-text-4" id="text-1-2-24">
 
 <p>Simple Linux Utility for Resource Management 
 TODO(dirlt): <a href="https://computing.llnl.gov/linux/slurm/">https://computing.llnl.gov/linux/slurm/</a>
@@ -2380,9 +2520,9 @@ TODO(dirlt): <a href="https://computing.llnl.gov/linux/slurm/">https://computing
 
 </div>
 
-<div id="outline-container-1-3-25" class="outline-4">
-<h4 id="sec-1-3-25"><span class="section-number-4">1.3.25</span> sar</h4>
-<div class="outline-text-4" id="text-1-3-25">
+<div id="outline-container-1-2-25" class="outline-4">
+<h4 id="sec-1-2-25"><span class="section-number-4">1.2.25</span> sar</h4>
+<div class="outline-text-4" id="text-1-2-25">
 
 <p>sar - Collect, report, or save system activity information.
 </p>
@@ -2731,9 +2871,9 @@ TODO(dirlt): <a href="https://computing.llnl.gov/linux/slurm/">https://computing
 
 </div>
 
-<div id="outline-container-1-3-26" class="outline-4">
-<h4 id="sec-1-3-26"><span class="section-number-4">1.3.26</span> netstat</h4>
-<div class="outline-text-4" id="text-1-3-26">
+<div id="outline-container-1-2-26" class="outline-4">
+<h4 id="sec-1-2-26"><span class="section-number-4">1.2.26</span> netstat</h4>
+<div class="outline-text-4" id="text-1-2-26">
 
 <p>netstat - Print network connections, routing tables, interface statistics, masquerade connections, and multicast memberships
 </p>
@@ -3001,9 +3141,9 @@ tcp        0   1024 tc-hpc-dev.tc.baidu.c:19870 tc-com-test00.tc.baid:60745 ESTA
 
 </div>
 
-<div id="outline-container-1-3-27" class="outline-4">
-<h4 id="sec-1-3-27"><span class="section-number-4">1.3.27</span> ifconfig</h4>
-<div class="outline-text-4" id="text-1-3-27">
+<div id="outline-container-1-2-27" class="outline-4">
+<h4 id="sec-1-2-27"><span class="section-number-4">1.2.27</span> ifconfig</h4>
+<div class="outline-text-4" id="text-1-2-27">
 
 <p>ifconfig - configure a network interface
 </p>
@@ -3094,9 +3234,9 @@ lo        Link encap:Local Loopback
 
 </div>
 
-<div id="outline-container-1-3-28" class="outline-4">
-<h4 id="sec-1-3-28"><span class="section-number-4">1.3.28</span> /sbin/ip</h4>
-<div class="outline-text-4" id="text-1-3-28">
+<div id="outline-container-1-2-28" class="outline-4">
+<h4 id="sec-1-2-28"><span class="section-number-4">1.2.28</span> /sbin/ip</h4>
+<div class="outline-text-4" id="text-1-2-28">
 
 <p>TODO(zhangyan04):
 </p>
@@ -3104,9 +3244,9 @@ lo        Link encap:Local Loopback
 
 </div>
 
-<div id="outline-container-1-3-29" class="outline-4">
-<h4 id="sec-1-3-29"><span class="section-number-4">1.3.29</span> ping</h4>
-<div class="outline-text-4" id="text-1-3-29">
+<div id="outline-container-1-2-29" class="outline-4">
+<h4 id="sec-1-2-29"><span class="section-number-4">1.2.29</span> ping</h4>
+<div class="outline-text-4" id="text-1-2-29">
 
 <p>TODO(zhangyan04):
 </p>
@@ -3114,9 +3254,9 @@ lo        Link encap:Local Loopback
 
 </div>
 
-<div id="outline-container-1-3-30" class="outline-4">
-<h4 id="sec-1-3-30"><span class="section-number-4">1.3.30</span> route</h4>
-<div class="outline-text-4" id="text-1-3-30">
+<div id="outline-container-1-2-30" class="outline-4">
+<h4 id="sec-1-2-30"><span class="section-number-4">1.2.30</span> route</h4>
+<div class="outline-text-4" id="text-1-2-30">
 
 <p>TODO(zhangyan04):
 </p>
@@ -3124,9 +3264,9 @@ lo        Link encap:Local Loopback
 
 </div>
 
-<div id="outline-container-1-3-31" class="outline-4">
-<h4 id="sec-1-3-31"><span class="section-number-4">1.3.31</span> tcpdump</h4>
-<div class="outline-text-4" id="text-1-3-31">
+<div id="outline-container-1-2-31" class="outline-4">
+<h4 id="sec-1-2-31"><span class="section-number-4">1.2.31</span> tcpdump</h4>
+<div class="outline-text-4" id="text-1-2-31">
 
 <p>TODO(zhangyan04):
 </p>
@@ -3134,9 +3274,9 @@ lo        Link encap:Local Loopback
 
 </div>
 
-<div id="outline-container-1-3-32" class="outline-4">
-<h4 id="sec-1-3-32"><span class="section-number-4">1.3.32</span> httperf</h4>
-<div class="outline-text-4" id="text-1-3-32">
+<div id="outline-container-1-2-32" class="outline-4">
+<h4 id="sec-1-2-32"><span class="section-number-4">1.2.32</span> httperf</h4>
+<div class="outline-text-4" id="text-1-2-32">
 
 <p>download <a href="http://www.hpl.hp.com/research/linux/httperf/">http://www.hpl.hp.com/research/linux/httperf/</a>
 </p>
@@ -3302,9 +3442,9 @@ session rate表示session完成频率。240/250表示发起250个但是完成240
 
 </div>
 
-<div id="outline-container-1-3-33" class="outline-4">
-<h4 id="sec-1-3-33"><span class="section-number-4">1.3.33</span> ab</h4>
-<div class="outline-text-4" id="text-1-3-33">
+<div id="outline-container-1-2-33" class="outline-4">
+<h4 id="sec-1-2-33"><span class="section-number-4">1.2.33</span> ab</h4>
+<div class="outline-text-4" id="text-1-2-33">
 
 <p>ab(apache benchmarking)是apache httpd自带的一个HTTP Server个的工具。下面是这个工具命令行参数
 </p>
@@ -3438,9 +3578,9 @@ Percentage of the requests served within a certain time (ms)
 
 </div>
 
-<div id="outline-container-1-3-34" class="outline-4">
-<h4 id="sec-1-3-34"><span class="section-number-4">1.3.34</span> autobench</h4>
-<div class="outline-text-4" id="text-1-3-34">
+<div id="outline-container-1-2-34" class="outline-4">
+<h4 id="sec-1-2-34"><span class="section-number-4">1.2.34</span> autobench</h4>
+<div class="outline-text-4" id="text-1-2-34">
 
 <p><a href="http://www.xenoclast.org/autobench/">http://www.xenoclast.org/autobench/</a>
 </p>
@@ -3517,9 +3657,9 @@ TODO(dirlt):后续可能需要学习如何使用autobench分布式测试，因�
 
 </div>
 
-<div id="outline-container-1-3-35" class="outline-4">
-<h4 id="sec-1-3-35"><span class="section-number-4">1.3.35</span> iftop</h4>
-<div class="outline-text-4" id="text-1-3-35">
+<div id="outline-container-1-2-35" class="outline-4">
+<h4 id="sec-1-2-35"><span class="section-number-4">1.2.35</span> iftop</h4>
+<div class="outline-text-4" id="text-1-2-35">
 
 <p>TODO(dirlt): <a href="http://www.ex-parrot.com/~pdw/iftop/">http://www.ex-parrot.com/~pdw/iftop/</a>
 </p>
@@ -3527,9 +3667,9 @@ TODO(dirlt):后续可能需要学习如何使用autobench分布式测试，因�
 
 </div>
 
-<div id="outline-container-1-3-36" class="outline-4">
-<h4 id="sec-1-3-36"><span class="section-number-4">1.3.36</span> iftraf</h4>
-<div class="outline-text-4" id="text-1-3-36">
+<div id="outline-container-1-2-36" class="outline-4">
+<h4 id="sec-1-2-36"><span class="section-number-4">1.2.36</span> iftraf</h4>
+<div class="outline-text-4" id="text-1-2-36">
 
 <p>TODO(dirlt): <a href="http://iptraf.seul.org/">http://iptraf.seul.org/</a>
 </p>
@@ -3537,9 +3677,9 @@ TODO(dirlt):后续可能需要学习如何使用autobench分布式测试，因�
 
 </div>
 
-<div id="outline-container-1-3-37" class="outline-4">
-<h4 id="sec-1-3-37"><span class="section-number-4">1.3.37</span> rsync</h4>
-<div class="outline-text-4" id="text-1-3-37">
+<div id="outline-container-1-2-37" class="outline-4">
+<h4 id="sec-1-2-37"><span class="section-number-4">1.2.37</span> rsync</h4>
+<div class="outline-text-4" id="text-1-2-37">
 
 <p>常用选项：
 </p><ul>
@@ -3558,40 +3698,40 @@ TODO(dirlt):后续可能需要学习如何使用autobench分布式测试，因�
 
 </div>
 
-<div id="outline-container-1-3-38" class="outline-4">
-<h4 id="sec-1-3-38"><span class="section-number-4">1.3.38</span> ttyload</h4>
-<div class="outline-text-4" id="text-1-3-38">
+<div id="outline-container-1-2-38" class="outline-4">
+<h4 id="sec-1-2-38"><span class="section-number-4">1.2.38</span> ttyload</h4>
+<div class="outline-text-4" id="text-1-2-38">
 
 </div>
 
 </div>
 
-<div id="outline-container-1-3-39" class="outline-4">
-<h4 id="sec-1-3-39"><span class="section-number-4">1.3.39</span> iodump</h4>
-<div class="outline-text-4" id="text-1-3-39">
+<div id="outline-container-1-2-39" class="outline-4">
+<h4 id="sec-1-2-39"><span class="section-number-4">1.2.39</span> iodump</h4>
+<div class="outline-text-4" id="text-1-2-39">
 
 </div>
 
 </div>
 
-<div id="outline-container-1-3-40" class="outline-4">
-<h4 id="sec-1-3-40"><span class="section-number-4">1.3.40</span> iopp</h4>
-<div class="outline-text-4" id="text-1-3-40">
+<div id="outline-container-1-2-40" class="outline-4">
+<h4 id="sec-1-2-40"><span class="section-number-4">1.2.40</span> iopp</h4>
+<div class="outline-text-4" id="text-1-2-40">
 
 </div>
 
 </div>
 
-<div id="outline-container-1-3-41" class="outline-4">
-<h4 id="sec-1-3-41"><span class="section-number-4">1.3.41</span> screen</h4>
-<div class="outline-text-4" id="text-1-3-41">
+<div id="outline-container-1-2-41" class="outline-4">
+<h4 id="sec-1-2-41"><span class="section-number-4">1.2.41</span> screen</h4>
+<div class="outline-text-4" id="text-1-2-41">
 
 
 </div>
 
-<div id="outline-container-1-3-41-1" class="outline-5">
-<h5 id="sec-1-3-41-1"><span class="section-number-5">1.3.41.1</span> 使用screen启动后台任务</h5>
-<div class="outline-text-5" id="text-1-3-41-1">
+<div id="outline-container-1-2-41-1" class="outline-5">
+<h5 id="sec-1-2-41-1"><span class="section-number-5">1.2.41.1</span> 使用screen启动后台任务</h5>
+<div class="outline-text-5" id="text-1-2-41-1">
 
 <ul>
 <li>screen创建一个新会话
@@ -3610,9 +3750,9 @@ TODO(dirlt):后续可能需要学习如何使用autobench分布式测试，因�
 
 </div>
 
-<div id="outline-container-1-3-42" class="outline-4">
-<h4 id="sec-1-3-42"><span class="section-number-4">1.3.42</span> ps(process snapshot)</h4>
-<div class="outline-text-4" id="text-1-3-42">
+<div id="outline-container-1-2-42" class="outline-4">
+<h4 id="sec-1-2-42"><span class="section-number-4">1.2.42</span> ps(process snapshot)</h4>
+<div class="outline-text-4" id="text-1-2-42">
 
 <p>进程状态有下面几种：
 </p><ul>
@@ -3675,20 +3815,120 @@ dp       30586  0.0  0.0   7628  1020 pts/2    S+   08:59   0:00 grep --color=au
 
 </div>
 
-<div id="outline-container-1-3-43" class="outline-4">
-<h4 id="sec-1-3-43"><span class="section-number-4">1.3.43</span> ulimit</h4>
-<div class="outline-text-4" id="text-1-3-43">
+<div id="outline-container-1-2-43" class="outline-4">
+<h4 id="sec-1-2-43"><span class="section-number-4">1.2.43</span> ulimit</h4>
+<div class="outline-text-4" id="text-1-2-43">
 
-<p>TODO(dirlt):
+<p>TODO(
 </p></div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> kernel</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> vmlinuz</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+<p>vmlinuz是可引导的、压缩的内核。“vm”代表“Virtual Memory”。Linux 支持虚拟内存，不像老的操作系统比如DOS有640KB内存的限制。Linux能够使用硬盘空间作为虚拟内存，因此得名“vm”。vmlinuz是可执行的Linux内核，它位于/boot/vmlinuz，它一般是一个软链接。vmlinux是未压缩的内核，vmlinuz是vmlinux的压缩文件。
+</p>
+<p>
+vmlinuz的建立有两种方式。一是编译内核时通过“make zImage”创建，然后通过：“cp /usr/src/linux-2.4/arch/i386/linux/boot/zImage /boot/vmlinuz”产生。zImage适用于小内核的情况，它的存在是为了向后的兼容性。二是内核编译时通过命令make bzImage创建，然后通过：“cp /usr/src/linux-2.4/arch/i386/linux/boot/bzImage /boot/vmlinuz”产生。bzImage是压缩的内核映像，需要注意，bzImage不是用bzip2压缩的，bzImage中的bz容易引起误解，bz表示“big zImage”。 bzImage中的b是“big”意思。
+</p>
+<p>
+zImage(vmlinuz)和bzImage(vmlinuz)都是用gzip压缩的。它们不仅是一个压缩文件，而且在这两个文件的开头部分内嵌有gzip解压缩代码。所以你不能用gunzip 或 gzip –dc解包vmlinuz。内核文件中包含一个微型的gzip用于解压缩内核并引导它。两者的不同之处在于，老的zImage解压缩内核到低端内存(第一个640K)，bzImage解压缩内核到高端内存(1M以上)。如果内核比较小，那么可以采用zImage或bzImage之一，两种方式引导的系统运行时是相同的。大的内核采用bzImage，不能采用zImage。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> application</h3>
+<div class="outline-text-3" id="text-1-4">
+
+
+</div>
+
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> 返回值</h4>
+<div class="outline-text-4" id="text-1-4-1">
+
+
+<hr/>
+<p>
+首先看下面一段Java程序
+</p>
+
+
+<pre class="src src-Java">/* coding:utf-8
+ * Copyright (C) dirlt
+ */
+
+public class X{
+  public static void main(String[] args) {
+    System.exit(1);
+  }
+}
+</pre>
+
+
+<p>
+然后这个Java程序被Python调用，判断这个打印值
+</p>
+
+
+<pre class="src src-Python">#!/usr/bin/env python
+#coding:utf-8
+#Copyright (C) dirlt
+
+import os
+print os.system('java X')
+
+</pre>
+
+
+<p>
+返回值不为0而是256，对此解释是这样的
+</p>
+
+
+<pre class="example">a 16-bit number, whose low byte is the signal number that killed the process, and whose high byte is the exit status (if the signal number is zero); the high bit of the low byte is set if a core file was produced. 
+</pre>
+
+
+
+<hr/>
+<p>
+然后下面这段Python程序，使用echo $?判断返回值为0而不是256
+</p>
+
+
+<pre class="src src-Python">#!/usr/bin/env python
+#coding:utf-8
+#Copyright (C) dirlt
+
+code=256
+exit(code)
+
+</pre>
+
+
+</div>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-07 22:22:05 CST</p>
-<p class="creator">Org version 7.8.02 with Emacs version 23</p>
+<p class="date">Date: 2012-11-09 22:13:42 CST</p>
+<p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>
