@@ -2,6 +2,7 @@
 ** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
     - http://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
+    - http://www.rethinkdb.com/blog/
 ** TODO 阅读完Core Java I
 ** TODO megastore
    - Megastore: Providing Scalable, Highly Available Storage for Interactive Services http://research.google.com/pubs/pub36971.html

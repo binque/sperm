@@ -140,15 +140,13 @@ mongod会进行voting，而arbiter也会进行voting但是却不会用来作为�
    - relaylog在局域网上的传输在ms级别上。
 
 但是官方文档里面也提到了
-#+BEGIN_EXAMPLE
-Replica sets are the preferred replication mechanism in MongoDB. However, if your deployment requires more than 12 nodes,
-you must use master/slave replication.
-#+END_EXAMPLE
+#+BEGIN_VERSE
+Replica sets are the preferred replication mechanism in MongoDB. However, if your deployment requires more than 12 nodes, you must use master/slave replication.
+#+END_VERSE
 如果部署超过12个节点的话，那么必须使用master/slave模式。原因我觉得可能是这个。
-#+BEGIN_SRC C++
-Within the replica set, members are interconnected with each other to exchange heartbeat message.
-A crashed server with missing heartbeat will be detected by other members and removed from the replica set membership.
-#+END_SRC
+#+BEGIN_VERSE
+Within the replica set, members are interconnected with each other to exchange heartbeat message. A crashed server with missing heartbeat will be detected by other members and removed from the replica set membership.
+#+END_VERSE
 也就是说，replicas之间都会和相互检测对方的心跳，这是一个全连接图。如果节点超过一定数量的话，那么心跳处理的延迟可能会非常长，同时选举的时间也会非常长，
 最终造成如果发生切换的话，切换时间会非常长。
 
