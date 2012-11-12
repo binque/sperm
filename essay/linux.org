@@ -2172,7 +2172,42 @@ dp       30586  0.0  0.0   7628  1020 pts/2    S+   08:59   0:00 grep --color=au
    - The D state basically means that the process is waiting for disk I/O, or other block I/O that can't be interrupted. Sometimes this means the kernel or device is feverishly trying to read a bad block (especially from an optical disk). Sometimes it means there's something else. The process cannot be killed until it gets out of the D state. Find out what it is waiting for and fix that. The easy way is to reboot. Sometimes removing the disk in question helps, but that can be rather dangerous: unfixable catastrophic hardware failure if you don't know what you're doing (read: smoke coming out).
 
 *** ulimit
-TODO(
+    TODO(
+*** ntp
+   - ntp.org: Home of the Network Time Protocol http://www.ntp.org/ *NOTE(dirlt):这个项目应该是非常复杂的*
+
+ntp(network time protocol)是用来做机器时间同步的，包含下面几个组件：
+   - ntpd(ntp daemon) 后台进程可以用来从其他机器上面同步时间，也可以为其他机器提供时间同步。配置文件是/etc/ntpd.conf.
+   - ntpq(ntp query) 查询当前时间同步的情况。
+   - ntpdate(ntp date) 和其他机器进行同步，不可以和ntpd共同使用。
+
+#+BEGIN_EXAMPLE
+[dirlt@umeng-ubuntu-pc] > sudo /etc/init.d/ntp start
+ * Starting NTP server ntpd
+   ...done.
+[dirlt@umeng-ubuntu-pc] > sudo /usr/sbin/ntpdate cn.pool.ntp.org
+12 Nov 17:08:07 ntpdate[30044]: the NTP socket is in use, exiting
+[dirlt@umeng-ubuntu-pc] > sudo /etc/init.d/ntp stop
+ * Stopping NTP server ntpd
+   ...done.
+[dirlt@umeng-ubuntu-pc] > sudo /usr/sbin/ntpdate cn.pool.ntp.org
+12 Nov 17:08:22 ntpdate[30061]: adjust time server 202.112.31.197 offset -0.071953 sec
+[dirlt@umeng-ubuntu-pc] > ntpq -p
+     remote           refid      st t when poll reach   delay   offset  jitter
+==============================================================================
+ netmon2.dcs1.bi 121.182.147.191  2 u    7   64    1  405.743   10.731   0.000
+ 202-150-213-154 133.243.238.163  2 u    8   64    1  171.722  -131.73   0.000
+ dns1.synet.edu. 223.255.185.2    2 u    7   64    1  166.558  -39.375   0.000
+ Hshh.org        66.220.9.122     2 u    6   64    1   41.734  -109.29   0.000
+ europium.canoni 193.79.237.14    2 u    4   64    1  673.181  -240.24   0.000
+#+END_EXAMPLE
+
+一个最重要的问题就是，daemon以什么时间间隔来和指定的server进行同步。
+   - How does it work? http://www.ntp.org/ntpfaq/NTP-s-algo.htm#AEN2082
+ntp是可以在minpoll和maxpoll指定的时间间隔内来选择同步间隔的，默认使用minpoll也就是64seconds.
+
+其实如果不考虑为其他机器提供服务的话，完全可以在cron里面使用ntpdate来进行同步。
+
 ** kernel
 *** vmlinuz
 vmlinuz是可引导的、压缩的内核。“vm”代表“Virtual Memory”。Linux 支持虚拟内存，不像老的操作系统比如DOS有640KB内存的限制。Linux能够使用硬盘空间作为虚拟内存，因此得名“vm”。vmlinuz是可执行的Linux内核，它位于/boot/vmlinuz，它一般是一个软链接。vmlinux是未压缩的内核，vmlinuz是vmlinux的压缩文件。
@@ -2182,7 +2217,7 @@ vmlinuz的建立有两种方式。一是编译内核时通过“make zImage”�
 zImage(vmlinuz)和bzImage(vmlinuz)都是用gzip压缩的。它们不仅是一个压缩文件，而且在这两个文件的开头部分内嵌有gzip解压缩代码。所以你不能用gunzip 或 gzip –dc解包vmlinuz。内核文件中包含一个微型的gzip用于解压缩内核并引导它。两者的不同之处在于，老的zImage解压缩内核到低端内存(第一个640K)，bzImage解压缩内核到高端内存(1M以上)。如果内核比较小，那么可以采用zImage或bzImage之一，两种方式引导的系统运行时是相同的。大的内核采用bzImage，不能采用zImage。
 
 ** application
-*** 返回值
+*** 一个返回值问题
 --------------------
 首先看下面一段Java程序
 #+BEGIN_SRC Java

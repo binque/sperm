@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hbase"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-12 15:50:04 CST"/>
+<meta name="generated" content="2012-11-12 18:15:18 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -106,6 +106,7 @@
 <li><a href="#sec-1-1-2">1.1.2 asynchbase</a></li>
 <li><a href="#sec-1-1-3">1.1.3 HBase Write Path | Apache Hadoop for the Enterprise | Cloudera</a></li>
 <li><a href="#sec-1-1-4">1.1.4 HBase Log Splitting | Apache Hadoop for the Enterprise | Cloudera</a></li>
+<li><a href="#sec-1-1-5">1.1.5 clock skew</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-2">1.2 Usage</a>
@@ -331,6 +332,63 @@ Times to complete single threaded log splitting vary, but the process may take s
 </ul>
 
 
+</div>
+
+</div>
+
+<div id="outline-container-1-1-5" class="outline-4">
+<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> clock skew</h4>
+<div class="outline-text-4" id="text-1-1-5">
+
+<p>如果region server和master的时间偏差太大的话，会造成region server启动失败
+</p>
+
+
+<pre class="example">at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+        at java.lang.reflect.Constructor.newInstance(Constructor.java:513)
+        at org.apache.hadoop.ipc.RemoteException.instantiateException(RemoteException.java:95)
+        at org.apache.hadoop.ipc.RemoteException.unwrapRemoteException(RemoteException.java:79)
+        at org.apache.hadoop.hbase.regionserver.HRegionServer.reportForDuty(HRegionServer.java:1506)
+        at org.apache.hadoop.hbase.regionserver.HRegionServer.tryReportForDuty(HRegionServer.java:1470)
+        at org.apache.hadoop.hbase.regionserver.HRegionServer.run(HRegionServer.java:563)
+        at java.lang.Thread.run(Thread.java:662)
+Caused by: org.apache.hadoop.ipc.RemoteException: org.apache.hadoop.hbase.ClockOutOfSyncException: Server s3,60020,1304927875246 has been rejected; Reported time is too far out of sync with master.  Time difference of 41450ms &gt; max allowed of 30000ms
+        at org.apache.hadoop.hbase.master.ServerManager.checkClockSkew(ServerManager.java:181)
+        at org.apache.hadoop.hbase.master.ServerManager.regionServerStartup(ServerManager.java:129)
+        at org.apache.hadoop.hbase.master.HMaster.regionServerStartup(HMaster.java:613)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+        at java.lang.reflect.Method.invoke(Method.java:597)
+        at org.apache.hadoop.hbase.ipc.HBaseRPC$Server.call(HBaseRPC.java:570)
+        at org.apache.hadoop.hbase.ipc.HBaseServer$Handler.run(HBaseServer.java:1039)
+        at org.apache.hadoop.hbase.ipc.HBaseClient.call(HBaseClient.java:771)
+        at org.apache.hadoop.hbase.ipc.HBaseRPC$Invoker.invoke(HBaseRPC.java:257)
+        at $Proxy5.regionServerStartup(Unknown Source)
+        at org.apache.hadoop.hbase.regionserver.HRegionServer.reportForDuty(HRegionServer.java:1502)
+</pre>
+
+<p>
+通常出现这个问题的原因是因为ntp没有正常工作导致本地时钟出现偏差(clock skew).这个参数通过 hbase.master.maxclockskew 来配置，默认是30000(ms)也就是30s.
+</p>
+<p>
+为什么hbase要规定region server和master时间同步呢？下面这篇文章给出了解释我觉得比较靠谱
+</p><ul>
+<li>hbase/hypertable集群启动需要进行时间同步原因？ <a href="http://www.cnblogs.com/xuqiang/archive/2011/12/14/2287327.html">http://www.cnblogs.com/xuqiang/archive/2011/12/14/2287327.html</a>
+</li>
+</ul>
+
+
+
+
+<pre class="example">这里假设一个range从rs1到rs2，并且rs1当前时间是6:00，rs2的当前时间是5:00，并且rs1上在5:59的时候写入数据&lt;k1, v1, 5:59&gt;,之后该range迁移到了rs2了，并且rs2已经能够向外界提供服务了，在5:10来了个对k1的修改请求，将k1对应的值改成v2，这时rs2将写入&lt;k1, v2, 5:10&gt;。这时如果来了对k1的查询请求的话，rs2将返回&lt;k1, v1&gt;，但实际上这已经是旧的数据了。
+</pre>
+
+<p>
+rs2最近写入的数据是v2，而接下来如果从rs2查询"latest"的数据的话返回的是v1。
+</p>
 </div>
 </div>
 
@@ -660,7 +718,7 @@ thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-12 15:50:04 CST</p>
+<p class="date">Date: 2012-11-12 18:15:18 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
