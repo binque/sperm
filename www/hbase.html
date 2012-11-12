@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hbase"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-12 18:15:18 CST"/>
+<meta name="generated" content="2012-11-12 19:14:40 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -382,9 +382,10 @@ Caused by: org.apache.hadoop.ipc.RemoteException: org.apache.hadoop.hbase.ClockO
 
 
 
+<p class="verse">
+这里假设一个range从rs1到rs2，并且rs1当前时间是6:00，rs2的当前时间是5:00，并且rs1上在5:59的时候写入数据&lt;k1, v1, 5:59&gt;,之后该range迁移到了rs2了，并且rs2已经能够向外界提供服务了，在5:10来了个对k1的修改请求，将k1对应的值改成v2，这时rs2将写入&lt;k1, v2, 5:10&gt;。这时如果来了对k1的查询请求的话，rs2将返回&lt;k1, v1&gt;，但实际上这已经是旧的数据了。<br/>
+</p>
 
-<pre class="example">这里假设一个range从rs1到rs2，并且rs1当前时间是6:00，rs2的当前时间是5:00，并且rs1上在5:59的时候写入数据&lt;k1, v1, 5:59&gt;,之后该range迁移到了rs2了，并且rs2已经能够向外界提供服务了，在5:10来了个对k1的修改请求，将k1对应的值改成v2，这时rs2将写入&lt;k1, v2, 5:10&gt;。这时如果来了对k1的查询请求的话，rs2将返回&lt;k1, v1&gt;，但实际上这已经是旧的数据了。
-</pre>
 
 <p>
 rs2最近写入的数据是v2，而接下来如果从rs2查询"latest"的数据的话返回的是v1。
@@ -718,7 +719,7 @@ thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-12 18:15:18 CST</p>
+<p class="date">Date: 2012-11-12 19:14:40 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
