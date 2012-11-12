@@ -942,3 +942,6 @@ alias dp1="ssh -p 16021 -l dp dp1" # authorized.
 alias hadoop1="ssh -p 16021 -l yunbg hadoop1" # authorized.
 alias nexus="ssh -p 16021 -l yunbg nexus" # authorized.
 alias hudson="ssh -l ceshi hudson" # authorized.
+
+ssh-add ~/.ssh/aws_rsa
+ssh-add ~/.ssh/id_rsa

@@ -1,7 +1,7 @@
 * linux
 #+OPTIONS: H:5
 
-** proc文件系统
+** proc filesystem
 *** /proc/<pid>/
 其中pid为对应的进程号，目录下面就是这个进程对应的信息。
    - attr ???
@@ -222,7 +222,6 @@ BOOT_IMAGE=/boot/vmlinuz-3.2.0-27-generic root=UUID=b25db1c7-e694-4eed-8d11-ea33
 Linux version 3.2.0-27-generic (buildd@allspice) (gcc version 4.6.3 (Ubuntu/Linaro 4.6.3-1ubuntu5) ) #43-Ubuntu SMP Fri Jul 6 14:25:57 UTC 2012
 #+END_EXAMPLE
 
-
 *** /proc/mounts
 系统当前挂载的所有文件系统.第一列表示挂载的设备，第二列表示在当前目录树中的挂载点，第三点表示当前文件系统的类型，第四列表示挂载属性（ro或者rw），第五列和第六列用来匹配/etc/mtab文件中的转储（dump）属性；
 #+BEGIN_EXAMPLE
@@ -321,6 +320,128 @@ vm.swappiness = 0
      - Always overcommit. Appropriate for some scientific applications.
    - OVERCOMMIT_NEVER=2 用户一次申请内存的大小不允许超过<可用内存>的大小。关于这个<可用内存>的大小计算可以看下面overcommit_ration这个参数，可以上面两种所说的可用内存不太一样。
      - Don't overcommit. The total address space commit for the system is not permitted to exceed swap + a configurable percentage (default is 50) of physical RAM. Depending on the percentage you use, in most situations this means a process will not be killed while accessing pages but will receive errors on memory allocation as appropriate.
+
+**** 一次修改成为2的经历
+下午将dp3的overcommit_memory参数修改成为2之后，首先出现的问题就是不能够再执行任何shell命令了，错误是fork can't allocate enough memory,就是fork没有那么多的内存可用。然后推出会话之后没有办法再登陆dp3了。这个主要是因为jvm应该基本上占用满了物理内存，而overcommit_ration=0.5,并且没有swap空间，所以没有办法allocate更多的memory了。
+
+从/var/log/syslog里面可以看到，修改了这个参数之后，很多程序受到影响(ganglia挂掉了，cron不能够fork出进程了，init也不能够分配出更多的tty，导致我们没有办法登陆上去）在ganglia里面看到内存以及CPU使用都是一条直线，不是因为系统稳定而是因为gmond挂掉了。
+#+BEGIN_EXAMPLE
+Nov  8 18:07:04 dp3 /usr/sbin/gmond[1664]: [PYTHON] Can't call the metric handler function for [diskstat_sdd_reads] in the python module [diskstat].#012
+Nov  8 18:07:04 dp3 /usr/sbin/gmond[1664]: [PYTHON] Can't call the metric handler function for [diskstat_sdd_writes] in the python module [diskstat].#012
+Nov  8 18:07:28 dp3 console-kit-daemon[1760]: WARNING: Error writing state file: No space left on device
+Nov  8 18:07:28 dp3 console-kit-daemon[1760]: WARNING: Cannot write to file /var/run/ConsoleKit/database~
+Nov  8 18:07:28 dp3 console-kit-daemon[1760]: WARNING: Unable to spawn /usr/lib/ConsoleKit/run-session.d/pam-foreground-compat.ck: Failed to fork (Cannot allocate memory)
+Nov  8 18:07:28 dp3 console-kit-daemon[1760]: WARNING: Error writing state file: No space left on device
+Nov  8 18:07:28 dp3 console-kit-daemon[1760]: WARNING: Cannot write to file /var/run/ConsoleKit/database~
+Nov  8 18:07:28 dp3 console-kit-daemon[1760]: WARNING: Cannot unlink /var/run/ConsoleKit/database: No such file or directory
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: slurpfile() open() error on file /proc/stat: Too many open files
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: update_file() got an error from slurpfile() reading /proc/stat
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: slurpfile() open() error on file /proc/stat: Too many open files
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: update_file() got an error from slurpfile() reading /proc/stat
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: slurpfile() open() error on file /proc/stat: Too many open files
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: update_file() got an error from slurpfile() reading /proc/stat
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: slurpfile() open() error on file /proc/stat: Too many open files
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: update_file() got an error from slurpfile() reading /proc/stat
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: slurpfile() open() error on file /proc/stat: Too many open files
+Nov  8 18:08:12 dp3 /usr/sbin/gmond[1664]: update_file() got an error from slurpfile() reading /proc/stat
+Nov  8 18:08:12 dp3 kernel: [4319715.969327] gmond[1664]: segfault at ffffffffffffffff ip 00007f52e0066f34 sp 00007fff4e428620 error 4 in libganglia-3.1.2.so.0.0.0[7f52e0060000+13000]
+Nov  8 18:10:01 dp3 cron[1637]: (CRON) error (can't fork)
+Nov  8 18:13:53 dp3 init: tty1 main process (2341) terminated with status 1
+Nov  8 18:13:53 dp3 init: tty1 main process ended, respawning
+Nov  8 18:13:53 dp3 init: Temporary process spawn error: Cannot allocate memory
+
+#+END_EXAMPLE
+
+
+而在hadoop的datanode日志里面，有下面这些错误（只是给出部分exception):
+#+BEGIN_EXAMPLE
+2012-11-08 18:07:01,283 ERROR org.apache.hadoop.hdfs.server.datanode.DataNode: DatanodeRegistration(10.18.10.56:50010, storageID=DS-1599419066-10.18.10.47-50010-1329122718923, infoPort=50075, ipcPort=50020):DataXceiver
+java.io.EOFException: while trying to read 65557 bytes
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.readToBuf(BlockReceiver.java:290)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.readNextPacket(BlockReceiver.java:334)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.receivePacket(BlockReceiver.java:398)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.receiveBlock(BlockReceiver.java:577)
+
+        at org.apache.hadoop.hdfs.server.datanode.DataXceiver.writeBlock(DataXceiver.java:480)
+        at org.apache.hadoop.hdfs.server.datanode.DataXceiver.run(DataXceiver.java:171)
+2012-11-08 18:07:02,163 ERROR org.apache.hadoop.hdfs.server.datanode.DataNode: DatanodeRegistration(10.18.10.56:50010, storageID=DS-1599419066-10.18.10.47-50010-1329122718923, infoPort=50075, ipcPort=50020):DataXceiverServer: Exiting due to:java.lang.OutOfMemoryError: unable to create new native thread
+        at java.lang.Thread.start0(Native Method)
+        at java.lang.Thread.start(Thread.java:640)
+        at org.apache.hadoop.hdfs.server.datanode.DataXceiverServer.run(DataXceiverServer.java:131)
+        at java.lang.Thread.run(Thread.java:662)
+
+
+2012-11-08 18:07:04,964 ERROR org.apache.hadoop.hdfs.server.datanode.DataNode: DatanodeRegistration(10.18.10.56:50010, storageID=DS-1599419066-10.18.10.47-50010-1329122718923, infoPort=50075, ipcPort=50020):DataXceiver
+java.io.InterruptedIOException: Interruped while waiting for IO on channel java.nio.channels.SocketChannel[closed]. 0 millis timeout left.
+        at org.apache.hadoop.net.SocketIOWithTimeout$SelectorPool.select(SocketIOWithTimeout.java:349)
+        at org.apache.hadoop.net.SocketIOWithTimeout.doIO(SocketIOWithTimeout.java:157)
+        at org.apache.hadoop.net.SocketInputStream.read(SocketInputStream.java:155)
+        at org.apache.hadoop.net.SocketInputStream.read(SocketInputStream.java:128)
+        at java.io.BufferedInputStream.read1(BufferedInputStream.java:256)
+        at java.io.BufferedInputStream.read(BufferedInputStream.java:317)
+        at java.io.DataInputStream.read(DataInputStream.java:132)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.readToBuf(BlockReceiver.java:287)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.readNextPacket(BlockReceiver.java:334)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.receivePacket(BlockReceiver.java:398)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.receiveBlock(BlockReceiver.java:577)
+
+        at org.apache.hadoop.hdfs.server.datanode.DataXceiver.writeBlock(DataXceiver.java:480)
+        at org.apache.hadoop.hdfs.server.datanode.DataXceiver.run(DataXceiver.java:171)
+
+2012-11-08 18:07:04,965 INFO org.apache.hadoop.hdfs.server.datanode.DataNode: PacketResponder blk_-1079258682690587867_32990729 1 Exception java.io.EOFException
+        at java.io.DataInputStream.readFully(DataInputStream.java:180)
+        at java.io.DataInputStream.readLong(DataInputStream.java:399)
+        at org.apache.hadoop.hdfs.protocol.DataTransferProtocol$PipelineAck.readFields(DataTransferProtocol.java:120)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver$PacketResponder.run(BlockReceiver.java:937)
+        at java.lang.Thread.run(Thread.java:662)
+
+2012-11-08 18:07:05,057 INFO org.apache.hadoop.hdfs.server.datanode.DataNode: PacketResponder blk_1523791863488769175_32972264 1 Exception java.nio.channels.ClosedChannelException
+        at sun.nio.ch.SocketChannelImpl.ensureWriteOpen(SocketChannelImpl.java:133)
+        at sun.nio.ch.SocketChannelImpl.write(SocketChannelImpl.java:324)
+        at org.apache.hadoop.net.SocketOutputStream$Writer.performIO(SocketOutputStream.java:55)
+        at org.apache.hadoop.net.SocketIOWithTimeout.doIO(SocketIOWithTimeout.java:142)
+        at org.apache.hadoop.net.SocketOutputStream.write(SocketOutputStream.java:146)
+        at org.apache.hadoop.net.SocketOutputStream.write(SocketOutputStream.java:107)
+        at java.io.BufferedOutputStream.flushBuffer(BufferedOutputStream.java:65)
+        at java.io.BufferedOutputStream.flush(BufferedOutputStream.java:123)
+        at java.io.DataOutputStream.flush(DataOutputStream.java:106)
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver$PacketResponder.run(BlockReceiver.java:1047)
+        at java.lang.Thread.run(Thread.java:662)
+
+2012-11-08 18:07:04,972 ERROR org.apache.hadoop.hdfs.server.datanode.DataNode: DatanodeRegistration(10.18.10.56:50010, storageID=DS-1599419066-10.18.10.47-50010-1329122718923, infoPort=5
+0075, ipcPort=50020):DataXceiver
+java.io.IOException: Interrupted receiveBlock
+        at org.apache.hadoop.hdfs.server.datanode.BlockReceiver.receiveBlock(BlockReceiver.java:622)
+        at org.apache.hadoop.hdfs.server.datanode.DataXceiver.writeBlock(DataXceiver.java:480)
+        at org.apache.hadoop.hdfs.server.datanode.DataXceiver.run(DataXceiver.java:171)
+
+2012-11-08 18:08:02,003 INFO org.apache.hadoop.hdfs.server.datanode.DataNode: Waiting for threadgroup to exit, active threads is 1
+2012-11-08 18:08:02,025 WARN org.apache.hadoop.util.Shell: Could not get disk usage information
+java.io.IOException: Cannot run program "du": java.io.IOException: error=12, Cannot allocate memory
+        at java.lang.ProcessBuilder.start(ProcessBuilder.java:460)
+        at org.apache.hadoop.util.Shell.runCommand(Shell.java:200)
+        at org.apache.hadoop.util.Shell.run(Shell.java:182)
+        at org.apache.hadoop.fs.DU.access$200(DU.java:29)
+        at org.apache.hadoop.fs.DU$DURefreshThread.run(DU.java:84)
+        at java.lang.Thread.run(Thread.java:662)
+Caused by: java.io.IOException: java.io.IOException: error=12, Cannot allocate memory
+        at java.lang.UNIXProcess.<init>(UNIXProcess.java:148)
+        at java.lang.ProcessImpl.start(ProcessImpl.java:65)
+        at java.lang.ProcessBuilder.start(ProcessBuilder.java:453)
+
+#+END_EXAMPLE
+
+接着之后就一直打印下面日志hang住了
+#+BEGIN_EXAMPLE
+2012-11-08 18:08:52,015 INFO org.apache.hadoop.hdfs.server.datanode.DataNode: Waiting for threadgroup to exit, active threads is 1
+
+#+END_EXAMPLE
+
+hdfs web页面上面显示dead node,但是实际上这个datanode进程还存活。原因估计也是因为不能够分配足够的内存出现这些问题的吧。
+
+最后可以登陆上去的原因，我猜想应该是datanode挂掉了，上面的regionserver暂时没有分配内存所以有足够的内存空间，init可以开辟tty。
+
+现在已经将这个值调整成为原来的值，也就是0。索性的是，在这个期间，这个修改对于线上的任务执行没有什么影响。
 
 *** /proc/sys/vm/overcommit_ratio
 如果overcommit_memory值为2的话，那么这个参数决定了系统的<可用内存>的大小。计算方式是 (Physical-RAM-Size) * ratio / 100 + (Swap-Size).
@@ -960,14 +1081,7 @@ Node 0, zone   Normal
   inactive_ratio:    1
 #+END_EXAMPLE
 
-** vmlinuz
-vmlinuz是可引导的、压缩的内核。“vm”代表“Virtual Memory”。Linux 支持虚拟内存，不像老的操作系统比如DOS有640KB内存的限制。Linux能够使用硬盘空间作为虚拟内存，因此得名“vm”。vmlinuz是可执行的Linux内核，它位于/boot/vmlinuz，它一般是一个软链接。vmlinux是未压缩的内核，vmlinuz是vmlinux的压缩文件。
-
-vmlinuz的建立有两种方式。一是编译内核时通过“make zImage”创建，然后通过：“cp /usr/src/linux-2.4/arch/i386/linux/boot/zImage /boot/vmlinuz”产生。zImage适用于小内核的情况，它的存在是为了向后的兼容性。二是内核编译时通过命令make bzImage创建，然后通过：“cp /usr/src/linux-2.4/arch/i386/linux/boot/bzImage /boot/vmlinuz”产生。bzImage是压缩的内核映像，需要注意，bzImage不是用bzip2压缩的，bzImage中的bz容易引起误解，bz表示“big zImage”。 bzImage中的b是“big”意思。
-
-zImage(vmlinuz)和bzImage(vmlinuz)都是用gzip压缩的。它们不仅是一个压缩文件，而且在这两个文件的开头部分内嵌有gzip解压缩代码。所以你不能用gunzip 或 gzip –dc解包vmlinuz。内核文件中包含一个微型的gzip用于解压缩内核并引导它。两者的不同之处在于，老的zImage解压缩内核到低端内存(第一个640K)，bzImage解压缩内核到高端内存(1M以上)。如果内核比较小，那么可以采用zImage 或bzImage之一，两种方式引导的系统运行时是相同的。大的内核采用bzImage，不能采用zImage。
-
-** 系统工具
+** system utility
 *** mpstat
 mpstat - Report processors related statistics.
 
@@ -2058,4 +2172,91 @@ dp       30586  0.0  0.0   7628  1020 pts/2    S+   08:59   0:00 grep --color=au
    - The D state basically means that the process is waiting for disk I/O, or other block I/O that can't be interrupted. Sometimes this means the kernel or device is feverishly trying to read a bad block (especially from an optical disk). Sometimes it means there's something else. The process cannot be killed until it gets out of the D state. Find out what it is waiting for and fix that. The easy way is to reboot. Sometimes removing the disk in question helps, but that can be rather dangerous: unfixable catastrophic hardware failure if you don't know what you're doing (read: smoke coming out).
 
 *** ulimit
-TODO(dirlt):
+    TODO(
+*** ntp
+   - ntp.org: Home of the Network Time Protocol http://www.ntp.org/ *NOTE(dirlt):这个项目应该是非常复杂的*
+
+ntp(network time protocol)是用来做机器时间同步的，包含下面几个组件：
+   - ntpd(ntp daemon) 后台进程可以用来从其他机器上面同步时间，也可以为其他机器提供时间同步。配置文件是/etc/ntpd.conf.
+   - ntpq(ntp query) 查询当前时间同步的情况。
+   - ntpdate(ntp date) 和其他机器进行同步，不可以和ntpd共同使用。
+
+#+BEGIN_EXAMPLE
+[dirlt@umeng-ubuntu-pc] > sudo /etc/init.d/ntp start
+ * Starting NTP server ntpd
+   ...done.
+[dirlt@umeng-ubuntu-pc] > sudo /usr/sbin/ntpdate cn.pool.ntp.org
+12 Nov 17:08:07 ntpdate[30044]: the NTP socket is in use, exiting
+[dirlt@umeng-ubuntu-pc] > sudo /etc/init.d/ntp stop
+ * Stopping NTP server ntpd
+   ...done.
+[dirlt@umeng-ubuntu-pc] > sudo /usr/sbin/ntpdate cn.pool.ntp.org
+12 Nov 17:08:22 ntpdate[30061]: adjust time server 202.112.31.197 offset -0.071953 sec
+[dirlt@umeng-ubuntu-pc] > ntpq -p
+     remote           refid      st t when poll reach   delay   offset  jitter
+==============================================================================
+ netmon2.dcs1.bi 121.182.147.191  2 u    7   64    1  405.743   10.731   0.000
+ 202-150-213-154 133.243.238.163  2 u    8   64    1  171.722  -131.73   0.000
+ dns1.synet.edu. 223.255.185.2    2 u    7   64    1  166.558  -39.375   0.000
+ Hshh.org        66.220.9.122     2 u    6   64    1   41.734  -109.29   0.000
+ europium.canoni 193.79.237.14    2 u    4   64    1  673.181  -240.24   0.000
+#+END_EXAMPLE
+
+一个最重要的问题就是，daemon以什么时间间隔来和指定的server进行同步。
+   - How does it work? http://www.ntp.org/ntpfaq/NTP-s-algo.htm#AEN2082
+ntp是可以在minpoll和maxpoll指定的时间间隔内来选择同步间隔的，默认使用minpoll也就是64seconds.
+
+其实如果不考虑为其他机器提供服务的话，完全可以在cron里面使用ntpdate来进行同步。
+
+** kernel
+*** vmlinuz
+vmlinuz是可引导的、压缩的内核。“vm”代表“Virtual Memory”。Linux 支持虚拟内存，不像老的操作系统比如DOS有640KB内存的限制。Linux能够使用硬盘空间作为虚拟内存，因此得名“vm”。vmlinuz是可执行的Linux内核，它位于/boot/vmlinuz，它一般是一个软链接。vmlinux是未压缩的内核，vmlinuz是vmlinux的压缩文件。
+
+vmlinuz的建立有两种方式。一是编译内核时通过“make zImage”创建，然后通过：“cp /usr/src/linux-2.4/arch/i386/linux/boot/zImage /boot/vmlinuz”产生。zImage适用于小内核的情况，它的存在是为了向后的兼容性。二是内核编译时通过命令make bzImage创建，然后通过：“cp /usr/src/linux-2.4/arch/i386/linux/boot/bzImage /boot/vmlinuz”产生。bzImage是压缩的内核映像，需要注意，bzImage不是用bzip2压缩的，bzImage中的bz容易引起误解，bz表示“big zImage”。 bzImage中的b是“big”意思。
+
+zImage(vmlinuz)和bzImage(vmlinuz)都是用gzip压缩的。它们不仅是一个压缩文件，而且在这两个文件的开头部分内嵌有gzip解压缩代码。所以你不能用gunzip 或 gzip –dc解包vmlinuz。内核文件中包含一个微型的gzip用于解压缩内核并引导它。两者的不同之处在于，老的zImage解压缩内核到低端内存(第一个640K)，bzImage解压缩内核到高端内存(1M以上)。如果内核比较小，那么可以采用zImage或bzImage之一，两种方式引导的系统运行时是相同的。大的内核采用bzImage，不能采用zImage。
+
+** application
+*** 一个返回值问题
+--------------------
+首先看下面一段Java程序
+#+BEGIN_SRC Java
+/* coding:utf-8
+ * Copyright (C) dirlt
+ */
+
+public class X{
+  public static void main(String[] args) {
+    System.exit(1);
+  }
+}
+#+END_SRC
+
+然后这个Java程序被Python调用，判断这个打印值
+#+BEGIN_SRC Python
+#!/usr/bin/env python
+#coding:utf-8
+#Copyright (C) dirlt
+
+import os
+print os.system('java X')
+
+#+END_SRC
+
+返回值不为0而是256，对此解释是这样的
+#+BEGIN_EXAMPLE
+a 16-bit number, whose low byte is the signal number that killed the process, and whose high byte is the exit status (if the signal number is zero); the high bit of the low byte is set if a core file was produced. 
+#+END_EXAMPLE
+
+--------------------
+然后下面这段Python程序，使用echo $?判断返回值为0而不是256
+#+BEGIN_SRC Python
+#!/usr/bin/env python
+#coding:utf-8
+#Copyright (C) dirlt
+
+code=256
+exit(code)
+
+#+END_SRC
+
