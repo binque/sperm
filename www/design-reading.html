@@ -7,11 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="design-reading"/>
 <meta name="generator" content="Org-mode"/>
-<<<<<<< HEAD
-<meta name="generated" content="2012-11-08 22:13:11 CST"/>
-=======
-<meta name="generated" content="2012-11-12 15:50:05 CST"/>
->>>>>>> 64e72866a54e6fc640bcb12df90462513a307854
+<meta name="generated" content="2012-11-13 10:26:49 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -259,17 +255,42 @@ In this context a critical bug is a bug that corrupts data, that crashes the ser
 
 <p><a href="http://monkey.org/~marius/talks/twittersystems/">http://monkey.org/~marius/talks/twittersystems/</a>
 </p>
+<p>
+主要围绕下面几个方面：
+</p><ul>
+<li>Clean concurrent programming model: simple, safe, and modular programs; uniform programming model. <b>something about scala</b>
+</li>
+<li>Message passing architecture: High concurrency, fault tolerant, performant. <b>something about rpc in finagle and scala</b>
+</li>
+<li>Protocol support: largely agnostic, support HTTP, thrift, memcache, redis, MySQL&hellip; <b>???</b>
+</li>
+<li>Observability: for diagnostics, profiling, optimization 个人感觉在这方面做得不错值得借鉴和学习：
+<ul>
+<li>统计数据可以通过http接口访问到(ostrich)，并且由viz展现出来。
+</li>
+<li>rpc交互追踪可以通过dapper的开源实现zipkin完成。
+</li>
+<li>profile数据同样可以通过http接口访问到，使用pprof来做分析。
+</li>
+<li>Tracing, cancellation, thread-biasing pools, etc. with zero user code change 并且这些功能不需要用户修改代码
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+<p>
+<b>TODO（dirlt）：其实我很想知道scala语言本身对于他们的系统架构的影响有多大？不过从作者花这么长的篇幅来讨论scala语言，我觉得今后可以在实践中好好体会</b>
+</p>
+
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<<<<<<< HEAD
-<p class="date">Date: 2012-11-08 22:13:11 CST</p>
-=======
-<p class="date">Date: 2012-11-12 15:50:05 CST</p>
->>>>>>> 64e72866a54e6fc640bcb12df90462513a307854
+<p class="date">Date: 2012-11-13 10:26:49 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

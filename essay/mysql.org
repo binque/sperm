@@ -1,8 +1,7 @@
 * mysql
 http://www.mysql.com/
 
-** FAQ
-*** MySQL半同步复制
+** MySQL半同步复制
    - http://www.db110.com/?p=3364
    - http://code.google.com/p/google-mysql-tools/wiki/SemiSyncReplication
    - http://code.google.com/p/google-mysql-tools/wiki/SemiSyncReplicationDesign

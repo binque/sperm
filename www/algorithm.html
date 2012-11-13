@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="algorithm"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-26 14:21:27 CST"/>
+<meta name="generated" content="2012-11-13 10:29:33 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -100,13 +100,14 @@
 <ul>
 <li><a href="#sec-1">1 algorithm</a>
 <ul>
-<li><a href="#sec-1-1">1.1 glibc strlen实现分析</a></li>
-<li><a href="#sec-1-2">1.2 一致性hash(Consistent hashing)</a></li>
+<li><a href="#sec-1-1">1.1 glibc strlen code</a></li>
+<li><a href="#sec-1-2">1.2 consistent hashing</a></li>
 <li><a href="#sec-1-3">1.3 树最长距离</a></li>
-<li><a href="#sec-1-4">1.4 rsync的核心算法</a></li>
+<li><a href="#sec-1-4">1.4 rsync core algorithm</a></li>
 <li><a href="#sec-1-5">1.5 开门抽奖问题</a></li>
 <li><a href="#sec-1-6">1.6 simhash算法原理和文档近似判断</a></li>
 <li><a href="#sec-1-7">1.7 等概率选取未知长度的链表中的元素</a></li>
+<li><a href="#sec-1-8">1.8 HyperLogLog</a></li>
 </ul>
 </li>
 </ul>
@@ -121,7 +122,7 @@
 </div>
 
 <div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> glibc strlen实现分析</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> glibc strlen code</h3>
 <div class="outline-text-3" id="text-1-1">
 
 <p>参考链接 <a href="http://www.kuqin.com/language/20071113/2308.html">http://www.kuqin.com/language/20071113/2308.html</a>. 这里和链接有点不太一样的就是，这个版本glibc实现考虑了非ASCII字符。
@@ -224,7 +225,7 @@ const char *str;
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 一致性hash(Consistent hashing)</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> consistent hashing</h3>
 <div class="outline-text-3" id="text-1-2">
 
 <ul>
@@ -240,7 +241,9 @@ const char *str;
 </li>
 </ul>
 
-<p>The basic idea behind the consistent hashing algorithm is to hash both objects and caches using the same hash function.The reason to do this is to map the cache to an interval, which will contain a number of object hashes. If the cache is removed then its interval is taken over by a cache with an adjacent interval. All the other caches remain unchanged.
+
+<p>
+The basic idea behind the consistent hashing algorithm is to hash both objects and caches using the same hash function.The reason to do this is to map the cache to an interval, which will contain a number of object hashes. If the cache is removed then its interval is taken over by a cache with an adjacent interval. All the other caches remain unchanged.
 </p>
 <p>
 一致性hash基本思想就是将所有对象都使用同样的hash函数进行hash(包括要被分布的对象，以及分布到的位置）。如果某个分布位置被移除的话，那么原本在这个位置上的对象就会分布在临近的分布位置上，而其他的对象却不用移动自己的位置。如果分布位置之间interval间隔过大的话那么可以制作virtual node来使得interval映射足够小，而这些virtual node映射到同一个node节点上面。实际上上述文章中也进行实验证明interval小的话那么standard deviations也变小了，每个node均摊的object基本均匀了：）。
@@ -284,7 +287,7 @@ def TreeDistance(root):
 </div>
 
 <div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> rsync的核心算法</h3>
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> rsync core algorithm</h3>
 <div class="outline-text-3" id="text-1-4">
 
 <ul>
@@ -427,13 +430,110 @@ for ( p=list; p!=NULL; p=p-&gt;next ){
 <p>因此倒数第二个元素被选出的概率为 1/(n-1) * (n-1)/n = 1/n. 同理计算对于每一个元素的概率都是 1/n.
 </p>
 </div>
+
+</div>
+
+<div id="outline-container-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> HyperLogLog</h3>
+<div class="outline-text-3" id="text-1-8">
+
+<ul>
+<li><a href="http://algo.inria.fr/flajolet/Publications/FlFuGaMe07.pdf">http://algo.inria.fr/flajolet/Publications/FlFuGaMe07.pdf</a>
+</li>
+<li>Fast, Cheap, and 98% Right: Cardinality Estimation for Big Data | Metamarkets <a href="http://metamarkets.com/2012/fast-cheap-and-98-right-cardinality-estimation-for-big-data/">http://metamarkets.com/2012/fast-cheap-and-98-right-cardinality-estimation-for-big-data/</a>
+</li>
+<li>Damn Cool Algorithms: Cardinality Estimation - Nick's Blog <a href="http://blog.notdot.net/2012/09/Dam-Cool-Algorithms-Cardinality-Estimation">http://blog.notdot.net/2012/09/Dam-Cool-Algorithms-Cardinality-Estimation</a>
+</li>
+<li>Sketch of the Day: HyperLogLog — Cornerstone of a Big Data Infrastructure – AK Tech Blog <a href="http://blog.aggregateknowledge.com/2012/10/25/sketch-of-the-day-hyperloglog-cornerstone-of-a-big-data-infrastructure/">http://blog.aggregateknowledge.com/2012/10/25/sketch-of-the-day-hyperloglog-cornerstone-of-a-big-data-infrastructure/</a>
+</li>
+</ul>
+
+
+
+<hr/>
+<p>
+这个算法主要是来进行去重的，前提是在big data下面并且内存存在限制。 <b>算法的假设和原理如下</b> ：
+</p>
+<p class="verse">
+Given a random uniform distribution for likelihoods of N 0s and 1s, you can extract a probability distribution for the likelihood of a specific phenomenon.  The phenomenon we care about is the maximum index of a 1 bit.  Specifically, we expect the following to be true:<br/>
+<br/>
+50% of hashed values will look like this: 1xxxxxxx…x<br/>
+25% of hashed values will look like this: 01xxxxxx…x<br/>
+12.5% of hashed values will look like this: 001xxxxxxxx…x<br/>
+6.25% of hashed values will look like this: 0001xxxxxxxx…x<br/>
+<br/>
+So, naively speaking, we expect that if we were to hash 8 unique things, one of them will start with 001.  If we were to hash 4 unique things, we would expect one to start with 01.  This expectation can also be inverted: if the “highest” index of a 1 is 2 (we start counting with index 1 as the leftmost bit location), then we probably saw ~4 unique values.  If the highest index is 4, we probably saw ~16 unique values.  This level of approximation is pretty coarse and it is pretty easy to see that it is only approximate at best, but it is the basic idea behind HyperLogLog.<br/>
+<br/>
+The adjustment HyperLogLog makes is that it essentially takes the above algorithm and introduces multiple “buckets”.  That is, you can take the first k bits of the hashed value and use that as a bucket index, then you keep track of the max(index of 1) for the remaining bits in that bucket.  The authors then provide some math for converting the values in all of the buckets back into an approximate cardinality.<br/>
+<br/>
+Another interesting thing about this algorithm is that it introduces two parameters to adjust the accuracy of the approximation:<br/>
+1)   Increasing the number of buckets (the k) increases the accuracy of the approximation<br/>
+2)   Increasing the number of bits of your hash increases the highest possible number you can accurately approximate<br/>
+</p>
+
+
+
+<hr/>
+<p>
+<b>算法代码如下：</b>
+</p>
+
+
+<pre class="src src-Python">def trailing_zeroes(num):
+  <span style="color: #00ffff; font-style: italic;">"""Counts the number of trailing 0 bits in num."""</span>
+  if num == 0:
+    return 32 # Assumes 32 bit integer inputs!
+  p = 0
+  while (num &gt;&gt; p) &amp; 1 == 0:
+    p += 1
+  return p
+
+def estimate_cardinality(values, k):
+  <span style="color: #00ffff; font-style: italic;">"""Estimates the number of unique elements in the input set values.</span>
+
+<span style="color: #00ffff; font-style: italic;">  Arguments:</span>
+<span style="color: #00ffff; font-style: italic;">    values: An iterator of hashable elements to estimate the cardinality of.</span>
+<span style="color: #00ffff; font-style: italic;">    k: The number of bits of hash to use as a bucket number; there will be 2**k buckets.</span>
+<span style="color: #00ffff; font-style: italic;">  """</span>
+  num_buckets = 2 ** k
+  max_zeroes = [0] * num_buckets
+  for value in values:
+    h = hash(value)
+    bucket = h &amp; (num_buckets - 1) # Mask out the k least significant bits as bucket ID
+    bucket_hash = h &gt;&gt; k
+    max_zeroes[bucket] = max(max_zeroes[bucket], trailing_zeroes(bucket_hash))
+  return 2 ** (float(sum(max_zeroes)) / num_buckets) * num_buckets * 0.79402
+</pre>
+
+
+<p>
+这个算法上面存在一些差别，就是这个算法实现是假设末尾为0的概率为0.5,末尾为10的概率为0.25，以此类推。最后的0.79402应该是调整系数。
+</p>
+<p>
+另外还有一个SuperLogLog针对HyperLogLog做了一些改进降低了错误的概率：
+</p><ul>
+<li>去掉30%的最大的bucket，只是计算剩余70%的bucket
+</li>
+<li>max_zeroes的计算不是使用geometric mean而是使用harmonic mean
+</li>
+</ul>
+
+
+
+<hr/>
+<p>
+<b>分布式计算</b>
+</p>
+<p>
+可以让每个机器各自维护各自的bucket，最后每个机器上面属于相同的bucket index的bucket进行merge即可，so damn cool!.
+</p></div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-10-26 14:21:27 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-11-13 10:29:33 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

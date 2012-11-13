@@ -1,5 +1,5 @@
 * algorithm
-** glibc strlen实现分析
+** glibc strlen code
 参考链接 http://www.kuqin.com/language/20071113/2308.html. 这里和链接有点不太一样的就是，这个版本glibc实现考虑了非ASCII字符。
 
 #+BEGIN_SRC C++
@@ -92,12 +92,13 @@ const char *str;
 }
 #+END_SRC
 
-** 一致性hash(Consistent hashing)
+** consistent hashing
    - http://en.wikipedia.org/wiki/Consistent_hash
    - http://www.tomkleinpeter.com/2008/03/17/programmers-toolbox-part-3-consistent-hashing/
    - http://cn.last.fm/user/RJ/journal/2007/04/10/rz_libketama_-_a_consistent_hashing_algo_for_memcache_clients
    - http://www.martinbroadhurst.com/Consistent-Hash-Ring.html
    - http://www.lexemetech.com/2007/11/consistent-hashing.html
+
 The basic idea behind the consistent hashing algorithm is to hash both objects and caches using the same hash function.The reason to do this is to map the cache to an interval, which will contain a number of object hashes. If the cache is removed then its interval is taken over by a cache with an adjacent interval. All the other caches remain unchanged.
 
 一致性hash基本思想就是将所有对象都使用同样的hash函数进行hash(包括要被分布的对象，以及分布到的位置）。如果某个分布位置被移除的话，那么原本在这个位置上的对象就会分布在临近的分布位置上，而其他的对象却不用移动自己的位置。如果分布位置之间interval间隔过大的话那么可以制作virtual node来使得interval映射足够小，而这些virtual node映射到同一个node节点上面。实际上上述文章中也进行实验证明interval小的话那么standard deviations也变小了，每个node均摊的object基本均匀了：）。
@@ -125,7 +126,7 @@ def TreeDistance(root):
 
 对于返回元组来说的话(a,b,c)，a表示树的最长距离，b表示左子树的高度，c表示右子树的高度。
 
-** rsync的核心算法
+** rsync core algorithm
    - http://coolshell.cn/articles/7425.html
 
 首先针对dst文件按照block分别求得checksum和md5.其中checksum用来进行弱校验，md5用来进行强校验。所谓弱校验就是如果checksum不等的话那么文件内容必然不相同，强校验就是如果md5相同的话那么文件内容必然相同。但是checksum还有一个好处，就是可以根据[k,k+n)的checksum,很快地计算出[k+1,k+n+1)的checksum.（非常类似于滑动窗口的工作方式）这点对于在src文件中查找相同块非常重要。将每个块的(checksum,md5)传输到源端。
@@ -189,3 +190,67 @@ for ( p=list; p!=NULL; p=p->next ){
    - 并且确保倒数第一个元素没有被 *选中* 。因为最后一个选中概率为1/n，所以最后一个元素不被选中概率为(n-1)/n
 因此倒数第二个元素被选出的概率为 1/(n-1) * (n-1)/n = 1/n. 同理计算对于每一个元素的概率都是 1/n.
 
+** HyperLogLog
+   - http://algo.inria.fr/flajolet/Publications/FlFuGaMe07.pdf
+   - Fast, Cheap, and 98% Right: Cardinality Estimation for Big Data | Metamarkets http://metamarkets.com/2012/fast-cheap-and-98-right-cardinality-estimation-for-big-data/
+   - Damn Cool Algorithms: Cardinality Estimation - Nick's Blog http://blog.notdot.net/2012/09/Dam-Cool-Algorithms-Cardinality-Estimation
+   - Sketch of the Day: HyperLogLog — Cornerstone of a Big Data Infrastructure – AK Tech Blog http://blog.aggregateknowledge.com/2012/10/25/sketch-of-the-day-hyperloglog-cornerstone-of-a-big-data-infrastructure/
+
+--------------------
+这个算法主要是来进行去重的，前提是在big data下面并且内存存在限制。 *算法的假设和原理如下* ：
+#+BEGIN_VERSE
+Given a random uniform distribution for likelihoods of N 0s and 1s, you can extract a probability distribution for the likelihood of a specific phenomenon.  The phenomenon we care about is the maximum index of a 1 bit.  Specifically, we expect the following to be true:
+
+50% of hashed values will look like this: 1xxxxxxx…x
+25% of hashed values will look like this: 01xxxxxx…x
+12.5% of hashed values will look like this: 001xxxxxxxx…x
+6.25% of hashed values will look like this: 0001xxxxxxxx…x
+
+So, naively speaking, we expect that if we were to hash 8 unique things, one of them will start with 001.  If we were to hash 4 unique things, we would expect one to start with 01.  This expectation can also be inverted: if the “highest” index of a 1 is 2 (we start counting with index 1 as the leftmost bit location), then we probably saw ~4 unique values.  If the highest index is 4, we probably saw ~16 unique values.  This level of approximation is pretty coarse and it is pretty easy to see that it is only approximate at best, but it is the basic idea behind HyperLogLog.
+
+The adjustment HyperLogLog makes is that it essentially takes the above algorithm and introduces multiple “buckets”.  That is, you can take the first k bits of the hashed value and use that as a bucket index, then you keep track of the max(index of 1) for the remaining bits in that bucket.  The authors then provide some math for converting the values in all of the buckets back into an approximate cardinality.
+
+Another interesting thing about this algorithm is that it introduces two parameters to adjust the accuracy of the approximation:
+1)   Increasing the number of buckets (the k) increases the accuracy of the approximation
+2)   Increasing the number of bits of your hash increases the highest possible number you can accurately approximate
+#+END_VERSE
+
+--------------------
+*算法代码如下：*
+#+BEGIN_SRC Python
+def trailing_zeroes(num):
+  """Counts the number of trailing 0 bits in num."""
+  if num == 0:
+    return 32 # Assumes 32 bit integer inputs!
+  p = 0
+  while (num >> p) & 1 == 0:
+    p += 1
+  return p
+
+def estimate_cardinality(values, k):
+  """Estimates the number of unique elements in the input set values.
+
+  Arguments:
+    values: An iterator of hashable elements to estimate the cardinality of.
+    k: The number of bits of hash to use as a bucket number; there will be 2**k buckets.
+  """
+  num_buckets = 2 ** k
+  max_zeroes = [0] * num_buckets
+  for value in values:
+    h = hash(value)
+    bucket = h & (num_buckets - 1) # Mask out the k least significant bits as bucket ID
+    bucket_hash = h >> k
+    max_zeroes[bucket] = max(max_zeroes[bucket], trailing_zeroes(bucket_hash))
+  return 2 ** (float(sum(max_zeroes)) / num_buckets) * num_buckets * 0.79402
+#+END_SRC
+
+这个算法上面存在一些差别，就是这个算法实现是假设末尾为0的概率为0.5,末尾为10的概率为0.25，以此类推。最后的0.79402应该是调整系数。
+
+另外还有一个SuperLogLog针对HyperLogLog做了一些改进降低了错误的概率：
+   - 去掉30%的最大的bucket，只是计算剩余70%的bucket
+   - max_zeroes的计算不是使用geometric mean而是使用harmonic mean
+
+--------------------
+*分布式计算*
+
+可以让每个机器各自维护各自的bucket，最后每个机器上面属于相同的bucket index的bucket进行merge即可，so damn cool!.
