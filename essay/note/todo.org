@@ -47,4 +47,4 @@
    - http://highscalability.com/blog/2012/2/13/tumblr-architecture-15-billion-page-views-a-month-and-harder.html
 ** TODO 29玫瑰
 ** TODO Deconstructing Recommender Systems - IEEE Spectrum
-http://spectrum.ieee.org/computing/software/deconstructing-recommender-systems
+   - http://spectrum.ieee.org/computing/software/deconstructing-recommender-systems

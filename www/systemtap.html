@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>systemtap</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="systemtap"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2012-11-13 11:59:59 CST"/>
+<meta name="author" content="dirtysalt"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">systemtap</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 systemtap</a>
+<ul>
+<li><a href="#sec-1-1">1.1 Introduction</a></li>
+<li><a href="#sec-1-2">1.2 probe</a></li>
+<li><a href="#sec-1-3">1.3 language</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> systemtap</h2>
+<div class="outline-text-2" id="text-1">
+
+<ul>
+<li>SystemTap <a href="http://sourceware.org/systemtap/">http://sourceware.org/systemtap/</a>
+</li>
+<li>SystemTap <a href="http://sourceware.org/systemtap/documentation.html">http://sourceware.org/systemtap/documentation.html</a>
+</li>
+<li>Linux 自检和 SystemTap <a href="http://www.ibm.com/developerworks/cn/linux/l-systemtap/">http://www.ibm.com/developerworks/cn/linux/l-systemtap/</a>
+</li>
+<li>IBM Redbooks | SystemTap: Instrumenting the Linux Kernel for Analyzing Performance and Functional Problems <a href="http://www.redbooks.ibm.com/abstracts/redp4469.html">http://www.redbooks.ibm.com/abstracts/redp4469.html</a>
+</li>
+<li>Architecture of systemtap a Linux trace probe tool <a href="http://sourceware.org/systemtap/archpaper.pdf">http://sourceware.org/systemtap/archpaper.pdf</a>
+</li>
+<li>Dynamic Instrumentation of Production Systems <a href="http://static.usenix.org/event/usenix04/tech/general/full_papers/cantrill/cantrill_html/">http://static.usenix.org/event/usenix04/tech/general/full_papers/cantrill/cantrill_html/</a>
+</li>
+<li>sudo apt-get install systemtap # 直接使用apt安装
+<ul>
+<li>sudo apt-get install elfutils # 可能需要安装
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Introduction</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p>systemtap的工作原理是使用linux提供的kprobe接口 <b>TODO(dirlt):more about kprobe</b> ，将用户需要观测linux系统的行为转换成为c（使用kprobe)并且编译成为kernel object然后运行。 
+systemtap使用一种触发式的工作方式，通过安装探针（probe）来监控系统的行为，一旦探针事件出现的话就会触发对应的代码。代码使用自己定义的语言，和C语言非常类似。
+</p>
+<p>
+<img src="./images/systemtap-prepare-workflow.gif"  alt="./images/systemtap-prepare-workflow.gif" />
+</p><ul>
+<li>stap 流程从将脚本转换成解析树开始 (pass 1)
+</li>
+<li>然后使用细化（elaboration）步骤 (pass 2) 中关于当前运行的内核的符号信息解析符号
+</li>
+<li>接下来转换流程将解析树转换成 C 源代码 (pass 3) 并使用解析后的信息和 tapset 脚本（SystemTap 定义的库，包含有用的功能）
+</li>
+<li>stap 的最后步骤是构造使用本地内核模块构建进程的内核模块 (pass 4)。
+</li>
+</ul>
+
+
+<p>
+<img src="./images/systemtap-run-workflow.gif"  alt="./images/systemtap-run-workflow.gif" />
+</p><ul>
+<li>staprun 负责启动kernel object
+</li>
+<li>stapio 负责收集kernel object的输出
+</li>
+<li>执行期间中断的话将执行清除进程，卸载模块并退出所有相关的实用程序
+</li>
+</ul>
+
+
+<p>
+一个使用systemtap的简单例子
+</p>
+
+
+<pre class="example">[dirlt@umeng-ubuntu-pc] &gt;  sudo stap -ve 'probe begin { log("hello world") exit() }'
+Pass 1: parsed user script and 76 library script(s) using 92476virt/22592res/2616shr kb, in 80usr/0sys/85real ms.
+Pass 2: analyzed script: 1 probe(s), 2 function(s), 0 embed(s), 0 global(s) using 93000virt/23472res/2816shr kb, in 0usr/0sys/4real 
+ms.                                                                                                                                
+Pass 3: translated to C into "/tmp/stapbx8Gpk/stap_7703b9bd08bd359932cf8da12019f6d8_813.c" using 93000virt/23628res/2964shr kb, in 0
+usr/0sys/0real ms.                                                                                                                 
+Pass 4: compiled C into "stap_7703b9bd08bd359932cf8da12019f6d8_813.ko" in 3240usr/510sys/4048real ms.
+Pass 5: starting run.
+hello world
+Pass 5: run completed in 10usr/10sys/600real ms.
+
+[dirlt@umeng-ubuntu-pc] &gt;  sudo stap -ve 'probe begin { log("hello world") exit() }'
+Pass 1: parsed user script and 76 library script(s) using 92476virt/22592res/2616shr kb, in 80usr/10sys/85real ms.
+Pass 2: analyzed script: 1 probe(s), 2 function(s), 0 embed(s), 0 global(s) using 93000virt/23472res/2816shr kb, in 0usr/0sys/4real 
+ms.                                                                                                                                
+Pass 3: using cached /home/dirlt/.systemtap/cache/77/stap_7703b9bd08bd359932cf8da12019f6d8_813.c
+Pass 4: using cached /home/dirlt/.systemtap/cache/77/stap_7703b9bd08bd359932cf8da12019f6d8_813.ko
+Pass 5: starting run.
+hello world
+Pass 5: run completed in 0usr/10sys/586real ms.
+</pre>
+
+<p>
+可以看到在第二次运行的时候systemtap会去读取缓存内容。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> probe</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<p>TODO(dirlt):
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> language</h3>
+<div class="outline-text-3" id="text-1-3">
+
+<p>TODO(dirlt):
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2012-11-13 11:59:59 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>
+<html><body>
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F54a700ad7035f6e485eaf2300641e7e9' type='text/javascript'%3E%3C/script%3E"));
+</script></body></html>

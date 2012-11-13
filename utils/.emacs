@@ -415,3 +415,6 @@
 (if mac-system
     (global-set-key [(f10)] 'ns-toggle-fullscreen))
 
+;;; systemtap.
+(require 'systemtap-mode)
+(add-to-list 'auto-mode-alist '("\\.stp$" . systemtap-mode))

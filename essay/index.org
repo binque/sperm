@@ -64,6 +64,7 @@ file:./images/valve-logo.jpg
    - [[file:folly.org][folly]] Folly is an open-source C++ library developed and used at Facebook.
    - [[file:flex-bison.org][flex-bison]] 可以用来书写词法和语法分析器，bison支持的语法是LALR（1）。
    - [[file:recommender-system.org][recommender-system]] 一些关于推荐系统东西，里面大部分都是介绍性质的文章。
+   - [[file:systemtap.org][systemtap]] 可以用来深度地观察linux操作系统。
 
 ** Network Programming
    - [[file:unp.org][unp]] Unix网络编程(Unix Network Programming),W. Richard Stevens的又一神作。笔记里面只是对于TCP原理有比较详细讨论，这部分笔记也包含了TCP Illustrated v1里面和TCP相关的章节内容。对于编程方面也着重TCP socket使用，毕竟在大部分应用场景下面我们选用TCP模型更多，并且TCP里面有很多非常琐碎的知识。
