@@ -18,6 +18,19 @@ POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="ht
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
+  <distributionManagement>    
+    <repository>
+      <id>releases</id>
+      <name>Release Repository</name>
+      <url>http://nexus:8088/nexus/content/repositories/releases/</url>
+    </repository>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <name>Snapshot Repository</name>
+      <url>http://nexus:8088/nexus/content/repositories/snapshots/</url>
+    </snapshotRepository>
+  </distributionManagement>
+  
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
