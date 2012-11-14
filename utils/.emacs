@@ -342,6 +342,7 @@
 ;; #+CAPTION: 表格标题，可以用在图片或者是表格上面
 ;; S-M-RET 在同级下面创建一个TODO项目
 ;; S-up/down 修改项目的优先级
+(setq load-path (cons "~/.emacs.d/org-7.9.2/" load-path))
 (require 'org-install)
 (require 'org-publish)
 (define-key global-map "\C-ca" 'org-agenda)
@@ -367,6 +368,7 @@
          :publishing-directory "~/github/sperm/www/note"
          :section-numbers 't
          :table-of-contents 't)))
+
 ;; auto indent
 ;;(setq org-startup-indented t)
 (global-set-key "\C-coi" 'org-indent-mode) ;; 切换indent视图

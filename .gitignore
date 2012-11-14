@@ -11,14 +11,14 @@
 *.project
 *.sconsign.dblite
 
-.emacs.d/tramp
-.emacs.d/ac-comphist.dat
-.emacs.d/auto-save-list/
-.emacs.d/session.*
-.emacs.d/.session
-.emacs.d/anything-c-adaptive-history
-.emacs.d/org-clock-save.el
-utils/.emacs.d
+utils/.emacs.d/tramp
+utils/.emacs.d/ac-comphist.dat
+utils/.emacs.d/auto-save-list/
+utils/.emacs.d/session.*
+utils/.emacs.d/.session
+utils/.emacs.d/anything-c-adaptive-history
+utils/.emacs.d/org-clock-save.el
+
 
 essay/images/.DS_Store
 

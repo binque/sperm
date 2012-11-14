@@ -44,3 +44,7 @@
 ** TODO 更换招行储蓄卡以及网银
 ** TODO 更换Android手机
 ** TODO 安装一些生活类型服务
+** TODO 整理impala
+** TODO 整理druid
+** TODO 搞定hadoop1集群任务
+** TODO 阅读systemtap论文，简单阅读=D
