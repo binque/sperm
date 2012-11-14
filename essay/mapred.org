@@ -565,6 +565,39 @@ public class TestHBaseOutputAndHDFSOutputMR extends TestCase {
 
 #+END_SRC
 
+*** 获取集群运行状况
+可以通过JobClient这个对象来获得集群和上面的作业运行状况，更多信息可以详细阅读一下JobClient的API部分
+#+BEGIN_SRC Java
+package com.dirlt.mapreduce;
+
+import java.io.IOException;
+
+import org.apache.hadoop.mapred.ClusterStatus;
+import org.apache.hadoop.mapred.JobClient;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.JobStatus;
+
+public class Cluster {
+    public static void main(String[] args) throws IOException {
+        JobConf jconf = new JobConf();
+        JobClient jclient = new JobClient(jconf);
+        JobStatus[] js = jclient.getAllJobs();
+        for (JobStatus j : js) {
+            System.out.println("JOB=jobid:" + j.getJobID().toString() + ",setup:"
+                    + j.setupProgress() + ",cleanup:" + j.cleanupProgress()
+                    + ",map:" + j.mapProgress() + ",reduce:"
+                    + j.reduceProgress() + ",status:"
+                    + JobStatus.getJobRunState(j.getRunState()));
+        }
+        ClusterStatus cs = jclient.getClusterStatus(true);
+        System.out.println("CSR=map-cap:" + cs.getMaxMapTasks() + ",map-used:"
+                + cs.getMapTasks() + ",reduce-cap:" + cs.getMaxReduceTasks()
+                + ",reduce-used:" + cs.getReduceTasks());
+    }
+}
+
+#+END_SRC
+
 ** Source Analysis
 *** task如何向tasktracker进行定时汇报
    - task不管是mapper还是reducer，和mr框架相关的内容都包含在了Context里面。

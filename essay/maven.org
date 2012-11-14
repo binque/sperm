@@ -5,7 +5,6 @@
 参考资源
    - http://maven.apache.org/
    - http://www.ibm.com/developerworks/cn/education/java/j-mavenv2/
-
 ** maven能够用来做什么
   - 理解项目通常是如何构建的。
   - 利用其内嵌的项目知识简化和便利项目构建。
@@ -1017,3 +1016,15 @@ under the License.
 </settings>
 
 #+END_SRC
+
+** 安装maven
+如果使用的是ubuntu/debian的话，可以直接使用apt-get install maven来完成。
+
+*maven3和maven2之间有不兼容的地方，不仅是语法还有插件*. 之前安装cobertura时候发现运行不了，最后确定问题在于使用的是maven3。
+当时系统安装的是maven3所以自己需要手动安装一个maven2，这种情况应该还是比较多的，所以这也就是单独编写这节的原因。下面是通过binary-package手动安装的过程：
+   - 下载binary package
+     - 3.0.4 http://apache.etoak.com/maven/maven-3/3.0.4/binaries/apache-maven-3.0.4-bin.tar.gz
+     - 2.2.1 http://mirror.bjtu.edu.cn/apache/maven/maven-2/2.2.1/binaries/apache-maven-2.2.1-bin.tar.gz
+   - export M2_HOME=/home/dirlt/utils/apache-maven-2.2.1/
+   - export PATH=/home/dirlt/utils/apache-maven-2.2.1/bin:$PATH 
+   - 如果已经存在一个.m2 repository的话，那么可以直接在$M2_HOME下面做一个软链接

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="mapred"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-12 21:07:31 CST"/>
+<meta name="generated" content="2012-11-14 11:36:55 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -112,6 +112,7 @@
 <ul>
 <li><a href="#sec-1-2-1">1.2.1 验证多路输入正确性</a></li>
 <li><a href="#sec-1-2-2">1.2.2 验证多路输出正确性</a></li>
+<li><a href="#sec-1-2-3">1.2.3 获取集群运行状况</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-3">1.3 Source Analysis</a>
@@ -860,6 +861,49 @@ public class TestHBaseOutputAndHDFSOutputMR extends TestCase {
 
 
 </div>
+
+</div>
+
+<div id="outline-container-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> 获取集群运行状况</h4>
+<div class="outline-text-4" id="text-1-2-3">
+
+<p>可以通过JobClient这个对象来获得集群和上面的作业运行状况，更多信息可以详细阅读一下JobClient的API部分
+</p>
+
+
+<pre class="src src-Java">package com.dirlt.mapreduce;
+
+import java.io.IOException;
+
+import org.apache.hadoop.mapred.ClusterStatus;
+import org.apache.hadoop.mapred.JobClient;
+import org.apache.hadoop.mapred.JobConf;
+import org.apache.hadoop.mapred.JobStatus;
+
+public class Cluster {
+    public static void main(String[] args) throws IOException {
+        JobConf jconf = new JobConf();
+        JobClient jclient = new JobClient(jconf);
+        JobStatus[] js = jclient.getAllJobs();
+        for (JobStatus j : js) {
+            System.out.println(<span style="color: #00ffff; font-style: italic;">"JOB=jobid:"</span> + j.getJobID().toString() + <span style="color: #00ffff; font-style: italic;">",setup:"</span>
+                    + j.setupProgress() + <span style="color: #00ffff; font-style: italic;">",cleanup:"</span> + j.cleanupProgress()
+                    + <span style="color: #00ffff; font-style: italic;">",map:"</span> + j.mapProgress() + <span style="color: #00ffff; font-style: italic;">",reduce:"</span>
+                    + j.reduceProgress() + <span style="color: #00ffff; font-style: italic;">",status:"</span>
+                    + JobStatus.getJobRunState(j.getRunState()));
+        }
+        ClusterStatus cs = jclient.getClusterStatus(true);
+        System.out.println(<span style="color: #00ffff; font-style: italic;">"CSR=map-cap:"</span> + cs.getMaxMapTasks() + <span style="color: #00ffff; font-style: italic;">",map-used:"</span>
+                + cs.getMapTasks() + <span style="color: #00ffff; font-style: italic;">",reduce-cap:"</span> + cs.getMaxReduceTasks()
+                + <span style="color: #00ffff; font-style: italic;">",reduce-used:"</span> + cs.getReduceTasks());
+    }
+}
+
+</pre>
+
+
+</div>
 </div>
 
 </div>
@@ -897,7 +941,7 @@ public class TestHBaseOutputAndHDFSOutputMR extends TestCase {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-12 21:07:31 CST</p>
+<p class="date">Date: 2012-11-14 11:36:55 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
