@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="druid"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-15 14:01:50 CST"/>
+<meta name="generated" content="2012-11-15 15:28:17 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -243,6 +243,17 @@ beta data set主要包含3个部分：
 <p>So about a year ago, we fired up a RDBMS instance (actually, the Greenplum Community Edition, running on an m1.large EC2 box) 开始使用一些关系数据库，但是存在下面这些问题：
 </p><ul>
 <li>We stored the data in a star schema, which meant that there was operational overhead maintaining dimension and fact tables. <b>TOOO（dirlt）：不太明白这个是什么意思</b>
+<ul>
+<li>关于star schema可以参考这篇文章 Salina &amp; IT Mind: Data Warehouse: Star Schema <a href="http://salinaitmind.blogspot.jp/2012/10/data-warehouse-star-schema.html">http://salinaitmind.blogspot.jp/2012/10/data-warehouse-star-schema.html</a>
+</li>
+<li>所谓的fact table里面存放的是具体值，而dimensional table是指属性或者说是维度。
+</li>
+<li>dimensional table引用的都是fact table里的值。
+</li>
+<li>一个fact table（多个fact table也行）可能会被多个dimensional table所引用，这样就形成了一个星型schema。 
+</li>
+</ul>
+
 </li>
 <li>Whenever we needed to do a full table scan, for things like global counts, the queries ran slow. For example, naive benchmarks showed scanning 33 million rows took 3 seconds. （对于一些全表扫描的操作非常地慢 <b>NOTE（dirlt）：这个主要是因为没有使用并行查询的方式把？</b> ）
 <ul>
@@ -410,8 +421,8 @@ These are the requirements we used to implement Druid. The system makes a number
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-15 14:01:50 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-11-15 15:28:17 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>
