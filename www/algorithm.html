@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="algorithm"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-13 10:29:33 CST"/>
+<meta name="generated" content="2012-11-15 12:08:28 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -108,6 +108,7 @@
 <li><a href="#sec-1-6">1.6 simhash算法原理和文档近似判断</a></li>
 <li><a href="#sec-1-7">1.7 等概率选取未知长度的链表中的元素</a></li>
 <li><a href="#sec-1-8">1.8 HyperLogLog</a></li>
+<li><a href="#sec-1-9">1.9 CONCISE</a></li>
 </ul>
 </li>
 </ul>
@@ -526,13 +527,79 @@ def estimate_cardinality(values, k):
 </p>
 <p>
 可以让每个机器各自维护各自的bucket，最后每个机器上面属于相同的bucket index的bucket进行merge即可，so damn cool!.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-9" class="outline-3">
+<h3 id="sec-1-9"><span class="section-number-3">1.9</span> CONCISE</h3>
+<div class="outline-text-3" id="text-1-9">
+
+<ul>
+<li>Maximum Performance with Minimum Storage: Data Compression in Druid | Metamarkets <a href="http://metamarkets.com/2012/druid-bitmap-compression/">http://metamarkets.com/2012/druid-bitmap-compression/</a>
+</li>
+<li>CONCISE(COpressed N Composable Integer Set)  <a href="http://ricerca.mat.uniroma3.it/users/colanton/docs/concise.pdf">http://ricerca.mat.uniroma3.it/users/colanton/docs/concise.pdf</a>
+</li>
+</ul>
+
+<p>这个算法主要是解决如何压缩一个可组合的整数集合，或者可以是认为如何压缩一个稀疏的bitmap. 链接1主要是介绍了一下背景，在他们的系统里面需要保存一个稀疏bitmap。链接2是原始论文，想了解具体内容还是看看这个比较好。
+</p>
+<p>
+这个算法应该是在WAH（Word Aligned Hybrid）上改进的。下面是WAH的简单描述
+</p><ul>
+<li>WAH是已31bit为一个处理单位，这里我们称为block
+</li>
+<li>如果block里面有0和1的话，那么使用&lt;1&gt; block表示
+</li>
+<li>如果block里面只有0的话，并且连续n个block都是这样的话，那么使用&lt;00&gt; &lt;n&gt;
+</li>
+<li>如果只有1的话，那么前缀使用&lt;01&gt;
+</li>
+</ul>
+
+<p><img src="./images/concise-wah.png"  alt="./images/concise-wah.png" />
+可以看到其实&lt;n&gt;最长为2^30-1（肯定不会为0）.但是实际上大部分到不了这么长。剩余的空间就会存在浪费。
+</p>
+<p>
+CONCISE针对这个部分稍微改进了一下
+</p><ul>
+<li>the following 5 bits are the position of a “flipped” bit within the first 31-bit block of the fill（剩余的5个bit表示从在第几位存在一个反转，这个可以处理一些特殊情况）
+</li>
+<li>and the remaining 25 bits count the number of 31-blocks that compose the fill minus one. （剩余的25个bit表示后面存在多少个31bit blocks)
+</li>
+</ul>
+
+<p>可以看到最大的范围是31 + 2^25 * 31 = 1040187423 , 如果从0开始的话，那么就是[0,1040187422]
+</p>
+<p>
+下面是一个例子， Compressed representation of the set {3, 5, 31–93, 1024, 1028, 1 040 187 422}.
+</p><ul>
+<li>The word #0 is used to represent integers in the range 0–30, 
+</li>
+<li>word #1 for integers in 31–92, （5bit为0，说明这个31bit是完全填充。25bit=1表示后面1 * 31个bit全为1，范围就是从31到31(start) + 31 + 31 - 1 = 92.
+</li>
+<li>word #2 for integers 93–1022, （5bit为1，说明下一个31bit的第一个元素是反转的也就是93。范围从93到93(start) + 31 + 29 * 31 - 1 = 1022
+</li>
+<li>word #3 for integers 1023–1053, 
+</li>
+<li>word #4 for integers 1054–1 040 187 391, 
+</li>
+<li>and word #5 for integers 1 040 187 392–1 040 187 422.
+</li>
+</ul>
+
+<p><img src="./images/concise-concise.png"  alt="./images/concise-concise.png" />
+</p>
+<p>
+论文后面还给了一些 <b>直接在这种压缩表示</b> 上面的算法。
 </p></div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-13 10:29:33 CST</p>
+<p class="date">Date: 2012-11-15 12:08:28 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

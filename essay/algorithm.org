@@ -254,3 +254,32 @@ def estimate_cardinality(values, k):
 *分布式计算*
 
 可以让每个机器各自维护各自的bucket，最后每个机器上面属于相同的bucket index的bucket进行merge即可，so damn cool!.
+
+** CONCISE
+   - Maximum Performance with Minimum Storage: Data Compression in Druid | Metamarkets http://metamarkets.com/2012/druid-bitmap-compression/
+   - CONCISE(COpressed N Composable Integer Set)  http://ricerca.mat.uniroma3.it/users/colanton/docs/concise.pdf
+这个算法主要是解决如何压缩一个可组合的整数集合，或者可以是认为如何压缩一个稀疏的bitmap. 链接1主要是介绍了一下背景，在他们的系统里面需要保存一个稀疏bitmap。链接2是原始论文，想了解具体内容还是看看这个比较好。
+
+这个算法应该是在WAH（Word Aligned Hybrid）上改进的。下面是WAH的简单描述
+   - WAH是已31bit为一个处理单位，这里我们称为block
+   - 如果block里面有0和1的话，那么使用<1> block表示
+   - 如果block里面只有0的话，并且连续n个block都是这样的话，那么使用<00> <n>
+   - 如果只有1的话，那么前缀使用<01>
+file:./images/concise-wah.png
+可以看到其实<n>最长为2^30-1（肯定不会为0）.但是实际上大部分到不了这么长。剩余的空间就会存在浪费。
+
+CONCISE针对这个部分稍微改进了一下
+   - the following 5 bits are the position of a “flipped” bit within the first 31-bit block of the fill（剩余的5个bit表示从在第几位存在一个反转，这个可以处理一些特殊情况）
+   - and the remaining 25 bits count the number of 31-blocks that compose the fill minus one. （剩余的25个bit表示后面存在多少个31bit blocks)
+可以看到最大的范围是31 + 2^25 * 31 = 1040187423 , 如果从0开始的话，那么就是[0,1040187422]
+
+下面是一个例子， Compressed representation of the set {3, 5, 31–93, 1024, 1028, 1 040 187 422}.
+   - The word #0 is used to represent integers in the range 0–30, 
+   - word #1 for integers in 31–92, （5bit为0，说明这个31bit是完全填充。25bit=1表示后面1 * 31个bit全为1，范围就是从31到31(start) + 31 + 31 - 1 = 92.
+   - word #2 for integers 93–1022, （5bit为1，说明下一个31bit的第一个元素是反转的也就是93。范围从93到93(start) + 31 + 29 * 31 - 1 = 1022
+   - word #3 for integers 1023–1053, 
+   - word #4 for integers 1054–1 040 187 391, 
+   - and word #5 for integers 1 040 187 392–1 040 187 422.
+file:./images/concise-concise.png
+
+论文后面还给了一些 *直接在这种压缩表示* 上面的算法。
