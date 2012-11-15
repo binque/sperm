@@ -77,8 +77,12 @@
 
 ;;; google c style.
 (require 'google-c-style)
-(setq c-basic-offset 2)
 (setq c-default-style "java")
+(defun my-c-mode-common-hook()
+  (setq tab-width 4)
+  (setq indent-tabs-mode nil)
+  (setq c-basic-offset 4))
+(add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 (add-hook 'c-mode-common-hook 'google-set-c-style)
 (add-hook 'c-mode-common-hook 'google-make-newline-indent)
 (setq auto-mode-alist  (append '(("\\.h\\'" . c++-mode)) 
@@ -87,9 +91,11 @@
                                '(("\\.cc\\'" . c++-mode)) 
                                '(("\\.cpp\\'" . c++-mode))
                                auto-mode-alist))
-(setq-default indent-tabs-mode nil)
 (setq-default nuke-trailing-whitespace-p t)
-(setq tab-width 2)
+;; never bother repeat it.
+(setq tab-width 4)
+(setq indent-tabs-mode nil)
+(setq c-basic-offset 4)
 
 ;;; doxymacs.
 ;; sudo apt-get install doxymacs
@@ -257,6 +263,7 @@
 ;;       "Keymap used by NXML Mode.")
 (setq load-path (cons "~/.emacs.d/nxml-mode-20041004" load-path))
 (require 'nxml-mode)
+(setq nxml-child-indent 4)
 (setq auto-mode-alist
       (cons '("\\.\\(xml\\|xsl\\|rng\\|xhtml\\|html\\|htm\\)\\'" . nxml-mode)
             auto-mode-alist))
