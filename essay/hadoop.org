@@ -182,6 +182,16 @@ RAID cards, redundant power supplies and other per-component reliability feature
 小集群来说的话，通常单个机器上面挂在4-6个disk即可）
    - On Network: This is the hardest variable to nail down. Hadoop workloads vary a lot. The key is to buy enough network capacity to allow all nodes in your cluster to communicate with each other at reasonable speeds and for reasonable cost. For smaller clusters, I’d recommend at least 1GB all-to-all bandwidth, which is easily achieved by just connecting all of your nodes to a good switch. With larger clusters this is still a good target although based on workload you can probably go lower. In the very large data centers the Yahoo! built, they are seeing 2*10GB per 20 node rack going up to a pair of central switches, with rack nodes connected with two 1GB links. As a rule of thumb, watch the ratio of network-to-computer cost and aim for network cost being somewhere around 20% of your total cost. Network costs should include your complete network, core switches, rack switches, any network cards needed, etc. We’ve been seeing InfiniBand and 10GB Ethernet networks to the node now. If you can build this cost effectively, that’s great. However, keep in mind that Hadoop grew up with commodity Ethernet, so understand your workload requirements before spending too much on the network.（这个主要还是看需求。通常来说网络整体开销占据所有开销的20%，包括核心交换机，机架之间的交换机以及网卡设备等。yahoo大集群的部署方式是rack之间使用2*10GB的核心交换机工作，而20个节点的rack之间内部使用1GB链路）。
 
+*** The dark side of Hadoop - BackType Technology
+http://web.archive.org/web/20110510125644/http://tech.backtype.com/the-dark-side-of-hadoop
+
+谈到了一些在使用hadoop出现的一些问题，而这些问题是hadoop本身的。
+   - Critical configuration poorly documented 一些关键的参数和配置并没有很好地说明清楚。
+   - Terrible with memory usage 内存使用上面存在问题。hadoop里面有一些非常sloppy的实现，比如chmod以及ln -s等操作，并没有调用fs API而是直接创建一个shell进程来完成。因为fork出一个shell进程需要申请同样大小的内存（虽然实现上是COW），但是这样造成jvm出现oom。解决的办法是开辟一定空间的swap The solution to these memory problems is to allocate a healthy amount of swap space for each machine to protect you from these memory glitches. We couldn't believe how much more stable everything became when we added swap space to our worker machines.
+   - Zombies hadoop集群出现一些zombie进程，而这些进程会一直持有内存直到大量zombie进程存在最后需要重启。造成这些zombie进程的原因通常是因为jvm oom（增加了swap之后就没有出现这个问题了），但是奇怪的是tasktracker作为这些process的parent，并不负责cleanup这些zombie进程而是依赖这些zombie进程的自己退出，这就是hadoop设计方面的问题。
+
+Making Hadoop easy to deploy, use, and operate should be the #1 priority for the developers of Hadoop.
+
 ** Scheduler
    - Fair Scheduler Guide http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html
    - Job Scheduling in Hadoop | Apache Hadoop for the Enterprise | Cloudera http://www.cloudera.com/blog/2008/11/job-scheduling-in-hadoop/
