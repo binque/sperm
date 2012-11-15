@@ -188,6 +188,8 @@ http://web.archive.org/web/20110510125644/http://tech.backtype.com/the-dark-side
 谈到了一些在使用hadoop出现的一些问题，而这些问题是hadoop本身的。
    - Critical configuration poorly documented 一些关键的参数和配置并没有很好地说明清楚。
    - Terrible with memory usage 内存使用上面存在问题。hadoop里面有一些非常sloppy的实现，比如chmod以及ln -s等操作，并没有调用fs API而是直接创建一个shell进程来完成。因为fork出一个shell进程需要申请同样大小的内存（虽然实现上是COW），但是这样造成jvm出现oom。解决的办法是开辟一定空间的swap The solution to these memory problems is to allocate a healthy amount of swap space for each machine to protect you from these memory glitches. We couldn't believe how much more stable everything became when we added swap space to our worker machines.
+     - Thomas Jungblut's Blog: Dealing with "OutOfMemoryError" in Hadoop http://codingwiththomas.blogspot.jp/2011/07/dealing-with-outofmemoryerror-in-hadoop.html 作者给出的解决办法就是修改hadoop的代码，通过调用Java API而不是使用ProcessBuilder来解决。
+     - *NOTE(dirlt):出现OOM的话必须区分JVM还是Linux System本身的OOM。JVM出现OOM是抛出异常，而Linux出现OOM是会触发OOM killer* 
    - Zombies hadoop集群出现一些zombie进程，而这些进程会一直持有内存直到大量zombie进程存在最后需要重启。造成这些zombie进程的原因通常是因为jvm oom（增加了swap之后就没有出现这个问题了），但是奇怪的是tasktracker作为这些process的parent，并不负责cleanup这些zombie进程而是依赖这些zombie进程的自己退出，这就是hadoop设计方面的问题。
 
 Making Hadoop easy to deploy, use, and operate should be the #1 priority for the developers of Hadoop.
@@ -369,7 +371,7 @@ public class SegmentMarkProtobufWritable extends ProtobufWritable<SegmentMark> {
 
 *NOTE(dirlt):现在看来只是支持了多路hdfs输入以及1路的htable输入*
 
-实现多路输入非常简单，但是过程非常magic：
+实现多路输入[[file:mapred.org][非常简单]]， 但是过程非常magic.：
    - 使用 TableMapReduceUtil.initTableMapperJob 初始化htable输入（作用就是为了指定htable的input table name）
    - 之后在调用一次 MultipleInputs.addInputPath(job, new Path(kInTableName1), TableInputFormat.class, TMapper.class); 这里的kInTableName1可以随便定义，但是不要和接下来的hdfs路径重名。（作用是为了能够调整input format）
    - 接下来就是添加hdfs输入  MultipleInputs.addInputPath(job, new Path(kInFileName1), TextInputFormat.class, FMapper.class); 可以调用多次来添加多个hdfs输入源。
@@ -382,3 +384,15 @@ public class SegmentMarkProtobufWritable extends ProtobufWritable<SegmentMark> {
    - 使用TableOutputFormat设置好输出table
    - 设置MultipleOutputs参数，使用命名前缀来进行区分。
    - 在mapper或者是reducer里面创建MultipleOutputs对象，按照命名前缀来做多路输出。
+
+*** OutOfMemoryError
+   - hadoop的mapreduce作业中经常出现Java heap space解决方案 http://blog.sina.com.cn/s/blog_6345041c01011bjq.html
+   - Hadoop troubleshooting http://ww2.cs.fsu.edu/~czhang/errors.html
+   - Thomas Jungblut's Blog: Dealing with "OutOfMemoryError" in Hadoop http://codingwiththomas.blogspot.jp/2011/07/dealing-with-outofmemoryerror-in-hadoop.html
+   - NoSQL | Hadoop http://www.nosql.se/tags/hadoop/
+
+总结起来大致就是以下几种原因吧：
+   - Increase the heap size for the TaskTracker, I did this by changing HADOOP_HEAPSIZE to 4096 in /etc/hadoop/conf/hadoop-env.sh to test.  This did not solve it.（增加TaskTracker的heapsize）
+   - Increase the heap size for the spawned child.  Add -Xmx1024 in mapred-site.xml for mapred.map.child.java.opts.  This did not solve it. （增加task的heapsize）
+   - Make sure that the limit of open files is not reached, I had already done this by adding “mapred – nofile 65536″ in /etc/security/limits.conf.  This did not solve it. （增加文件数目限制）
+   - Adding the following to /etc/security/limits.conf and restarting the TaskTracker solved it "mapred – nproc 8192" （增加开辟子进程的数目） 

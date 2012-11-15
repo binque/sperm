@@ -56,6 +56,10 @@ beta data set主要包含3个部分：
 *** Failed Solution I: Dynamic Roll-Ups with a RDBMS
 So about a year ago, we fired up a RDBMS instance (actually, the Greenplum Community Edition, running on an m1.large EC2 box) 开始使用一些关系数据库，但是存在下面这些问题：
    - We stored the data in a star schema, which meant that there was operational overhead maintaining dimension and fact tables. *TOOO（dirlt）：不太明白这个是什么意思*
+     - 关于star schema可以参考这篇文章 Salina & IT Mind: Data Warehouse: Star Schema http://salinaitmind.blogspot.jp/2012/10/data-warehouse-star-schema.html
+     - 所谓的fact table里面存放的是具体值，而dimensional table是指属性或者说是维度。
+     - dimensional table引用的都是fact table里的值。
+     - 一个fact table（多个fact table也行）可能会被多个dimensional table所引用，这样就形成了一个星型schema。 
    - Whenever we needed to do a full table scan, for things like global counts, the queries ran slow. For example, naive benchmarks showed scanning 33 million rows took 3 seconds. （对于一些全表扫描的操作非常地慢 *NOTE（dirlt）：这个主要是因为没有使用并行查询的方式把？* ）
      - We started materializing all dimensional roll-ups of a certain depth, and began routing queries to these pre-aggregated tables. We also implemented a caching layer in front of our queries. （开始通过pre roll up到一定的深度然后在这些table上面进行查询，并且在query之前假设一个cache layer）
      - This approach generally worked and is, I believe, a fairly common strategy in the space. Except, when things weren’t in the cache and a query couldn’t be mapped to a pre-aggregated table, we were back to full scans and slow performance.（上面工作方式在大部分时候工作还是很好的，但是如果没有出现在cache或者是pre-compute的table里面性能就非常差）

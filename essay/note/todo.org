@@ -47,4 +47,5 @@
 ** TODO 整理druid
 ** TODO 搞定hadoop1集群任务
 ** TODO 阅读systemtap论文，简单阅读=D
-** TODO maven部署？
+** TODO High Scalability - High Scalability - Gone Fishin': LiveJournal Architecture
+   - http://highscalability.com/blog/2012/10/31/gone-fishin-livejournal-architecture.html
