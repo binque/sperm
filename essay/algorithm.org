@@ -266,6 +266,7 @@ def estimate_cardinality(values, k):
    - 如果block里面只有0的话，并且连续n个block都是这样的话，那么使用<00> <n>
    - 如果只有1的话，那么前缀使用<01>
 file:./images/concise-wah.png
+
 可以看到其实<n>最长为2^30-1（肯定不会为0）.但是实际上大部分到不了这么长。剩余的空间就会存在浪费。
 
 CONCISE针对这个部分稍微改进了一下
