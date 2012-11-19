@@ -2220,7 +2220,7 @@ vmlinuz的建立有两种方式。一是编译内核时通过“make zImage”�
 zImage(vmlinuz)和bzImage(vmlinuz)都是用gzip压缩的。它们不仅是一个压缩文件，而且在这两个文件的开头部分内嵌有gzip解压缩代码。所以你不能用gunzip 或 gzip –dc解包vmlinuz。内核文件中包含一个微型的gzip用于解压缩内核并引导它。两者的不同之处在于，老的zImage解压缩内核到低端内存(第一个640K)，bzImage解压缩内核到高端内存(1M以上)。如果内核比较小，那么可以采用zImage或bzImage之一，两种方式引导的系统运行时是相同的。大的内核采用bzImage，不能采用zImage。
 
 ** application
-*** 一个返回值问题
+*** 返回值问题
 --------------------
 首先看下面一段Java程序
 #+BEGIN_SRC Java
@@ -2262,4 +2262,41 @@ code=256
 exit(code)
 
 #+END_SRC
+
+*** dp8网卡问题
+当时dp8的网络流量从一个非常大的值变为非常小的值，检查/proc/net/netstat，以下几个统计数值dp8和其他机器差距较大（相差1-2个数量级）：
+   - TCPDirectCopyFromPrequeue
+   - TCPHPHitsToUser
+   - TCPDSACKUndo
+   - TCPLossUndo
+   - TCPLostRetransmit
+   - TCPFastRetrans
+   - TCPSlowStartRetrans
+   - TCPSackShiftFallback
+
+之后在dmesg上面发现如下线索：
+#+BEGIN_EXAMPLE
+dp@dp8:~$ dmesg | grep eth0
+[ 15.635160] eth0: Broadcom NetXtreme II BCM5716 1000Base-T (C0) PCI Express f
+[ 15.736389] bnx2: eth0: using MSIX
+[ 15.738263] ADDRCONF(NETDEV_UP): eth0: link is not ready
+[ 37.848755] bnx2: eth0 NIC Copper Link is Up, 100 Mbps full duplex
+[ 37.850623] ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+[ 1933.934668] bnx2: eth0: using MSIX
+[ 1933.936960] ADDRCONF(NETDEV_UP): eth0: link is not ready
+[ 1956.130773] bnx2: eth0 NIC Copper Link is Up, 100 Mbps full duplex
+[ 1956.132625] ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+[4804526.542976] bnx2: eth0 NIC Copper Link is Down
+[4804552.008858] bnx2: eth0 NIC Copper Link is Up, 100 Mbps full duplex
+#+END_EXAMPLE
+/[4804552.008858] bnx2: eth0 NIC Copper Link is Up, 100 Mbps full duplex/  dp8上的网卡速度被识别成100 Mbps了。
+
+可能的原因如下：
+   1. 网线、水晶头质量太差或老化、水晶头没压好，从而导致网线接触不良或短路等，可以重新压水晶头或更换网线，建议用质量可靠的六类网线六类水晶头
+   2. 本地连接―右键―属性―配置―高级―速度和双工，这里设置错误，改为自动感应或1000Mbps全双工即可
+   3. 网卡所接的交换机或路由器等硬件设备出现故障，或者这些设备是百兆的（千和百连在一起,千变百向下兼容）
+   4. 电磁场干扰有时也会变百兆，所以说网线尽量别与电线一起穿管（论坛会员tchack友情提供）
+我们的网线都是由世纪互联提供的，质量应该不错，有两种情况需要优先排除。
+   1. 网线问题（测试方法：换根网线试试）
+   2. 交换机dp8连接的口坏了（测试方法：把dp8的网线换一个交换机的口）
 

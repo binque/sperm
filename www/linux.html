@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="linux"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-19 10:11:27 CST"/>
+<meta name="generated" content="2012-11-19 15:21:03 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -203,7 +203,8 @@
 </li>
 <li><a href="#sec-1-4">1.4 application</a>
 <ul>
-<li><a href="#sec-1-4-1">1.4.1 一个返回值问题</a></li>
+<li><a href="#sec-1-4-1">1.4.1 返回值问题</a></li>
+<li><a href="#sec-1-4-2">1.4.2 dp8网卡问题</a></li>
 </ul>
 </li>
 </ul>
@@ -3931,7 +3932,7 @@ zImage(vmlinuz)和bzImage(vmlinuz)都是用gzip压缩的。它们不仅是一个
 </div>
 
 <div id="outline-container-1-4-1" class="outline-4">
-<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> 一个返回值问题</h4>
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> 返回值问题</h4>
 <div class="outline-text-4" id="text-1-4-1">
 
 
@@ -3995,13 +3996,86 @@ exit(code)
 
 
 </div>
+
+</div>
+
+<div id="outline-container-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> dp8网卡问题</h4>
+<div class="outline-text-4" id="text-1-4-2">
+
+<p>当时dp8的网络流量从一个非常大的值变为非常小的值，检查/proc/net/netstat，以下几个统计数值dp8和其他机器差距较大（相差1-2个数量级）：
+</p><ul>
+<li>TCPDirectCopyFromPrequeue
+</li>
+<li>TCPHPHitsToUser
+</li>
+<li>TCPDSACKUndo
+</li>
+<li>TCPLossUndo
+</li>
+<li>TCPLostRetransmit
+</li>
+<li>TCPFastRetrans
+</li>
+<li>TCPSlowStartRetrans
+</li>
+<li>TCPSackShiftFallback
+</li>
+</ul>
+
+
+<p>
+之后在dmesg上面发现如下线索：
+</p>
+
+
+<pre class="example">dp@dp8:~$ dmesg | grep eth0
+[ 15.635160] eth0: Broadcom NetXtreme II BCM5716 1000Base-T (C0) PCI Express f
+[ 15.736389] bnx2: eth0: using MSIX
+[ 15.738263] ADDRCONF(NETDEV_UP): eth0: link is not ready
+[ 37.848755] bnx2: eth0 NIC Copper Link is Up, 100 Mbps full duplex
+[ 37.850623] ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+[ 1933.934668] bnx2: eth0: using MSIX
+[ 1933.936960] ADDRCONF(NETDEV_UP): eth0: link is not ready
+[ 1956.130773] bnx2: eth0 NIC Copper Link is Up, 100 Mbps full duplex
+[ 1956.132625] ADDRCONF(NETDEV_CHANGE): eth0: link becomes ready
+[4804526.542976] bnx2: eth0 NIC Copper Link is Down
+[4804552.008858] bnx2: eth0 NIC Copper Link is Up, 100 Mbps full duplex
+</pre>
+
+<p>
+<i>[4804552.008858] bnx2: eth0 NIC Copper Link is Up, 100 Mbps full duplex</i>  dp8上的网卡速度被识别成100 Mbps了。
+</p>
+<p>
+可能的原因如下：
+</p><ol>
+<li>网线、水晶头质量太差或老化、水晶头没压好，从而导致网线接触不良或短路等，可以重新压水晶头或更换网线，建议用质量可靠的六类网线六类水晶头
+</li>
+<li>本地连接―右键―属性―配置―高级―速度和双工，这里设置错误，改为自动感应或1000Mbps全双工即可
+</li>
+<li>网卡所接的交换机或路由器等硬件设备出现故障，或者这些设备是百兆的（千和百连在一起,千变百向下兼容）
+</li>
+<li>电磁场干扰有时也会变百兆，所以说网线尽量别与电线一起穿管（论坛会员tchack友情提供）
+</li>
+</ol>
+
+<p>我们的网线都是由世纪互联提供的，质量应该不错，有两种情况需要优先排除。
+</p><ol>
+<li>网线问题（测试方法：换根网线试试）
+</li>
+<li>交换机dp8连接的口坏了（测试方法：把dp8的网线换一个交换机的口）
+</li>
+</ol>
+
+
+</div>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-19 10:11:27 CST</p>
+<p class="date">Date: 2012-11-19 15:21:03 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
