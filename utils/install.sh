@@ -43,7 +43,7 @@ echo "[$PROGNAME]installing .bash_profile"
 rm -rf $HOME/.bash_profile
 ln -s $BINDIR/.bashrc $HOME/.bash_profile
 
-TARGETS=".bashrc .emacs .emacs.d .vpn-umeng-shijihulian .vpn-umeng-shijihulian2"
+TARGETS=".bashrc .emacs .emacs.d .vpn-umeng-ubuntu-workpc .vpn-umeng-mba .vpn-umeng-ubuntu-homepc"
 for target in $TARGETS
 do
   echo "[$PROGNAME]installing $target..."
@@ -54,8 +54,8 @@ done
 TARGETS="2utf8 cxxindent \
 oprof mysqldb syslog \
 local-install org2twiki \
- gc pom-create vpn-umeng vpn-umeng2 vpn-dirlt-com vpn-shiwen-aws \
-rhs gds pcrypt einstall uinstall"
+ gc pom-create vpn-umeng-ubuntu-workpc vpn-umeng-mba vpn-umeng-ubuntu-homepc vpn-dirlt-com vpn-shiwen-aws \
+rhs go-doc-server pcrypt einstall uinstall"
 
 INSTALLDIR=$HOME/utils/bin
 if [ ! -d $INSTALLDIR ]
