@@ -1,7 +1,7 @@
 * druid
    - github https://github.com/metamx/druid
   
-**  Design · metamx/druid Wiki
+** Design · metamx/druid Wiki
 https://github.com/metamx/druid/wiki/Design
 
 *** Introduction
