@@ -2208,6 +2208,9 @@ ntp是可以在minpoll和maxpoll指定的时间间隔内来选择同步间隔的
 
 其实如果不考虑为其他机器提供服务的话，完全可以在cron里面使用ntpdate来进行同步。
 
+*** nethogs
+TODO(dirlt):
+
 ** kernel
 *** vmlinuz
 vmlinuz是可引导的、压缩的内核。“vm”代表“Virtual Memory”。Linux 支持虚拟内存，不像老的操作系统比如DOS有640KB内存的限制。Linux能够使用硬盘空间作为虚拟内存，因此得名“vm”。vmlinuz是可执行的Linux内核，它位于/boot/vmlinuz，它一般是一个软链接。vmlinux是未压缩的内核，vmlinuz是vmlinux的压缩文件。
