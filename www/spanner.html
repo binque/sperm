@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<title>mysql</title>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-<meta name="title" content="mysql"/>
+<title>spanner</title>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta name="title" content="spanner"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-20 21:26:33 CST"/>
+<meta name="generated" content="2012-11-20 21:26:31 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -91,60 +91,28 @@
 </div>
 
 <div id="content">
-<h1 class="title">mysql</h1>
+<h1 class="title">spanner</h1>
 
 
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 mysql</a>
-<ul>
-<li><a href="#sec-1-1">1.1 MySQL半同步复制</a></li>
-</ul>
-</li>
+<li><a href="#sec-1">1 spanner</a></li>
 </ul>
 </div>
 </div>
 
 <div id="outline-container-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> mysql</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> spanner</h2>
 <div class="outline-text-2" id="text-1">
 
-<p><a href="http://www.mysql.com/">http://www.mysql.com/</a>
-</p>
-
-</div>
-
-<div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> MySQL半同步复制</h3>
-<div class="outline-text-3" id="text-1-1">
-
-<ul>
-<li><a href="http://www.db110.com/?p=3364">http://www.db110.com/?p=3364</a>
-</li>
-<li><a href="http://code.google.com/p/google-mysql-tools/wiki/SemiSyncReplication">http://code.google.com/p/google-mysql-tools/wiki/SemiSyncReplication</a>
-</li>
-<li><a href="http://code.google.com/p/google-mysql-tools/wiki/SemiSyncReplicationDesign">http://code.google.com/p/google-mysql-tools/wiki/SemiSyncReplicationDesign</a>
-</li>
-<li><a href="http://dev.mysql.com/doc/refman/5.5/en/replication-semisync.html">http://dev.mysql.com/doc/refman/5.5/en/replication-semisync.html</a>
-</li>
-</ul>
-
-
-<p>
-很早之前做了一个mysql集群主从切换模块，里面就涉及到了半同步复制。按照半同步的定义（全同步的语义应该就是等待所有的slave都同步完成，强一致性），半同步还是会存在丢数据的可能，半同步的语义仅仅是认为一个slave同步到数据之后的话同步就完成。但是如果master挂掉同时slave也挂掉（或者是没有等其他slave补齐数据的话），那么就会存在数据丢失的可能（仅仅是提供最终一致性可能）。
-</p>
-<p>
-项目里面使用选项log-slave-updates,这个选项的含义是binlog里面也会保存relay-log（默认是不保存的，这样slave的binlog里面是没有同步的log的，只有直接在slave上面操作留下的log)。这里顺带介绍一下binlog和relay-log。mysql实现上是所有操作都会写到binlog里面，然后slave有一个专门的io线程不断地从master binlog里面取出增量数据，写到本地的relay-log.同时slave本地有一个执行线程，将这些realy-log执行修改自己的数据库，达到同步的目的。默认relay-log是不删除的，如果希望删除的话可以设置选项relay_log_purge=1. relay-log里面的内容和master binlog内容每条记录都是完全相同的，最后进入slave binlog记录和master binlog对应记录也是一样的。执行id是master id,执行时间是master binlog记录的时间，本地slave是不会进行任何修改的。
-</p>
-</div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-20 21:26:33 CST</p>
+<p class="date">Date: 2012-11-20 21:26:31 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

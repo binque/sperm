@@ -4,8 +4,6 @@
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
     - http://www.rethinkdb.com/blog/
 ** TODO 阅读完Core Java I
-** TODO megastore
-   - Megastore: Providing Scalable, Highly Available Storage for Interactive Services http://research.google.com/pubs/pub36971.html
 ** TODO spanner
    - http://www.yankay.com/google-spanner%E5%8E%9F%E7%90%86-%E5%85%A8%E7%90%83%E7%BA%A7%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93/
    - Google Research Publication: Spanner http://research.google.com/archive/spanner.html
@@ -34,19 +32,14 @@
 ** TODO 查询过年飞机
 ** TODO 独单租房可能在年前
 ** TODO 找中医并且调理身体
-** TODO 分辨率展示情况
-   - http://github.umeng.com/dp/dp-comproc/issues/46#issuecomment-5836     
 ** TODO Tumblr Architecture - 15 Billion Page Views a Month and Harder to Scale than Twitter
    - http://highscalability.com/blog/2012/2/13/tumblr-architecture-15-billion-page-views-a-month-and-harder.html
-** TODO 29玫瑰
-** TODO 支付宝
 ** TODO 更换招行储蓄卡以及网银
 ** TODO 更换Android手机
 ** TODO 安装一些生活类型服务
 ** TODO 阅读systemtap论文，简单阅读=D
 ** TODO High Scalability - High Scalability - Gone Fishin': LiveJournal Architecture
    - http://highscalability.com/blog/2012/10/31/gone-fishin-livejournal-architecture.html
-
 ** TODO 整理weibo.
 ** TODO 整理bookmark.
 ** TODO 试试skype

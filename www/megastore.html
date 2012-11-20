@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>megastore</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="megastore"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2012-11-20 21:28:42 CST"/>
+<meta name="author" content="dirtysalt"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">megastore</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 megastore</a>
+<ul>
+<li><a href="#sec-1-1">1.1 ABSTRACT</a></li>
+<li><a href="#sec-1-2">1.2 INTRODUCTION</a></li>
+<li><a href="#sec-1-3">1.3 TOWARD AVAILABILITY AND SCALE</a>
+<ul>
+<li><a href="#sec-1-3-1">1.3.1 Replication</a></li>
+<li><a href="#sec-1-3-2">1.3.2 Partitioning and Locality</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-4">1.4 A TOUR OF MEGASTORE</a>
+<ul>
+<li><a href="#sec-1-4-1">1.4.1 API Design Philosophy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> megastore</h2>
+<div class="outline-text-2" id="text-1">
+
+<ul>
+<li>link: <a href="http://research.google.com/pubs/pub36971.html">http://research.google.com/pubs/pub36971.html</a>
+</li>
+<li>title: Megastore: Providing Scalable, Highly Available Storage for Interactive Services
+</li>
+<li>date: 2011
+</li>
+</ul>
+
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> ABSTRACT</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<ul>
+<li>Megastore is a storage system developed to meet the re-quirements of today’s interactive online services. Megas-tore blends the scalability of a NoSQL datastore with the convenience of a traditional RDBMS in a novel way, and provides both strong consistency guarantees and high avail-ability. （只要是为了满足现在交互式在线服务的存储需求，融合了NoSQL扩展性以及RDBMS的方便性，同时提供了强一致性以及高可用性）
+</li>
+<li>We provide fully serializable ACID semantics within fine-grained partitions of data. This partitioning allows us to synchronously replicate each write across a wide area net-work with reasonable latency and support seamless failover between datacenters.（在一个数据区域上提供了完全的可串行化的ACID语义。在这个数据区域上面我们所有的写可以在WAN下面以非常小的延迟做同步replicate，同时支持datacenter之间的seamless failover）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> INTRODUCTION</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<ul>
+<li>We accomplish this by taking a middle ground in the RDBMS vs. NoSQL design space: we partition the data-store and replicate each partition separately, providing full ACID semantics within partitions, but only limited con-sistency guarantees across them. We provide traditional database features, such as secondary indexes, but only those features that can scale within user-tolerable latency limits, and only with the semantics that our partitioning scheme can support. 
+<ul>
+<li>将数据进行partition，对于每个partition内部提供完全ACID语义的操作并且之间的replicate是强一致的，但是对于across partition仅仅是做到了有限的一致性（最终一致性？）
+</li>
+<li>同时提供了一些传统的db特性比如二级索引，但是这个feature可能会带来比较高的延迟，并且对应的语义是partition scheme（分区方案）所支持的（ <b>比如如果二级索引是跨partition的话，那么索引的更新是做不到原子的</b> ）
+</li>
+</ul>
+
+</li>
+<li>Contrary to conventional wisdom [24, 28], we were able to use Paxos to build a highly available system that pro-vides reasonable latencies for interactive applications while synchronously replicating writes across geographically dis-tributed datacenters. While many systems use Paxos solely for locking, master election, or replication of metadata and configurations, we believe that Megastore is the largest sys-tem deployed that uses Paxos to replicate primary user data across datacenters on every write.（mega使用paxos来完成低延迟下跨地域的同步复制来构建高可用性的系统。大部分的系统都是使用paxos来做locking，master选举或者是备份一些metadata或者是配置文件，而mega对每次写都用paxos做跨数据中心的复制）
+</li>
+</ul>
+
+
+<p>
+<b>NOTE（dirlt）：table schema主要是用来描述各个表存储结构。mega使用上更类似NoSQL</b>
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> TOWARD AVAILABILITY AND SCALE</h3>
+<div class="outline-text-3" id="text-1-3">
+
+<ul>
+<li>To do so, we have taken a two-pronged approach:
+<ul>
+<li>for availability, we implemented a synchronous, fault-tolerant log replicator optimized for long distance-links;（对于availablity使用同步容错的log replicator，为了长距离链接进行了优化。 <b>使用优化的Paxos</b> ）
+</li>
+<li>for scale, we partitioned data into a vast space of small databases, each with its own replicated log stored in a per-replica NoSQL datastore.（为了scale对于数据进行partition。各个partition有自己的replicated log，记录在自己所在的NoSQL datastore里面）
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> Replication</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+<ul>
+<li>For cloud storage to meet availability demands, service providers must replicate data over a wide geographic area.（对于云存储必须满足可用性的需求，服务提供商必须跨地域进行replication），We evaluated common strategies for wide-area replication：（下面几个常见的跨地域replication解决方案）
+<ul>
+<li>Asynchronous Master/Slave 数据丢失风险，SPOF
+</li>
+<li>Synchronous Master/Slave 延迟大，SPOF
+</li>
+<li>Optimistic Replication 数据丢失风险并且不能够确定commit order，不能够做到ACID
+</li>
+</ul>
+
+</li>
+<li>We decided to use Paxos, a proven, optimal, fault-tolerant consensus algorithm with no requirement for a distinguished master. （paxos不需要单独的master）
+<ul>
+<li>We replicate a write-ahead log over a group of symmetric peers. Any node can initiate reads and writes. Each log append blocks on acknowledgments from a ma-jority of replicas, and replicas in the minority catch up as they are able—the algorithm’s inherent fault tolerance elim-inates the need for a distinguished “failed” state. （每个群组都有一个WAL，在群组里面所有的节点都可以发起read/write，只要大部分节点ack那么说明数据就写入了WAL返回成功，对于小部分没有ack的节点之后有办法跟上数据而不会造成不一致）
+</li>
+<li>A novel extension to Paxos, detailed in Section 4.4.1, allows local reads at any up-to-date replica. Another extension permits single-roundtrip writes.（对于paxos进行了一些扩展，允许在任何一个up-to-date的节点上面进行local read，并且write只需要single-roundtrip）
+</li>
+<li><b>TODO（dirlt）：read paxos paper, then read this paper back</b>
+</li>
+</ul>
+
+</li>
+<li>Even with fault tolerance from Paxos, there are limita-tions to using a single log. With replicas spread over a wide area, communication latencies limit overall through-put. Moreover, progress is impeded when no replica is cur-rent or a majority fail to acknowledge writes. In a traditional SQL database hosting thousands or millions of users, us-ing a synchronously replicated log would risk interruptions of widespread impact . So to improve availability and throughput we use multiple replicated logs, each governing its own partition of the data set.（但是使用single log还是存在局限性。一方面因为跨地域进行replication那么延迟相当高 <b>我理解如果只有一个WAL的话，为了确保满足ACID性质那么所有的write必须是order的，这样所有的write都集中在一个WAL会导致latency非常高</b> ，另外更重要的因素是如果没有足够的replica使用或者是大部分节点都failed to ack write的话，那么所有的write都会被block住，整个progress就停止了。所以为了提高可用性以及吞吐我们必须使用multiple replicated logs，每个partition都有各自的replicated log）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> Partitioning and Locality</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+<ul>
+<li>To scale throughput and localize outages, we partition our data into a collection of entity groups, each indepen-dently and synchronously replicated over a wide area. The underlying data is stored in a scalable NoSQL datastore in each datacenter (see Figure 1) 划分的每个单元称为entity group. <b>后面简称EG</b>
+<ul>
+<li>Entities within an entity group are mutated with single-phase ACID transactions (for which the commit record is replicated via Paxos).（在一个EG里面操作满足ACID，操作使用paxos来进行同步复制）
+</li>
+<li>Operations across entity groups could rely on expensive two-phase commits, but typically leverage Megastore’s efficient asynchronous messaging. （如果是跨EG的话那么需要使用两阶段提交，但是通过mega自带的异步消息队列完成）
+</li>
+<li>A transac-tion in a sending entity group places one or more messages in a queue; transactions in receiving entity groups atomically consume those messages and apply ensuing mutations.（一个EG发起的事务可能会包含多个mutation，接收EG会atomically读取这些mutation然后apply them）
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+<p>
+<img src="./images/megastore-scalable-replication.png"  alt="./images/megastore-scalable-replication.png" />
+</p>
+<ul>
+<li>Indexes local to an entity group obey ACID semantics; those across entity groups have looser consistency. See Fig-ure 2 for the various operations on and between entity groups.（对于index也是一样，如果是local的话那么满足ACID语义，但是如果跨EG的话那么就只有更加松散一致性（ <b>可以认为是最终一致性？</b> ）
+</li>
+</ul>
+
+
+<p>
+<img src="./images/megastore-operations-across-entity-groups.png"  alt="./images/megastore-operations-across-entity-groups.png" />
+</p>
+<ul>
+<li>We use Google’s Bigtable for scalable fault-tolerant storage within a single datacenter, allowing us to support arbitrary read and write throughput by spreading operations across multiple rows.(底层使用bigtable来作为一个datacenter的存储）
+</li>
+<li>We minimize latency and maximize throughput by let-ting applications control the placement of data: through the selection of Bigtable instances and specification of locality within an instance.（允许应用程序控制data placement来减小延迟和增大吞吐，包括选择bigtable的实例以及如何组织数据提高locality）
+<ul>
+<li>To minimize latency, applications try to keep data near users and replicas near each other. They assign each entity group to the region or continent from which it is accessed most. Within that region they assign a triplet or quintuplet of replicas to datacenters with isolated failure domains.（为了减少延迟将数据放在离user更近的位置）
+</li>
+<li>For low latency, cache efficiency, and throughput, the data for an entity group are held in contiguous ranges of Bigtable rows. Our schema language lets applications control the placement of hierarchical data, storing data that is accessed together in nearby rows or denormalized into the same row.（schema language可以控制将一些有层级关系的数据进行连续存储或者是放在同一个row里面）
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> A TOUR OF MEGASTORE</h3>
+<div class="outline-text-3" id="text-1-4">
+
+
+</div>
+
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> API Design Philosophy</h4>
+<div class="outline-text-4" id="text-1-4-1">
+
+
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2012-11-20 21:28:42 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>
+<html><body>
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F54a700ad7035f6e485eaf2300641e7e9' type='text/javascript'%3E%3C/script%3E"));
+</script></body></html>
