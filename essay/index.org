@@ -110,6 +110,8 @@ file:./images/valve-logo.jpg
    - [[file:kafka.org][kafka]] apache的分布式消息系统。似乎在高可用性方面还有很多事情需要做。
    - [[file:impala.org][impala]] cloudera的大规模数据实时查询系统，可以认为是google的dremel的开源实现。
    - [[file:druid.org][druid]] metamarket的大规模数据实时查询系统，可以认为是google的dremel的开源实现。
+   - [[file:megastore.org][megastore]] google的跨地域级别的分布式存储系统。
+   - [[file:spanner.org][spanner]] google的全球级别的分布式存储系统。
    
 ** Programming Language and Design Pattern
    - [[file:./prog-lang.org][prog-lang]] including following languages:     
