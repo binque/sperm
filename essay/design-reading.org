@@ -72,4 +72,8 @@ http://monkey.org/~marius/talks/twittersystems/
 
 *TODO（dirlt）：其实我很想知道scala语言本身对于他们的系统架构的影响有多大？不过从作者花这么长的篇幅来讨论scala语言，我觉得今后可以在实践中好好体会*
 
+** The Architecture of Open Source Applications
+http://www.aosabook.org/en/index.html
+
+TODO(dirlt):
 

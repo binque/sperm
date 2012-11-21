@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hdfs"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-12 18:25:36 CST"/>
+<meta name="generated" content="2012-11-21 15:13:22 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -135,10 +135,15 @@
 <li><a href="#sec-1-1-5">1.1.5 FUTURE WORK</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-2">1.2 Usage</a>
+<li><a href="#sec-1-2">1.2 View</a>
 <ul>
-<li><a href="#sec-1-2-1">1.2.1 file system API</a></li>
-<li><a href="#sec-1-2-2">1.2.2 Filesystem Corruption and Missing Blocks</a></li>
+<li><a href="#sec-1-2-1">1.2.1 Under the Hood: Hadoop Distributed Filesystem reliability with Namenode and Avatarnode | Facebook</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-3">1.3 Usage</a>
+<ul>
+<li><a href="#sec-1-3-1">1.3.1 file system API</a></li>
+<li><a href="#sec-1-3-2">1.3.2 Filesystem Corruption and Missing Blocks</a></li>
 </ul>
 </li>
 </ul>
@@ -683,15 +688,45 @@ Whenever a read client or a block scanner detects a corrupt block, it notifies t
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Usage</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> View</h3>
 <div class="outline-text-3" id="text-1-2">
 
 
 </div>
 
 <div id="outline-container-1-2-1" class="outline-4">
-<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> file system API</h4>
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> Under the Hood: Hadoop Distributed Filesystem reliability with Namenode and Avatarnode | Facebook</h4>
 <div class="outline-text-4" id="text-1-2-1">
+
+<p><a href="http://www.facebook.com/notes/facebook-engineering/under-the-hood-hadoop-distributed-filesystem-reliability-with-namenode-and-avata/10150888759153920">http://www.facebook.com/notes/facebook-engineering/under-the-hood-hadoop-distributed-filesystem-reliability-with-namenode-and-avata/10150888759153920</a>
+</p>
+<p>
+fb数据仓库故障有41%是源于HDFS，而如果有reliable namenode解决方案的话那么其中有90%是可以避免的。
+</p>
+<p>
+<img src="./images/hdfs-ha-namenode.png"  alt="./images/hdfs-ha-namenode.png" />
+</p>
+<p>
+如果primary NN挂掉的话那么就切换到standby NN. datanode会将自己的status report到两个NN这样standby NN可以得到最新的状态可以使得切换时间更短。切换是通过zk来完成的，两个NN都在zk上面注册节点，client会从zk上了解primary NN对primary NN进行操作。之间的数据同步是通过共享存储来完成的，比如NFS，对于standby NN只需要增量读取操作内容即可。 <b>TODO（dirlt）：大家似乎对NFS的稳定性存在问题，不过我是觉得NFS上面主要是一些namenode上面一些操作的log，吞吐量不会太大而且也不会打开非常多的文件，在这个场景下面还是比较合适的</b>
+</p>
+<p>
+<img src="./images/hdfs-avatarnode-view.png"  alt="./images/hdfs-avatarnode-view.png" />
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Usage</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> file system API</h4>
+<div class="outline-text-4" id="text-1-3-1">
 
 <p>因为hdfs本质上是一个文件系统，只不过这个文件系统是应用层面上的。获得这个文件系统之后很多操作就很明了了，因为很多概念是可以直接从linux文件系统借鉴过来的。
 </p><ol>
@@ -715,9 +750,9 @@ FileSystem hdfs=FileSystem.get(conf);
 
 </div>
 
-<div id="outline-container-1-2-2" class="outline-4">
-<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> Filesystem Corruption and Missing Blocks</h4>
-<div class="outline-text-4" id="text-1-2-2">
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> Filesystem Corruption and Missing Blocks</h4>
+<div class="outline-text-4" id="text-1-3-2">
 
 <ul>
 <li>HadoopRecovery &lt; Storage &lt; TWiki <a href="https://www.opensciencegrid.org/bin/view/Storage/HadoopRecovery">https://www.opensciencegrid.org/bin/view/Storage/HadoopRecovery</a>
@@ -821,8 +856,8 @@ The filesystem under path '/hbase/.corrupt/dp18.umeng.com%3A60020.1349065853563'
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-10-12 18:25:36 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-11-21 15:13:22 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

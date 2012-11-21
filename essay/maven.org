@@ -291,6 +291,7 @@ NOTE(dirlt):似乎这些命令和maven生命周期非常相似。
    - mvn compile. 编译项目源代码
    - mvn test-compile. 编译测试项目源代码
    - mvn test. 运行测试用例
+     - mvn test -Dtest=<qualified-name>:<test-function>
    - mvn package. 将编译输出打包
    - mvn integration-test. 运行集成测试. TODO(dirlt):
    - mvn verify. 检查是否可以发布. TODO(dirlt):

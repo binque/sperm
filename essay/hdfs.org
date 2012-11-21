@@ -168,6 +168,18 @@ Large HDFS clusters at Yahoo! include about 3500 nodes. A typical cluster node h
   - NameNode的自动恢复。现在BackupNode已经算是Warm NameNode了，但是缺少block reports，所以如果切换到BackupNode的话还需要block reports比较耗时。如果BackupNode能够同时接收block reports的话，那么可以作为Hot NameNode存在。
   - NameNode的扩展性问题。NameNode现在瓶颈在于内存使用上，尤其是当内存块使用完的时候出现GC更加糟糕有时候需要restart。虽然我们鼓励用户创建大文件，并且增加了配额管理以及archive tool,但是依然没有解决本质问题。     
 
+** View
+*** Under the Hood: Hadoop Distributed Filesystem reliability with Namenode and Avatarnode | Facebook
+http://www.facebook.com/notes/facebook-engineering/under-the-hood-hadoop-distributed-filesystem-reliability-with-namenode-and-avata/10150888759153920
+
+fb数据仓库故障有41%是源于HDFS，而如果有reliable namenode解决方案的话那么其中有90%是可以避免的。
+
+file:./images/hdfs-ha-namenode.png
+
+如果primary NN挂掉的话那么就切换到standby NN. datanode会将自己的status report到两个NN这样standby NN可以得到最新的状态可以使得切换时间更短。切换是通过zk来完成的，两个NN都在zk上面注册节点，client会从zk上了解primary NN对primary NN进行操作。之间的数据同步是通过共享存储来完成的，比如NFS，对于standby NN只需要增量读取操作内容即可。 *TODO（dirlt）：大家似乎对NFS的稳定性存在问题，不过我是觉得NFS上面主要是一些namenode上面一些操作的log，吞吐量不会太大而且也不会打开非常多的文件，在这个场景下面还是比较合适的*
+
+file:./images/hdfs-avatarnode-view.png
+
 ** Usage
 *** file system API
 因为hdfs本质上是一个文件系统，只不过这个文件系统是应用层面上的。获得这个文件系统之后很多操作就很明了了，因为很多概念是可以直接从linux文件系统借鉴过来的。
