@@ -1,4 +1,70 @@
 * hbase
+** HBaseCon2012
+*** Storing and Manipulating Graphs in HBase - Dan Lynn, FullContact
+MultiScanTableInputFormat  http://code.google.com/p/socorro/source/browse/trunk/analysis/src/java/org/apache/hadoop/hbase/mapreduce/MultiScanTableInputFormat.java?r=2244
+
+这个InputFormat的注释非常有意思
+#+BEGIN_VERSE
+
+/**
+ * Similar to TableInputFormat except this is meant for an array of Scan objects that can
+ * be used to delimit row-key ranges.  This allows the usage of hashed dates to be prepended
+ * to row keys so that hbase won't create hotspots based on dates, while minimizing the amount
+ * of data that must be read during a MapReduce job for a given day.
+ * 
+ * Note: Only the first Scan object is used as a template.  The rest are only used for ranges.
+ * @author Daniel Einspanjer
+ * @author Xavier Stevens
+ *
+ */
+
+#+END_VERSE
+针对时间这种开头的rowkey，我们可以之前加上hashcode来将连续时间row打散，这样访问就不会集中在几个region上面了。
+而使用这种方式的话在扫描的时候就需要input format支持传入multi scan对象。
+
+*** Supporting HBase： How to Stabilize, Diagnose, and Repair - Jeff, Jonathan, Kathleen, Cloudera
+file:./images/hbasecon2012-hbase-cross-section.png
+
+TODO(dirlt):
+   - DOs and DON’Ts for keeping HBase Healthy
+     - DOs
+       - Monitor and Alert
+       - Optimize network
+       - Know your logs
+     - DON'Ts
+       - Swap
+       - Oversubscribe MR
+       - Share the network
+   - Understanding the logs helps us diagnose issues
+     - Related events logged by different processes in different places
+     - Log messages point at each other
+       - HDFS accesses by RS logged by NN and DN
+       - HBase accesses by MR logged by JT, RS, NN, ZK
+       - ZK logs indicate HBase health
+
+*** Unique Sets on HBase and Hadoop - Elliot Clark, StumbleUpon
+   - Try to get the best upper bound on runtime
+   - More and more flexibility will be required as time goes on
+   - Store more data now, and when new features are requested development will be easier
+   - Choose a good serialization framework and stick with it
+   - Always clean your data before inserting
+
+*** You’ve got HBase! How AOL Mail Handles Big Data
+   - Proper system tuning is essential
+     - Good information on tuning Hadoop is prolific, but…
+       - XFS > EXT
+       - JBOD > RAID
+     - As far as HBase is concerned…
+       - Just go buy Lars’ book
+   - Leverages Memcached to reduce query load on HBase
+   - Exploding regions
+     - Batch inserts via MapRed result in fast, symmetrical key space growth
+     - Attempting to split every region at the same time is a bad idea
+     - Turning off region splitting and using a custom “rolling region splitter” is a good idea
+     - Take time and load into consideration when selecting regions to split
+   - Large, non-splitable regions tell you things. 
+     - Our key space maps to accounts. Excessively large keys equal excessively “active” accounts
+
 ** View
 *** 业强 2012-08-16 hbase讲座
 file:./images/hbase-architecture.png

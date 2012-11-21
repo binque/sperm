@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hbase"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-15 14:01:48 CST"/>
+<meta name="generated" content="2012-11-21 19:19:38 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -100,23 +100,31 @@
 <ul>
 <li><a href="#sec-1">1 hbase</a>
 <ul>
-<li><a href="#sec-1-1">1.1 View</a>
+<li><a href="#sec-1-1">1.1 HBaseCon2012</a>
 <ul>
-<li><a href="#sec-1-1-1">1.1.1 业强 2012-08-16 hbase讲座</a></li>
-<li><a href="#sec-1-1-2">1.1.2 asynchbase</a></li>
-<li><a href="#sec-1-1-3">1.1.3 HBase Write Path | Apache Hadoop for the Enterprise | Cloudera</a></li>
-<li><a href="#sec-1-1-4">1.1.4 HBase Log Splitting | Apache Hadoop for the Enterprise | Cloudera</a></li>
-<li><a href="#sec-1-1-5">1.1.5 clock skew</a></li>
+<li><a href="#sec-1-1-1">1.1.1 Storing and Manipulating Graphs in HBase - Dan Lynn, FullContact</a></li>
+<li><a href="#sec-1-1-2">1.1.2 Supporting HBase： How to Stabilize, Diagnose, and Repair - Jeff, Jonathan, Kathleen, Cloudera</a></li>
+<li><a href="#sec-1-1-3">1.1.3 Unique Sets on HBase and Hadoop - Elliot Clark, StumbleUpon</a></li>
+<li><a href="#sec-1-1-4">1.1.4 You’ve got HBase! How AOL Mail Handles Big Data</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-2">1.2 Usage</a>
+<li><a href="#sec-1-2">1.2 View</a>
 <ul>
-<li><a href="#sec-1-2-1">1.2.1 hbase shell</a></li>
-<li><a href="#sec-1-2-2">1.2.2 hbase increment</a></li>
-<li><a href="#sec-1-2-3">1.2.3 hbase join</a></li>
-<li><a href="#sec-1-2-4">1.2.4 hbase的kv大小限制</a></li>
-<li><a href="#sec-1-2-5">1.2.5 create table API</a></li>
-<li><a href="#sec-1-2-6">1.2.6 use python</a></li>
+<li><a href="#sec-1-2-1">1.2.1 业强 2012-08-16 hbase讲座</a></li>
+<li><a href="#sec-1-2-2">1.2.2 asynchbase</a></li>
+<li><a href="#sec-1-2-3">1.2.3 HBase Write Path | Apache Hadoop for the Enterprise | Cloudera</a></li>
+<li><a href="#sec-1-2-4">1.2.4 HBase Log Splitting | Apache Hadoop for the Enterprise | Cloudera</a></li>
+<li><a href="#sec-1-2-5">1.2.5 clock skew</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-3">1.3 Usage</a>
+<ul>
+<li><a href="#sec-1-3-1">1.3.1 hbase shell</a></li>
+<li><a href="#sec-1-3-2">1.3.2 hbase increment</a></li>
+<li><a href="#sec-1-3-3">1.3.3 hbase join</a></li>
+<li><a href="#sec-1-3-4">1.3.4 hbase的kv大小限制</a></li>
+<li><a href="#sec-1-3-5">1.3.5 create table API</a></li>
+<li><a href="#sec-1-3-6">1.3.6 use python</a></li>
 </ul>
 </li>
 </ul>
@@ -133,15 +141,195 @@
 </div>
 
 <div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> View</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> HBaseCon2012</h3>
 <div class="outline-text-3" id="text-1-1">
 
 
 </div>
 
 <div id="outline-container-1-1-1" class="outline-4">
-<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> 业强 2012-08-16 hbase讲座</h4>
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Storing and Manipulating Graphs in HBase - Dan Lynn, FullContact</h4>
 <div class="outline-text-4" id="text-1-1-1">
+
+<p>MultiScanTableInputFormat  <a href="http://code.google.com/p/socorro/source/browse/trunk/analysis/src/java/org/apache/hadoop/hbase/mapreduce/MultiScanTableInputFormat.java?r=2244">http://code.google.com/p/socorro/source/browse/trunk/analysis/src/java/org/apache/hadoop/hbase/mapreduce/MultiScanTableInputFormat.java?r=2244</a>
+</p>
+<p>
+这个InputFormat的注释非常有意思
+</p>
+<p class="verse">
+<br/>
+/**<br/>
+&nbsp;&nbsp; * Similar to TableInputFormat except this is meant for an array of Scan objects that can<br/>
+&nbsp;&nbsp; * be used to delimit row-key ranges.  This allows the usage of hashed dates to be prepended<br/>
+&nbsp;&nbsp; * to row keys so that hbase won't create hotspots based on dates, while minimizing the amount<br/>
+&nbsp;&nbsp; * of data that must be read during a MapReduce job for a given day.<br/>
+&nbsp;&nbsp; *<br/>
+&nbsp;&nbsp; * Note: Only the first Scan object is used as a template.  The rest are only used for ranges.<br/>
+&nbsp;&nbsp; * @author Daniel Einspanjer<br/>
+&nbsp;&nbsp; * @author Xavier Stevens<br/>
+&nbsp;&nbsp; *<br/>
+&nbsp;&nbsp; */<br/>
+<br/>
+</p>
+
+
+<p>
+针对时间这种开头的rowkey，我们可以之前加上hashcode来将连续时间row打散，这样访问就不会集中在几个region上面了。
+而使用这种方式的话在扫描的时候就需要input format支持传入multi scan对象。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> Supporting HBase： How to Stabilize, Diagnose, and Repair - Jeff, Jonathan, Kathleen, Cloudera</h4>
+<div class="outline-text-4" id="text-1-1-2">
+
+<p><img src="./images/hbasecon2012-hbase-cross-section.png"  alt="./images/hbasecon2012-hbase-cross-section.png" />
+</p>
+<p>
+TODO(dirlt):
+</p><ul>
+<li>DOs and DON’Ts for keeping HBase Healthy
+<ul>
+<li>DOs
+<ul>
+<li>Monitor and Alert
+</li>
+<li>Optimize network
+</li>
+<li>Know your logs
+</li>
+</ul>
+
+</li>
+<li>DON'Ts
+<ul>
+<li>Swap
+</li>
+<li>Oversubscribe MR
+</li>
+<li>Share the network
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+<li>Understanding the logs helps us diagnose issues
+<ul>
+<li>Related events logged by different processes in different places
+</li>
+<li>Log messages point at each other
+<ul>
+<li>HDFS accesses by RS logged by NN and DN
+</li>
+<li>HBase accesses by MR logged by JT, RS, NN, ZK
+</li>
+<li>ZK logs indicate HBase health
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> Unique Sets on HBase and Hadoop - Elliot Clark, StumbleUpon</h4>
+<div class="outline-text-4" id="text-1-1-3">
+
+<ul>
+<li>Try to get the best upper bound on runtime
+</li>
+<li>More and more flexibility will be required as time goes on
+</li>
+<li>Store more data now, and when new features are requested development will be easier
+</li>
+<li>Choose a good serialization framework and stick with it
+</li>
+<li>Always clean your data before inserting
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-4" class="outline-4">
+<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> You’ve got HBase! How AOL Mail Handles Big Data</h4>
+<div class="outline-text-4" id="text-1-1-4">
+
+<ul>
+<li>Proper system tuning is essential
+<ul>
+<li>Good information on tuning Hadoop is prolific, but…
+<ul>
+<li>XFS &gt; EXT
+</li>
+<li>JBOD &gt; RAID
+</li>
+</ul>
+
+</li>
+<li>As far as HBase is concerned…
+<ul>
+<li>Just go buy Lars’ book
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+<li>Leverages Memcached to reduce query load on HBase
+</li>
+<li>Exploding regions
+<ul>
+<li>Batch inserts via MapRed result in fast, symmetrical key space growth
+</li>
+<li>Attempting to split every region at the same time is a bad idea
+</li>
+<li>Turning off region splitting and using a custom “rolling region splitter” is a good idea
+</li>
+<li>Take time and load into consideration when selecting regions to split
+</li>
+</ul>
+
+</li>
+<li>Large, non-splitable regions tell you things. 
+<ul>
+<li>Our key space maps to accounts. Excessively large keys equal excessively “active” accounts
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> View</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+</div>
+
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> 业强 2012-08-16 hbase讲座</h4>
+<div class="outline-text-4" id="text-1-2-1">
 
 <p><img src="./images/hbase-architecture.png"  alt="./images/hbase-architecture.png" />
 </p>
@@ -189,9 +377,9 @@ scan过程大致是这样的：
 
 </div>
 
-<div id="outline-container-1-1-2" class="outline-4">
-<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> asynchbase</h4>
-<div class="outline-text-4" id="text-1-1-2">
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> asynchbase</h4>
+<div class="outline-text-4" id="text-1-2-2">
 
 <p><a href="https://github.com/stumbleupon/asynchbase">https://github.com/stumbleupon/asynchbase</a>
 </p>
@@ -219,9 +407,9 @@ scan过程大致是这样的：
 
 </div>
 
-<div id="outline-container-1-1-3" class="outline-4">
-<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> HBase Write Path | Apache Hadoop for the Enterprise | Cloudera</h4>
-<div class="outline-text-4" id="text-1-1-3">
+<div id="outline-container-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> HBase Write Path | Apache Hadoop for the Enterprise | Cloudera</h4>
+<div class="outline-text-4" id="text-1-2-3">
 
 <p><a href="http://blog.cloudera.com/blog/2012/06/hbase-write-path/">http://blog.cloudera.com/blog/2012/06/hbase-write-path/</a>
 </p>
@@ -254,9 +442,9 @@ By default, WAL file is rolled when its size is about 95% of the HDFS block size
 
 </div>
 
-<div id="outline-container-1-1-4" class="outline-4">
-<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> HBase Log Splitting | Apache Hadoop for the Enterprise | Cloudera</h4>
-<div class="outline-text-4" id="text-1-1-4">
+<div id="outline-container-1-2-4" class="outline-4">
+<h4 id="sec-1-2-4"><span class="section-number-4">1.2.4</span> HBase Log Splitting | Apache Hadoop for the Enterprise | Cloudera</h4>
+<div class="outline-text-4" id="text-1-2-4">
 
 <p><a href="http://blog.cloudera.com/blog/2012/07/hbase-log-splitting/">http://blog.cloudera.com/blog/2012/07/hbase-log-splitting/</a>
 </p>
@@ -336,9 +524,9 @@ Times to complete single threaded log splitting vary, but the process may take s
 
 </div>
 
-<div id="outline-container-1-1-5" class="outline-4">
-<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> clock skew</h4>
-<div class="outline-text-4" id="text-1-1-5">
+<div id="outline-container-1-2-5" class="outline-4">
+<h4 id="sec-1-2-5"><span class="section-number-4">1.2.5</span> clock skew</h4>
+<div class="outline-text-4" id="text-1-2-5">
 
 <p>如果region server和master的时间偏差太大的话，会造成region server启动失败
 </p>
@@ -395,16 +583,16 @@ rs2最近写入的数据是v2，而接下来如果从rs2查询"latest"的数据�
 
 </div>
 
-<div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Usage</h3>
-<div class="outline-text-3" id="text-1-2">
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Usage</h3>
+<div class="outline-text-3" id="text-1-3">
 
 
 </div>
 
-<div id="outline-container-1-2-1" class="outline-4">
-<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> hbase shell</h4>
-<div class="outline-text-4" id="text-1-2-1">
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> hbase shell</h4>
+<div class="outline-text-4" id="text-1-3-1">
 
 <ul>
 <li>scan 'test'
@@ -431,9 +619,9 @@ rs2最近写入的数据是v2，而接下来如果从rs2查询"latest"的数据�
 
 </div>
 
-<div id="outline-container-1-2-2" class="outline-4">
-<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> hbase increment</h4>
-<div class="outline-text-4" id="text-1-2-2">
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> hbase increment</h4>
+<div class="outline-text-4" id="text-1-3-2">
 
 <p><a href="http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html">http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html</a>
 </p>
@@ -441,9 +629,9 @@ rs2最近写入的数据是v2，而接下来如果从rs2查询"latest"的数据�
 
 </div>
 
-<div id="outline-container-1-2-3" class="outline-4">
-<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> hbase join</h4>
-<div class="outline-text-4" id="text-1-2-3">
+<div id="outline-container-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> hbase join</h4>
+<div class="outline-text-4" id="text-1-3-3">
 
 <p><a href="http://stackoverflow.com/questions/11327316/how-to-join-tables-in-hbase">http://stackoverflow.com/questions/11327316/how-to-join-tables-in-hbase</a>
 </p>
@@ -466,9 +654,9 @@ rs2最近写入的数据是v2，而接下来如果从rs2查询"latest"的数据�
 
 </div>
 
-<div id="outline-container-1-2-4" class="outline-4">
-<h4 id="sec-1-2-4"><span class="section-number-4">1.2.4</span> hbase的kv大小限制</h4>
-<div class="outline-text-4" id="text-1-2-4">
+<div id="outline-container-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> hbase的kv大小限制</h4>
+<div class="outline-text-4" id="text-1-3-4">
 
 <p>下面代码可以进行检测
 </p>
@@ -580,9 +768,9 @@ private void validatePut(final Put put) throws IllegalArgumentException{
 
 </div>
 
-<div id="outline-container-1-2-5" class="outline-4">
-<h4 id="sec-1-2-5"><span class="section-number-4">1.2.5</span> create table API</h4>
-<div class="outline-text-4" id="text-1-2-5">
+<div id="outline-container-1-3-5" class="outline-4">
+<h4 id="sec-1-3-5"><span class="section-number-4">1.3.5</span> create table API</h4>
+<div class="outline-text-4" id="text-1-3-5">
 
 
 
@@ -617,9 +805,9 @@ public class App  {
 
 </div>
 
-<div id="outline-container-1-2-6" class="outline-4">
-<h4 id="sec-1-2-6"><span class="section-number-4">1.2.6</span> use python</h4>
-<div class="outline-text-4" id="text-1-2-6">
+<div id="outline-container-1-3-6" class="outline-4">
+<h4 id="sec-1-3-6"><span class="section-number-4">1.3.6</span> use python</h4>
+<div class="outline-text-4" id="text-1-3-6">
 
 <p>使用python来访问hbase确实可以很大地提高开发效率，但是通过thrift server来进行中转的话对于性能还是存在影响的，因此比较适合测试。
 </p><ul>
@@ -719,8 +907,8 @@ thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-15 14:01:48 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-11-21 19:19:38 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

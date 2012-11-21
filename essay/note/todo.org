@@ -42,5 +42,5 @@
 ** TODO 整理bookmark.
 ** TODO 试试skype
 ** TODO 整理todo部分
-** TODO 验证OsVersion这个是否已经上线（等待18 appuserstat完成，get 'appuserstat', '2012-11-18_4d707f5e112cf75410007470' , {COLUMN=>'stat:osVersions_1_lanCnt'}）
-** TODO 调度器增加kill功能，分页功能似乎存在bug.
+** TODO 验证OsVersion这个是否已经上线以及分辨率（等待18 appuserstat完成，get 'appuserstat', '2012-11-18_4d707f5e112cf75410007470' , {COLUMN=>'stat:osVersions_1_lanCnt'}）
+
