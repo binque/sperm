@@ -12,3 +12,10 @@ http://nathanmarz.com/blog/how-to-beat-the-cap-theorem.html
 http://www.google.com/about/datacenters/
 
 TODO(dirlt):
+
+** Google Research Publication: Web Search for a Planet
+   - link: http://research.google.com/archive/googlecluster.html
+   - date: 2003 *NOTE(dirlt):可以看得出这篇文章相当老了*
+
+
+

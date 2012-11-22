@@ -8,8 +8,7 @@
    - http://www.yankay.com/google-spanner%E5%8E%9F%E7%90%86-%E5%85%A8%E7%90%83%E7%BA%A7%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93/
    - Google Research Publication: Spanner http://research.google.com/archive/spanner.html
    - Spanner——Google的全球化分布式数据库 - Sun Yongyue - 博客园 http://www.cnblogs.com/sunyongyue/archive/2012/09/20/spanner_note.html
-** TODO Google Research Publication: Web Search for a Planet
-   - http://research.google.com/archive/googlecluster.html
+** TODO 
 ** TODO dynamo, cassandra, 
 ** TODO The anatomy of google
 ** TODO RSS system we make
@@ -43,6 +42,6 @@
 ** TODO 整理bookmark.
 ** TODO 试试skype
 ** TODO 整理todo部分
-** HBase Error
-   - ERROR: Region dailylaunchindex,2012-10-05_4ff2b6405270157d2c000027_3fde54a44fe62833e0ae93705a4e96d7,1349867953135.49777bf76187aa811c6d22db7f1075a0. is listed in META on region server dp3.umeng.com:60020 but is multiply assigned to region servers dp3.umeng.com:60020, dp10.umeng.com:60020 Trying to fix assignment error...
-   - 
+** TODO umid服务
+** TODO 游戏统计部分
+** TODO 调研memcached.
