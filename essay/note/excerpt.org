@@ -1,6 +1,29 @@
 * excerpt
 #+TITLE: 网络摘抄
 --------------------
+* My experience as the first employee of a Y Combinator startup - thoughts from the red planet - thoughts from the red planet*
+http://nathanmarz.com/blog/my-experience-as-the-first-employee-of-a-y-combinator-startu.html
+
+   - Because there are no rules, you have to be able to set your own direction and make decisions on your own.
+   - I've converged on going into the office twice a week and working from home the other days. Sometimes I go into the office less, and sometimes I go into the office more. It depends on how I feel and whether I feel we have a lot of syncing up to do that's better done in person.
+   - Ultimately, choosing when and where I work makes me more productive. And that's what matters most in a startup.
+   - So we started doing meetings every other week where we discuss direction and progress of the company. Before the meeting, I put together an agenda on our wiki and then everyone has a chance to add items they want to discuss to the agenda. Our meeting usually takes about 40 minutes and has helped us all stay on the same page.
+   - To avoid burn-out, I find it's really important to have a sense of balance and not be ingrained in work all the time. For me, playing music, reading, exercising, and writing this blog all help keep me balanced. Interspersing those activities throughout the day helps keep my mind sharp during those hours that I'm working. 
+   - Of course, the freedom of working for a startup carries with it more responsibility as well. There's no sysadmin so figuring out how to configure, setup, and deploy machines is all on your plate. And when shit hits the fan, you better be comfortable digging into anything and everything to solve the issue.
+
+--------------------
+*Your company has a knowledge debt problem - thoughts from the red planet - thoughts from the red planet*
+http://nathanmarz.com/blog/your-company-has-a-knowledge-debt-problem.html
+
+   - If anything, a company should prefer candidates who are experienced in a different set of technologies. Any worthwhile programmer will be able to pick up the technologies necessary to work with the existing code base. Hiring people with different skill sets gives the team instant experience in a new set of tools for solving problems.
+   - Every time a new language, database, tool, or technique is invented, a company accumulates knowledge debt. Unless a company actively tries to combat knowledge debt, the company will continue to use the same old tools and techniques that feel "comfortable", fall behind, and eventually look something like the companies still using Enterprise Java today.
+   - Similar to how technical debt has interest payments in the form of manual labor and maintenance costs, knowledge debt has interest payments in the form of being less productive than possible.
+   - You have to make a constant investment in combating knowledge debt or you're guaranteed to fall behind. One way to combat knowledge debt is to sacrifice some productivity in the short-term by experimenting with different technologies in the hope of improving productivity for the future.
+
+--------------------
+
+
+--------------------
 初级程序员们应该“忘掉”他们觉得自己已经知道的东西,然后重新学习他们需要的东西。刚走出校园的程序员有两种类型:要么干劲十足,随时准备改变世界;要么胆小如鼠,不敢抓住机会或者尝试有风险的东西,生怕被炒鱿鱼。 
 
 第一种是我非常担心的一种。他们自认为知道要做什么,且在google和互联网上搜索他们需要的资料,他们会为了挂画把墙锯开,或者会因为射钉枪和你争吵,因为他们觉得那是对的:射钉枪钉钉子的效率更高。实际上他们错了,因为射钉枪没法控制钉钉子的力量(它会把钉子整个钉进墙里),并不适合挂画。
