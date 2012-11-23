@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="mapred"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-20 21:26:36 CST"/>
+<meta name="generated" content="2012-11-23 09:00:40 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -102,10 +102,12 @@
 <ul>
 <li><a href="#sec-1-1">1.1 YARN</a>
 <ul>
-<li><a href="#sec-1-1-1">1.1.1 Introducing Apache Hadoop YARN</a></li>
-<li><a href="#sec-1-1-2">1.1.2 Apache Hadoop YARN – Background and an Overview</a></li>
-<li><a href="#sec-1-1-3">1.1.3 Apache Hadoop YARN – Concepts and Applications</a></li>
+<li><a href="#sec-1-1-1">1.1.1 Introducing Apache Hadoop YARN | Hortonworks</a></li>
+<li><a href="#sec-1-1-2">1.1.2 Apache Hadoop YARN – Background and an Overview | Hortonworks</a></li>
+<li><a href="#sec-1-1-3">1.1.3 Apache Hadoop YARN – Concepts and Applications | Hortonworks</a></li>
 <li><a href="#sec-1-1-4">1.1.4 Apache Mesos (Twitter Open Source Open House)</a></li>
+<li><a href="#sec-1-1-5">1.1.5 Apache Hadoop YARN – NodeManager | Hortonworks</a></li>
+<li><a href="#sec-1-1-6">1.1.6 Apache Hadoop YARN – ResourceManager | Hortonworks</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-2">1.2 Usage</a>
@@ -141,7 +143,7 @@
 </div>
 
 <div id="outline-container-1-1-1" class="outline-4">
-<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Introducing Apache Hadoop YARN</h4>
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Introducing Apache Hadoop YARN | Hortonworks</h4>
 <div class="outline-text-4" id="text-1-1-1">
 
 <p><a href="http://hortonworks.com/blog/introducing-apache-hadoop-yarn/">http://hortonworks.com/blog/introducing-apache-hadoop-yarn/</a> 
@@ -155,7 +157,7 @@
 </div>
 
 <div id="outline-container-1-1-2" class="outline-4">
-<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> Apache Hadoop YARN – Background and an Overview</h4>
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> Apache Hadoop YARN – Background and an Overview | Hortonworks</h4>
 <div class="outline-text-4" id="text-1-1-2">
 
 <p><a href="http://hortonworks.com/blog/apache-hadoop-yarn-background-and-an-overview/">http://hortonworks.com/blog/apache-hadoop-yarn-background-and-an-overview/</a>
@@ -219,7 +221,7 @@ YARN主要做的工作就是在资源利用的改进上面，将资源利用已�
 </div>
 
 <div id="outline-container-1-1-3" class="outline-4">
-<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> Apache Hadoop YARN – Concepts and Applications</h4>
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> Apache Hadoop YARN – Concepts and Applications | Hortonworks</h4>
 <div class="outline-text-4" id="text-1-1-3">
 
 <p><a href="http://hortonworks.com/blog/apache-hadoop-yarn-concepts-and-applications/">http://hortonworks.com/blog/apache-hadoop-yarn-concepts-and-applications/</a>
@@ -316,9 +318,136 @@ Let’s walk through an application execution sequence (steps are illustrated in
 
 <p><a href="https://speakerdeck.com/u/benh/p/apache-mesos-twitter-open-source-open-house">https://speakerdeck.com/u/benh/p/apache-mesos-twitter-open-source-open-house</a>
 </p>
-<p>
-和YARN类似的资源调度层。
+</div>
+
+</div>
+
+<div id="outline-container-1-1-5" class="outline-4">
+<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> Apache Hadoop YARN – NodeManager | Hortonworks</h4>
+<div class="outline-text-4" id="text-1-1-5">
+
+<p><a href="http://hortonworks.com/blog/apache-hadoop-yarn-nodemanager/">http://hortonworks.com/blog/apache-hadoop-yarn-nodemanager/</a>
 </p>
+<p>
+<img src="./images/yarn-nodemanager-arch.png"  alt="./images/yarn-nodemanager-arch.png" />
+</p>
+<ul>
+<li>NodeStatusUpdater 做一些资源状态汇报，并且接收RM请求停止已经运行的container
+</li>
+<li>ContainerManager <b>核心部分</b>
+<ul>
+<li>RPC server 接收AM的命令运行或停止container，和ContainerTokenSecretManager协作完成请求认证。所有操作会记录在audit-log
+</li>
+<li>ResourceLocalizationService 准备一些applicaiton所需要的资源
+</li>
+<li>ContainersLauncher 维护container线程池，接收RM/AM的请求来运行和停止container
+</li>
+<li>AuxServices 提供额外服务。当application在这个node上面第一个container运行或者是application结束的时候会收到通知。
+</li>
+<li>ContainersMonitor 监控container运行状况，如果资源使用超限的话会kill container
+</li>
+<li>LogHandler 收集application本地产生的日志进行聚合并且上传到hdfs
+</li>
+</ul>
+
+</li>
+<li>ContainerExecutor 执行container
+</li>
+<li>NodeHealthCheckerService 对于node做一些健康检查，将一些资源数据给NodeStatusUpdater
+</li>
+<li>Security
+<ul>
+<li>ApplicationACLsManagerNM
+</li>
+<li>ContainerTokenSecretManager
+</li>
+</ul>
+
+</li>
+<li>WebServer 当前运行的application以及对应的container，资源利用状况以及聚合的log
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-6" class="outline-4">
+<h4 id="sec-1-1-6"><span class="section-number-4">1.1.6</span> Apache Hadoop YARN – ResourceManager | Hortonworks</h4>
+<div class="outline-text-4" id="text-1-1-6">
+
+<p><a href="http://hortonworks.com/blog/apache-hadoop-yarn-resourcemanager/">http://hortonworks.com/blog/apache-hadoop-yarn-resourcemanager/</a>
+</p>
+<p>
+<img src="./images/yarn-resourcemanager-arch.png"  alt="./images/yarn-resourcemanager-arch.png" />
+</p>
+<ul>
+<li>Components interfacing RM to the clients:
+<ul>
+<li>ClientService 用户接口用来提交删除application以及获得当前集群的状况等数据
+</li>
+<li>AdminService 管理接口可以用来调整queue的优先级或者是增加node等
+</li>
+</ul>
+
+</li>
+<li>Components connecting RM to the nodes:
+<ul>
+<li>ResourceTrackerService 用来和NodeManager做RPC
+</li>
+<li>NMLivelinessMonitor 检测NM是否存活
+</li>
+<li>NodesListManager 维护当前所有的NM节点
+</li>
+</ul>
+
+</li>
+<li>Components interacting with the per-application AMs 
+<ul>
+<li>ApplicationMasterService 用来和AM交互部分接口，AM的资源请求通过这个接口提交，然后转向YarnScheduler处理
+</li>
+<li>AMLivelinessMonitor 检测AM是否存活
+</li>
+</ul>
+
+</li>
+<li>The core of the ResourceManager <b>核心部分</b>
+<ul>
+<li>ApplicationsManager 维护当所有提交的Application
+</li>
+<li>ApplicationACLsManager
+</li>
+<li>ApplicationMasterLauncher 负责AM的启动
+</li>
+<li>YarnScheduler <b>NOTE（dirlt）：似乎这个调度行为是在一开始就决定的</b>
+<ul>
+<li>The Scheduler is responsible for allocating resources to the various running applications subject to constraints of capacities, queues etc. It performs its scheduling function based on the resource requirements of the applications such as memory, CPU, disk, network etc. Currently, only memory is supported and support for CPU is close to completion.
+</li>
+</ul>
+
+</li>
+<li>ContainerAllocationExpirer application可能占用container但是却不使用。可以用来检测哪些container没有使用。
+</li>
+</ul>
+
+</li>
+<li>TokenSecretManagers
+<ul>
+<li>ApplicationTokenSecretManager
+</li>
+<li>ContainerTokenSecretManager
+</li>
+<li>RMDelegationTokenSecretManager
+</li>
+</ul>
+
+</li>
+<li>DelegationTokenRenewer
+</li>
+</ul>
+
+
 </div>
 </div>
 
@@ -941,7 +1070,7 @@ public class Cluster {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-20 21:26:36 CST</p>
+<p class="date">Date: 2012-11-23 09:00:40 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
