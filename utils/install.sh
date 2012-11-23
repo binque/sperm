@@ -55,7 +55,7 @@ TARGETS="2utf8 cxxindent \
 oprof mysqldb syslog \
 local-install org2twiki \
  gc pom-create vpn-umeng-ubuntu-workpc vpn-umeng-mba vpn-umeng-ubuntu-homepc vpn-dirlt-com vpn-shiwen-aws \
-proc-netstat rhs go-doc-server pcrypt einstall uinstall"
+proc-netstat rhs go-doc-server pcrypt einstall uinstall clj"
 
 INSTALLDIR=$HOME/utils/bin
 if [ ! -d $INSTALLDIR ]

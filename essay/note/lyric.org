@@ -402,3 +402,32 @@ Seediq blbale wa!
 A Seediq Bale! 
 #+END_EXAMPLE
   
+** in my remains(linkin park)
+#+BEGIN_EXAMPLE
+Separate, sifting through the wreckage, 
+I can't concentrate.
+Searching for the message in the fear and pain.
+Broken down and waiting for the chance to feel alive.
+Now in my remains, our promises, 
+they never came
+So let silence ring to wash away the worst of me.
+Come apart, 
+falling in the cracks of every broken heart.
+Digging through the wreckage of your disregard
+Sinking down and waiting 
+for the chance to feel alive.
+Now in my remains, 
+our promises, they never came
+So let silence ring to 
+wash away the worst of me.
+
+Like an army falling, one by one by one.
+Like an army falling, one by one by one.
+Like an army falling, one by one by one.
+Like an army falling, one by one by one.
+Now in my remains, 
+our promises, they never came
+So let silence ring to wash away the worst of me.
+Like an army falling, one by one by one.
+Like an army falling, one by one by one.
+#+END_EXAMPLE
