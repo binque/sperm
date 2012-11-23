@@ -1,7 +1,7 @@
 * excerpt
 #+TITLE: 网络摘抄
 --------------------
-* My experience as the first employee of a Y Combinator startup - thoughts from the red planet - thoughts from the red planet*
+*My experience as the first employee of a Y Combinator startup - thoughts from the red planet - thoughts from the red planet*
 http://nathanmarz.com/blog/my-experience-as-the-first-employee-of-a-y-combinator-startu.html
 
    - Because there are no rules, you have to be able to set your own direction and make decisions on your own.
