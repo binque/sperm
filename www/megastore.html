@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="megastore"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-24 22:35:02 CST"/>
+<meta name="generated" content="2012-11-24 22:45:19 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -455,13 +455,10 @@
 
 </li>
 <li>A write transaction always begins with a current read to determine the next available log position. The commit operation gathers mutations into a log entry, assigns it a timestamp higher than any previous one, and appends it to the log using Paxos. The protocol uses optimistic con-currency: though multiple writers might be attempting to write to the same log position, only one will win. The rest will notice the victorious write, abort, and retry their op-erations. Advisory locking is available to reduce the effects of contention. Batching writes through session affinity to a particular front-end server can avoid contention altogether（对于write trasnaction的话必须使用current read读取最新的log position，然后将所有的mutation放在一个log entry里面使用一个更大的timestamp，然后使用paxos来追加。但是可能会出现冲突，如果发现冲突失败的话那么需要重试这个操作 <b>NOTE（dirlt）：我觉得这个操作可能还需要包括重新发起read以及apply logic.</b> 使用advisory lock能够减少这种冲突，或者是在提交修改时候就单独通过和这个session绑定的server来做提交 ）
+
 </li>
-</ul>
-
-
-<p>
-   -The complete transaction lifecycle is as follows:
-</p><ol>
+<li>The complete transaction lifecycle is as follows:
+<ol>
 <li>Read: Obtain the timestamp and log position of the last committed transaction.
 </li>
 <li>Application logic: Read from Bigtable and gather writes into a log entry.
@@ -475,6 +472,9 @@
 <li>The write operation can return to the client at any point after Commit, though it makes a best-effort attempt to wait for the nearest replica to apply.  <b>TODO（dirlt）？？？</b>
 </li>
 </ol>
+
+</li>
+</ul>
 
 
 
@@ -518,12 +518,8 @@
 <ul>
 <li>We have built a tight integration with Bigtable’s full-text index in which updates and searches participate in Megas-tore’s transactions and multiversion concurrency. A full-text index declared in a Megastore schema can index a table’s text or other application-generated attributes.（全文索引 <b>TODO（dirlt）：为啥我觉得这个东西没啥用途呢？</b> ）
 </li>
-<li>Synchronous replication is sufficient defense against the most common corruptions and accidents, but backups can be invaluable in cases of programmer or operator error. Megas-tore’s integrated backup system supports periodic full snap-shots as well as incremental backup of transaction logs. The restore process can bring back an entity group’s state to any point in time, optionally omitting selected log entries (as after accidental deletes). The backup system complies with legal and common sense principles for expiring deleted
+<li>Synchronous replication is sufficient defense against the most common corruptions and accidents, but backups can be invaluable in cases of programmer or operator error. Megas-tore’s integrated backup system supports periodic full snap-shots as well as incremental backup of transaction logs. The restore process can bring back an entity group’s state to any point in time, optionally omitting selected log entries (as after accidental deletes). The backup system complies with legal and common sense principles for expiring deleted data.（内置backup systems能够定期地做snapshot或者是增量地backup transaction log）
 </li>
-</ul>
-
-<p>data.（内置backup systems能够定期地做snapshot或者是增量地backup transaction log）
-</p><ul>
 <li>Applications have the option of encrypting data at rest, including the transaction logs. Encryption uses a distinct key per entity group. We avoid granting the same operators access to both the encryption keys and the encrypted data.（针对每个EG一个encrypt key来进行加密）
 </li>
 </ul>
@@ -589,7 +585,7 @@
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-24 22:35:02 CST</p>
+<p class="date">Date: 2012-11-24 22:45:19 CST</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
