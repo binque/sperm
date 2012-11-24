@@ -170,3 +170,4 @@ file:./images/valve-logo.jpg
    - [[file:note/naruto.org][火影周边]]
    - [[file:note/to-death.org][给离去的亲人们]]
    - [[file:note/virgin-foot-massage.org][初次足疗]]
+   - [[file:note/not-easy-as-you-think.org][没有那么简单]]

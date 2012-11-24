@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="distributed-system-reading"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-23 09:00:43 CST"/>
+<meta name="generated" content="2012-11-24 22:35:11 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -108,8 +108,8 @@
 </ul>
 </li>
 <li><a href="#sec-1-2">1.2 Availability vs. Durability</a></li>
-<li><a href="#sec-1-3">1.3 Google Data centers</a></li>
-<li><a href="#sec-1-4">1.4 Google Research Publication: Web Search for a Planet</a></li>
+<li><a href="#sec-1-3">1.3 Google Research Publication: Web Search for a Planet</a></li>
+<li><a href="#sec-1-4">1.4 You Can’t Sacrifice Partition Tolerance | codahale.com</a></li>
 </ul>
 </li>
 </ul>
@@ -224,26 +224,14 @@ This is a far more useful consistency model than eventual consistency, since it 
 </p>
 <p>
 如果只有一个副本机器A，要是A的硬盘坏了，那数据就丢失了。要是有多个副本机器，则还可以从其他机器上找回来。所以说多副本提高了数据的durability，写完多副本的数据很难会丢失。
-</p></div>
+</p>
+</div>
 
 </div>
 
 <div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Google Data centers</h3>
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Google Research Publication: Web Search for a Planet</h3>
 <div class="outline-text-3" id="text-1-3">
-
-<p><a href="http://www.google.com/about/datacenters/">http://www.google.com/about/datacenters/</a>
-</p>
-<p>
-TODO(dirlt):
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Google Research Publication: Web Search for a Planet</h3>
-<div class="outline-text-3" id="text-1-4">
 
 <ul>
 <li>link: <a href="http://research.google.com/archive/googlecluster.html">http://research.google.com/archive/googlecluster.html</a>
@@ -253,7 +241,47 @@ TODO(dirlt):
 </ul>
 
 
+</div>
 
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> You Can’t Sacrifice Partition Tolerance | codahale.com</h3>
+<div class="outline-text-3" id="text-1-4">
+
+<p><a href="http://codahale.com/you-cant-sacrifice-partition-tolerance/">http://codahale.com/you-cant-sacrifice-partition-tolerance/</a>
+</p><ul>
+<li>On Partition Tolerance
+<ul>
+<li>In order to model partition tolerance, the network will be allowed to lose arbitrarily many messages sent from one node to another. When a network is partitioned, all messages sent from nodes in one component of the partition to nodes in another component are lost. (And any pattern of message loss can be modeled as a temporary partition separating the communicating nodes at the exact instant the message is lost.) 
+</li>
+<li>For a distributed (i.e., multi-node) system to not require partition-tolerance it would have to run on a network which is guaranteed to never drop messages (or even deliver them late) and whose nodes are guaranteed to never die. You and I do not work with these types of systems because they don’t exist.
+
+</li>
+</ul>
+
+</li>
+<li>But Never Both
+<ul>
+<li>You cannot, however, choose both consistency and availability in a distributed system.
+</li>
+<li>As a thought experiment, imagine a distributed system which keeps track of a single piece of data using three nodes—A, B, and C—and which claims to be both consistent and available in the face of network partitions. Misfortune strikes, and that system is partitioned into two components: {A,B} and {C}. In this state, a write request arrives at node C to update the single piece of data. That node only has two options:
+<ul>
+<li>Accept the write, knowing that neither A nor B will know about this new data until the partition heals.
+</li>
+<li>Refuse the write, knowing that the client might not be able to contact A or B until the partition heals.
+</li>
+</ul>
+
+</li>
+<li>You either choose availability (Door #1) or you choose consistency (Door #2). You cannot choose both.
+</li>
+<li>To claim to do so is claiming either that the system operates on a single node (and is therefore not distributed) or that an update applied to a node in one component of a network partition will also be applied to another node in a different partition component magically. 如果同时满足CA的话，就意味着需要牺牲P（或者是在网络断开的情况下面能够magically达成一致，当然这是不可能的）。而不允许parition tolerance的话似乎只有单机系统而非分布式系统。
+</li>
+</ul>
+
+</li>
+</ul>
 
 </div>
 </div>
@@ -261,8 +289,8 @@ TODO(dirlt):
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-23 09:00:43 CST</p>
-<p class="creator">Org version 7.8.02 with Emacs version 23</p>
+<p class="date">Date: 2012-11-24 22:35:11 CST</p>
+<p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>
