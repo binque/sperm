@@ -68,6 +68,8 @@
 
 ;;; clojure.
 (require 'clojure-mode)
+(require 'clojure-test-mode)
+(global-set-key (kbd "C-c C-j") 'clojure-jack-in)
 
 ;; ;;; anything.
 ;; ;; sudo apt-get install anything-el
@@ -176,8 +178,8 @@
 
 ;; ;;; python-mode.
 ;; ;; sudo apt-get install python-mode
-;; (setq load-path (cons "~/.emacs.d/python-mode.el-6.0.11" load-path))
-;; (require 'python-mode)
+(setq load-path (cons "~/.emacs.d/python-mode.el-6.0.11" load-path))
+(require 'python-mode)
 
 ;;; php-mode
 ;; sudo apt-get install php-elisp
@@ -188,8 +190,13 @@
 ;; (require 'cedet)
 
 ;;; ido.
+(setq load-path (cons "~/.emacs.d/ido" load-path))
 (require 'ido)
 (ido-mode t)
+(require 'ido-ubiquitous)
+(ido-ubiquitous t)
+(require 'init-ido)
+(require 'smex)
 
 ;;; cscope.
 ;;; NOTE(dirlt):但是其实索引效果没有那么好，cscope对于C支持很好，对C++就已经有点吃力了。
@@ -430,3 +437,17 @@
 ;;; systemtap.
 (require 'systemtap-mode)
 (add-to-list 'auto-mode-alist '("\\.stp$" . systemtap-mode))
+
+;;; rainbow-delimiters
+(require 'rainbow-delimiters)
+(global-rainbow-delimiters-mode)
+
+;;; ac-slime
+(require 'ac-slime)
+
+;;; starter-kit
+;; (setq load-path (cons "~/.emacs.d/starter-kit" load-path))
+;; (require 'starter-kit)
+;; (require 'starter-kit-lisp)
+;; (require 'starter-kit-eshell)
+;; (require 'starter-kit-bindings)
