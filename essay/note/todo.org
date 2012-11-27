@@ -40,9 +40,9 @@
 ** TODO 整理weibo.
 ** TODO 整理bookmark.
 ** TODO 试试skype
-** TODO 整理todo部分
-** TODO umid服务
+** TODO umid服务,db research.
 ** TODO 游戏统计部分
-** TODO 调研memcached.
-** TODO 分析htable代码
+** TODO 调研memcached. and netty and thrift.
+** TODO 分析htable代码put.
 ** TODO 完成游戏模版代码以及页面访问深度
+** TODO hbase testing utility.

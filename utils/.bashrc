@@ -835,8 +835,10 @@ then
 else
     export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64/
 fi
+export HADOOP_HOME=$HOME/utils/hadoop-0.20.2-cdh3u3/
 export CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:.
 export MANPATH=/usr/local/share/man:/usr/share/man
+export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native/Linux-amd64-64/
 
 PATH=$JAVA_HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH
 PATH=$HOME/utils/bin:$PATH
@@ -918,7 +920,6 @@ alias ed="emacs"
 
 # default value of oozie url.
 export OOZIE_URL="http://localhost:11000/oozie" 
-
 
 if [ $MAC == 1 ]
 then
