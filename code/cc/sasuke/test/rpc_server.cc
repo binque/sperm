@@ -27,8 +27,8 @@ static void sig_handler(int signo) {
   }
 }
 
-#define ip "tcp://10.26.140.39:19870"
-//#define ip "tcp://127.0.0.1:19870"
+//#define ip "tcp://10.26.140.39:19870"
+#define ip "tcp://127.0.0.1:19870"
 
 int main() {
   static const int server_threads = 1;
