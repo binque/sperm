@@ -18,6 +18,8 @@ utils/.emacs.d/session.*
 utils/.emacs.d/.session
 utils/.emacs.d/anything-c-adaptive-history
 utils/.emacs.d/org-clock-save.el
+utils/.emacs.d/backups/
+utils/.emacs.d/.smex-items
 
 
 essay/images/.DS_Store
