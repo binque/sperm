@@ -451,3 +451,7 @@
 ;; (require 'starter-kit-lisp)
 ;; (require 'starter-kit-eshell)
 ;; (require 'starter-kit-bindings)
+
+;;; paredit-mode
+(require 'paredit)
+(enable-paredit-mode)
