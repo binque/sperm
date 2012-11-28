@@ -84,7 +84,7 @@ file:./images/valve-logo.jpg
    - [[file:leveldb.org][leveldb]] google的开源kv存储系统。支持billion级别的数据量，适合于写少读多的情况。当时阅读的时候是从github上面clone下来的，可能还存相当多的bug.TODO(dirlt):更深入的阅读.
    - [[file:mongodb.org][mongodb]] 面向文档的分布式存储系统，但是却可以针对文档字段索引来加快查询。功能上比通常我们认为的NoSQL强但是弱于RDBMS.
    - [[file:redis.org][redis]] 内存存储系统，支持丰富的数据类型以及相应的计算(支持持久化)。外围包装网络访问接口(并且提供了丰富的客户端),可以比较方便地在分布式系统内或者是环境下面使用.
-   - [[file:./dsgm.org][dsgm]] Document Synchronization based on Google Mail. https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm
+   - [[file:./dsgm.org][dsgm]] Document Synchronization based on Google Mail. https://github.com/dirtysalt/sperm/tree/master/code/py/dsgm *NOTE(dirlt):it really sucks. please ignore it*
    - [[file:./mysql.org][mysql]] 开源关系型数据库。The world's most popular open source database.
    - [[file:./ssd.org][ssd]] solid state disk.固态硬盘。
    - [[file:raid.org][raid]] Redundant Array of Inexpensive Disk. 廉价磁盘冗余阵列。
