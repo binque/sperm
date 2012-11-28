@@ -1,5 +1,7 @@
 Design, Implementation and Tutorial: http://dirlt.com/dsgm.html
 
+*NOTE(dirlt):it sucks. I'm gonna remove it from my repository*
+
 TODO:
    -  add some status in another db. and support 'dsgm status'
    -  output log to file for easier debugging

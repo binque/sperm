@@ -39,12 +39,6 @@ POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="ht
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.16</version>
-    </dependency>
-
     <!-- <dependency> -->
     <!--   <groupId>com.google.protobuf</groupId> -->
     <!--   <artifactId>protobuf-java</artifactId> -->
@@ -88,26 +82,8 @@ POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="ht
     <!--   <artifactId>Hadoop-GPL-Compression</artifactId> -->
     <!--   <version>0.4.15</version> -->
     <!-- </dependency> -->
-
-    <!-- <dependency> -->
-    <!--   <groupId>com.google.guava</groupId> -->
-    <!--   <artifactId>guava</artifactId> -->
-    <!--   <version>10.0.1</version> -->
-    <!-- </dependency> -->
-
-    <!-- <dependency> -->
-    <!--   <groupId>org.mongodb</groupId> -->
-    <!--   <artifactId>mongo-java-driver</artifactId> -->
-    <!--   <version>2.7.3</version> -->
-    <!-- </dependency> -->
-
-    <!-- <dependency> -->
-    <!--   <groupId>org.mongodb</groupId> -->
-    <!--   <artifactId>bson</artifactId> -->
-    <!--   <version>2.7.3</version> -->
-    <!-- </dependency> -->
   </dependencies>
-
+  
   <build>
     <plugins>
       <plugin>
@@ -118,44 +94,6 @@ POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="ht
           <target>1.6</target>
         </configuration>
       </plugin>    
-
-      <plugin>  
-        <groupId>org.apache.maven.plugins</groupId>  
-        <artifactId>maven-dependency-plugin</artifactId>  
-        <executions>
-          <execution>  
-            <id>copy-dependencies</id>  
-            <phase>compile</phase>
-            <goals>  
-              <goal>copy-dependencies</goal>  
-            </goals>  
-            <configuration> 
-              <outputDirectory>${project.build.directory}/lib</outputDirectory>  
-              <overWriteReleases>false</overWriteReleases>  
-              <overWriteSnapshots>false</overWriteSnapshots>  
-              <overWriteIfNewer>true</overWriteIfNewer>  
-            </configuration>  
-          </execution>  
-        </executions>  
-      </plugin>  
-
-            <!-- <plugin> -->
-            <!--     <artifactId>maven-assembly-plugin</artifactId> -->
-            <!--     <configuration> -->
-            <!--         <descriptorRefs> -->
-            <!--             <descriptorRef>jar-with-dependencies</descriptorRef> -->
-            <!--         </descriptorRefs> -->
-            <!--     </configuration> -->
-            <!--     <executions> -->
-            <!--       <execution> -->
-            <!--         <id>make-assembly</id>  -->
-            <!--         <phase>package</phase> -->
-            <!--         <goals> -->
-            <!--           <goal>single</goal> -->
-            <!--         </goals> -->
-            <!--       </execution> -->
-            <!--     </executions> -->
-            <!-- </plugin> -->
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -174,20 +112,6 @@ POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="ht
             </goals>
           </execution>
         </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.2.1</version>
-        <configuration>
-          <executable>java</executable>                  
-          <arguments>
-            <argument>-cp</argument>
-            <classpath/>
-            <argument>%(groupId)s.%(artifactId)s.Main</argument>
-          </arguments>
-        </configuration>
       </plugin>
 
       <!-- <plugin> -->
@@ -234,100 +158,15 @@ POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="ht
 </project>
 """
 
-SRC_TEMPLATE="""/* coding:utf-8
- * Copyright (C) dirlt
- */
-
-package %(groupId)s;
-
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import org.apache.log4j.Logger;
-
-public class %(artifactId)s {
-  private static final Logger LOG  = Logger.getLogger(%(artifactId)s.class);
-  public static void main(String[] args) {
-    // TODO(dirlt):
-  }
-}
-"""
-
-TEST_TEMPLATE="""/* coding:utf-8
- * Copyright (C) dirlt
- */
-
-package %(groupId)s;
-
-import org.junit.*;
-import static org.junit.Assert.*;
-
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.*;
-import org.apache.log4j.Logger;
-
-public class %(artifactId)sTest {
-  private static final Logger LOG  = Logger.getLogger(%(artifactId)sTest.class);
-  
-  @Before
-  public void setUp() throws Exception {
-    // TODO(dirlt):
-  }
-  
-  @After
-  public void tearDown() throws Exception {
-    // TODO(dirlt):
-  }
-
-  @Test
-  public void test() throws Exception {
-    // TODO(dirlt):
-  }
-}
-"""
-
-LOG4J="""#
-# Copyright (C) dirlt
-#
-
-log4j.rootCategory=INFO, stdout , FILE
-
-log4j.appender.stdout=org.apache.log4j.ConsoleAppender
-log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
-log4j.appender.stdout.layout.ConversionPattern=%%d %%p [%%c] - <%%m>%%n
-
-log4j.appender.FILE=org.apache.log4j.FileAppender
-log4j.appender.FILE.File=/tmp/%(artifactId)s.log
-log4j.appender.FILE.Append=true
-log4j.appender.FILE.layout=org.apache.log4j.PatternLayout
-log4j.appender.FILE.layout.ConversionPattern=%%d %%p [%%c] - <%%m>%%n
-
-# log4j.appender.FILE=org.apache.log4j.RollingFileAppender
-# log4j.appender.FILE.File=/tmp/%(artifactId)s.log
-# log4j.appender.FILE.MaxFileSize=1GB
-# log4j.appender.FILE.MaxBackupIndex=1
-# log4j.appender.FILE.Append=true
-# log4j.appender.FILE.layout=org.apache.log4j.PatternLayout
-# log4j.appender.FILE.layout.ConversionPattern=%%d %%p [%%c] - <%%m>%%n
-
-"""
-
 import os
 def generate(project,groupId,artifactId):
-    cps=groupId.split('.')
+    cps=groupId.split('.').append(artifactId)
     os.system('mkdir -p %s'%(project))
     open('%s/pom.xml'%(project),'w').write(POM_TEMPLATE%(locals()))
     os.system('mkdir -p %s/src/main/java/%s/'%(project,'/'.join(cps)))
     os.system('mkdir -p %s/src/test/java/%s/'%(project,'/'.join(cps)))
     os.system('mkdir -p %s/src/main/resources/'%(project))
     os.system('mkdir -p %s/src/test/resources/'%(project))
-    open('%s/src/main/java/%s/%s.java'%(project,'/'.join(cps),artifactId),'w').write(SRC_TEMPLATE%(locals()))
-    open('%s/src/test/java/%s/%sTest.java'%(project,'/'.join(cps),artifactId),'w').write(TEST_TEMPLATE%(locals()))
-    open('%s/src/main/resources/log4j.properties'%(project),'w').write(LOG4J%(locals()))
-    open('%s/src/test/resources/log4j.properties'%(project),'w').write(LOG4J%(locals()))
 
 import sys
 if __name__=='__main__':
