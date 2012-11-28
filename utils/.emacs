@@ -439,8 +439,8 @@
 (add-to-list 'auto-mode-alist '("\\.stp$" . systemtap-mode))
 
 ;;; rainbow-delimiters
-(require 'rainbow-delimiters)
-(global-rainbow-delimiters-mode)
+;; (require 'rainbow-delimiters)
+;; (global-rainbow-delimiters-mode)
 
 ;;; ac-slime
 (require 'ac-slime)
@@ -453,5 +453,5 @@
 ;; (require 'starter-kit-bindings)
 
 ;;; paredit-mode
-(require 'paredit)
-(enable-paredit-mode)
+;; (require 'paredit)
+;; (enable-paredit-mode)
