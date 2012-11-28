@@ -193,10 +193,10 @@
 (setq load-path (cons "~/.emacs.d/ido" load-path))
 (require 'ido)
 (ido-mode t)
-(require 'ido-ubiquitous)
-(ido-ubiquitous t)
-(require 'init-ido)
-(require 'smex)
+;; (require 'ido-ubiquitous)
+;; (ido-ubiquitous t)
+;; (require 'init-ido)
+;; (require 'smex)
 
 ;;; cscope.
 ;;; NOTE(dirlt):但是其实索引效果没有那么好，cscope对于C支持很好，对C++就已经有点吃力了。

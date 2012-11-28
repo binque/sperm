@@ -34,8 +34,6 @@ sae/
 code/py/dsgm/dsgm.db
 code/py/dsgm/dsgm.conf     
 code/py/pcrypt/pcrypt.png
-code/py/pcrypt/pcrypt.py.ok
-
 
 code/cc/astyle/test/test_astyle
 code/cc/bench/t_cond
