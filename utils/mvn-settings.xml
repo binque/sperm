@@ -205,6 +205,7 @@ under the License.
       </activation>
       <repositories>
         
+	<!-- repository inside -->
         <repository>
           <id>umeng.public</id>
           <name>Umeng Public Maven Repository</name>
@@ -213,7 +214,7 @@ under the License.
           <snapshots><enabled>true</enabled></snapshots>
         </repository>
         
-        <!-- repository outside
+        <!-- repository outside -->
         <repository>
           <id>apache.snapshots</id>
           <name>Apache Snapshots</name>
@@ -237,7 +238,6 @@ under the License.
           <name>cloudera repository</name>
           <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
         </repository>
-        --> 
       </repositories>
 
       <pluginRepositories>

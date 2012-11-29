@@ -68,6 +68,7 @@
    - sudo apt-get install virtualbox-guest-additions # 设置windows虚拟机共享文件夹
    - sudo apt-get install ntpd
    - sudo apt-get install systemtap
+   - sudo apt-get install clojure
 
 ** amarok循环播放
 在amarok的右下角有task progression的图标，选择repeat track即可。

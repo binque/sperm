@@ -124,6 +124,16 @@ file:./images/yarn-resourcemanager-arch.png
      - RMDelegationTokenSecretManager
    - DelegationTokenRenewer
 
+** Source Analysis
+*** task如何向tasktracker进行定时汇报
+   - task不管是mapper还是reducer，和mr框架相关的内容都包含在了Context里面。
+   - Context初始化里面需要传入一个Reporter类，这个类主要用来和tasktracker汇报信息。Reporter本身是一个抽象类，一个具体实现类有TaskReporter
+   - TaskReporter本身实现了一个run方法，代码里面可以看到在和tasktracker通信。如果任务每个完成的话，那么会不断检查sendProgress这个标志位，这个标志位也被progress方法设置.
+   - 在MapTask以及ReduceTask里面的run方法，首先会创建reporter对象并且启动（startCommunicationThread），然后执行具体的map或者是reduce过程。（runNewMapper/runNewReducer） ，最后回到了Context.run
+   - 在Context.run里面本质工作是在不断地读取kv然后交给appcode来进行处理，在每次调用nextKeyValue里面，实际上调用了report.progress方法。
+简单地来说，有单独的汇报线程，然后在mapper以及reducer里面每次读取一个kv的话都会调用progress，之后汇报线程就可以向tasktracker汇报状态。因此如果自己某个任务耗时过长的话，可以调用context.progress().
+
+
 ** Usage
 *** 多路输入
 多路输入包括从多路hbase以及多路hdfs输入：
@@ -642,13 +652,4 @@ public class Cluster {
 }
 
 #+END_SRC
-
-** Source Analysis
-*** task如何向tasktracker进行定时汇报
-   - task不管是mapper还是reducer，和mr框架相关的内容都包含在了Context里面。
-   - Context初始化里面需要传入一个Reporter类，这个类主要用来和tasktracker汇报信息。Reporter本身是一个抽象类，一个具体实现类有TaskReporter
-   - TaskReporter本身实现了一个run方法，代码里面可以看到在和tasktracker通信。如果任务每个完成的话，那么会不断检查sendProgress这个标志位，这个标志位也被progress方法设置.
-   - 在MapTask以及ReduceTask里面的run方法，首先会创建reporter对象并且启动（startCommunicationThread），然后执行具体的map或者是reduce过程。（runNewMapper/runNewReducer） ，最后回到了Context.run
-   - 在Context.run里面本质工作是在不断地读取kv然后交给appcode来进行处理，在每次调用nextKeyValue里面，实际上调用了report.progress方法。
-简单地来说，有单独的汇报线程，然后在mapper以及reducer里面每次读取一个kv的话都会调用progress，之后汇报线程就可以向tasktracker汇报状态。因此如果自己某个任务耗时过长的话，可以调用context.progress().
 

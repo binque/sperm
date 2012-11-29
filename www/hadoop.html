@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hadoop"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-24 22:35:09 CST"/>
+<meta name="generated" content="2012-11-30 07:23:49 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -938,15 +938,20 @@ public static class Reduce
 <h4 id="sec-1-4-4"><span class="section-number-4">1.4.4</span> 多路输出</h4>
 <div class="outline-text-4" id="text-1-4-4">
 
-<p>多路输出代码可以参考<a href="mapred.html">这里</a> 其中一小节"验证多路输出正确性",主要步骤是这样的：
+<p>多路输出代码可以参考<a href="mapred.html">这里</a> 其中一小节"多路输出"
 </p><ul>
-<li>使用FileOutputFormat设置好输出文件目录
+<li>使用MultipleOutputs 多文件和table混合输出（和mrunit配合不好）
 </li>
-<li>使用TableOutputFormat设置好输出table
+<li>使用MultipleTableOutputFormat 多table输出
 </li>
-<li>设置MultipleOutputs参数，使用命名前缀来进行区分。
+<li>使用MultipleOutputFormat 多文件输出
+<ul>
+<li>需要继承这个类并且复写一些方法，然后设置OutputFormat为这个类
 </li>
-<li>在mapper或者是reducer里面创建MultipleOutputs对象，按照命名前缀来做多路输出。
+<li>似乎高版本被MultipleOutputs代替
+</li>
+</ul>
+
 </li>
 </ul>
 
@@ -991,8 +996,8 @@ public static class Reduce
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-24 22:35:09 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-11-30 07:23:49 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

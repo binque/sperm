@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="mapred"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-24 22:35:04 CST"/>
+<meta name="generated" content="2012-11-30 07:23:46 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -112,8 +112,8 @@
 </li>
 <li><a href="#sec-1-2">1.2 Usage</a>
 <ul>
-<li><a href="#sec-1-2-1">1.2.1 验证多路输入正确性</a></li>
-<li><a href="#sec-1-2-2">1.2.2 验证多路输出正确性</a></li>
+<li><a href="#sec-1-2-1">1.2.1 多路输入</a></li>
+<li><a href="#sec-1-2-2">1.2.2 多路输出</a></li>
 <li><a href="#sec-1-2-3">1.2.3 获取集群运行状况</a></li>
 </ul>
 </li>
@@ -461,10 +461,10 @@ Let’s walk through an application execution sequence (steps are illustrated in
 </div>
 
 <div id="outline-container-1-2-1" class="outline-4">
-<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> 验证多路输入正确性</h4>
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> 多路输入</h4>
 <div class="outline-text-4" id="text-1-2-1">
 
-<p>多路输入包括从多路hbase以及多路hdfs输入，下面是一个验证程序，可以在上面修改确认是否OK。大致思路如下：
+<p>多路输入包括从多路hbase以及多路hdfs输入：
 </p><ul>
 <li>编写hbase以及hdfs对应的mapper
 </li>
@@ -671,10 +671,10 @@ public class TestHBaseInputAndHDFSInputMR {
 </div>
 
 <div id="outline-container-1-2-2" class="outline-4">
-<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> 验证多路输出正确性</h4>
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> 多路输出</h4>
 <div class="outline-text-4" id="text-1-2-2">
 
-<p>多路输出包括输出到hdfs和htable，下面是一个验证程序。大致似乎是这样的：
+<p>多路输出包括输出到hdfs和htable
 </p><ul>
 <li>构造一个输入文件
 </li>
@@ -685,15 +685,20 @@ public class TestHBaseInputAndHDFSInputMR {
 </ul>
 
 
-<p>
-<b>NOTE（dirlt）：似乎只是支持1个htable，和1个hdfs的目录。但是hdfs每个输出文件会有一个前缀用来进行区分</b>
-</p>
-<p>
-<b>NOTE（dirlt）：支持多个htable，并且write(String namedOutput, K key, V value, String baseOutputPath) 这个函数支持写到不同的目录下面。当使用这个函数调用的话，那么不会像之前的方式每个文件使用不同的前缀</b>
-</p>
-<p>
-<b>NOTE（dirlt）：所以对于多路输出方面的话，完全可以做到多个htable以及多个hdfs目录的输出</b>
-</p>
+<ul>
+<li id="sec-1-2-2-1">MultipleOutputs<br/>
+<ul>
+<li>支持多个htable，
+</li>
+<li>如果使用write(String namedOutput, K key, V value)会写到FileOutputFormat设置的目录下面，文件附上前缀namedOutput-，编号从0开始
+</li>
+<li>如果使用write(String namedOutput, K key, V value, String baseOutputPath) 会写到baseOutputPath目录下面，文件名没有前缀，编号还是从0开始
+</li>
+<li>因为最后输出是调用MultipleOutputs.write而非Context.write，因此和mrunit配合不太好
+</li>
+</ul>
+
+
 
 
 
@@ -856,12 +861,12 @@ public class TestHBaseOutputAndHDFSOutputMR {
 <p>
 但是上面这种方式实际上并不太好进行测试。一种可以测试的方法就是MultipleOutputs进行mock，修改其write的方法将结果缓存起来。
 </p>
-
-<hr/>
-
-<p>
+</li>
+</ul>
+<ul>
+<li id="sec-1-2-2-2">MultipleTableOutputFormat<br/>
 但是如果我们只是输出到多个表的话，还是可以使用mrunit来进行测试的，下面是如果只有htable输出的情况，这样更加方面做ut
-</p>
+
 
 
 <pre class="src src-Java">package com.umeng.dp.offline;
@@ -989,6 +994,8 @@ public class TestHBaseOutputAndHDFSOutputMR extends TestCase {
 </pre>
 
 
+</li>
+</ul>
 </div>
 
 </div>
@@ -1070,8 +1077,8 @@ public class Cluster {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-24 22:35:04 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-11-30 07:23:46 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>
