@@ -65,14 +65,14 @@ POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="ht
     <!-- </dependency> -->
 
     <!-- <dependency> -->
-    <!--   <groupId>com.apache.hbase</groupId> -->
+    <!--   <groupId>org.apache.hbase</groupId> -->
     <!--   <artifactId>hbase-test</artifactId> -->
     <!--   <version>0.90.4-cdh3u2</version> -->
     <!--   <scope>test</scope> -->
     <!-- </dependency> -->
 
     <!-- <dependency> -->
-    <!--   <groupId>com.twitter</groupId> -->
+    <!--   <groupId>com.twitter.elephantbird</groupId> -->
     <!--   <artifactId>elephant-bird</artifactId> -->
     <!--   <version>2.1.2</version> -->
     <!-- </dependency> -->

@@ -379,11 +379,12 @@ public class SegmentMarkProtobufWritable extends ProtobufWritable<SegmentMark> {
 *TODO（dirlt）：至于为什么这样可以就需要阅读源代码，这也意味着不保证其他hadoop版本也可以这么做*
 
 *** 多路输出
-多路输出代码可以参考[[file:mapred.org][这里]] 其中一小节"验证多路输出正确性",主要步骤是这样的：
-   - 使用FileOutputFormat设置好输出文件目录
-   - 使用TableOutputFormat设置好输出table
-   - 设置MultipleOutputs参数，使用命名前缀来进行区分。
-   - 在mapper或者是reducer里面创建MultipleOutputs对象，按照命名前缀来做多路输出。
+多路输出代码可以参考[[file:mapred.org][这里]] 其中一小节"多路输出"
+   - 使用MultipleOutputs 多文件和table混合输出（和mrunit配合不好）
+   - 使用MultipleTableOutputFormat 多table输出
+   - 使用MultipleOutputFormat 多文件输出
+     - 需要继承这个类并且复写一些方法，然后设置OutputFormat为这个类
+     - 似乎高版本被MultipleOutputs代替
 
 *** OutOfMemoryError
    - hadoop的mapreduce作业中经常出现Java heap space解决方案 http://blog.sina.com.cn/s/blog_6345041c01011bjq.html
