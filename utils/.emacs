@@ -466,8 +466,8 @@
 (add-hook 'clojure-mode-hook 'enable-paredit-mode)
 (add-hook 'clojure-test-mode-hook 'enable-paredit-mode)
 
-;; (require 'package)
-;; (add-to-list 'package-archives
-;;              '("marmalade" . "http://marmalade-repo.org/packages/") t)
-;; (package-initialize)
-
+(require 'package)
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/") t)
+;; (package-refresh-contents)
+(package-initialize)
