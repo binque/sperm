@@ -69,7 +69,6 @@
 ;;; clojure.
 (require 'clojure-mode)
 (require 'clojure-test-mode)
-(global-set-key (kbd "C-c C-j") 'clojure-jack-in)
 
 ;; ;;; anything.
 ;; ;; sudo apt-get install anything-el
@@ -315,7 +314,16 @@
 (global-set-key "\C-chdv" 'describe-variable) ;; help describe variable.
 (global-set-key "\C-chdk" 'describe-key) ;; help describe key.
 (global-set-key "\C-c;" 'comment-or-uncomment-region)
-(global-set-key "\C-cc" 'calendar)
+(defun run-current-file ()
+  (interactive)
+  (setq ext-map
+	'(("clj" . " ~/utils/bin/clj")))
+  (setq file-name (buffer-file-name))
+  (setq file-ext (file-name-extension file-name))
+  (setq prog-name (cdr (assoc file-ext ext-map)))
+  (setq command (concat prog-name " " file-name))
+  (shell-command command))
+(global-set-key "\C-c\C-c" 'run-current-file)
 
 
 ;;; encoding.
@@ -443,7 +451,7 @@
 ;; (global-rainbow-delimiters-mode)
 
 ;;; ac-slime
-(require 'ac-slime)
+;; (require 'ac-slime)
 
 ;;; starter-kit
 ;; (setq load-path (cons "~/.emacs.d/starter-kit" load-path))
@@ -453,5 +461,13 @@
 ;; (require 'starter-kit-bindings)
 
 ;;; paredit-mode
-;; (require 'paredit)
-;; (enable-paredit-mode)
+(require 'paredit)
+(disable-paredit-mode)
+(add-hook 'clojure-mode-hook 'enable-paredit-mode)
+(add-hook 'clojure-test-mode-hook 'enable-paredit-mode)
+
+;; (require 'package)
+;; (add-to-list 'package-archives
+;;              '("marmalade" . "http://marmalade-repo.org/packages/") t)
+;; (package-initialize)
+
