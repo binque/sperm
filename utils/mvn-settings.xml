@@ -109,6 +109,7 @@ under the License.
    | Authentication profiles can be used whenever maven must make a connection to a remote server.
    |-->
   <servers>
+    <!-- internal repository authentication -->
     <server>
       <id>umeng.public</id>
       <username>dp</username>
@@ -167,11 +168,11 @@ under the License.
      | this mirror serves has an ID that matches the mirrorOf element of this mirror. IDs are used
      | for inheritance and direct lookup purposes, and must be unique across the set of mirrors.
      | 
-    <mirror>
+     <mirror>
       <id>umeng.public</id>
       <mirrorOf>central</mirrorOf>
       <name>Umeng Public Maven Repository</name>
-      <url>http://118.194.160.11:8088/nexus/content/groups/public</url>
+      <url>http://nexus:8088/nexus/content/groups/public</url>
     </mirror>
     -->
   </mirrors>
@@ -206,48 +207,68 @@ under the License.
       <repositories>
         
 	<!-- repository inside -->
-        <repository>
-          <id>umeng.public</id>
-          <name>Umeng Public Maven Repository</name>
-          <url>http://nexus:8088/nexus/content/groups/public/</url>
-          <releases><enabled>true</enabled></releases>
-          <snapshots><enabled>true</enabled></snapshots>
-        </repository>
-        
+	<repository>
+	  <id>umeng.public</id>
+	  <name>Umeng Public Maven Repository</name>
+	  <url>http://nexus:8088/nexus/content/groups/public/</url>
+	  <releases><enabled>true</enabled></releases>
+	  <snapshots><enabled>true</enabled></snapshots>
+	</repository>
+	
         <!-- repository outside -->
-        <repository>
+	
+	<!-- Tell maven where to find finagle -->
+	<repository>
+	  <id>twitter</id>
+	  <name>twitter repository</name>
+	  <url>http://maven.twttr.com/</url>
+	</repository>
+
+	<repository>
+          <id>apache.releases</id>
+	  <name>apache releases</name>
+	  <url>https://repository.apache.org/content/repositories/releases/</url>
+        </repository>
+	
+	<repository>
           <id>apache.snapshots</id>
-          <name>Apache Snapshots</name>
-          <url>http://repository.apache.org/snapshots/</url>
+	  <name>apache snapshots</name>
+	  <url>https://repository.apache.org/content/repositories/snapshots/</url>
         </repository>        
 
         <repository>
-          <id>codehaus.snapshots</id>
-          <name>Codehaus Snapshots</name>
-          <url>http://nexus.codehaus.org/snapshots/</url>
-        </repository>        
+	  <id>codehaus.snapshots</id>
+	  <name>codehaus snapshots</name>
+          <url>https://nexus.codehaus.org/content/repositories/snapshots/</url>
+	</repository>
+
+        <repository>
+          <id>codehaus.releases</id>
+	  <name>codehaus releases</name>
+          <url>https://nexus.codehaus.org/content/repositories/releases/</url>
+	</repository>
 
         <repository>
           <id>java.net2</id>
-          <name>Java Net2</name>
+	  <name>java net2</name>
           <url>http://download.java.net/maven/2/</url>
-          </repository>
-
+	</repository>
+	
         <repository>
           <id>cloudera</id>
           <name>cloudera repository</name>
-          <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
+	  <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
         </repository>
       </repositories>
-
+      
       <pluginRepositories>
-        <pluginRepository>
-          <id>umeng.public</id>
-          <name>Umeng Public Maven Repository</name>
-          <url>http://nexus:8088/nexus/content/groups/public</url>
-          <releases><enabled>true</enabled></releases>
-          <snapshots><enabled>true</enabled></snapshots>
-        </pluginRepository>
+	<pluginRepository>
+	  <id>umeng.public</id>
+	  <name>Umeng Public Maven Repository</name>
+	  <url>http://nexus:8088/nexus/content/groups/public</url>
+	  <releases><enabled>true</enabled></releases>
+	  <snapshots><enabled>true</enabled></snapshots>
+	</pluginRepository>
       </pluginRepositories>
       
     </profile>
