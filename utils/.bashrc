@@ -838,7 +838,10 @@ fi
 export HADOOP_HOME=$HOME/utils/hadoop-0.20.2-cdh3u3/
 export CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:.
 export MANPATH=/usr/local/share/man:/usr/share/man
-export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native/Linux-amd64-64/
+if [ $MAC != 1 ]
+then
+    export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native/Linux-amd64-64/
+fi
 
 PATH=$JAVA_HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH
 PATH=$HOME/utils/bin:$PATH
