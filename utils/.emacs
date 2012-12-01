@@ -278,8 +278,8 @@
 
 ;;; multi-term.
 (require 'multi-term)
-;; (setq multi-term-program "/bin/zsh")
-(setq multi-term-program "/bin/bash")
+(setq multi-term-program "/bin/zsh")
+;; (setq multi-term-program "/bin/bash")
 (setq multi-term-buffer-name "multi-term")
 ;; 打开之后直接定位到这个窗口
 (setq multi-term-dedicated-select-after-open-p t) 
