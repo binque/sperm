@@ -47,3 +47,5 @@
 ** TODO 完成游戏模版代码以及页面访问深度
 ** TODO hbase testing utility.
 ** TODO 分群任务修改.
+** TODO mac绑定command
+** TODO bashrc搞定 
