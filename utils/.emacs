@@ -1,8 +1,10 @@
 ;;; .emacs
 
 (setq mac-system nil)
-(if (string-equal (getenv "HOME") "/Users/dirlt")
-    (setq mac-system t))
+;; (if (string-equal (getenv "HOME") "/Users/dirlt")
+;;     (setq mac-system t))
+(when (eq system-type 'darwin)
+  (setq mac-system t))
 
 ;;; common code.
 ;; sudo apt-get install emacs-goodies-el
@@ -141,8 +143,7 @@
 (setq load-path (cons "~/.emacs.d/color-theme-6.6.0" load-path))
 (require 'color-theme)
 (color-theme-initialize)
-;(color-theme-billw)
-(color-theme-dark-blue2)
+(color-theme-billw)
 
 ;;; auto-complete.
 ;; sudo apt-get install auto-complete-el
@@ -278,8 +279,8 @@
 
 ;;; multi-term.
 (require 'multi-term)
-(setq multi-term-program "/bin/zsh")
-;; (setq multi-term-program "/bin/bash")
+;; (setq multi-term-program "/bin/zsh")
+(setq multi-term-program "/bin/bash")
 (setq multi-term-buffer-name "multi-term")
 ;; 打开之后直接定位到这个窗口
 (setq multi-term-dedicated-select-after-open-p t) 
@@ -288,9 +289,10 @@
   (interactive)
   (progn
     (eshell)
+    ;; rename eshell buffer.
     (rename-buffer (generate-new-buffer-name "eshell-"))))
 (global-set-key "\C-x." 'multi-term)
-(global-set-key "\C-x," 'multi-eshell)
+;; (global-set-key "\C-x," 'multi-eshell)
        
 ;;; protobuf-mode.
 (require 'protobuf-mode)
@@ -444,6 +446,12 @@
 (if mac-system
     (global-set-key [(f10)] 'ns-toggle-fullscreen))
 
+;; key bindings
+(when (eq system-type 'darwin) ;; mac specific settings
+  (setq mac-option-modifier 'alt)
+  (setq mac-command-modifier 'meta)
+  (global-set-key [kp-delete] 'delete-char) ;; sets fn-delete to be right-delete
+  )
 ;;; systemtap.
 (require 'systemtap-mode)
 (add-to-list 'auto-mode-alist '("\\.stp$" . systemtap-mode))
