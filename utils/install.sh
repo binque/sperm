@@ -51,11 +51,7 @@ echo "[$PROGNAME]installing .zshrc"
 rm -rf $HOME/.zshrc
 ln -s $BINDIR/.zshrc $HOME/.zshrc
 
-echo "[$PROGNAME]installing .bashrc"
-rm -rf $HOME/.bashrc
-ln -s $BINDIR/.bashrc $HOME/.bashrc
-
-TARGETS=".bashrc .emacs .emacs.d .vpn-umeng-ubuntu-workpc .vpn-umeng-mba .vpn-umeng-ubuntu-homepc"
+TARGETS=".emacs .emacs.d .vpn-umeng-ubuntu-workpc .vpn-umeng-mba .vpn-umeng-ubuntu-homepc"
 for target in $TARGETS
 do
   echo "[$PROGNAME]installing $target..."

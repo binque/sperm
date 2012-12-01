@@ -21,6 +21,10 @@ CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:.
 export CLASSPATH
 
 PATH=$HOME/utils/bin:$JAVA_HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH
+if [ -z $MANPATH ]
+then
+    MANPATH="."
+fi
 MANPATH=/usr/local/share/man:/usr/share/man:$MANPATH
 
 # most items are useless since I get apt-get install :)

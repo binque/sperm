@@ -279,8 +279,8 @@
 
 ;;; multi-term.
 (require 'multi-term)
-;; (setq multi-term-program "/bin/zsh")
-(setq multi-term-program "/bin/bash")
+(setq multi-term-program "/bin/zsh")
+;; (setq multi-term-program "/bin/bash")
 (setq multi-term-buffer-name "multi-term")
 ;; 打开之后直接定位到这个窗口
 (setq multi-term-dedicated-select-after-open-p t) 
@@ -448,7 +448,7 @@
 
 ;; key bindings
 (when (eq system-type 'darwin) ;; mac specific settings
-  (setq mac-option-modifier 'alt)
+  ;; (setq mac-option-modifier 'alt)
   (setq mac-command-modifier 'meta)
   (global-set-key [kp-delete] 'delete-char) ;; sets fn-delete to be right-delete
   )
