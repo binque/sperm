@@ -83,6 +83,7 @@
   (setq tab-width 2)
   (setq indent-tabs-mode nil)
   (setq c-basic-offset 2))
+
 (add-hook 'c-mode-common-hook 'my-c-mode-common-hook)
 (add-hook 'c-mode-common-hook 'google-set-c-style)
 (add-hook 'c-mode-common-hook 'google-make-newline-indent)
@@ -277,7 +278,7 @@
 
 ;;; multi-term.
 (require 'multi-term)
-(setq multi-term-program "/bin/bash")
+(setq multi-term-program "/bin/zsh")
 (setq multi-term-buffer-name "multi-term")
 ;; 打开之后直接定位到这个窗口
 (setq multi-term-dedicated-select-after-open-p t) 

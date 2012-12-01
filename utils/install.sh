@@ -39,9 +39,11 @@ echo "[$PROGNAME]installing mvn-settings.xml..."
 rm -rf $HOME/.m2/settings.xml
 ln -s $BINDIR/mvn-settings.xml $HOME/.m2/settings.xml
 
-echo "[$PROGNAME]installing .bash_profile"
-rm -rf $HOME/.bash_profile
-ln -s $BINDIR/.bashrc $HOME/.bash_profile
+echo "[$PROGNAME]installing .zshrc"
+rm -rf $HOME/.zshrc
+rm -rf $HOME/.oh-my-zsh
+ln -s $BINDIR/.zshrc $HOME/.zshrc
+ln -s $BINDIR/.oh-my-zsh $HOME/.oh-my-zsh
 
 TARGETS=".bashrc .emacs .emacs.d .vpn-umeng-ubuntu-workpc .vpn-umeng-mba .vpn-umeng-ubuntu-homepc"
 for target in $TARGETS
