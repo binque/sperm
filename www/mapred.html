@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="mapred"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-30 07:23:46 CST"/>
+<meta name="generated" content="2012-12-01 22:10:45 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -110,16 +110,16 @@
 <li><a href="#sec-1-1-6">1.1.6 Apache Hadoop YARN – ResourceManager | Hortonworks</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-2">1.2 Usage</a>
+<li><a href="#sec-1-2">1.2 Source Analysis</a>
 <ul>
-<li><a href="#sec-1-2-1">1.2.1 多路输入</a></li>
-<li><a href="#sec-1-2-2">1.2.2 多路输出</a></li>
-<li><a href="#sec-1-2-3">1.2.3 获取集群运行状况</a></li>
+<li><a href="#sec-1-2-1">1.2.1 task如何向tasktracker进行定时汇报</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-3">1.3 Source Analysis</a>
+<li><a href="#sec-1-3">1.3 Usage</a>
 <ul>
-<li><a href="#sec-1-3-1">1.3.1 task如何向tasktracker进行定时汇报</a></li>
+<li><a href="#sec-1-3-1">1.3.1 多路输入</a></li>
+<li><a href="#sec-1-3-2">1.3.2 多路输出</a></li>
+<li><a href="#sec-1-3-3">1.3.3 获取集群运行状况</a></li>
 </ul>
 </li>
 </ul>
@@ -454,15 +454,47 @@ Let’s walk through an application execution sequence (steps are illustrated in
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Usage</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Source Analysis</h3>
 <div class="outline-text-3" id="text-1-2">
 
 
 </div>
 
 <div id="outline-container-1-2-1" class="outline-4">
-<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> 多路输入</h4>
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> task如何向tasktracker进行定时汇报</h4>
 <div class="outline-text-4" id="text-1-2-1">
+
+<ul>
+<li>task不管是mapper还是reducer，和mr框架相关的内容都包含在了Context里面。
+</li>
+<li>Context初始化里面需要传入一个Reporter类，这个类主要用来和tasktracker汇报信息。Reporter本身是一个抽象类，一个具体实现类有TaskReporter
+</li>
+<li>TaskReporter本身实现了一个run方法，代码里面可以看到在和tasktracker通信。如果任务每个完成的话，那么会不断检查sendProgress这个标志位，这个标志位也被progress方法设置.
+</li>
+<li>在MapTask以及ReduceTask里面的run方法，首先会创建reporter对象并且启动（startCommunicationThread），然后执行具体的map或者是reduce过程。（runNewMapper/runNewReducer） ，最后回到了Context.run
+</li>
+<li>在Context.run里面本质工作是在不断地读取kv然后交给appcode来进行处理，在每次调用nextKeyValue里面，实际上调用了report.progress方法。
+</li>
+</ul>
+
+<p>简单地来说，有单独的汇报线程，然后在mapper以及reducer里面每次读取一个kv的话都会调用progress，之后汇报线程就可以向tasktracker汇报状态。因此如果自己某个任务耗时过长的话，可以调用context.progress().
+</p>
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Usage</h3>
+<div class="outline-text-3" id="text-1-3">
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> 多路输入</h4>
+<div class="outline-text-4" id="text-1-3-1">
 
 <p>多路输入包括从多路hbase以及多路hdfs输入：
 </p><ul>
@@ -518,20 +550,20 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
 public class TestHBaseInputAndHDFSInputMR {
-    public static final String kInTableName1 = <span style="color: #00ffff; font-style: italic;">"test.temporary.in1"</span>;
-    public static final String kInTableName2 = <span style="color: #00ffff; font-style: italic;">"test.temporary.in2"</span>;
-    public static final String kInFileName1 = <span style="color: #00ffff; font-style: italic;">"/tmp/test.temporary.in1"</span>;
-    public static final String kInFileName2 = <span style="color: #00ffff; font-style: italic;">"/tmp/test.temporary.in2"</span>;
-    public static final String kOutFileName = <span style="color: #00ffff; font-style: italic;">"/tmp/test.temporary.out"</span>;
-    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CF"</span>);
-    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CL"</span>);
+    public static final String kInTableName1 = <span style="color: #ffff00;">"test.temporary.in1"</span>;
+    public static final String kInTableName2 = <span style="color: #ffff00;">"test.temporary.in2"</span>;
+    public static final String kInFileName1 = <span style="color: #ffff00;">"/tmp/test.temporary.in1"</span>;
+    public static final String kInFileName2 = <span style="color: #ffff00;">"/tmp/test.temporary.in2"</span>;
+    public static final String kOutFileName = <span style="color: #ffff00;">"/tmp/test.temporary.out"</span>;
+    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #ffff00;">"CF"</span>);
+    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #ffff00;">"CL"</span>);
 
     public static class FMapper extends Mapper&lt;LongWritable, Text, Text, Text&gt; {
         @Override
         protected void map(LongWritable key, Text value, Context context)
                 throws IOException, InterruptedException {
-            context.write(new Text(<span style="color: #00ffff; font-style: italic;">"0"</span>),
-                    new Text(<span style="color: #00ffff; font-style: italic;">"file mapper value="</span> + value.toString()));
+            context.write(new Text(<span style="color: #ffff00;">"0"</span>),
+                    new Text(<span style="color: #ffff00;">"file mapper value="</span> + value.toString()));
         }
     }
 
@@ -540,10 +572,10 @@ public class TestHBaseInputAndHDFSInputMR {
         protected void map(ImmutableBytesWritable key, Result result,
                 Context context) throws IOException, InterruptedException {
             context.write(
-                    new Text(<span style="color: #00ffff; font-style: italic;">"0"</span>),
-                    new Text(<span style="color: #00ffff; font-style: italic;">"table mapper key = "</span>
+                    new Text(<span style="color: #ffff00;">"0"</span>),
+                    new Text(<span style="color: #ffff00;">"table mapper key = "</span>
                             + Bytes.toString(key.get())
-                            + <span style="color: #00ffff; font-style: italic;">", value="</span>
+                            + <span style="color: #ffff00;">", value="</span>
                             + Bytes.toString(result.getValue(kByteColumnFamily,
                                     kByteColumn))));
         }
@@ -575,8 +607,8 @@ public class TestHBaseInputAndHDFSInputMR {
         admin.createTable(dp);
 
         HTable table = new HTable(name);
-        Put put = new Put(Bytes.toBytes(name + <span style="color: #00ffff; font-style: italic;">".rowkey"</span>));
-        put.add(kByteColumnFamily, kByteColumn, Bytes.toBytes(name + <span style="color: #00ffff; font-style: italic;">".tvalue"</span>));
+        Put put = new Put(Bytes.toBytes(name + <span style="color: #ffff00;">".rowkey"</span>));
+        put.add(kByteColumnFamily, kByteColumn, Bytes.toBytes(name + <span style="color: #ffff00;">".tvalue"</span>));
         table.put(put);
         table.close();
     }
@@ -589,7 +621,7 @@ public class TestHBaseInputAndHDFSInputMR {
             fs.delete(p, true);
         }
         FSDataOutputStream fos = fs.create(p);
-        fos.writeBytes(name + <span style="color: #00ffff; font-style: italic;">".fvalue\n"</span>);
+        fos.writeBytes(name + <span style="color: #ffff00;">".fvalue\n"</span>);
         fos.close();
         fs.close();
     }
@@ -615,8 +647,8 @@ public class TestHBaseInputAndHDFSInputMR {
         // delete out
         deleteFile(kOutFileName, conf);
 
-        String jobName = <span style="color: #00ffff; font-style: italic;">"TestHBaseInputAndHDFSInputMR#"</span>
-                + new SimpleDateFormat(<span style="color: #00ffff; font-style: italic;">"yyyyMMddHHmmss"</span>).format(new Date());
+        String jobName = <span style="color: #ffff00;">"TestHBaseInputAndHDFSInputMR#"</span>
+                + new SimpleDateFormat(<span style="color: #ffff00;">"yyyyMMddHHmmss"</span>).format(new Date());
         // setup environment.
         Job job = new Job(conf);
         job.setJobName(jobName);
@@ -670,9 +702,9 @@ public class TestHBaseInputAndHDFSInputMR {
 
 </div>
 
-<div id="outline-container-1-2-2" class="outline-4">
-<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> 多路输出</h4>
-<div class="outline-text-4" id="text-1-2-2">
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> 多路输出</h4>
+<div class="outline-text-4" id="text-1-3-2">
 
 <p>多路输出包括输出到hdfs和htable
 </p><ul>
@@ -686,7 +718,7 @@ public class TestHBaseInputAndHDFSInputMR {
 
 
 <ul>
-<li id="sec-1-2-2-1">MultipleOutputs<br/>
+<li id="sec-1-3-2-1">MultipleOutputs<br/>
 <ul>
 <li>支持多个htable，
 </li>
@@ -748,12 +780,12 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
 public class TestHBaseOutputAndHDFSOutputMR {
-    public static final String kInputFileName = <span style="color: #00ffff; font-style: italic;">"/tmp/test/temporary.in"</span>;
-    public static final String kOutputTableName = <span style="color: #00ffff; font-style: italic;">"test.temporary.out"</span>;
-    public static final String kOutputTableName2 = <span style="color: #00ffff; font-style: italic;">"test.temporary.out2"</span>;
-    public static final String kOutputFileName = <span style="color: #00ffff; font-style: italic;">"/tmp/test/temporary.out"</span>;
-    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CF"</span>);
-    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CL"</span>);
+    public static final String kInputFileName = <span style="color: #ffff00;">"/tmp/test/temporary.in"</span>;
+    public static final String kOutputTableName = <span style="color: #ffff00;">"test.temporary.out"</span>;
+    public static final String kOutputTableName2 = <span style="color: #ffff00;">"test.temporary.out2"</span>;
+    public static final String kOutputFileName = <span style="color: #ffff00;">"/tmp/test/temporary.out"</span>;
+    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #ffff00;">"CF"</span>);
+    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #ffff00;">"CL"</span>);
 
     public static void createTable(String name, Configuration conf)
             throws IOException {
@@ -776,7 +808,7 @@ public class TestHBaseOutputAndHDFSOutputMR {
             fs.delete(p, true);
         }
         FSDataOutputStream fos = fs.create(p);
-        fos.writeBytes(name + <span style="color: #00ffff; font-style: italic;">".fvalue\n"</span>);
+        fos.writeBytes(name + <span style="color: #ffff00;">".fvalue\n"</span>);
         fos.close();
         fs.close();
     }
@@ -801,12 +833,12 @@ public class TestHBaseOutputAndHDFSOutputMR {
 
         @Override
         public void map(LongWritable k, Text v, Context ctx) throws IOException, InterruptedException {
-            mos.write(<span style="color: #00ffff; font-style: italic;">"f"</span>, new Text(<span style="color: #00ffff; font-style: italic;">"fkey"</span>), v);
-            mos.write(<span style="color: #00ffff; font-style: italic;">"f2"</span>, new Text(<span style="color: #00ffff; font-style: italic;">"fkey"</span>), v);
-            Put put = new Put(Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"tkey"</span>));
+            mos.write(<span style="color: #ffff00;">"f"</span>, new Text(<span style="color: #ffff00;">"fkey"</span>), v);
+            mos.write(<span style="color: #ffff00;">"f2"</span>, new Text(<span style="color: #ffff00;">"fkey"</span>), v);
+            Put put = new Put(Bytes.toBytes(<span style="color: #ffff00;">"tkey"</span>));
             put.add(kByteColumnFamily, kByteColumn, v.getBytes());
-            mos.write(<span style="color: #00ffff; font-style: italic;">"t"</span>, new ImmutableBytesWritable(Bytes.toBytes(kOutputTableName)), put);
-            mos.write(<span style="color: #00ffff; font-style: italic;">"t"</span>, new ImmutableBytesWritable(Bytes.toBytes(kOutputTableName2)), put);
+            mos.write(<span style="color: #ffff00;">"t"</span>, new ImmutableBytesWritable(Bytes.toBytes(kOutputTableName)), put);
+            mos.write(<span style="color: #ffff00;">"t"</span>, new ImmutableBytesWritable(Bytes.toBytes(kOutputTableName2)), put);
         }
 
         @Override
@@ -823,8 +855,8 @@ public class TestHBaseOutputAndHDFSOutputMR {
         deleteFile(kOutputFileName, conf);
         createFile(kInputFileName, conf);
 
-        String jobName = <span style="color: #00ffff; font-style: italic;">"TestHBaseOutputAndHDFSOutputMR#"</span>
-                + new SimpleDateFormat(<span style="color: #00ffff; font-style: italic;">"yyyyMMddHHmmss"</span>).format(new Date());
+        String jobName = <span style="color: #ffff00;">"TestHBaseOutputAndHDFSOutputMR#"</span>
+                + new SimpleDateFormat(<span style="color: #ffff00;">"yyyyMMddHHmmss"</span>).format(new Date());
         // setup environment.
         Job job = new Job(conf);
         job.setJobName(jobName);
@@ -832,10 +864,10 @@ public class TestHBaseOutputAndHDFSOutputMR {
         job.setMapperClass(TestHBaseOutputAndHDFSOutputMR.XMap.class);
         FileInputFormat.setInputPaths(job, new Path(kInputFileName));
 
-        MultipleOutputs.addNamedOutput(job, <span style="color: #00ffff; font-style: italic;">"f"</span>, TextOutputFormat.class, Text.class, Text.class);
-        MultipleOutputs.addNamedOutput(job, <span style="color: #00ffff; font-style: italic;">"f2"</span>, TextOutputFormat.class, Text.class, Text.class);
-        MultipleOutputs.addNamedOutput(job, <span style="color: #00ffff; font-style: italic;">"t"</span>, MultiTableOutputFormat.class, ImmutableBytesWritable.class, Put.class);
-        MultipleOutputs.addNamedOutput(job, <span style="color: #00ffff; font-style: italic;">"t2"</span>, MultiTableOutputFormat.class, ImmutableBytesWritable.class, Put.class);
+        MultipleOutputs.addNamedOutput(job, <span style="color: #ffff00;">"f"</span>, TextOutputFormat.class, Text.class, Text.class);
+        MultipleOutputs.addNamedOutput(job, <span style="color: #ffff00;">"f2"</span>, TextOutputFormat.class, Text.class, Text.class);
+        MultipleOutputs.addNamedOutput(job, <span style="color: #ffff00;">"t"</span>, MultiTableOutputFormat.class, ImmutableBytesWritable.class, Put.class);
+        MultipleOutputs.addNamedOutput(job, <span style="color: #ffff00;">"t2"</span>, MultiTableOutputFormat.class, ImmutableBytesWritable.class, Put.class);
         FileOutputFormat.setOutputPath(job, new Path(kOutputFileName));        
 
         job.setNumReduceTasks(0);
@@ -864,7 +896,7 @@ public class TestHBaseOutputAndHDFSOutputMR {
 </li>
 </ul>
 <ul>
-<li id="sec-1-2-2-2">MultipleTableOutputFormat<br/>
+<li id="sec-1-3-2-2">MultipleTableOutputFormat<br/>
 但是如果我们只是输出到多个表的话，还是可以使用mrunit来进行测试的，下面是如果只有htable输出的情况，这样更加方面做ut
 
 
@@ -897,11 +929,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.util.GenericOptionsParser;
 
 public class TestHBaseOutputAndHDFSOutputMR extends TestCase {
-    public static final String kInputFileName = <span style="color: #00ffff; font-style: italic;">"/tmp/test/temporary.in"</span>;
-    public static final String kOutputTableName = <span style="color: #00ffff; font-style: italic;">"test.temporary.out"</span>;
-    public static final String kOutputTableName2 = <span style="color: #00ffff; font-style: italic;">"test.temporary.out2"</span>;
-    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CF"</span>);
-    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CL"</span>);
+    public static final String kInputFileName = <span style="color: #ffff00;">"/tmp/test/temporary.in"</span>;
+    public static final String kOutputTableName = <span style="color: #ffff00;">"test.temporary.out"</span>;
+    public static final String kOutputTableName2 = <span style="color: #ffff00;">"test.temporary.out2"</span>;
+    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #ffff00;">"CF"</span>);
+    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #ffff00;">"CL"</span>);
 
     public static void createTable(String name, Configuration conf)
             throws IOException {
@@ -924,7 +956,7 @@ public class TestHBaseOutputAndHDFSOutputMR extends TestCase {
             fs.delete(p, true);
         }
         FSDataOutputStream fos = fs.create(p);
-        fos.writeBytes(name + <span style="color: #00ffff; font-style: italic;">".fvalue\n"</span>);
+        fos.writeBytes(name + <span style="color: #ffff00;">".fvalue\n"</span>);
         fos.close();
         fs.close();
     }
@@ -947,7 +979,7 @@ public class TestHBaseOutputAndHDFSOutputMR extends TestCase {
 
         @Override
         public void map(LongWritable k, Text v, Context ctx) throws IOException, InterruptedException {            
-            Put put = new Put(Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"tkey"</span>));
+            Put put = new Put(Bytes.toBytes(<span style="color: #ffff00;">"tkey"</span>));
             put.add(kByteColumnFamily, kByteColumn, v.getBytes());
             ctx.write(new ImmutableBytesWritable(Bytes.toBytes(kOutputTableName)), put);
             ctx.write(new ImmutableBytesWritable(Bytes.toBytes(kOutputTableName2)), put);
@@ -965,8 +997,8 @@ public class TestHBaseOutputAndHDFSOutputMR extends TestCase {
         createTable(kOutputTableName2,conf);
         createFile(kInputFileName, conf);
 
-        String jobName = <span style="color: #00ffff; font-style: italic;">"TestHBaseOutputAndHDFSOutputMR#"</span>
-                + new SimpleDateFormat(<span style="color: #00ffff; font-style: italic;">"yyyyMMddHHmmss"</span>).format(new Date());
+        String jobName = <span style="color: #ffff00;">"TestHBaseOutputAndHDFSOutputMR#"</span>
+                + new SimpleDateFormat(<span style="color: #ffff00;">"yyyyMMddHHmmss"</span>).format(new Date());
         // setup environment.
         Job job = new Job(conf);
         job.setJobName(jobName);
@@ -1000,9 +1032,9 @@ public class TestHBaseOutputAndHDFSOutputMR extends TestCase {
 
 </div>
 
-<div id="outline-container-1-2-3" class="outline-4">
-<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> 获取集群运行状况</h4>
-<div class="outline-text-4" id="text-1-2-3">
+<div id="outline-container-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> 获取集群运行状况</h4>
+<div class="outline-text-4" id="text-1-3-3">
 
 <p>可以通过JobClient这个对象来获得集群和上面的作业运行状况，更多信息可以详细阅读一下JobClient的API部分
 </p>
@@ -1023,16 +1055,16 @@ public class Cluster {
         JobClient jclient = new JobClient(jconf);
         JobStatus[] js = jclient.getAllJobs();
         for (JobStatus j : js) {
-            System.out.println(<span style="color: #00ffff; font-style: italic;">"JOB=jobid:"</span> + j.getJobID().toString() + <span style="color: #00ffff; font-style: italic;">",setup:"</span>
-                    + j.setupProgress() + <span style="color: #00ffff; font-style: italic;">",cleanup:"</span> + j.cleanupProgress()
-                    + <span style="color: #00ffff; font-style: italic;">",map:"</span> + j.mapProgress() + <span style="color: #00ffff; font-style: italic;">",reduce:"</span>
-                    + j.reduceProgress() + <span style="color: #00ffff; font-style: italic;">",status:"</span>
+            System.out.println(<span style="color: #ffff00;">"JOB=jobid:"</span> + j.getJobID().toString() + <span style="color: #ffff00;">",setup:"</span>
+                    + j.setupProgress() + <span style="color: #ffff00;">",cleanup:"</span> + j.cleanupProgress()
+                    + <span style="color: #ffff00;">",map:"</span> + j.mapProgress() + <span style="color: #ffff00;">",reduce:"</span>
+                    + j.reduceProgress() + <span style="color: #ffff00;">",status:"</span>
                     + JobStatus.getJobRunState(j.getRunState()));
         }
         ClusterStatus cs = jclient.getClusterStatus(true);
-        System.out.println(<span style="color: #00ffff; font-style: italic;">"CSR=map-cap:"</span> + cs.getMaxMapTasks() + <span style="color: #00ffff; font-style: italic;">",map-used:"</span>
-                + cs.getMapTasks() + <span style="color: #00ffff; font-style: italic;">",reduce-cap:"</span> + cs.getMaxReduceTasks()
-                + <span style="color: #00ffff; font-style: italic;">",reduce-used:"</span> + cs.getReduceTasks());
+        System.out.println(<span style="color: #ffff00;">"CSR=map-cap:"</span> + cs.getMaxMapTasks() + <span style="color: #ffff00;">",map-used:"</span>
+                + cs.getMapTasks() + <span style="color: #ffff00;">",reduce-cap:"</span> + cs.getMaxReduceTasks()
+                + <span style="color: #ffff00;">",reduce-used:"</span> + cs.getReduceTasks());
     }
 }
 
@@ -1041,44 +1073,13 @@ public class Cluster {
 
 </div>
 </div>
-
-</div>
-
-<div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Source Analysis</h3>
-<div class="outline-text-3" id="text-1-3">
-
-
-</div>
-
-<div id="outline-container-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> task如何向tasktracker进行定时汇报</h4>
-<div class="outline-text-4" id="text-1-3-1">
-
-<ul>
-<li>task不管是mapper还是reducer，和mr框架相关的内容都包含在了Context里面。
-</li>
-<li>Context初始化里面需要传入一个Reporter类，这个类主要用来和tasktracker汇报信息。Reporter本身是一个抽象类，一个具体实现类有TaskReporter
-</li>
-<li>TaskReporter本身实现了一个run方法，代码里面可以看到在和tasktracker通信。如果任务每个完成的话，那么会不断检查sendProgress这个标志位，这个标志位也被progress方法设置.
-</li>
-<li>在MapTask以及ReduceTask里面的run方法，首先会创建reporter对象并且启动（startCommunicationThread），然后执行具体的map或者是reduce过程。（runNewMapper/runNewReducer） ，最后回到了Context.run
-</li>
-<li>在Context.run里面本质工作是在不断地读取kv然后交给appcode来进行处理，在每次调用nextKeyValue里面，实际上调用了report.progress方法。
-</li>
-</ul>
-
-<p>简单地来说，有单独的汇报线程，然后在mapper以及reducer里面每次读取一个kv的话都会调用progress，之后汇报线程就可以向tasktracker汇报状态。因此如果自己某个任务耗时过长的话，可以调用context.progress().
-</p>
-</div>
-</div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-30 07:23:46 CST</p>
-<p class="creator">Org version 7.8.02 with Emacs version 23</p>
+<p class="date">Date: 2012-12-01 22:10:45 CST</p>
+<p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

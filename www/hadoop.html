@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hadoop"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-30 07:23:49 CST"/>
+<meta name="generated" content="2012-12-01 22:10:48 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -852,7 +852,7 @@ public class SegmentMarkProtobufWritable extends ProtobufWritable&lt;SegmentMark
         SegmentMark sm = value.get();
         String appKey = sm.getAppKey();
         String umid = sm.getUmid();
-        context.write(new Text(appKey + <span style="color: #00ffff; font-style: italic;">"_"</span> + umid), value);
+        context.write(new Text(appKey + <span style="color: #ffff00;">"_"</span> + umid), value);
     }
 }
 
@@ -996,8 +996,8 @@ public static class Reduce
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-30 07:23:49 CST</p>
-<p class="creator">Org version 7.8.02 with Emacs version 23</p>
+<p class="date">Date: 2012-12-01 22:10:48 CST</p>
+<p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>
