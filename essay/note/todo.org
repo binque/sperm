@@ -30,7 +30,6 @@
 ** TODO 查询过年飞机
 ** TODO 独单租房可能在年前
 ** TODO 找中医并且调理身体
-** TODO 更换招行储蓄卡以及网银
 ** TODO 更换Android手机
 ** TODO 安装一些生活类型服务
 ** TODO 阅读systemtap论文，简单阅读=D
@@ -44,5 +43,4 @@
 ** TODO 分析htable代码put.
 ** TODO 完成游戏模版代码以及页面访问深度
 ** TODO hbase testing utility.
-
-
+** TODO 上线新的任务调度器。

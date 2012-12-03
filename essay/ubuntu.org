@@ -69,6 +69,7 @@
    - sudo apt-get install ntpd
    - sudo apt-get install systemtap
    - sudo apt-get install clojure
+   - sudo apt-get install zsh
 
 ** amarok循环播放
 在amarok的右下角有task progression的图标，选择repeat track即可。
