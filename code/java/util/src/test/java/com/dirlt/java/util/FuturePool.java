@@ -34,12 +34,15 @@ public class FuturePool<IN, OUT> {
 				}
 			}
 		};
+		System.out.println("submit blocking...");
 		return executorService.submit(c);
 	}
+	
+	
 
 	public static void main(String[] args) throws InterruptedException,
 			ExecutionException {
-		ExecutorService executorService = Executors.newFixedThreadPool(10);
+		ExecutorService executorService = Executors.newFixedThreadPool(1);
 		FuturePool<String, String> pool = new FuturePool<String, String>(
 				executorService); // share a thread pool.		
 		Future<String> blockTask = executorService
