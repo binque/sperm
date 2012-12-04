@@ -10,9 +10,7 @@ public class FuturePool<IN, OUT> {
 	public static interface CallbackInterface<IN, OUT> {
 		OUT onOK(IN response);
 
-		OUT onInterruptedException(InterruptedException e);
-
-		OUT onExecutionException(ExecutionException e);
+		OUT onException(Exception e);
 	}
 
 	private ExecutorService executorService;
@@ -27,18 +25,14 @@ public class FuturePool<IN, OUT> {
 			public OUT call() {
 				try {
 					return callback.onOK(future.get());
-				} catch (InterruptedException e) {
-					return callback.onInterruptedException(e);
-				} catch (ExecutionException e) {
-					return callback.onExecutionException(e);
+				} catch (Exception e) {
+					return callback.onException(e);
 				}
 			}
 		};
 		System.out.println("submit blocking...");
 		return executorService.submit(c);
 	}
-	
-	
 
 	public static void main(String[] args) throws InterruptedException,
 			ExecutionException {
@@ -66,16 +60,12 @@ public class FuturePool<IN, OUT> {
 						return "OK";
 					}
 
-					public String onInterruptedException(InterruptedException e) {
+					public String onException(Exception e) {
 						e.printStackTrace();
-						return "Interrupted Exception";
-					}
-
-					public String onExecutionException(ExecutionException e) {
-						e.printStackTrace();
-						return "Execution Exception";
+						return "Caught Exception";
 					}
 				});
 		System.out.println(blockTaskResult.get());
+		executorService.shutdown();
 	}
 }
