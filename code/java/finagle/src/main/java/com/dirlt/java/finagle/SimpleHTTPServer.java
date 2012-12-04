@@ -25,7 +25,7 @@ public class SimpleHTTPServer {
 				ChannelBuffer cbuf = ChannelBuffers.buffer(
 						ByteOrder.BIG_ENDIAN, 1024);
 				cbuf.writeBytes("Hello,World".getBytes());
-				res.setContent(cbuf);
+				res.setContent(cbuf);	
 				return Future.value(res);
 			}
 		};
