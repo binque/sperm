@@ -41,7 +41,7 @@
 ** TODO 游戏统计部分
 ** TODO 调研memcached. and netty and thrift.
 ** TODO 分析htable代码put.
-** TODO 完成游戏模版代码以及页面访问深度
+** TODO 完成游戏模版代码
 ** TODO hbase testing utility.
 ** TODO 上线新的任务调度器。
 ** TODO netty的线程池问题以及使用总结。
