@@ -371,6 +371,7 @@
 ;; *text* bold mode.
 ;; /text/ italic mode.
 ;; _text_ underline mode.
+;; #<<anchor>>
 (setq load-path (cons "~/.emacs.d/org-7.9.2/" load-path))
 (require 'org-install)
 (require 'org-publish)
