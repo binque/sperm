@@ -259,6 +259,18 @@ under the License.
           <name>cloudera repository</name>
 	  <url>https://repository.cloudera.com/artifactory/cloudera-repos/</url>
         </repository>
+
+	<!-- spymemcached -->
+	<repository>
+	  <id>spy</id>
+	  <name>Spy Repository</name>
+	  <layout>default</layout>
+	  <url>http://files.couchbase.com/maven2/</url>
+	  <snapshots>
+	    <enabled>false</enabled>
+	  </snapshots>
+	</repository>
+
       </repositories>
       
       <pluginRepositories>
