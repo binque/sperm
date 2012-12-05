@@ -2,7 +2,6 @@ package com.dirlt.java.hbase;
 
 import java.util.ArrayList;
 
-import org.apache.hadoop.hbase.util.Bytes;
 import org.hbase.async.GetRequest;
 import org.hbase.async.HBaseClient;
 import org.hbase.async.KeyValue;
@@ -12,17 +11,20 @@ import com.stumbleupon.async.Callback;
 import com.stumbleupon.async.Deferred;
 
 public class AsyncHBase {
+	public static class Bytes {
+		public static byte[] toBytes(String s) {
+			return s.getBytes();
+		}
+		public static String toString(byte[] bs) {
+			return new String(bs);
+		}
+	}
 	private static final String quorum = "localhost:2181";
 	private static HBaseClient client = new HBaseClient(quorum);
-	private static final String table = ".t1";
-	private static final String cf = ".c1";
+	private static final String table = "t1";
+	private static final String cf = "f1";
 
 	public static void main(String[] args) throws Exception {
-//		if (Utility.isHTableAvailable(table)) {
-//			Utility.dropHTable(table);
-//		}
-//		Utility.createHTable(table, cf);
-
 		PutRequest put = new PutRequest(Bytes.toBytes(table),
 				Bytes.toBytes("r1"), Bytes.toBytes(cf), Bytes.toBytes("key"),
 				Bytes.toBytes("value"));
@@ -34,16 +36,17 @@ public class AsyncHBase {
 				get.family(cf).qualifier("key");
 				Deferred<ArrayList<KeyValue>> getFuture = client.get(get);
 				getFuture.addCallback(new Callback<Object,ArrayList<KeyValue>>() {
-					// get over. try to validate it.
-					public Object call(ArrayList<KeyValue> kvs) {
+					// get over. try to validate it.					
+					public Object call(ArrayList<KeyValue> kvs) {						
 						assert(kvs.size()==1);
 						KeyValue kv = kvs.get(0);
 						assert(Bytes.toString(kv.value()).equals("value"));
-						return null;						
+						client.shutdown();
+						return null;				
 					}
 				});			
 				return null;
 			}
-		});
+		});		
 	}
 }
