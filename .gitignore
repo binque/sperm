@@ -10,6 +10,8 @@
 *.settings/
 *.project
 *.sconsign.dblite
+*.iml
+.idea
 
 utils/.emacs.d/tramp
 utils/.emacs.d/ac-comphist.dat
