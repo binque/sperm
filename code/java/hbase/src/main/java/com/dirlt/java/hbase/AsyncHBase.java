@@ -41,7 +41,6 @@ public class AsyncHBase {
 						assert(kvs.size()==1);
 						KeyValue kv = kvs.get(0);
 						assert(Bytes.toString(kv.value()).equals("value"));
-						client.shutdown();
 						return null;				
 					}
 				});			

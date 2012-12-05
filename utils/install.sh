@@ -2,8 +2,8 @@ PROGNAME=$0
 BINDIR=`python -c "import os;print os.path.abspath('.')"`
 
 echo "[$PROGNAME]installing index.html..."
-sudo rm -rf /index.html
-sudo ln -s $BINDIR/index.html /index.html
+rm -rf ~/index.html
+ln -s $BINDIR/index.html ~/index.html
 
 echo "[$PROGNAME]installing hosts..."
 sudo rm -rf /etc/hosts
