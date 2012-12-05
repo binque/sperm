@@ -2,5 +2,8 @@
   - link: http://research.google.com/archive/spanner.html
   - title: Spanner: Google's Globally-Distributed Database
   - date: 2012
-  - Spanner——Google的全球化分布式数据库 - Sun Yongyue - 博客园 http://www.cnblogs.com/sunyongyue/archive/2012/09/20/spanner_note.html
-  - Google Spanner原理- 全球级的分布式数据库_EMC中国研究院_新浪轻博客_Qing http://qing.weibo.com/2294942122/88ca09aa3300221n.html
+  - misc:
+    - Spanner——Google的全球化分布式数据库 - Sun Yongyue - 博客园 http://www.cnblogs.com/sunyongyue/archive/2012/09/20/spanner_note.html
+    - Google Spanner原理- 全球级的分布式数据库_EMC中国研究院_新浪轻博客_Qing http://qing.weibo.com/2294942122/88ca09aa3300221n.html
+    - Google Spanner (中文版) | 厦门大学数据库实验室 | 厦门大学 | 厦门大学计算机系|数据库实验室 http://dblab.xmu.edu.cn/node/230
+

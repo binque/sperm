@@ -1,6 +1,5 @@
 * gfs
 #+OPTIONS: H:5
-
    - link: http://research.google.com/archive/gfs.html
    - title: The Google File System
    - author: Sanjay Ghemawat, Howard Gobioff, and Shun-Tak Leung(Google Inc)

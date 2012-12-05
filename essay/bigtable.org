@@ -1,8 +1,10 @@
 * bigtable
-   - http://research.google.com/archive/bigtable.html
-   - Bigtable: A Distributed Storage System for Structured Data
-   - Fay Chang, Jeffrey Dean, Sanjay Ghemawat, Wilson C. Hsieh, Deborah A. Wallach, Mike Burrows, Tushar Chandra, Andrew Fikes, and Robert E. Gruber 
-   - 2006
+   - link: http://research.google.com/archive/bigtable.html
+   - title: Bigtable: A Distributed Storage System for Structured Data
+   - author: Fay Chang, Jeffrey Dean, Sanjay Ghemawat, Wilson C. Hsieh, Deborah A. Wallach, Mike Burrows, Tushar Chandra, Andrew Fikes, and Robert E. Gruber 
+   - date: 2006
+   - misc:
+     - Google Bigtable (中文版) | 厦门大学数据库实验室 | 厦门大学 | 厦门大学计算机系|数据库实验室 http://dblab.xmu.edu.cn/node/121
 
 ** Abstract
    - Bigtable is a distributed storage system for managing structured data that is designed to scale to a very large size: petabytes of data across thousands of commodity servers. (针对千台机器管理PB级别数据）
