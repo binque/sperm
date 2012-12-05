@@ -3,3 +3,10 @@
   - http://clojure.org/
   - http://clojure.github.com/clojure/
   - http://java.ociweb.com/mark/clojure/
+  - Clojure made simple http://clojure.jr0cket.co.uk/
+  - Clojure - Functional Programming for the JVM http://java.ociweb.com/mark/clojure/article.html
+  - Clojure Handbook (by jamesqiu) http://qiujj.com/static/clojure-handbook.html
+
+package
+  - http://github.com/downloads/clojure/clojure/clojure-1.2.0.zip
+  - http://github.com/downloads/clojure/clojure-contrib/clojure-contrib-1.2.0.zip

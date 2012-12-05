@@ -472,10 +472,10 @@
 ;; (require 'starter-kit-bindings)
 
 ;;; paredit-mode
-(require 'paredit)
-(disable-paredit-mode)
-(add-hook 'clojure-mode-hook 'enable-paredit-mode)
-(add-hook 'clojure-test-mode-hook 'enable-paredit-mode)
+;; (require 'paredit)
+;; (disable-paredit-mode)
+;; (add-hook 'clojure-mode-hook 'enable-paredit-mode)
+;; (add-hook 'clojure-test-mode-hook 'enable-paredit-mode)
 
 (require 'package)
 (add-to-list 'package-archives
