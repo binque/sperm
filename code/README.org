@@ -20,7 +20,13 @@
 
 * py
    - dsgm // Documentation Synchronize based on Google Mail. http://dirlt.com/dsgm.html
-   - pcrypt // encryption into picture.
+   - b2p // encode byte into picture and vice verse.
+
+* java
+   - finagle // test code on finagle
+   - netty // test code on netty
+   - playboard // test code on java and jvm.
+   - util // some utility may be useful.
 
 * project name
    - madara //
