@@ -22,71 +22,54 @@ ff02::3	ip6-allhosts
 122.11.52.244 git.fm
 122.11.52.244 github.umeng.com
 122.11.52.226 hadoop1
-211.151.139.253 dp0
-
-10.18.10.54 dp1
-10.18.10.55 dp2
-10.18.10.56 dp3
-10.18.10.57 dp4
-10.18.10.58 dp5
-10.18.10.59 dp6
-10.18.10.60 dp7
-10.18.10.61 dp8
-10.18.10.62 dp9
-10.18.10.63 dp10
-10.18.10.64 dp11
-10.18.10.65 dp12
-10.18.10.66 dp13
-10.18.10.67 dp14
-10.18.10.68 dp15
-10.18.10.69 dp16
-10.18.10.70 dp17
-10.18.10.71 dp18
-10.18.10.72 dp19
-10.18.10.73 dp20
-10.18.10.74 dp21
-10.18.10.75 dp22
-10.18.10.76 dp23
-10.18.10.77 dp24
-10.18.10.90 dp25
-10.18.10.91 dp26
-10.18.10.92 dp27
-10.18.10.93 dp28
-10.18.10.94 dp29
-10.18.10.95 dp30
-
-10.18.10.54 dp1.umeng.com
-10.18.10.55 dp2.umeng.com
-10.18.10.56 dp3.umeng.com
-10.18.10.57 dp4.umeng.com
-10.18.10.58 dp5.umeng.com
-10.18.10.59 dp6.umeng.com
-10.18.10.60 dp7.umeng.com
-10.18.10.61 dp8.umeng.com
-10.18.10.62 dp9.umeng.com
-10.18.10.63 dp10.umeng.com
-10.18.10.64 dp11.umeng.com
-10.18.10.65 dp12.umeng.com
-10.18.10.66 dp13.umeng.com
-10.18.10.67 dp14.umeng.com
-10.18.10.68 dp15.umeng.com
-10.18.10.69 dp16.umeng.com
-10.18.10.70 dp17.umeng.com
-10.18.10.71 dp18.umeng.com
-10.18.10.72 dp19.umeng.com
-10.18.10.73 dp20.umeng.com
-10.18.10.74 dp21.umeng.com
-10.18.10.75 dp22.umeng.com
-10.18.10.76 dp23.umeng.com
-10.18.10.77 dp24.umeng.com
-10.18.10.90 dp25.umeng.com
-10.18.10.91 dp26.umeng.com
-10.18.10.92 dp27.umeng.com
-10.18.10.93 dp28.umeng.com
-10.18.10.94 dp29.umeng.com
-10.18.10.95 dp30.umeng.com
-
 122.11.52.227 nexus
 10.18.103.251 hudson
 10.18.102.188 dpwiki
 10.18.10.97 usocial
+
+10.11.0.31      dp0.umeng.com                   dp0
+10.18.10.54     dp1.umeng.com                   dp1
+10.18.10.55     dp2.umeng.com                   dp2
+10.18.10.56     dp3.umeng.com                   dp3
+10.18.10.57     dp4.umeng.com                   dp4
+10.18.10.58     dp5.umeng.com                   dp5
+10.18.10.59     dp6.umeng.com                   dp6
+10.18.10.60     dp7.umeng.com                   dp7
+10.18.10.61     dp8.umeng.com                   dp8
+10.18.10.62     dp9.umeng.com                   dp9
+10.18.10.63     dp10.umeng.com                  dp10
+10.18.10.64     dp11.umeng.com                  dp11
+10.18.10.65     dp12.umeng.com                  dp12
+10.18.10.66     dp13.umeng.com                  dp13
+10.18.10.67     dp14.umeng.com                  dp14
+10.18.10.68     dp15.umeng.com                  dp15
+10.18.10.69     dp16.umeng.com                  dp16
+10.18.10.70     dp17.umeng.com                  dp17
+10.18.10.71     dp18.umeng.com                  dp18
+10.18.10.72     dp19.umeng.com                  dp19
+10.18.10.73     dp20.umeng.com                  dp20
+10.18.10.74     dp21.umeng.com                  dp21
+10.18.10.75     dp22.umeng.com                  dp22
+10.18.10.76     dp23.umeng.com                  dp23
+10.18.10.77     dp24.umeng.com                  dp24
+10.18.10.90     dp25.umeng.com                  dp25
+10.18.10.91     dp26.umeng.com                  dp26
+10.18.10.92     dp27.umeng.com                  dp27
+10.18.10.93     dp28.umeng.com                  dp28
+10.18.10.94     dp29.umeng.com                  dp29
+10.18.10.95     dp30.umeng.com                  dp30
+# 2012-12-07 friday.
+10.11.0.45      dp31.umeng.com                  dp31
+10.11.0.32      dp32.umeng.com                  dp32
+10.11.0.33      dp33.umeng.com                  dp33
+10.11.0.34      dp34.umeng.com                  dp34
+10.11.0.35      dp35.umeng.com                  dp35
+10.11.0.36      dp36.umeng.com                  dp36
+10.11.0.37      dp37.umeng.com                  dp37
+10.11.0.38      dp38.umeng.com                  dp38
+10.11.0.39      dp39.umeng.com                  dp39
+10.11.0.40      dp40.umeng.com                  dp40
+10.11.0.41      dp41.umeng.com                  dp41
+10.11.0.42      dp42.umeng.com                  dp42
+10.11.0.43      dp43.umeng.com                  dp43
+10.11.0.44      dp44.umeng.com                  dp44

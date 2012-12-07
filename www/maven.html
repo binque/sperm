@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="maven"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-24 22:35:03 CST"/>
+<meta name="generated" content="2012-12-07 20:12:01 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -708,6 +708,8 @@ NOTE(dirlt):似乎这些命令和maven生命周期非常相似。
 <ul>
 <li>mvn test -Dtest=&lt;qualified-name&gt;:&lt;test-function&gt;
 </li>
+<li>-Dmaven.test.skip=true 跳过单元测试
+</li>
 </ul>
 
 </li>
@@ -726,12 +728,6 @@ NOTE(dirlt):似乎这些命令和maven生命周期非常相似。
 <li>mvn archetype:create. 创建maven项目文件
 </li>
 <li>mvn clean. 清除编译输出
-</li>
-</ul>
-
-<p>常用参数有下面这些：
-</p><ul>
-<li>-Dmaven.test.skip=true 跳过单元测试
 </li>
 </ul>
 
@@ -779,8 +775,8 @@ NOTE(dirlt):使用archetype:generate就是使用交互式方式生成pom.xml.似
 
 
 
-<pre class="src src-XML">&lt;project xmlns=<span style="color: #00ffff; font-style: italic;">"http://maven.apache.org/POM/4.0.0"</span> xmlns:xsi=<span style="color: #00ffff; font-style: italic;">"http://www.w3.org/2001/XMLSchema-instance"</span>
-  xsi:schemaLocation=<span style="color: #00ffff; font-style: italic;">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span>&gt;
+<pre class="src src-XML">&lt;project xmlns=<span style="color: #ffff00;">"http://maven.apache.org/POM/4.0.0"</span> xmlns:xsi=<span style="color: #ffff00;">"http://www.w3.org/2001/XMLSchema-instance"</span>
+  xsi:schemaLocation=<span style="color: #ffff00;">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span>&gt;
   &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
 
   &lt;groupId&gt;com.dirlt.chaos&lt;/groupId&gt;
@@ -1218,10 +1214,10 @@ maven会自动将父项目的pom.xml包含进来。NOTE(dirlt):实际上可以�
       &lt;phase&gt;generate-sources&lt;/phase&gt;
       &lt;configuration&gt;
         &lt;tasks&gt;
-          &lt;mkdir dir=<span style="color: #00ffff; font-style: italic;">"src/main/gen-java"</span>/&gt;
-          &lt;exec executable=<span style="color: #00ffff; font-style: italic;">"protoc"</span>&gt;
-            &lt;arg value=<span style="color: #00ffff; font-style: italic;">"--java_out=src/main/gen-java"</span>/&gt;
-            &lt;arg value=<span style="color: #00ffff; font-style: italic;">"src/main/protobuf/ua_log.proto"</span>/&gt;
+          &lt;mkdir dir=<span style="color: #ffff00;">"src/main/gen-java"</span>/&gt;
+          &lt;exec executable=<span style="color: #ffff00;">"protoc"</span>&gt;
+            &lt;arg value=<span style="color: #ffff00;">"--java_out=src/main/gen-java"</span>/&gt;
+            &lt;arg value=<span style="color: #ffff00;">"src/main/protobuf/ua_log.proto"</span>/&gt;
           &lt;/exec&gt;
         &lt;/tasks&gt;
         &lt;sourceRoot&gt;src/main/gen-java&lt;/sourceRoot&gt;
@@ -1328,7 +1324,7 @@ NOTE(dirlt):网上有很多教程如何搭建nexus maven服务器，对于企业
 
 
 
-<pre class="src src-XML">&lt;?xml version=<span style="color: #00ffff; font-style: italic;">"1.0"</span> encoding=<span style="color: #00ffff; font-style: italic;">"UTF-8"</span>?&gt;
+<pre class="src src-XML">&lt;?xml version=<span style="color: #ffff00;">"1.0"</span> encoding=<span style="color: #ffff00;">"UTF-8"</span>?&gt;
 
 &lt;!--
 Licensed to the Apache Software Foundation (ASF) under one
@@ -1336,14 +1332,14 @@ or more contributor license agreements.  See the NOTICE file
 distributed with this work for additional information
 regarding copyright ownership.  The ASF licenses this file
 to you under the Apache License, Version 2.0 (the
-<span style="color: #00ffff; font-style: italic;">"License"</span>); you may not use this file except in compliance
+<span style="color: #ffff00;">"License"</span>); you may not use this file except in compliance
 with the License.  You may obtain a copy of the License at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing,
 software distributed under the License is distributed on an
-<span style="color: #00ffff; font-style: italic;">"AS IS"</span> BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+<span style="color: #ffff00;">"AS IS"</span> BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
 KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
@@ -1373,9 +1369,9 @@ under the License.
  | values (values used when the setting is not specified) are provided.
  |
  |--&gt;
-&lt;settings xmlns=<span style="color: #00ffff; font-style: italic;">"http://maven.apache.org/SETTINGS/1.0.0"</span>
-          xmlns:xsi=<span style="color: #00ffff; font-style: italic;">"http://www.w3.org/2001/XMLSchema-instance"</span>
-          xsi:schemaLocation=<span style="color: #00ffff; font-style: italic;">"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd"</span>&gt;
+&lt;settings xmlns=<span style="color: #ffff00;">"http://maven.apache.org/SETTINGS/1.0.0"</span>
+          xmlns:xsi=<span style="color: #ffff00;">"http://www.w3.org/2001/XMLSchema-instance"</span>
+          xsi:schemaLocation=<span style="color: #ffff00;">"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd"</span>&gt;
   &lt;!-- localRepository
    | The path to the local repository maven will use to store artifacts.
    |
@@ -1402,8 +1398,8 @@ under the License.
 
   &lt;!-- pluginGroups
    | This is a list of additional group identifiers that will be searched when resolving plugins by their prefix, i.e.
-   | when invoking a command line like <span style="color: #00ffff; font-style: italic;">"mvn prefix:goal"</span>. Maven will automatically add the group identifiers
-   | <span style="color: #00ffff; font-style: italic;">"org.apache.maven.plugins"</span> and <span style="color: #00ffff; font-style: italic;">"org.codehaus.mojo"</span> if these are not already contained in the list.
+   | when invoking a command line like <span style="color: #ffff00;">"mvn prefix:goal"</span>. Maven will automatically add the group identifiers
+   | <span style="color: #ffff00;">"org.apache.maven.plugins"</span> and <span style="color: #ffff00;">"org.codehaus.mojo"</span> if these are not already contained in the list.
    |--&gt;
   &lt;pluginGroups&gt;
     &lt;!-- pluginGroup
@@ -1697,8 +1693,8 @@ under the License.
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-24 22:35:03 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-12-07 20:12:01 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

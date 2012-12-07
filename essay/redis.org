@@ -1,6 +1,6 @@
 * redis
 #+OPTIONS: H:5
-
+   - alphazero/jredis · GitHub https://github.com/alphazero/jredis Java Client 支持异步操作
 ** 简介
 主页是http://redis.io/. redis(REmote DIctionary Server)是kv数据库，对于k来说的话允许是binary,而对于v来说的话可以支持很多数据结构。
 作者的主页是http://antirez.com/, http://invece.org/. github是https://github.com/antirez/. 推荐这些的原因主要是因为作者真的是非常非常强的人。

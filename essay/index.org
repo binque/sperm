@@ -38,7 +38,7 @@ file:./images/valve-logo.jpg
    - [[file:snappy.org][snappy]] google的开源压缩解压库。在满足一定压缩比率的条件下着重提升压缩和解压速度。
    - [[file:./lzf.org][lzf]] redis使用的开源压缩解压库。轻量(两个文件)可以很容易地独立纳入项目。
    - [[file:build-system.org][build-system]] 在实现baidu in-house的构建工具comake2之前，做过构建系统的调研总结出来的。在语法表达上面(非常重要)借鉴了SCons,考虑了其他构建系统提供的功能。
-     - [[file:mave.org][maven]] 主要针对Java开发的基于工程对象模型(POM, Project Object Model)构建系统，主要记录了一些使用方面的问题和解决办法。
+     - [[file:maven.org][maven]] 主要针对Java开发的基于工程对象模型(POM, Project Object Model)构建系统，主要记录了一些使用方面的问题和解决办法。
    - [[file:oprofile.org][oprofile]] OProfile(系统级profiler)的原理和应用。不过说实话没有分析过源代码(或者是自己技术背景不行)终究觉得对这个东西理解不够深入，而且自己也仅仅是使用OProfile功能的子集。
    - [[file:swig.org][swig]] C/C++多语言扩展接口生成器，使用起来非常方便(至于生成的代码没有看过效率如何).个人觉得比较适合quick & dirty的方案。
    - [[file:git.org][git]] 分布式版本控制系统。很多项目都在使用Git进行版本管理包括Linux Kernel, Ruby on Rails, WINE, X.org等。
@@ -56,6 +56,7 @@ file:./images/valve-logo.jpg
    - [[file:./mac.org][mac]] 如何更好地使用mac。以前使用windows，后来转向ubuntu，再后来买了个air，熟悉mac又需要一段时间了。
    - [[file:./license.org][license]] 一些常见的开源协议。不知道自己以后是否可以用得上：）
    - [[file:./eclipse.org][eclipse]] 虽然我喜欢emacs，但是似乎java方面开发似乎还是离不开它。
+   - [[file:intellij.org][intellij]] eclipse太慢了，看看intellij怎么样。
    - [[file:./algorithm.org][algorithm]] 算法还是非常重要的。记录的都是现实中使用到的算法或者是比较有趣的数学问题吧。
    - [[file:./data-mining.org][data-mining]] 了解一些数据挖掘方面的知识还是比较有帮助的。其实我们每天都在不知不觉地进行数据挖掘。
    - [[file:lcov.org][lcov]] the LTP(Linux Testing Project) GCOV extension.用来完成C/C++测试覆盖。

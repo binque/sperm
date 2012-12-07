@@ -292,6 +292,7 @@ NOTE(dirlt):似乎这些命令和maven生命周期非常相似。
    - mvn test-compile. 编译测试项目源代码
    - mvn test. 运行测试用例
      - mvn test -Dtest=<qualified-name>:<test-function>
+     - -Dmaven.test.skip=true 跳过单元测试
    - mvn package. 将编译输出打包
    - mvn integration-test. 运行集成测试. TODO(dirlt):
    - mvn verify. 检查是否可以发布. TODO(dirlt):
@@ -300,8 +301,6 @@ NOTE(dirlt):似乎这些命令和maven生命周期非常相似。
    - mvn generate-sources 生成应用所需要的额外代码
    - mvn archetype:create. 创建maven项目文件
    - mvn clean. 清除编译输出
-常用参数有下面这些：
-   - -Dmaven.test.skip=true 跳过单元测试
 
 *** 创建项目(archetype)
 使用archetype插件可以很方便地创建项目。假设我们需要创建项目com.dirlt.chaos.JTest,我们可以执行下面命令
