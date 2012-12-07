@@ -6,3 +6,6 @@ Port 16021
 
 Host nexus
 Port 16021
+
+Host usocial
+Port 18021

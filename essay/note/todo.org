@@ -38,10 +38,10 @@
    - http://highscalability.com/blog/2012/10/31/gone-fishin-livejournal-architecture.html
 ** TODO 试试skype
 ** TODO umid服务,db research.probelm.
-** TODO 游戏统计部分
 ** TODO 调研memcached. and netty and thrift.
 ** TODO 分析htable代码put.
 ** TODO 完成游戏模版代码
 ** TODO hbase testing utility.
-** TODO 上线新的任务调度器。
 ** TODO netty的线程池问题以及使用总结。
+** TODO 游戏统计部分
+
