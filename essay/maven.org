@@ -296,7 +296,7 @@ NOTE(dirlt):似乎这些命令和maven生命周期非常相似。
    - mvn package. 将编译输出打包
    - mvn integration-test. 运行集成测试. TODO(dirlt):
    - mvn verify. 检查是否可以发布. TODO(dirlt):
-   - mvn install. 将包安装到本地的repository.
+   - mvn install. 将包安装到本地的repository. *NOTE（dirlt）：这个对于从github上面下载的东西非常有用*
    - mvn deploy. 将包部署到远程的repository.
    - mvn generate-sources 生成应用所需要的额外代码
    - mvn archetype:create. 创建maven项目文件

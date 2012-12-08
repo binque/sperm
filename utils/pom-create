@@ -141,7 +141,7 @@ POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="ht
       <!--         <tasks> -->
       <!--           <mkdir dir="src/main/gen-java"/> -->
       <!--           <exec executable="protoc"> -->
-      <!--             <arg value="src/main/protobuf/message.proto"/> -->
+      <!--             <arg value="src/main/proto/message.proto"/> -->
       <!--           </exec> -->
       <!--         </tasks> -->
       <!--         <sourceRoot>src/main/gen-java</sourceRoot> -->
