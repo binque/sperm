@@ -13,7 +13,7 @@ public class Configuration {
     private String quorumSpec;
 
     public Configuration(String[] args) {
-
+        // TODO(dirlt):
     }
 
     public int getRestPort() {

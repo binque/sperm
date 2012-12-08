@@ -25,6 +25,7 @@ public class RestHandler extends SimpleChannelHandler {
     @Override
     public void writeComplete(ChannelHandlerContext ctx,
                               WriteCompletionEvent e) {
+        MetricStore.incRpcOutCount();
         // not handling.
         // don't close it.
     }
@@ -37,7 +38,6 @@ public class RestHandler extends SimpleChannelHandler {
     @Override
     public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) {
         MetricStore.decConnectionCount();
-        client.code = AsyncClient.kClosed;
-        CpuWorkerPool.getInstance().submit(client);
+        e.getChannel().close();
     }
 }
