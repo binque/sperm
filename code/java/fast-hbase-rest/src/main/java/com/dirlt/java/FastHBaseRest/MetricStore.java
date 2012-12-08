@@ -24,6 +24,9 @@ public class MetricStore {
     public static final String kRpcOutBytes = "rpc.out.bytes";
     public static final String kConnectionCount = "connection.count";
     public static final String kProtobufInvalidCount = "protobuf.invalid.count";
+    public static final String kQueryCount = "query.count";
+    public static final String kLocalCacheCount = "local.cache.count";
+
 
     public static void incRpcInCount() {
         instance.addCounter(kRpcInCount, 1);
@@ -51,6 +54,14 @@ public class MetricStore {
 
     public static void incProtobufInvalidCount() {
         instance.addCounter(kProtobufInvalidCount, 1);
+    }
+
+    public static void addQueryCount(int count) {
+        instance.addCounter(kQueryCount, count);
+    }
+
+    public static void addLocalCacheCount(int count) {
+        instance.addCounter(kLocalCacheCount, count);
     }
 
     public static MetricStore getInstance() {
