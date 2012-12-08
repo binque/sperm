@@ -1,6 +1,9 @@
 package com.dirlt.java.FastHBaseRest;
 
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.*;
+import org.jboss.netty.handler.codec.http.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,29 +18,49 @@ public class RestHandler extends SimpleChannelHandler {
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
-        MetricStore.incRpcInCount();
-        client.code = AsyncClient.kHandleRequest;
-        client.channel = e.getChannel();
-        client.httpRequest = (HttpRequest) e.getMessage();
+        HttpRequest request = (HttpRequest) e.getMessage();
+        Channel channel = e.getChannel();
+        StatStore.incRpcInCount();
+
+        if (request.getUri().equals("/stat")) {
+            // just return statistics.
+            StatStore stat = StatStore.getInstance();
+            HttpResponse response = new DefaultHttpResponse(
+                    HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+            String content = stat.toString();
+            StatStore.addRpcOutBytes(content.length());
+            response.setHeader("Content-Length", content.length());
+            ChannelBuffer buffer = ChannelBuffers.buffer(content.length());
+            buffer.writeBytes(content.getBytes());
+            response.setContent(buffer);
+            channel.write(response);
+            return;
+        }
+
+        client.code = AsyncClient.Status.kHttpRequest;
+        client.channel = channel;
+        client.httpRequest = request;
         CpuWorkerPool.getInstance().submit(client);
     }
 
     @Override
     public void writeComplete(ChannelHandlerContext ctx,
                               WriteCompletionEvent e) {
-        MetricStore.incRpcOutCount();
+        StatStore.incRpcOutCount();
         // not handling.
         // don't close it.
     }
 
     @Override
     public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) {
-        MetricStore.incConnectionCount();
+        RestServer.logger.debug("connection open");
+        StatStore.incConnectionCount();
     }
 
     @Override
     public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) {
-        MetricStore.decConnectionCount();
+        RestServer.logger.debug("connection closed");
+        StatStore.decConnectionCount();
         e.getChannel().close();
     }
 }

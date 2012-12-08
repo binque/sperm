@@ -19,12 +19,13 @@ public class HBaseService {
     private static HBaseService instance = null;
     private HBaseClient client = null;
 
-    public void init(Configuration configuration) {
+    public static void init(Configuration configuration) {
         instance = new HBaseService(configuration);
     }
 
     private HBaseService(Configuration configuration) {
-        // TODO(dirlt):
+        // TODO(dirlt): like dp5:2181,dp4:2181,dp6:2181
+        RestServer.logger.info("hbase-quorum-spec=" + configuration.getQuorumSpec());
         client = new HBaseClient(configuration.getQuorumSpec());
     }
 

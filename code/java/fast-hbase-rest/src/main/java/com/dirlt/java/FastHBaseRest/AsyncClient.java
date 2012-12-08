@@ -8,9 +8,11 @@ import com.stumbleupon.async.Deferred;
 import org.hbase.async.GetRequest;
 import org.hbase.async.KeyValue;
 import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
-import org.jboss.netty.handler.codec.http.HttpRequest;
+import org.jboss.netty.handler.codec.http.*;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +24,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 
-public class AsyncClient extends Runnable {
+public class AsyncClient implements Runnable {
     public static final int kDefaultVersion = 1;
     public static final String kSep = String.format("%c", 0x0);
 
@@ -60,9 +62,10 @@ public class AsyncClient extends Runnable {
     @Override
     public void run() {
         if (code == Status.kHttpRequest) {
+            RestServer.logger.debug("http request");
             ChannelBuffer buffer = httpRequest.getContent();
             int size = buffer.readableBytes();
-            MetricStore.addRpcInBytes(size); // rpc in bytes.
+            StatStore.addRpcInBytes(size); // rpc in bytes.
             byte[] bs = new byte[size];
             buffer.readBytes(bs);
             // parse request.
@@ -72,7 +75,8 @@ public class AsyncClient extends Runnable {
                 protoRequest = builder.build();
             } catch (InvalidProtocolBufferException e) {
                 // just close channel.
-                MetricStore.incProtobufInvalidCount();
+                RestServer.logger.debug("parse protobuf exception");
+                StatStore.incProtobufInvalidCount();
                 channel.close();
             }
 
@@ -91,21 +95,31 @@ public class AsyncClient extends Runnable {
             run();
 
         } else if (code == Status.kLocalCache) {
+            RestServer.logger.debug("local cache");
             queryCacheQualifiers = new ArrayList<String>();
 
             // check local cache mean while fill the cache request.
+            int queryCount = 0;
+            int cacheCount = 0;
             for (String q : protoRequest.getQualifiersList()) {
                 String cacheKey = makeCacheKey(prefix, q);
+                RestServer.logger.debug("search cache with key = " + cacheKey);
                 byte[] b = LocalCache.getInstance().get(cacheKey);
+                queryCount += 1;
                 if (b != null) {
+                    RestServer.logger.debug("cache hit!");
+                    cacheCount += 1;
                     MessageProtos1.Response.KeyValue.Builder bd = MessageProtos1.Response.KeyValue.newBuilder();
                     bd.setQualifier(q);
                     bd.setContent(ByteString.copyFrom(b));
                     protoResponseBuilder.addKvs(bd);
                 } else {
+                    RestServer.logger.debug("query hbase qualifier: " + q);
                     queryCacheQualifiers.add(q);
                 }
             }
+            StatStore.addQueryCount(queryCount);
+            StatStore.addQueryLocalCacheCount(cacheCount);
 
             if (!queryCacheQualifiers.isEmpty()) {
                 code = Status.kCacheService; // query cache service.
@@ -124,8 +138,18 @@ public class AsyncClient extends Runnable {
             run();
 
         } else if (code == Status.kHBaseService) {
+            RestServer.logger.debug("hbase service");
+            RestServer.logger.debug("tableName = " + tableName + ", rowKey = " + rowKey + ", columnFamily = " + columnFamily);
             GetRequest getRequest = new GetRequest(tableName, rowKey);
             getRequest.family(columnFamily);
+            // a little bit tedious.
+            byte[][] qualifiers = new byte[queryHBaseQualifiers.size()][];
+            int idx = 0;
+            for (String q : queryHBaseQualifiers) {
+                qualifiers[idx] = q.getBytes();
+                idx += 1;
+            }
+            getRequest.qualifiers(qualifiers);
             Deferred<ArrayList<KeyValue>> deferred = HBaseService.getInstance().get(getRequest);
             final AsyncClient client = this;
             // if failed, we don't return.
@@ -133,9 +157,19 @@ public class AsyncClient extends Runnable {
                 @Override
                 public Object call(ArrayList<KeyValue> keyValues) throws Exception {
                     // we don't return because we put into CpuWorkerPool.
-                    client.code = kHttpResponse;
+                    client.code = Status.kHttpResponse;
                     // fill the cache and builder.
-                    // TODO(dirlt):
+                    for (KeyValue kv : keyValues) {
+                        String k = new String(kv.qualifier()); // not kv.key(), that's rowkey.
+                        String cacheKey = makeCacheKey(prefix, k);
+                        byte[] value = kv.value();
+                        RestServer.logger.debug("fill cache with key = " + cacheKey);
+                        LocalCache.getInstance().set(cacheKey, value);
+                        MessageProtos1.Response.KeyValue.Builder bd = MessageProtos1.Response.KeyValue.newBuilder();
+                        bd.setQualifier(k);
+                        bd.setContent(ByteString.copyFrom(value));
+                        client.protoResponseBuilder.addKvs(bd);
+                    }
                     CpuWorkerPool.getInstance().submit(client);
                     return null;
                 }
@@ -148,7 +182,23 @@ public class AsyncClient extends Runnable {
                 }
             });
         } else if (code == Status.kHttpResponse) {
-            // TODO(dirlt):
+            RestServer.logger.debug("http response");
+            HttpResponse response = new DefaultHttpResponse(
+                    HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+            MessageProtos1.Response msg = protoResponseBuilder.build();
+            int size = msg.getSerializedSize();
+            StatStore.addRpcOutBytes(size);
+            response.setHeader("Content-Length", size);
+            ByteArrayOutputStream os = new ByteArrayOutputStream(size);
+            try {
+                msg.writeTo(os);
+                ChannelBuffer buffer = ChannelBuffers.copiedBuffer(os.toByteArray());
+                response.setContent(buffer);
+
+                channel.write(response); // write over.
+            } catch (Exception e) {
+                // just igtnore it.
+            }
         }
     }
 }

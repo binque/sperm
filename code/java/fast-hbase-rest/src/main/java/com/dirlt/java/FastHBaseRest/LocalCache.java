@@ -3,6 +3,8 @@ package com.dirlt.java.FastHBaseRest;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created with IntelliJ IDEA.
  * User: dirlt
@@ -20,8 +22,11 @@ public class LocalCache {
     }
 
     private LocalCache(Configuration configuration) {
-        // TODO(dirlt): some strategy.
+        RestServer.logger.info("cache-expire-time=" + configuration.getCacheExpireTime() +
+                "(s), cache-max-capacity=" + configuration.getCacheMaxCapacity());
         CacheBuilder builder = CacheBuilder.newBuilder();
+        builder.expireAfterWrite(configuration.getCacheExpireTime(), TimeUnit.SECONDS);
+        builder.maximumSize(configuration.getCacheMaxCapacity());
         cache = builder.build();
     }
 

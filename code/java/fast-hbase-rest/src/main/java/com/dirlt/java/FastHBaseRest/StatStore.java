@@ -1,8 +1,8 @@
 package com.dirlt.java.FastHBaseRest;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,11 +12,11 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 
-public class MetricStore {
+public class StatStore {
     // singleton.
-    private Map<String, Long> counter = new HashMap<String, Long>();
-    private Map<String, String> status = new HashMap<String, String>();
-    private static MetricStore instance = new MetricStore();
+    private Map<String, Long> counter = new TreeMap<String, Long>();
+    private Map<String, String> status = new TreeMap<String, String>();
+    private static StatStore instance = new StatStore();
 
     public static final String kRpcInCount = "rpc.in.count";
     public static final String kRpcOutCount = "rpc.out.count";
@@ -25,8 +25,7 @@ public class MetricStore {
     public static final String kConnectionCount = "connection.count";
     public static final String kProtobufInvalidCount = "protobuf.invalid.count";
     public static final String kQueryCount = "query.count";
-    public static final String kLocalCacheCount = "local.cache.count";
-
+    public static final String kQueryLocalCacheCount = "query.local.cache.count";
 
     public static void incRpcInCount() {
         instance.addCounter(kRpcInCount, 1);
@@ -60,11 +59,11 @@ public class MetricStore {
         instance.addCounter(kQueryCount, count);
     }
 
-    public static void addLocalCacheCount(int count) {
-        instance.addCounter(kLocalCacheCount, count);
+    public static void addQueryLocalCacheCount(int count) {
+        instance.addCounter(kQueryLocalCacheCount, count);
     }
 
-    public static MetricStore getInstance() {
+    public static StatStore getInstance() {
         return instance;
     }
 
@@ -103,14 +102,14 @@ public class MetricStore {
     // well a little too simple.:).
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        sb.append("----------counter----------\n");
+//        sb.append("----------counter----------\n");
         synchronized (counter) {
             Set<Map.Entry<String, Long>> entries = counter.entrySet();
             for (Map.Entry<String, Long> entry : entries) {
                 sb.append(String.format("%s = %s\n", entry.getKey(), entry.getValue().toString()));
             }
         }
-        sb.append("----------status----------\n");
+//        sb.append("----------status----------\n");
         synchronized (status) {
             Set<Map.Entry<String, String>> entries = status.entrySet();
             for (Map.Entry<String, String> entry : entries) {

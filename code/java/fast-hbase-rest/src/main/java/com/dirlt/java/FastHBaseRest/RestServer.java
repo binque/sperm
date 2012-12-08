@@ -20,6 +20,30 @@ import java.util.concurrent.Executors;
  * To change this template use File | Settings | File Templates.
  */
 public class RestServer {
+    public static class Logger {
+        public boolean xdebug = true;
+        public boolean xinfo = true;
+
+        public void debug(String s) {
+            if (xdebug) {
+                System.out.println("[DEBUG]" + s);
+            }
+        }
+
+        public void info(String s) {
+            if (xinfo) {
+                System.out.println("[INFO]" + s);
+            }
+        }
+    }
+
+    public static Logger logger = new Logger();
+
+    static {
+        logger.xdebug = true;
+        logger.xinfo = true;
+    }
+
     public static void runHttpServer(Configuration configuration) {
         ChannelFactory factory = new NioServerSocketChannelFactory(
                 Executors.newCachedThreadPool(),
@@ -34,29 +58,19 @@ public class RestServer {
                 return pipeline;
             }
         });
-        bootstrap.bind(new InetSocketAddress(configuration.getRestPort()));
-    }
-
-    public static void runMetricServer(Configuration configuration) {
-        ChannelFactory factory = new NioServerSocketChannelFactory(
-                Executors.newCachedThreadPool(),
-                Executors.newCachedThreadPool());
-        ServerBootstrap bootstrap = new ServerBootstrap(factory);
-        bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
-            public ChannelPipeline getPipeline() throws Exception {
-                ChannelPipeline pipeline = Channels.pipeline();
-                pipeline.addLast("decoder", new HttpRequestDecoder());
-                pipeline.addLast("encoder", new HttpResponseEncoder());
-                pipeline.addLast("handler", new MetricHandler());
-                return pipeline;
-            }
-        });
-        bootstrap.bind(new InetSocketAddress(configuration.getMetricPort()));
+        logger.info("port=" + configuration.getPort());
+        bootstrap.bind(new InetSocketAddress(configuration.getPort()));
     }
 
     public static void main(String[] args) {
-        Configuration configuration = new Configuration(args);
+        Configuration configuration = new Configuration();
+        if (!configuration.parse(args)) {
+            Configuration.usage();
+            return;
+        }
+        LocalCache.init(configuration);
+        CpuWorkerPool.init(configuration);
+        HBaseService.init(configuration);
         runHttpServer(configuration);
-        runMetricServer(configuration);
     }
 }

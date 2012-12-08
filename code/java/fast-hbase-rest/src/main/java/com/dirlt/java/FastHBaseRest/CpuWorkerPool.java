@@ -1,7 +1,9 @@
 package com.dirlt.java.FastHBaseRest;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,7 +23,10 @@ public class CpuWorkerPool {
 
     private CpuWorkerPool(Configuration configuration) {
         // TODO(dirlt): some strategy.
-        executorService = Executors.newCachedThreadPool();
+        RestServer.logger.info("cpu-thread-number=" + configuration.getCpuThreadNumber() +
+                ", cpu-queue-size=" + configuration.getCpuQueueSize());
+        executorService = new ThreadPoolExecutor(configuration.getCpuThreadNumber(), configuration.getCpuThreadNumber(),
+                0, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(configuration.getCpuQueueSize()));
     }
 
     public static CpuWorkerPool getInstance() {
