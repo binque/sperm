@@ -23,6 +23,7 @@ public class RestServer {
     public static class Logger {
         public boolean xdebug = true;
         public boolean xinfo = true;
+        public boolean xwarn = true;
 
         public void debug(String s) {
             if (xdebug) {
@@ -35,13 +36,20 @@ public class RestServer {
                 System.out.println("[INFO]" + s);
             }
         }
+
+        public void warn(String s) {
+            if (xwarn) {
+                System.out.println("[WARN]" + s);
+            }
+        }
     }
 
     public static Logger logger = new Logger();
 
     static {
-        logger.xdebug = true;
-        logger.xinfo = true;
+        logger.xdebug = false;
+        logger.xinfo = false;
+        logger.xwarn = false;
     }
 
     public static void runHttpServer(Configuration configuration) {

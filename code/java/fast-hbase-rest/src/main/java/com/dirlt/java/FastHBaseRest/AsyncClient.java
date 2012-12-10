@@ -48,6 +48,7 @@ public class AsyncClient implements Runnable {
     public String rowKey;
     public String columnFamily;
     public String prefix; // cache key prefix.
+
     private List<String> queryCacheQualifiers;
     private List<String> queryHBaseQualifiers;
 
@@ -132,6 +133,7 @@ public class AsyncClient implements Runnable {
             queryHBaseQualifiers = queryCacheQualifiers;
 
             // TODO(dirlt): add cache service for example redis or memcached.
+            // but you also have to think about the access pattern.
 
             // raise hbase service request.
             code = Status.kHBaseService;
