@@ -45,4 +45,4 @@
 ** TODO netty的线程池问题以及使用总结。
 ** TODO 游戏统计部分
 ** TODO appsync的任务，
-
+** TODO 在tasktracker机器上面建立新人关系

@@ -10,3 +10,4 @@
 package
   - http://github.com/downloads/clojure/clojure/clojure-1.2.0.zip
   - http://github.com/downloads/clojure/clojure-contrib/clojure-contrib-1.2.0.zip
+
