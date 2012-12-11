@@ -12,6 +12,7 @@
 *.sconsign.dblite
 *.iml
 .idea
+.lein
 
 utils/.emacs.d/tramp
 utils/.emacs.d/ac-comphist.dat
