@@ -48,7 +48,7 @@ TODO(dirlt):translate it!!!
    - Is Cloudera forking Hadoop? / Absolutely not. Cloudera is committed to the Hadoop project and the principles of the Apache Software License and Foundation. We continue to work actively with current releases of Hadoop and deliver certified releases to the community as appropriate.
    - Does Cloudera contribute their changes back to Apache? / We do, and will continue to contribute all eligible changes back to Apache. We occasionally release code we know to be stable even if our contribution to Apache is still in progress. Some of our changes are not eligible for contribution, as they capture the Cloudera brand, or link to our tools and documentation, but these do not affect compatibility with core project.
 
-** View
+** 观点
 *** Hadoop即将过时了吗？
 http://www.kuqin.com/database/20120715/322528.html google提出的三个东西都是解决hadoop的软肋，最终目的还是需要解决大数据上面的实时性问题。
 
@@ -194,13 +194,14 @@ http://web.archive.org/web/20110510125644/http://tech.backtype.com/the-dark-side
 
 Making Hadoop easy to deploy, use, and operate should be the #1 priority for the developers of Hadoop.
 
-** Scheduler
+** Topic
+*** Scheduler
    - Fair Scheduler Guide http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html
    - Job Scheduling in Hadoop | Apache Hadoop for the Enterprise | Cloudera http://www.cloudera.com/blog/2008/11/job-scheduling-in-hadoop/
    - Understanding Apache Hadoop’s Capacity Scheduler | Hortonworks http://hortonworks.com/blog/understanding-apache-hadoops-capacity-scheduler/
    - Upcoming Functionality in “Fair Scheduler 2.0″ | Apache Hadoop for the Enterprise | Cloudera http://www.cloudera.com/blog/2009/04/upcoming-functionality-in-fair-scheduler-20/
 
-** Usage
+** 使用
 *** 搭建单节点集群
 搭建单节点集群允许我们在单机做一些模拟或者是测试，还是非常有意义的。如何操作的话可以参考链接 http://z/home/dirlt/utils/hadoop-0.20.2-cdh3u3/docs/single_node_setup.html
 这里稍微总结一下：
@@ -262,129 +263,74 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 #+END_SRC
 
 **** 编写proto文件
-首先创建proto文件，比如segment_mark.proto
+首先创建proto文件，比如message.proto
 #+BEGIN_EXAMPLE
-package com.umeng.analytics.proto;
+package com.dirlt.java.mr.proto;
 
 // FATAL: This name works as a version number
 // Increase this number everytime you do a non-compatible modification!!
 // The block storage writer is responsible for write the version number.
-option java_outer_classname = "SegmentMarkProtos1";
+option java_outer_classname = "MessageProtos1";
 
-message SegmentMark {
-  enum Tag {
-    INSTALL=0;
-    DEVICE=1;
-    EVENTS=2;
-    ALL=3;
-  }
-  required string app_key=1;
-  required string umid=2;
-  repeated string marks=3;
-  required Tag tag=4;
+message Message {
+  required string text = 1;
 }
 #+END_EXAMPLE
    - package 名字空间
    - java_outer_classname 具体输出类名称
-使用protoc --java_out=<dir> segment_mark.proto就会在<dir>下面生成SegmentMarkProtos1.java文件。
+使用protoc --java_out=<dir> message.proto就会在<dir>下面生成MessageProtos1.java文件。
 
 此外我们还需要为这个类写几个辅助类，但是索性的是辅助类并不是很复杂。
-   - InputFormat
-   - OutputFormat
-   - Writable
+   - InputFormat com.dirlt.java.mr.MessageLzoProtobufInputFormat
 #+BEGIN_SRC Java
-public class SegmentMarkLzoProtobufBlockInputFormat extends LzoProtobufBlockInputFormat<SegmentMark> {
-  public SegmentMarkLzoProtobufBlockInputFormat() {
-    super(new TypeRef<SegmentMark>(){});
-  }
+public class MessageLzoProtobufInputFormat extends LzoProtobufBlockInputFormat<MessageProtos1.Message> {
+    public MessageLzoProtobufInputFormat() {
+        super(new TypeRef<MessageProtos1.Message>() {
+        });
+    }
+}
+#+END_SRC
+
+   - OutputFormat com.dirlt.java.mr.MessageLzoProtobufOutputFormat
+#+BEGIN_SRC Java
+public class MessageLzoProtobufOutputFormat extends LzoProtobufBlockOutputFormat<MessageProtos1.Message> {
+    public MessageLzoProtobufOutputFormat() {
+        super(new TypeRef<MessageProtos1.Message>() {
+        });
+    }
+}
+#+END_SRC
+
+   - Writable com.dirlt.java.mr.MessageLzoProtobufWritable
+#+BEGIN_SRC Java
+public class MessageLzoProtobufWritable extends ProtobufWritable<MessageProtos1.Message> {
+    public MessageLzoProtobufWritable() {
+        super(new TypeRef<MessageProtos1.Message>() {
+        });
+    }
+
+    public MessageLzoProtobufWritable(MessageProtos1.Message message) {
+        super(message, new TypeRef<MessageProtos1.Message>() {
+        });
+    }
 }
 
-public class SegmentMarkLzoProtobufBlockOutputFormat extends LzoProtobufBlockOutputFormat<SegmentMark> {
-  public SegmentMarkLzoProtobufBlockOutputFormat() {
-    super(new TypeRef<SegmentMark>(){});
-  }
-}
-
-public class SegmentMarkProtobufWritable extends ProtobufWritable<SegmentMark> {
-  public SegmentMarkProtobufWritable() {
-    super(new TypeRef<SegmentMark>(){});
-  }
-  public SegmentMarkProtobufWritable(SegmentMark m) {
-    super(m, new TypeRef<SegmentMark>(){});
-  }
-}
 #+END_SRC
 
 **** 使用lzo
-做好上面的工作之后就可以开始使用了。
-   - job.setInputFormatClass(SegmentMarkLzoProtobufBlockInputFormat.getInputFormatClass(SegmentMark.class, job.getConfiguration()));
-   - job.setOutputFormatClass(SegmentMarkLzoProtobufBlockOutputFormat.class);
-#+BEGIN_SRC Java
-    public static class XMap
-            extends
-            Mapper<LongWritable, ProtobufWritable<SegmentMark>, Text, ProtobufWritable<SegmentMark>> {
-        @Override
-        protected void map(LongWritable key,
-                ProtobufWritable<SegmentMark> value, Context context)
-                throws IOException, InterruptedException {
-            SegmentMark sm = value.get();
-            String appKey = sm.getAppKey();
-            String umid = sm.getUmid();
-            context.write(new Text(appKey + "_" + umid), value);
-        }
-    }
-
-    public static class Reduce
-            extends
-            Reducer<Text, ProtobufWritable<SegmentMark>, NullWritable, ProtobufWritable<SegmentMark>> {
-        @Override
-        protected void reduce(Text key,
-                Iterable<ProtobufWritable<SegmentMark>> values, Context context)
-                throws IOException, InterruptedException {
-            for (ProtobufWritable<SegmentMark> psm : values) {
-                psm.setConverter(SegmentMark.class);
-                SegmentMark sm = psm.get();
-            }
-            SegmentMark.Builder sm = null;
-            sm = SegmentMark.newBuilder();
-            sm.setAppKey(appKey);
-            sm.setUmid(umid);
-            sm.setTag(SegmentMark.Tag.ALL);
-            SegmentMark mark = sm.build();
-            info(TextFormat.printToString(mark));
-            context.write(null, new SegmentMarkProtobufWritable(mark));
-        }
-    }
-#+END_SRC
-*NOTE（dirlt）：这里面代码不正确，只是示例*
+关于如何使用lzo可以参看代码示例， com.dirlt.java.mr.UseLzoProtobuf . 下面几点需要说明：
+   - 如果输入为lzo文件的话，那么类型是ProtobufWritable<M>（泛型），如果需要取值的话必须通过setConverter提供类信息
+   - 如果使用本地测试集群的话，那么需要提供lzo encoder/decoder. 
+     - Configuration conf = new Configuration(); // 如果是本地测试集群的话，那么是没有读取core-site.xml的，因此也就是没有编码解码信息，需要通过下面语句提供
+     - conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.GzipCodec,com.hadoop.compression.lzo.LzopCodec");
+     - conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
+   - LzoIndexer.main(new String[]{kOutputFileName}); // 如果需要在程序里面进行indexer的话，那么可以直接调用LzoIndexer
+     - 如果是分布式的话可以调用 DistributedLzoIndexer.main
+     - 当然也可以按照下面的方法通过程序调用
 
 之后在输出目录下面会存在很多lzo文件，但是这些文件并不能够直接作为输入使用（因为hadoop不知道如何对这些lzo文件进行切分），需要对这些lzo文件进行索引。使用下面的命令来进行索引：
    - hadoop jar /usr/lib/hadoop/lib/hadoop-lzo-0.4.14.jar com.hadoop.compression.lzo.DistributedLzoIndexer <output-dir>
 完成之后对于每一个lzo文件都会存在一个.index文件。如果重复运行上面命令的话，会检查.index文件是否存在，如果存在的话那么就不会重新进行索引。
-
-*** 多路输入
-多路输入分为三种情况，分别是：
-   - 多路hdfs
-   - 多路htable
-   - 多路hdfs和htable混合。
-第三中情况包含前面两种情况，所以下面看看第三种情况如何实现。
-
-*NOTE(dirlt):现在看来只是支持了多路hdfs输入以及1路的htable输入*
-
-实现多路输入[[file:mapred.org][非常简单]]， 但是过程非常magic.：
-   - 使用 TableMapReduceUtil.initTableMapperJob 初始化htable输入（作用就是为了指定htable的input table name）
-   - 之后在调用一次 MultipleInputs.addInputPath(job, new Path(kInTableName1), TableInputFormat.class, TMapper.class); 这里的kInTableName1可以随便定义，但是不要和接下来的hdfs路径重名。（作用是为了能够调整input format）
-   - 接下来就是添加hdfs输入  MultipleInputs.addInputPath(job, new Path(kInFileName1), TextInputFormat.class, FMapper.class); 可以调用多次来添加多个hdfs输入源。
-
-*TODO（dirlt）：至于为什么这样可以就需要阅读源代码，这也意味着不保证其他hadoop版本也可以这么做*
-
-*** 多路输出
-多路输出代码可以参考[[file:mapred.org][这里]] 其中一小节"多路输出"
-   - 使用MultipleOutputs 多文件和table混合输出（和mrunit配合不好）
-   - 使用MultipleTableOutputFormat 多table输出
-   - 使用MultipleOutputFormat 多文件输出
-     - 需要继承这个类并且复写一些方法，然后设置OutputFormat为这个类
-     - 似乎高版本被MultipleOutputs代替
 
 *** OutOfMemoryError
    - hadoop的mapreduce作业中经常出现Java heap space解决方案 http://blog.sina.com.cn/s/blog_6345041c01011bjq.html

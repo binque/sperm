@@ -82,6 +82,14 @@ POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="ht
     <!--   <artifactId>Hadoop-GPL-Compression</artifactId> -->
     <!--   <version>0.4.15</version> -->
     <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--   <groupId>org.apache.hadoop</groupId> -->
+    <!--   <artifactId>hadoop-mrunit</artifactId> -->
+    <!--   <version>0.20.2-cdh3u3</version> -->
+    <!--   <scope>test</scope> -->
+    <!-- </dependency> -->
+
   </dependencies>
   
   <build>
@@ -161,10 +169,14 @@ POM_TEMPLATE="""<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="ht
 MAKEFILE_TEMPLATE="""#coding:utf-8
 #Copyright (C) dirlt
 
-CP=./target/dependencies;./target/classes
-
+# mostly this works.
 copy-unpack-dependency:
 	mvn dependency:unpack-dependencies
+
+# if the above command failed. please use this one.
+copy-unpack-dependency2:
+	mvn dependency:copy-dependencies ; cd ./target/dependency ; for x in *.jar ; do echo "jar xf $$x ..." ; jar xf $$x ; done
+
 """
 
 import os

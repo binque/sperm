@@ -24,5 +24,7 @@ response = message_pb2.Response()
 response.ParseFromString(back)
 
 print response
+print response.table_name
+
 
 
