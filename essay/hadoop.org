@@ -103,7 +103,9 @@ http://www.cnblogs.com/chinacloud/archive/2010/12/03/1895365.html 第四主题
 
 *** MapReduce：一个重大的倒退
 原文 http://apps.hi.baidu.com/share/detail/6912773
+
 英文 http://www.databasecolumn.com/2008/01/mapreduce-a-major-step-back.html
+
 认为MapReduce相对于数据管理系统是一个巨大退步。
 
 MapReduce可能在某些特定类型的通用计算上是个不错的想法，但是对于数据库社区来说：
@@ -194,14 +196,7 @@ http://web.archive.org/web/20110510125644/http://tech.backtype.com/the-dark-side
 
 Making Hadoop easy to deploy, use, and operate should be the #1 priority for the developers of Hadoop.
 
-** Topic
-*** Scheduler
-   - Fair Scheduler Guide http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html
-   - Job Scheduling in Hadoop | Apache Hadoop for the Enterprise | Cloudera http://www.cloudera.com/blog/2008/11/job-scheduling-in-hadoop/
-   - Understanding Apache Hadoop’s Capacity Scheduler | Hortonworks http://hortonworks.com/blog/understanding-apache-hadoops-capacity-scheduler/
-   - Upcoming Functionality in “Fair Scheduler 2.0″ | Apache Hadoop for the Enterprise | Cloudera http://www.cloudera.com/blog/2009/04/upcoming-functionality-in-fair-scheduler-20/
-
-** 使用
+** 使用问题
 *** 搭建单节点集群
 搭建单节点集群允许我们在单机做一些模拟或者是测试，还是非常有意义的。如何操作的话可以参考链接 http://z/home/dirlt/utils/hadoop-0.20.2-cdh3u3/docs/single_node_setup.html
 这里稍微总结一下：
@@ -243,95 +238,6 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
      -  NameNode - http://localhost:50070/ 
      -  JobTracker - http://localhost:50030/
 
-*** hadoop-lzo
-**** 安装配置
-   - 安装liblzo2库，sudo apt-get install liblzo2-2(liblzo2-dev)
-   - 安装lzop程序，sudo apt-get install lzop
-   - 下载hadoop-lzo. git clone git://github.com/kevinweil/hadoop-lzo.git https://github.com/kevinweil/hadoop-lzo
-   - 编译，ant compile-native tar 
-   - 将结果build/hadoop-lzo-0.4.14的hadoop-lzo-0.4.14.jar复制到 $HADOOP_HOME/lib，将build/hadoop-lzo-0.4.14/lib/native下的文件复制到$HADOOP_HOME/lib/native (native/Linux-amd64-64)
-   - 修改core-site.xml配置
-#+BEGIN_SRC XML
-<property>
-<name>io.compression.codecs</name>    
-<value>org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec</value>
-</property>
-<property>
-<name>io.compression.codec.lzo.class</name>
-<value>com.hadoop.compression.lzo.LzoCodec</value>
-</property>
-#+END_SRC
-
-**** 编写proto文件
-首先创建proto文件，比如message.proto
-#+BEGIN_EXAMPLE
-package com.dirlt.java.mr.proto;
-
-// FATAL: This name works as a version number
-// Increase this number everytime you do a non-compatible modification!!
-// The block storage writer is responsible for write the version number.
-option java_outer_classname = "MessageProtos1";
-
-message Message {
-  required string text = 1;
-}
-#+END_EXAMPLE
-   - package 名字空间
-   - java_outer_classname 具体输出类名称
-使用protoc --java_out=<dir> message.proto就会在<dir>下面生成MessageProtos1.java文件。
-
-此外我们还需要为这个类写几个辅助类，但是索性的是辅助类并不是很复杂。
-   - InputFormat com.dirlt.java.mr.MessageLzoProtobufInputFormat
-#+BEGIN_SRC Java
-public class MessageLzoProtobufInputFormat extends LzoProtobufBlockInputFormat<MessageProtos1.Message> {
-    public MessageLzoProtobufInputFormat() {
-        super(new TypeRef<MessageProtos1.Message>() {
-        });
-    }
-}
-#+END_SRC
-
-   - OutputFormat com.dirlt.java.mr.MessageLzoProtobufOutputFormat
-#+BEGIN_SRC Java
-public class MessageLzoProtobufOutputFormat extends LzoProtobufBlockOutputFormat<MessageProtos1.Message> {
-    public MessageLzoProtobufOutputFormat() {
-        super(new TypeRef<MessageProtos1.Message>() {
-        });
-    }
-}
-#+END_SRC
-
-   - Writable com.dirlt.java.mr.MessageLzoProtobufWritable
-#+BEGIN_SRC Java
-public class MessageLzoProtobufWritable extends ProtobufWritable<MessageProtos1.Message> {
-    public MessageLzoProtobufWritable() {
-        super(new TypeRef<MessageProtos1.Message>() {
-        });
-    }
-
-    public MessageLzoProtobufWritable(MessageProtos1.Message message) {
-        super(message, new TypeRef<MessageProtos1.Message>() {
-        });
-    }
-}
-
-#+END_SRC
-
-**** 使用lzo
-关于如何使用lzo可以参看代码示例， com.dirlt.java.mr.UseLzoProtobuf . 下面几点需要说明：
-   - 如果输入为lzo文件的话，那么类型是ProtobufWritable<M>（泛型），如果需要取值的话必须通过setConverter提供类信息
-   - 如果使用本地测试集群的话，那么需要提供lzo encoder/decoder. 
-     - Configuration conf = new Configuration(); // 如果是本地测试集群的话，那么是没有读取core-site.xml的，因此也就是没有编码解码信息，需要通过下面语句提供
-     - conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.GzipCodec,com.hadoop.compression.lzo.LzopCodec");
-     - conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
-   - LzoIndexer.main(new String[]{kOutputFileName}); // 如果需要在程序里面进行indexer的话，那么可以直接调用LzoIndexer
-     - 如果是分布式的话可以调用 DistributedLzoIndexer.main
-     - 当然也可以按照下面的方法通过程序调用
-
-之后在输出目录下面会存在很多lzo文件，但是这些文件并不能够直接作为输入使用（因为hadoop不知道如何对这些lzo文件进行切分），需要对这些lzo文件进行索引。使用下面的命令来进行索引：
-   - hadoop jar /usr/lib/hadoop/lib/hadoop-lzo-0.4.14.jar com.hadoop.compression.lzo.DistributedLzoIndexer <output-dir>
-完成之后对于每一个lzo文件都会存在一个.index文件。如果重复运行上面命令的话，会检查.index文件是否存在，如果存在的话那么就不会重新进行索引。
-
 *** OutOfMemoryError
    - hadoop的mapreduce作业中经常出现Java heap space解决方案 http://blog.sina.com.cn/s/blog_6345041c01011bjq.html
    - Hadoop troubleshooting http://ww2.cs.fsu.edu/~czhang/errors.html
@@ -343,3 +249,11 @@ public class MessageLzoProtobufWritable extends ProtobufWritable<MessageProtos1.
    - Increase the heap size for the spawned child.  Add -Xmx1024 in mapred-site.xml for mapred.map.child.java.opts.  This did not solve it. （增加task的heapsize）
    - Make sure that the limit of open files is not reached, I had already done this by adding “mapred – nofile 65536″ in /etc/security/limits.conf.  This did not solve it. （增加文件数目限制）
    - Adding the following to /etc/security/limits.conf and restarting the TaskTracker solved it "mapred – nproc 8192" （增加开辟子进程的数目） 
+
+** Topic
+*** Scheduler
+   - Fair Scheduler Guide http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html
+   - Job Scheduling in Hadoop | Apache Hadoop for the Enterprise | Cloudera http://www.cloudera.com/blog/2008/11/job-scheduling-in-hadoop/
+   - Understanding Apache Hadoop’s Capacity Scheduler | Hortonworks http://hortonworks.com/blog/understanding-apache-hadoops-capacity-scheduler/
+   - Upcoming Functionality in “Fair Scheduler 2.0″ | Apache Hadoop for the Enterprise | Cloudera http://www.cloudera.com/blog/2009/04/upcoming-functionality-in-fair-scheduler-20/
+

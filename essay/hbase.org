@@ -65,10 +65,9 @@ TODO(dirlt):
    - Large, non-splitable regions tell you things. 
      - Our key space maps to accounts. Excessively large keys equal excessively “active” accounts
 
-** View
+** 观点
 *** 业强 2012-08-16 hbase讲座
 file:./images/hbase-architecture.png
-
 
 HRegion类似于tablet，每个HRegion有很多Store存储不同的column family。
 
@@ -195,7 +194,7 @@ Caused by: org.apache.hadoop.ipc.RemoteException: org.apache.hadoop.hbase.ClockO
 #+END_VERSE
 rs2最近写入的数据是v2，而接下来如果从rs2查询"latest"的数据的话返回的是v1。
 
-** Usage
+** 使用问题
 *** hbase shell
    - scan 'test'
    - scan 'test' , { LIMIT=>10 }

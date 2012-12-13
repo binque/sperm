@@ -13,6 +13,7 @@ Oprofile 通过取样来工作。使用收集到的评测数据，用户可以�
 
 ** OProfile地址
 文档 http://oprofile.sourceforge.net/doc/index.html
+
 AMD Family 10 Events http://oprofile.sourceforge.net/docs/amd-family10-events.php
 
 ** OProfile组成部分
@@ -49,6 +50,7 @@ daemon部分用于收集内核驱动采样数据，并且将采样数据dump到�
 
 ** OProfile使用
 安装文档 http://oprofile.sourceforge.net/doc/install.html
+
 安装Requirement http://oprofile.sourceforge.net/doc/requirements.html
 
 如果不是2.6以及以上版本Linux内核的话，那么必须提供源代码树来编译出oprofile驱动。

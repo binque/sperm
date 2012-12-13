@@ -46,6 +46,9 @@
 ** TODO 游戏统计部分
 ** TODO appsync的任务，
 ** TODO 在tasktracker机器上面建立新人关系
-** TODO 使用mrunit来进行但愿测试，以及如何检查multipleoutputs.
 ** TODO 没有使用hadoop jar提交可以直接写本地文件
-** TODO 总结多路输入和多路输出
+** TODO 尝试编写多个table输入的情况
+** TODO 整理hbase以及hdfs部分
+** TODO 整理cc代码部分，rpc部分还是保留下来还是比较有用的。
+** TODO 整理maven部分
+** TODO 整理cpp/python.org里面对应的代码，只保留一些必要的部分

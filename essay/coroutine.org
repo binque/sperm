@@ -33,5 +33,3 @@ coroutine框架必须在每个线程可以启动一个调度coroutine.然后crea
 
 coroutine这种user thread只是做到的了cooperative thread,而preemptive thread还是需要OS的帮助，两者之间存在明显的区分。关于这点的话我觉得Erlang做的就比较全面。 *Erlang有一个自己的VM/OS.在自己的VM/OS上面可以在两者之间平滑地过度，从而达到在高吞吐和低延迟之间达到一定的平衡。*
 
-
-
