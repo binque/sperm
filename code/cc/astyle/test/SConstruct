@@ -16,4 +16,4 @@ excepts=[]
 for x in glob.glob('*.cc'):
     if x in excepts:
         continue
-    env.Program(os.path.splitext(x)[0],[x])
+    env.Program(os.path.splitext(x)[0]+'.exe',[x])

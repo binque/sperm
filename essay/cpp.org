@@ -92,9 +92,7 @@ _Z3foov:
 ** hook function
 hook函数调用有两种方式，一种是hook我们代码内部的函数，这意味这这个函数是由我们来编译的，当然我们不能够修改需要hook的函数实现否则就没有意义了。另外一种hook函数是动态库里面的函数，静态库里面的函数因为完全进入了可执行程序，所以修改起来比较麻烦一些。我们QA写过这样的程序用libbfd库修改可执行程序本身，在函数调用之间加上跳板，但是相比本文介绍的两种方式更加复杂。（复杂就以为着容易出错，而且这种修改可执行程序应该是不值得提倡的）。
 
---------------------
-hook编译时函数
-
+*** hook编译时函数
 在gcc编译的时候需要加入-finstrument-functions这个选项之后，那么每个函数调用之前和之后都会调用
    - __cyg_profile_func_enter
    - __cyg_profile_func_exit 
@@ -131,9 +129,7 @@ extern "C" {
 }
 #+END_SRC
 
---------------------
-hook运行时函数
-
+*** hook运行时函数
 可以使用dlopen截获函数入口，然后使用dlsym(RTLD_NEXT)来获得下一个入口.我们以截获malloc为例。
 #+BEGIN_SRC C++
 #include <unistd.h>
@@ -158,12 +154,6 @@ void free(void *p){
     }
     return pfree(p);
 }
-#+END_SRC
-
-** 编译可运行的.so
-#+BEGIN_SRC C++
-
-END_DECLS
 #+END_SRC
 
 ** undefined reference to static const class member
@@ -210,9 +200,7 @@ new/delete和C的内存分配有很多区别，主要的改进在进行了很多
    * 默认的new还进行检查以确信在传递地址给构造函数之前内存分配成功
    * 允许重载全局new/delete和某个类的new/delete 
 
---------------------
-new重载
-
+*** new重载
 用户可以重载new/delete来实现全局new/delete或者是某个类的new/delete.原型有下面这些
 #+BEGIN_SRC C++
 // #include <new>
@@ -266,9 +254,7 @@ int main(){
 }
 #+END_SRC
 
---------------------
-new异常规格
-
+*** new异常规格
 从new的异常规格可以看到，如果是普通的调用的话可能会抛出std::bad_alloc这个异常，但是原型里面还有
 #+BEGIN_SRC C++
 void* operator new(std::size_t, const std::nothrow_t&) throw(); 
@@ -282,9 +268,7 @@ void* p=new (std::nothrow) int(); // 这里std::nothrow就是std::nothrow_t的�
 #+END_SRC
 通过函数重载来达到这个目的，这个方法值得借鉴。
 
---------------------
-内存分配失败
-
+*** 内存分配失败
 C++来提供了内存分配失败的回调函数，但是这个只能够处理全局new分配失败的情况
 #+BEGIN_SRC C++
   /** If you write your own error handler to be called by @c new, it must
@@ -294,9 +278,7 @@ C++来提供了内存分配失败的回调函数，但是这个只能够处理�
   new_handler set_new_handler(new_handler) throw();
 #+END_SRC
 
---------------------
-operator new与new operator
-
+*** operator new与new operator
 此外在很多书籍里面会提到operator new和new operator这两个说法，这两个是不一样的概念。operator new就是我们重写运算符函数，而new operator使我们调用new这个表达式。本质上说new这个表达式调用了分配类型里面的operator new函数，同时调用这个类型的初始化构造函数。同理operator delete和delete operator差别也是一样的。通常new operator的动作是这样的:
    - void *raw=operaotor new(sizeof(A)); //使用operator new进行内存分配
    - call A::A on *raw; //在raw上面调用构造函数
@@ -328,7 +310,7 @@ main.cc:5: error: size of array `STATIC_ASSERT_FAILED_int_MUST_BE_8_BYTES’ is 
 
 当然错误信息并不是非常的优美，但是已经提供了足够多的信息了。不过这种编译断言可能只是比较适合用于简单断言比如sizeof等，对于复杂断言话可能还是需要依赖于configure这种工具比如系统是否有libunwind库。
 
-** boost::function和boost::bind
+** boost::bind
 之前看到陈硕同学在[[http://blog.csdn.net/solstice/][博客]] 给出的C++工程实践推荐，使用boost::function和boost::bind代替虚函数。之所以我们需要使用虚函数，无非就是希望统一执行接口。统一接口通过虚函数是一种方法，而使用boost::function和boost::bind也可以达到相同的目的。
 
 首先我们假设存在一个Executor类，里面有一个执行队列，所有的Task首先被push进来然后遍历执行。对于这个Task我们本身只需要一个执行接口void fun(Executor*).如果通过虚函数实现的话，我们需要定义一个abstract class含有virtual函数，然后在具体的类里面实现它。但是如果很不幸的话我们原本定义的类不是这样的，而是
@@ -360,135 +342,16 @@ class B{
 
 这里_1是boost::bind导出的符号表示占位符，这个参数表示接口中的第一个参数，这里不进行绑定。第一个参数表示函数地址，如果是成员函数的话那么需要传入对象地址（这里对于对象内存管理的话，可能需要智能指针的帮助。可以参考http://xuchaoqian.com/?p=797)。事实上稍微猜想一下boost::function和boost::bind实现，boost::function用于产生新的类型，boost::bind用于产生这个类型的对象，并且将指针以及所需要的closure context都绑定上去。我本来想实现的，但是发现基于模板的元编程，我确实不会:(
 
-----------
+之后我在想，虽然这个方式不错消除继承完全按照基于对象的方式编程，但是如果对于对象所需要的接口非常多的话，并且虚函数本身就是语言内置的特性，相对来说使用起来会更加方便。下面是可编译的示例代码之后我在想，虽然这个方式不错消除继承完全按照基于对象的方式编程，但是如果对于对象所需要的接口非常多的话，并且虚函数本身就是语言内置的特性，相对来说使用起来会更加方便。
 
-之后我在想，虽然这个方式不错消除继承完全按照基于对象的方式编程，但是如果对于对象所需要的接口非常多的话，并且虚函数本身就是语言内置的特性，相对来说使用起来会更加方便。下面是可编译的示例代码之后我在想，虽然这个方式不错消除继承完全按照基于对象的方式编程，但是如果对于对象所需要的接口非常多的话，并且虚函数本身就是语言内置的特性，相对来说使用起来会更加方便。下面是可编译的示例代码
-#+BEGIN_SRC C++
-/*
- * Copyright (C) dirlt
- */
-
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
-#include <queue>
-#include <string>
-#include <iostream>
-
-class Executor {
-  typedef boost::function<void(Executor*,int)> Callable;
-  typedef std::queue<Callable> Q;
- public:
-  void push(Callable c){
-    q_.push(c);
-  }
-  void run() {
-    while(!q_.empty()){
-      Callable c=q_.front();
-      q_.pop();
-      c(this,1);
-    }
-  }
- private:
-  Q q_;
-}; // class Executor
-
-class A{
- public:
-  void fun(Executor* x,std::string s,int){
-    std::cout << "executor=" << x << ", s=" << s << std::endl;
-  }
-}; // class A
-
-class B{
- public:
-  void fun(Executor* x,int s,int){
-    std::cout << "executor=" << x << ", s=" << s << std::endl;
-  }
-}; // class B
-
-int main() {
-  Executor x;
-  A a;
-  B b;
-  x.push(boost::bind(&A::fun,&a,_1,"hello",_2));
-  x.push(boost::bind(&A::fun,&a,_1,"world",_2));
-  x.push(boost::bind(&B::fun,&b,_1,123,_2));
-  x.push(boost::bind(&B::fun,&b,_1,456,_2));
-  x.run();
-  return 0;
-}
-#+END_SRC
+具体代码可以参考 code/cc/playboard/test_bind.cc
 
 ** 试用boost::spirit
 今天被Dr. Yang推荐使用boost::spirit，模板编程实现的语法解析器。Dr. Yang推荐我看看hypertable里面实现的hql，里面就是使用spirit实现的hql(hypertable query language)，在src/cc/Hypertable/Lib/HqlParser.h里面。粗看一下功能还是非常强大的，对于很多使用flex/bison完成的工作都可以通过spirit来完成。看上去是LALR解析器，现在不太清楚就是如果出现shift/reduce或者是reduce/reduce冲突的话spirit是怎么解决的。NOTE(dirlt):事实上是LL解析器，而且如果没有猜错应该是LL(1)解析器。
 
 对于action的话需要单独编写function object来完成，operator()是这个grammar对应的字符串。定义ParserState来构建语法树是一个好主意。对于里面更多的细节现在还是不太了解，关于入门使用可以查看代码中的链接或者documentation.
-#+BEGIN_EXAMPLE
-/* coding:utf-8
- * Copyright (C) dirlt
- */
 
-// http://www.ibm.com/developerworks/cn/aix/library/au-boost_parser/
-#include <iostream>
-#include <string>
-#include <boost/spirit.hpp>
-using namespace boost::spirit;
-
-struct ParserState {
-  std::string name;
-}; // class ParserState
-
-
-struct set_name {
-  set_name(ParserState& state):state(state){}
-  void operator()(char const* s,char const* e) const{
-    state.name.assign(s,e);
-  }
-  ParserState& state;
-};
-
-struct Parser : public grammar< Parser >{
-  Parser(ParserState& state):state(state) {}
-  template< typename ScannerT >
-  struct definition {
-    definition(Parser const& self){
-      keywords = ""; // define keywords.
-      typedef strlit<> Token; // case sensitive
-      // typedef inhibit_case< strlit<> > Token // case insensitive
-      Token MY = "my";
-      Token NAME = "name";
-      Token IS = "is";
-      chlit<> DOUBLEQUOTE('"');
-
-      // grammers.
-      identifier = lexeme_d[(alpha_p >> *(alnum_p | '_')) - (keywords)];
-      string_literal = lexeme_d[DOUBLEQUOTE >> +(anychar_p - chlit<>('"')) >> DOUBLEQUOTE];
-      statement = MY >> NAME >> IS >> string_literal[set_name(self.state)];      
-    }
-    // entry.
-    rule< ScannerT> const& start() const {
-      return statement;
-    }
-    symbols<> keywords;
-    rule< ScannerT> statement,
-      identifier,
-      string_literal;
-  }; // class definition
-  ParserState& state;
-}; // class Parser
-
-int main ()
-{
-  std::string input="my name is \"lilei\"";
-  ParserState state;
-  Parser parser(state);
-  parse_info<> info=parse(input.c_str(),parser,space_p);
-  if(info.full){
-    printf("%s\n",state.name.c_str());
-  }
-  return 0;
-}
-#+END_EXAMPLE
+具体代码可以参考 code/cc/playboard/test_spirit.cc
 
 ** google::protobuf动态编译
 使用google::protobuf如果我们不知道生成消息schema的话，那么就需要依赖于google::protobuf动态编译的能力了。google::protobuf支持动态地读取某个proto文件并且进行动态编译。其实这里说编译有点不太恰当，因为内部并没有生成native code,不过确实使得我们有能力去动态构造一个消息。
@@ -506,117 +369,7 @@ int main ()
    - Reflection
    - FieldDescriptor
 
-----------
-首先看看封装之后的类
-#+BEGIN_SRC C++
-/* coding:utf-8
- * Copyright (C) dirlt
- */
-
-#ifndef __SPERM_CC_COMMON_PROTO_DYNAMIC_H__
-#define __SPERM_CC_COMMON_PROTO_DYNAMIC_H__
-
-#include <iostream>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/compiler/importer.h>
-#include <google/protobuf/dynamic_message.h>
-
-namespace common {
-
-// ------------------------------------------------------------
-// simplify usage of dynamic message in protobuf.
-class ProtoDynamic:
-  public google::protobuf::compiler::MultiFileErrorCollector {
-public:
-  ProtoDynamic(): importer_(&tree_, this) {
-    tree_.MapPath("/", "/"); // absolute path.
-    tree_.MapPath("", "."); // default starts with current directory.
-  }
-  virtual ~ProtoDynamic() {}
-  virtual void AddError(const std::string& filename,
-                        int line, int column,
-                        const std::string& message) {
-    std::cerr << filename << '@' << line << ',' << column
-              << ':' << message << std::endl;
-  }
-  const google::protobuf::FileDescriptor* import(const std::string& filename) {
-    return importer_.Import(filename);
-  }
-  const google::protobuf::Descriptor* findMessageTypeByName(
-    const google::protobuf::FileDescriptor* fd,
-    const std::string& name) const {
-    return fd->pool()->FindMessageTypeByName(name);
-  }
-  google::protobuf::MessageFactory* newMessageFactory(
-    const google::protobuf::FileDescriptor* fd) const {
-    return new google::protobuf::DynamicMessageFactory(fd->pool());
-  }
-  void deleteMessageFactory(google::protobuf::MessageFactory* factory) const {
-    delete factory;
-  }
-private:
-  google::protobuf::compiler::DiskSourceTree tree_;
-  google::protobuf::compiler::Importer importer_;
-}; // class ProtoDynamic
-
-} // namespace common
-
-#endif // __SPERM_CC_COMMON_PROTO_DYNAMIC_H__
-#+END_SRC
-
-----------
-然后看看如何使用。假设我们存在一个proto文件
-#+BEGIN_EXAMPLE
-package sample;
-    message Session {
-    optional string user=1;
-    optional string passwd=2;
-}; 
-#+END_EXAMPLE
-
-然后我们使用下面代码来验证动态编译的功能。在得到MessageFactory以及Descriptor之后的话代码就非常好写了。
-
-#+BEGIN_SRC C++
-/* coding:utf-8
- * Copyright (C) dirlt
- */
-
-#include <cassert>
-#include "common/proto_dynamic.h"
-#include "sample.pb.h"
-
-using namespace google::protobuf;
-using namespace google::protobuf::compiler;
-using namespace common;
-using namespace sample;
-
-int main() {
-  std::string data;
-  {
-    // create message dynamicly.
-    ProtoDynamic dynamic;
-    const FileDescriptor* fd = dynamic.import("sample.proto");
-    assert(fd);
-    const Descriptor* desc = dynamic.findMessageTypeByName(fd, "sample.Session");
-    assert(desc);
-    MessageFactory* factory = dynamic.newMessageFactory(fd);
-    Message* msg = factory->GetPrototype(desc)->New();
-    const Reflection* reflection = msg->GetReflection();
-    assert(reflection);
-
-    reflection->SetString(msg, desc->FindFieldByName("user"), "dirlt");
-    reflection->SetString(msg, desc->FindFieldByName("passwd"), "fuck");
-    msg->SerializeToString(&data);
-  }
-  {
-    Session session;
-    session.ParseFromString(data);
-    assert(strcmp(session.user().c_str(), "dirlt") == 0);
-    assert(strcmp(session.passwd().c_str(), "fuck") == 0);
-  }
-  return 0;
-}
-#+END_SRC
+具体代码可以参考 code/cc/common/proto_dynamic.h 以及 code/cc/common/test/test_proto_dynamic.cc
 
 ** 重新认识static_cast
 学习C的时候总是认为强转不过就是二进制层面的强转。开始学习C++之后就认为C语言的强转对应的就是reinterpret_cast.而static_cast和reinterpret_cast的差别不过就是static_cast可以做一些类型上面的检查，所以在大多数的时候都习惯使用reinterpret_cast而非static_cast.直到在编写itachi（一个异步网络编程框架）的时候，才发现并不是这么回事。下面的例子是我遇到问题的一个抽象。

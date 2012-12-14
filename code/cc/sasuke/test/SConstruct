@@ -14,14 +14,14 @@ env=Environment(CPPPATH=['../../'],
                       'uuid',
                       'pthread'])
 
-env.Program('rpc_client',
+env.Program('rpc_client.exe',
             ['rpc_client.cc',
              'echo.pb.cc'])
 
-env.Program('rpc_server',
+env.Program('rpc_server.exe',
             ['rpc_server.cc',
              'echo.pb.cc'])
 
-env.Program('test_zmq',
+env.Program('test_zmq.exe',
             ['test_zmq.cc'])
 

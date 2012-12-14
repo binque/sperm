@@ -11,6 +11,7 @@
 *.project
 *.sconsign.dblite
 *.iml
+*.exe
 .idea
 .lein
 
@@ -31,41 +32,6 @@ essay/note/*.html
 essay/note/private
 www/images
 sae/
-
-
-code/py/dsgm/dsgm.db
-code/py/dsgm/dsgm.conf     
-code/py/pcrypt/pcrypt.png
-
-code/cc/astyle/test/test_astyle
-code/cc/bench/t_cond
-code/cc/bench/t_lock
-code/cc/bench/t_mem
-code/cc/bench/t_misc
-code/cc/bench/t_time
-code/cc/common/test/test_atomic
-code/cc/common/test/test_compress
-code/cc/common/test/test_cond
-code/cc/common/test/test_fs
-code/cc/common/test/test_proto_dynamic
-code/cc/common/test/test_proto_serializer
-code/cc/common/test/test_queue
-code/cc/common/test/test_socket
-code/cc/common/test/test_stress_queue
-code/cc/common/test/test_utils
-code/cc/common/test/test_zkclient
-code/cc/common/test/test_lockfree
-code/cc/itachi/test/asock_echo_client
-code/cc/itachi/test/asock_echo_server
-code/cc/itachi/test/echo_client
-code/cc/itachi/test/echo_server
-code/cc/itachi/test/test_cpu_handler
-code/cc/itachi/test/test_net_handler
-code/cc/sasuke/test/rpc_client
-code/cc/sasuke/test/rpc_server
-code/cc/sasuke/test/test_zmq
-code/cc/nasty/test/test_parser
-code/cc/playboard/runnable_so
 
 code/java/*/target
 

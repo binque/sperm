@@ -17,6 +17,7 @@
    - bench // benchmark for system call performance.
    - astyle // C/C++/Java language code formatter.(http://astyle.sourceforge.net/astyle.html)
    - nasty // lisp-like language frontend used flex + bison.
+   - playboard // test code on c++ and library.
 
 * py
    - b2p // encode byte into picture and vice verse.

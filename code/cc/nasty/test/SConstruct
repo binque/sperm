@@ -7,5 +7,5 @@ env=Environment(CPPPATH=['../../'],
                 CXXFLAGS='-W -Wall -g -Werror -O2 -DDEBUG -fPIC',
                 LIBPATH=['../'],
                 LIBS=['nasty'])
-env.Program('test_parser',
+env.Program('test_parser.exe',
             ['test_parser.cc'])

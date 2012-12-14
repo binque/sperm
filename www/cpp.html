@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="cpp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-10-12 18:25:45 CST"/>
+<meta name="generated" content="2012-12-14 14:10:01 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -103,19 +103,30 @@
 <li><a href="#sec-1-1">1.1 相关资料</a></li>
 <li><a href="#sec-1-2">1.2 TC++PL</a></li>
 <li><a href="#sec-1-3">1.3 local static object</a></li>
-<li><a href="#sec-1-4">1.4 hook function</a></li>
-<li><a href="#sec-1-5">1.5 编译可运行的.so</a></li>
-<li><a href="#sec-1-6">1.6 undefined reference to static const class member</a></li>
-<li><a href="#sec-1-7">1.7 new/delete</a></li>
-<li><a href="#sec-1-8">1.8 static assert</a></li>
-<li><a href="#sec-1-9">1.9 boost::function和boost::bind</a></li>
-<li><a href="#sec-1-10">1.10 试用boost::spirit</a></li>
-<li><a href="#sec-1-11">1.11 google::protobuf动态编译</a></li>
-<li><a href="#sec-1-12">1.12 重新认识static_cast</a>
+<li><a href="#sec-1-4">1.4 hook function</a>
 <ul>
-<li><a href="#sec-1-12-1">1.12.1 正确的例子</a></li>
-<li><a href="#sec-1-12-2">1.12.2 当处理多继承时</a></li>
-<li><a href="#sec-1-12-3">1.12.3 应该怎么做</a></li>
+<li><a href="#sec-1-4-1">1.4.1 hook编译时函数</a></li>
+<li><a href="#sec-1-4-2">1.4.2 hook运行时函数</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-5">1.5 undefined reference to static const class member</a></li>
+<li><a href="#sec-1-6">1.6 new/delete</a>
+<ul>
+<li><a href="#sec-1-6-1">1.6.1 new重载</a></li>
+<li><a href="#sec-1-6-2">1.6.2 new异常规格</a></li>
+<li><a href="#sec-1-6-3">1.6.3 内存分配失败</a></li>
+<li><a href="#sec-1-6-4">1.6.4 operator new与new operator</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-7">1.7 static assert</a></li>
+<li><a href="#sec-1-8">1.8 boost::bind</a></li>
+<li><a href="#sec-1-9">1.9 试用boost::spirit</a></li>
+<li><a href="#sec-1-10">1.10 google::protobuf动态编译</a></li>
+<li><a href="#sec-1-11">1.11 重新认识static_cast</a>
+<ul>
+<li><a href="#sec-1-11-1">1.11.1 正确的例子</a></li>
+<li><a href="#sec-1-11-2">1.11.2 当处理多继承时</a></li>
+<li><a href="#sec-1-11-3">1.11.3 应该怎么做</a></li>
 </ul>
 </li>
 </ul>
@@ -274,12 +285,13 @@ _Z3foov:
 <p>hook函数调用有两种方式，一种是hook我们代码内部的函数，这意味这这个函数是由我们来编译的，当然我们不能够修改需要hook的函数实现否则就没有意义了。另外一种hook函数是动态库里面的函数，静态库里面的函数因为完全进入了可执行程序，所以修改起来比较麻烦一些。我们QA写过这样的程序用libbfd库修改可执行程序本身，在函数调用之间加上跳板，但是相比本文介绍的两种方式更加复杂。（复杂就以为着容易出错，而且这种修改可执行程序应该是不值得提倡的）。
 </p>
 
-<hr/>
-<p>
-hook编译时函数
-</p>
-<p>
-在gcc编译的时候需要加入-finstrument-functions这个选项之后，那么每个函数调用之前和之后都会调用
+</div>
+
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> hook编译时函数</h4>
+<div class="outline-text-4" id="text-1-4-1">
+
+<p>在gcc编译的时候需要加入-finstrument-functions这个选项之后，那么每个函数调用之前和之后都会调用
 </p><ul>
 <li>__cyg_profile_func_enter
 </li>
@@ -327,13 +339,15 @@ extern <span style="color: #ffff00;">"C"</span> {
 </pre>
 
 
+</div>
 
-<hr/>
-<p>
-hook运行时函数
-</p>
-<p>
-可以使用dlopen截获函数入口，然后使用dlsym(RTLD_NEXT)来获得下一个入口.我们以截获malloc为例。
+</div>
+
+<div id="outline-container-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> hook运行时函数</h4>
+<div class="outline-text-4" id="text-1-4-2">
+
+<p>可以使用dlopen截获函数入口，然后使用dlsym(RTLD_NEXT)来获得下一个入口.我们以截获malloc为例。
 </p>
 
 
@@ -363,60 +377,13 @@ void free(void *p){
 
 
 </div>
+</div>
 
 </div>
 
 <div id="outline-container-1-5" class="outline-3">
-<h3 id="sec-1-5"><span class="section-number-3">1.5</span> 编译可运行的.so</h3>
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> undefined reference to static const class member</h3>
 <div class="outline-text-3" id="text-1-5">
-
-
-
-
-<pre class="src src-C++">#include &lt;cstdio&gt;
-#include &lt;cstdlib&gt;
-
-#ifndef BEGIN_DECLS
-#ifdef __cplusplus
-#define BEGIN_DECLS extern <span style="color: #ffff00;">"C"</span> {
-#define END_DECLS }
-#else
-#define BEGIN_DECLS
-#define BEGIN_DECLS
-#endif
-#endif
-
-BEGIN_DECLS
-#ifndef __i386
-#define LD_SO_PATH <span style="color: #ffff00;">"/lib64/ld-linux-x86-64.so.2"</span>
-#else
-#define LD_SO_PATH <span style="color: #ffff00;">"/lib/ld-linux.so.2"</span>
-#endif
-
-#if defined(__DATE__) &amp;&amp; defined(__TIME__)
-#define BUILD_DATE  (__DATE__ <span style="color: #ffff00;">" "</span> __TIME__)
-#else
-#define BUILD_DATE  <span style="color: #ffff00;">"unknown"</span>
-#endif
-
-const char interp[] __attribute__((section(<span style="color: #ffff00;">".interp"</span>))) = LD_SO_PATH;
-void so_main() {
-  printf(<span style="color: #ffff00;">"LD_SO_PATH : %s\n"</span>, LD_SO_PATH);
-  printf(<span style="color: #ffff00;">"BuildDate : %s\n"</span>, BUILD_DATE);
-  exit(0);
-}
-
-END_DECLS
-</pre>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-1-6" class="outline-3">
-<h3 id="sec-1-6"><span class="section-number-3">1.6</span> undefined reference to static const class member</h3>
-<div class="outline-text-3" id="text-1-6">
 
 <p>类型静态常量成员只允许是标量内容,而不允许是字符串数组或者是结构体等。但是下面代码会存在链接问题
 </p>
@@ -463,9 +430,9 @@ int main() {
 
 </div>
 
-<div id="outline-container-1-7" class="outline-3">
-<h3 id="sec-1-7"><span class="section-number-3">1.7</span> new/delete</h3>
-<div class="outline-text-3" id="text-1-7">
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> new/delete</h3>
+<div class="outline-text-3" id="text-1-6">
 
 <p>new/delete和C的内存分配有很多区别，主要的改进在进行了很多可定制化的内容:
 </p><ul>
@@ -489,12 +456,13 @@ int main() {
 
 
 
-<hr/>
-<p>
-new重载
-</p>
-<p>
-用户可以重载new/delete来实现全局new/delete或者是某个类的new/delete.原型有下面这些
+</div>
+
+<div id="outline-container-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> new重载</h4>
+<div class="outline-text-4" id="text-1-6-1">
+
+<p>用户可以重载new/delete来实现全局new/delete或者是某个类的new/delete.原型有下面这些
 </p>
 
 
@@ -554,13 +522,15 @@ int main(){
 </pre>
 
 
+</div>
 
-<hr/>
-<p>
-new异常规格
-</p>
-<p>
-从new的异常规格可以看到，如果是普通的调用的话可能会抛出std::bad_alloc这个异常，但是原型里面还有
+</div>
+
+<div id="outline-container-1-6-2" class="outline-4">
+<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> new异常规格</h4>
+<div class="outline-text-4" id="text-1-6-2">
+
+<p>从new的异常规格可以看到，如果是普通的调用的话可能会抛出std::bad_alloc这个异常，但是原型里面还有
 </p>
 
 
@@ -581,13 +551,15 @@ void* p=new (std::nothrow) int(); // &#36825;&#37324;std::nothrow&#23601;&#26159
 <p>
 通过函数重载来达到这个目的，这个方法值得借鉴。
 </p>
+</div>
 
-<hr/>
-<p>
-内存分配失败
-</p>
-<p>
-C++来提供了内存分配失败的回调函数，但是这个只能够处理全局new分配失败的情况
+</div>
+
+<div id="outline-container-1-6-3" class="outline-4">
+<h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> 内存分配失败</h4>
+<div class="outline-text-4" id="text-1-6-3">
+
+<p>C++来提供了内存分配失败的回调函数，但是这个只能够处理全局new分配失败的情况
 </p>
 
 
@@ -599,13 +571,15 @@ new_handler set_new_handler(new_handler) throw();
 </pre>
 
 
+</div>
 
-<hr/>
-<p>
-operator new与new operator
-</p>
-<p>
-此外在很多书籍里面会提到operator new和new operator这两个说法，这两个是不一样的概念。operator new就是我们重写运算符函数，而new operator使我们调用new这个表达式。本质上说new这个表达式调用了分配类型里面的operator new函数，同时调用这个类型的初始化构造函数。同理operator delete和delete operator差别也是一样的。通常new operator的动作是这样的:
+</div>
+
+<div id="outline-container-1-6-4" class="outline-4">
+<h4 id="sec-1-6-4"><span class="section-number-4">1.6.4</span> operator new与new operator</h4>
+<div class="outline-text-4" id="text-1-6-4">
+
+<p>此外在很多书籍里面会提到operator new和new operator这两个说法，这两个是不一样的概念。operator new就是我们重写运算符函数，而new operator使我们调用new这个表达式。本质上说new这个表达式调用了分配类型里面的operator new函数，同时调用这个类型的初始化构造函数。同理operator delete和delete operator差别也是一样的。通常new operator的动作是这样的:
 </p><ul>
 <li>void *raw=operaotor new(sizeof(A)); //使用operator new进行内存分配
 </li>
@@ -626,12 +600,13 @@ operator new与new operator
 <p>说到这里，我们需要清楚为什么需要有new []和delete []的方法了。对于operator new和delete来说真的不关心这些，因为只是分配内存，而对于new operator和delete operator就需要关心了，因为需要关心有多少个对象，这样的话才能够调用每个对象的构造函数。调用了new []分配的对象也一定需要使用delete []来释放，不然只会调用第一个元素析构函数和释放它的空间。
 </p>
 </div>
+</div>
 
 </div>
 
-<div id="outline-container-1-8" class="outline-3">
-<h3 id="sec-1-8"><span class="section-number-3">1.8</span> static assert</h3>
-<div class="outline-text-3" id="text-1-8">
+<div id="outline-container-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> static assert</h3>
+<div class="outline-text-3" id="text-1-7">
 
 
 
@@ -670,9 +645,9 @@ operator new与new operator
 
 </div>
 
-<div id="outline-container-1-9" class="outline-3">
-<h3 id="sec-1-9"><span class="section-number-3">1.9</span> boost::function和boost::bind</h3>
-<div class="outline-text-3" id="text-1-9">
+<div id="outline-container-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> boost::bind</h3>
+<div class="outline-text-3" id="text-1-8">
 
 <p>之前看到陈硕同学在<a href="http://blog.csdn.net/solstice/">博客</a> 给出的C++工程实践推荐，使用boost::function和boost::bind代替虚函数。之所以我们需要使用虚函数，无非就是希望统一执行接口。统一接口通过虚函数是一种方法，而使用boost::function和boost::bind也可以达到相同的目的。
 </p>
@@ -715,159 +690,35 @@ x.push(boost::bind(&amp;B::fun,&amp;b,_1,456));
 <p>
 这里_1是boost::bind导出的符号表示占位符，这个参数表示接口中的第一个参数，这里不进行绑定。第一个参数表示函数地址，如果是成员函数的话那么需要传入对象地址（这里对于对象内存管理的话，可能需要智能指针的帮助。可以参考<a href="http://xuchaoqian.com/?p=797">http://xuchaoqian.com/?p=797</a>)。事实上稍微猜想一下boost::function和boost::bind实现，boost::function用于产生新的类型，boost::bind用于产生这个类型的对象，并且将指针以及所需要的closure context都绑定上去。我本来想实现的，但是发现基于模板的元编程，我确实不会:(
 </p>
-
-<hr/>
-
 <p>
-之后我在想，虽然这个方式不错消除继承完全按照基于对象的方式编程，但是如果对于对象所需要的接口非常多的话，并且虚函数本身就是语言内置的特性，相对来说使用起来会更加方便。下面是可编译的示例代码之后我在想，虽然这个方式不错消除继承完全按照基于对象的方式编程，但是如果对于对象所需要的接口非常多的话，并且虚函数本身就是语言内置的特性，相对来说使用起来会更加方便。下面是可编译的示例代码
+之后我在想，虽然这个方式不错消除继承完全按照基于对象的方式编程，但是如果对于对象所需要的接口非常多的话，并且虚函数本身就是语言内置的特性，相对来说使用起来会更加方便。下面是可编译的示例代码之后我在想，虽然这个方式不错消除继承完全按照基于对象的方式编程，但是如果对于对象所需要的接口非常多的话，并且虚函数本身就是语言内置的特性，相对来说使用起来会更加方便。
 </p>
-
-
-<pre class="src src-C++">/*
- * Copyright (C) dirlt
- */
-
-#include &lt;boost/function.hpp&gt;
-#include &lt;boost/bind.hpp&gt;
-#include &lt;queue&gt;
-#include &lt;string&gt;
-#include &lt;iostream&gt;
-
-class Executor {
-  typedef boost::function&lt;void(Executor*,int)&gt; Callable;
-  typedef std::queue&lt;Callable&gt; Q;
- public:
-  void push(Callable c){
-    q_.push(c);
-  }
-  void run() {
-    while(!q_.empty()){
-      Callable c=q_.front();
-      q_.pop();
-      c(this,1);
-    }
-  }
- private:
-  Q q_;
-}; // class Executor
-
-class A{
- public:
-  void fun(Executor* x,std::string s,int){
-    std::cout &lt;&lt; <span style="color: #ffff00;">"executor="</span> &lt;&lt; x &lt;&lt; <span style="color: #ffff00;">", s="</span> &lt;&lt; s &lt;&lt; std::endl;
-  }
-}; // class A
-
-class B{
- public:
-  void fun(Executor* x,int s,int){
-    std::cout &lt;&lt; <span style="color: #ffff00;">"executor="</span> &lt;&lt; x &lt;&lt; <span style="color: #ffff00;">", s="</span> &lt;&lt; s &lt;&lt; std::endl;
-  }
-}; // class B
-
-int main() {
-  Executor x;
-  A a;
-  B b;
-  x.push(boost::bind(&amp;A::fun,&amp;a,_1,<span style="color: #ffff00;">"hello"</span>,_2));
-  x.push(boost::bind(&amp;A::fun,&amp;a,_1,<span style="color: #ffff00;">"world"</span>,_2));
-  x.push(boost::bind(&amp;B::fun,&amp;b,_1,123,_2));
-  x.push(boost::bind(&amp;B::fun,&amp;b,_1,456,_2));
-  x.run();
-  return 0;
-}
-</pre>
-
-
+<p>
+具体代码可以参考 code/cc/playboard/test_bind.cc
+</p>
 </div>
 
 </div>
 
-<div id="outline-container-1-10" class="outline-3">
-<h3 id="sec-1-10"><span class="section-number-3">1.10</span> 试用boost::spirit</h3>
-<div class="outline-text-3" id="text-1-10">
+<div id="outline-container-1-9" class="outline-3">
+<h3 id="sec-1-9"><span class="section-number-3">1.9</span> 试用boost::spirit</h3>
+<div class="outline-text-3" id="text-1-9">
 
 <p>今天被Dr. Yang推荐使用boost::spirit，模板编程实现的语法解析器。Dr. Yang推荐我看看hypertable里面实现的hql，里面就是使用spirit实现的hql(hypertable query language)，在src/cc/Hypertable/Lib/HqlParser.h里面。粗看一下功能还是非常强大的，对于很多使用flex/bison完成的工作都可以通过spirit来完成。看上去是LALR解析器，现在不太清楚就是如果出现shift/reduce或者是reduce/reduce冲突的话spirit是怎么解决的。NOTE(dirlt):事实上是LL解析器，而且如果没有猜错应该是LL(1)解析器。
 </p>
 <p>
 对于action的话需要单独编写function object来完成，operator()是这个grammar对应的字符串。定义ParserState来构建语法树是一个好主意。对于里面更多的细节现在还是不太了解，关于入门使用可以查看代码中的链接或者documentation.
 </p>
-
-
-<pre class="example">/* coding:utf-8
- * Copyright (C) dirlt
- */
-
-// http://www.ibm.com/developerworks/cn/aix/library/au-boost_parser/
-#include &lt;iostream&gt;
-#include &lt;string&gt;
-#include &lt;boost/spirit.hpp&gt;
-using namespace boost::spirit;
-
-struct ParserState {
-  std::string name;
-}; // class ParserState
-
-
-struct set_name {
-  set_name(ParserState&amp; state):state(state){}
-  void operator()(char const* s,char const* e) const{
-    state.name.assign(s,e);
-  }
-  ParserState&amp; state;
-};
-
-struct Parser : public grammar&lt; Parser &gt;{
-  Parser(ParserState&amp; state):state(state) {}
-  template&lt; typename ScannerT &gt;
-  struct definition {
-    definition(Parser const&amp; self){
-      keywords = ""; // define keywords.
-      typedef strlit&lt;&gt; Token; // case sensitive
-      // typedef inhibit_case&lt; strlit&lt;&gt; &gt; Token // case insensitive
-      Token MY = "my";
-      Token NAME = "name";
-      Token IS = "is";
-      chlit&lt;&gt; DOUBLEQUOTE('"');
-
-      // grammers.
-      identifier = lexeme_d[(alpha_p &gt;&gt; *(alnum_p | '_')) - (keywords)];
-      string_literal = lexeme_d[DOUBLEQUOTE &gt;&gt; +(anychar_p - chlit&lt;&gt;('"')) &gt;&gt; DOUBLEQUOTE];
-      statement = MY &gt;&gt; NAME &gt;&gt; IS &gt;&gt; string_literal[set_name(self.state)];      
-    }
-    // entry.
-    rule&lt; ScannerT&gt; const&amp; start() const {
-      return statement;
-    }
-    symbols&lt;&gt; keywords;
-    rule&lt; ScannerT&gt; statement,
-      identifier,
-      string_literal;
-  }; // class definition
-  ParserState&amp; state;
-}; // class Parser
-
-int main ()
-{
-  std::string input="my name is \"lilei\"";
-  ParserState state;
-  Parser parser(state);
-  parse_info&lt;&gt; info=parse(input.c_str(),parser,space_p);
-  if(info.full){
-    printf("%s\n",state.name.c_str());
-  }
-  return 0;
-}
-</pre>
-
-
+<p>
+具体代码可以参考 code/cc/playboard/test_spirit.cc
+</p>
 </div>
 
 </div>
 
-<div id="outline-container-1-11" class="outline-3">
-<h3 id="sec-1-11"><span class="section-number-3">1.11</span> google::protobuf动态编译</h3>
-<div class="outline-text-3" id="text-1-11">
+<div id="outline-container-1-10" class="outline-3">
+<h3 id="sec-1-10"><span class="section-number-3">1.10</span> google::protobuf动态编译</h3>
+<div class="outline-text-3" id="text-1-10">
 
 <p>使用google::protobuf如果我们不知道生成消息schema的话，那么就需要依赖于google::protobuf动态编译的能力了。google::protobuf支持动态地读取某个proto文件并且进行动态编译。其实这里说编译有点不太恰当，因为内部并没有生成native code,不过确实使得我们有能力去动态构造一个消息。
 </p>
@@ -901,148 +752,25 @@ int main ()
 </ul>
 
 
-
-<hr/>
 <p>
-首先看看封装之后的类
+具体代码可以参考 code/cc/common/proto_dynamic.h 以及 code/cc/common/test/test_proto_dynamic.cc
 </p>
-
-
-<pre class="src src-C++">/* coding:utf-8
- * Copyright (C) dirlt
- */
-
-#ifndef __SPERM_CC_COMMON_PROTO_DYNAMIC_H__
-#define __SPERM_CC_COMMON_PROTO_DYNAMIC_H__
-
-#include &lt;iostream&gt;
-#include &lt;google/protobuf/descriptor.h&gt;
-#include &lt;google/protobuf/compiler/importer.h&gt;
-#include &lt;google/protobuf/dynamic_message.h&gt;
-
-namespace common {
-
-// ------------------------------------------------------------
-// simplify usage of dynamic message in protobuf.
-class ProtoDynamic:
-  public google::protobuf::compiler::MultiFileErrorCollector {
-public:
-  ProtoDynamic(): importer_(&amp;tree_, this) {
-    tree_.MapPath(<span style="color: #ffff00;">"/"</span>, <span style="color: #ffff00;">"/"</span>); // absolute path.
-    tree_.MapPath(<span style="color: #ffff00;">""</span>, <span style="color: #ffff00;">"."</span>); // default starts with current directory.
-  }
-  virtual ~ProtoDynamic() {}
-  virtual void AddError(const std::string&amp; filename,
-                        int line, int column,
-                        const std::string&amp; message) {
-    std::cerr &lt;&lt; filename &lt;&lt; '@' &lt;&lt; line &lt;&lt; ',' &lt;&lt; column
-              &lt;&lt; ':' &lt;&lt; message &lt;&lt; std::endl;
-  }
-  const google::protobuf::FileDescriptor* import(const std::string&amp; filename) {
-    return importer_.Import(filename);
-  }
-  const google::protobuf::Descriptor* findMessageTypeByName(
-    const google::protobuf::FileDescriptor* fd,
-    const std::string&amp; name) const {
-    return fd-&gt;pool()-&gt;FindMessageTypeByName(name);
-  }
-  google::protobuf::MessageFactory* newMessageFactory(
-    const google::protobuf::FileDescriptor* fd) const {
-    return new google::protobuf::DynamicMessageFactory(fd-&gt;pool());
-  }
-  void deleteMessageFactory(google::protobuf::MessageFactory* factory) const {
-    delete factory;
-  }
-private:
-  google::protobuf::compiler::DiskSourceTree tree_;
-  google::protobuf::compiler::Importer importer_;
-}; // class ProtoDynamic
-
-} // namespace common
-
-#endif // __SPERM_CC_COMMON_PROTO_DYNAMIC_H__
-</pre>
-
-
-
-<hr/>
-<p>
-然后看看如何使用。假设我们存在一个proto文件
-</p>
-
-
-<pre class="example">package sample;
-    message Session {
-    optional string user=1;
-    optional string passwd=2;
-}; 
-</pre>
-
-
-<p>
-然后我们使用下面代码来验证动态编译的功能。在得到MessageFactory以及Descriptor之后的话代码就非常好写了。
-</p>
-
-
-
-<pre class="src src-C++">/* coding:utf-8
- * Copyright (C) dirlt
- */
-
-#include &lt;cassert&gt;
-#include <span style="color: #ffff00;">"common/proto_dynamic.h"</span>
-#include <span style="color: #ffff00;">"sample.pb.h"</span>
-
-using namespace google::protobuf;
-using namespace google::protobuf::compiler;
-using namespace common;
-using namespace sample;
-
-int main() {
-  std::string data;
-  {
-    // create message dynamicly.
-    ProtoDynamic dynamic;
-    const FileDescriptor* fd = dynamic.import(<span style="color: #ffff00;">"sample.proto"</span>);
-    assert(fd);
-    const Descriptor* desc = dynamic.findMessageTypeByName(fd, <span style="color: #ffff00;">"sample.Session"</span>);
-    assert(desc);
-    MessageFactory* factory = dynamic.newMessageFactory(fd);
-    Message* msg = factory-&gt;GetPrototype(desc)-&gt;New();
-    const Reflection* reflection = msg-&gt;GetReflection();
-    assert(reflection);
-
-    reflection-&gt;SetString(msg, desc-&gt;FindFieldByName(<span style="color: #ffff00;">"user"</span>), <span style="color: #ffff00;">"dirlt"</span>);
-    reflection-&gt;SetString(msg, desc-&gt;FindFieldByName(<span style="color: #ffff00;">"passwd"</span>), <span style="color: #ffff00;">"fuck"</span>);
-    msg-&gt;SerializeToString(&amp;data);
-  }
-  {
-    Session session;
-    session.ParseFromString(data);
-    assert(strcmp(session.user().c_str(), <span style="color: #ffff00;">"dirlt"</span>) == 0);
-    assert(strcmp(session.passwd().c_str(), <span style="color: #ffff00;">"fuck"</span>) == 0);
-  }
-  return 0;
-}
-</pre>
-
-
 </div>
 
 </div>
 
-<div id="outline-container-1-12" class="outline-3">
-<h3 id="sec-1-12"><span class="section-number-3">1.12</span> 重新认识static_cast</h3>
-<div class="outline-text-3" id="text-1-12">
+<div id="outline-container-1-11" class="outline-3">
+<h3 id="sec-1-11"><span class="section-number-3">1.11</span> 重新认识static_cast</h3>
+<div class="outline-text-3" id="text-1-11">
 
 <p>学习C的时候总是认为强转不过就是二进制层面的强转。开始学习C++之后就认为C语言的强转对应的就是reinterpret_cast.而static_cast和reinterpret_cast的差别不过就是static_cast可以做一些类型上面的检查，所以在大多数的时候都习惯使用reinterpret_cast而非static_cast.直到在编写itachi（一个异步网络编程框架）的时候，才发现并不是这么回事。下面的例子是我遇到问题的一个抽象。
 </p>
 
 </div>
 
-<div id="outline-container-1-12-1" class="outline-4">
-<h4 id="sec-1-12-1"><span class="section-number-4">1.12.1</span> 正确的例子</h4>
-<div class="outline-text-4" id="text-1-12-1">
+<div id="outline-container-1-11-1" class="outline-4">
+<h4 id="sec-1-11-1"><span class="section-number-4">1.11.1</span> 正确的例子</h4>
+<div class="outline-text-4" id="text-1-11-1">
 
 
 
@@ -1088,9 +816,9 @@ int main() {
 
 </div>
 
-<div id="outline-container-1-12-2" class="outline-4">
-<h4 id="sec-1-12-2"><span class="section-number-4">1.12.2</span> 当处理多继承时</h4>
-<div class="outline-text-4" id="text-1-12-2">
+<div id="outline-container-1-11-2" class="outline-4">
+<h4 id="sec-1-11-2"><span class="section-number-4">1.11.2</span> 当处理多继承时</h4>
+<div class="outline-text-4" id="text-1-11-2">
 
 <p>处理B类型没有问题，但是处理B的子类型的话，那么上面代码可能就会出现问题。因为对于B子类型而言的话很可能在 <b>对象模型</b> 之前添加了一些字段，按照reintrepret_cast语义的话是直接二进制映射，字段没有虚方法所以是直接按照偏移来取的，因此可能存在问题。但是看看下面这个例子
 </p>
@@ -1143,9 +871,9 @@ c:0xbfff9a9c c.g:0xbfff9aa0
 
 </div>
 
-<div id="outline-container-1-12-3" class="outline-4">
-<h4 id="sec-1-12-3"><span class="section-number-4">1.12.3</span> 应该怎么做</h4>
-<div class="outline-text-4" id="text-1-12-3">
+<div id="outline-container-1-11-3" class="outline-4">
+<h4 id="sec-1-11-3"><span class="section-number-4">1.11.3</span> 应该怎么做</h4>
+<div class="outline-text-4" id="text-1-11-3">
 
 <p><b>因为自己也缺乏C++对象模型方面的知识，所以也没有办法从底层解释原因。</b> 但是结论我想说的就是，尽量地执行static_cast而非reinterpret_cast.reinterpret_cast对于继承方面基本没有做任何事情，而使用static_cast的话则能够检测到类型系统，然后根据类型系统来进行正确的转换。 <b>要是想对于static_cast有更多认识的话，必须看看C++对象模型的实现。</b>
 </p>
@@ -1171,8 +899,8 @@ c:0xbfff9a9c c.g:0xbfff9aa0
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-10-12 18:25:45 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-12-14 14:10:01 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

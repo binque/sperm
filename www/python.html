@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="python"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-14 13:27:41 CST"/>
+<meta name="generated" content="2012-12-14 14:09:59 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -102,7 +102,7 @@
 <ul>
 <li><a href="#sec-1-1">1.1 encode/decode</a></li>
 <li><a href="#sec-1-2">1.2 wsgi</a></li>
-<li><a href="#sec-1-3">1.3 read excel</a></li>
+<li><a href="#sec-1-3">1.3 excel</a></li>
 </ul>
 </li>
 </ul>
@@ -144,9 +144,8 @@ u'\u4e2d\u56fd'
 
 
 <p>
-这里一个比较难处理的问题就是字符编码的识别，这个在我的项目<a href="./dsgm.html">dsgm</a> 遇到过。个人现在处理的办法就是尝试全部转换成为utf8来进行处理。实现办法就是首先尝试转换
-到gb18030,如果转换失败的话那么转换成为utf8（当然这不是最好的，使用chardet这样的模块似乎是更合理的选择），这样的操作对于我们中国大陆用户来说基本上应该
-OK，就我所知道的系统XP都是GB2312编码，linux/mac通常设置成为utf8，而cygwin这样架在windows上面的系统通常也是gb2312。
+这里一个比较难处理的问题就是字符编码的识别，现在处理的办法就是尝试全部转换成为utf8来进行处理。实现办法就是首先尝试转换到gb18030,如果转换失败的话那么转换成为utf8（当然这不是最好的，使用chardet这样的模块似乎是更合理的选择），
+这样的操作对于我们中国大陆用户来说基本上应该OK，就我所知道的系统XP都是GB2312编码，linux/mac通常设置成为utf8，而cygwin这样架在windows上面的系统通常也是gb2312。
 </p>
 
 
@@ -275,7 +274,7 @@ if(sys.getdefaultencoding() !='utf8'):
 </div>
 
 <div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> read excel</h3>
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> excel</h3>
 <div class="outline-text-3" id="text-1-3">
 
 <p>分析excel文件在实际生活中还是比较常见的，通常我们的问题就是卡在读取上面（主要原因是因为我对COM接口不太熟悉，不太了解windows编程）。使用xlrd可以通过python来访问excel文件。
@@ -365,7 +364,7 @@ for i in range(0,book.nsheets):
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-14 13:27:41 CST</p>
+<p class="date">Date: 2012-12-14 14:09:59 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

@@ -16,14 +16,14 @@ env=Environment(CPPPATH=['../../'],
 excepts=['test_proto_serializer.cc',
          'test_proto_dynamic.cc',
          'sample.pb.cc']
-env.Program('test_proto_serializer',
+env.Program('test_proto_serializer.exe',
             ['test_proto_serializer.cc',
              'sample.pb.cc'])
-env.Program('test_proto_dynamic',            
+env.Program('test_proto_dynamic.exe',            
             ['test_proto_dynamic.cc',
              'sample.pb.cc'])
 
 for x in glob.glob('*.cc'):
     if x in excepts:
         continue
-    env.Program(os.path.splitext(x)[0],[x])
+    env.Program(os.path.splitext(x)[0]+'.exe',[x])
