@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hbase"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-24 22:35:08 CST"/>
+<meta name="generated" content="2012-12-14 12:14:00 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -108,7 +108,7 @@
 <li><a href="#sec-1-1-4">1.1.4 You’ve got HBase! How AOL Mail Handles Big Data</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-2">1.2 View</a>
+<li><a href="#sec-1-2">1.2 观点</a>
 <ul>
 <li><a href="#sec-1-2-1">1.2.1 业强 2012-08-16 hbase讲座</a></li>
 <li><a href="#sec-1-2-2">1.2.2 asynchbase</a></li>
@@ -117,7 +117,7 @@
 <li><a href="#sec-1-2-5">1.2.5 clock skew</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-3">1.3 Usage</a>
+<li><a href="#sec-1-3">1.3 使用问题</a>
 <ul>
 <li><a href="#sec-1-3-1">1.3.1 hbase shell</a></li>
 <li><a href="#sec-1-3-2">1.3.2 hbase increment</a></li>
@@ -321,7 +321,7 @@ TODO(dirlt):
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> View</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 观点</h3>
 <div class="outline-text-3" id="text-1-2">
 
 
@@ -333,7 +333,6 @@ TODO(dirlt):
 
 <p><img src="./images/hbase-architecture.png"  alt="./images/hbase-architecture.png" />
 </p>
-
 <p>
 HRegion类似于tablet，每个HRegion有很多Store存储不同的column family。
 </p>
@@ -403,6 +402,11 @@ scan过程大致是这样的：
 </ul>
 
 
+<p>
+<b>NOTE（dirlt@2012-12-10）：code/java/asynchbase下面有一些使用的示例代码，并且在自己的fast-hbase-rest里面也使用了asynchbase</b>.使用还是比较方便的
+实现上asynchbase没有使用任何org.apache.hbase的代码，从头完成了自己的协议访问，这个可以从HBaseClient的构造参数可以看到，在里面没有使用configuration,
+而是直接传入quorumSpec就是zookeeper的地址。
+</p>
 </div>
 
 </div>
@@ -584,7 +588,7 @@ rs2最近写入的数据是v2，而接下来如果从rs2查询"latest"的数据�
 </div>
 
 <div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Usage</h3>
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 使用问题</h3>
 <div class="outline-text-3" id="text-1-3">
 
 
@@ -679,9 +683,9 @@ import org.apache.hadoop.hbase.util.Bytes;
 // turns out max size is 10M. 
 // refers to the HTable::validatePut this method.
 public class TestMaxSizeOfHBaseValue {
-    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CF"</span>);
-    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"CL"</span>);
-    private final static String kTableName = <span style="color: #00ffff; font-style: italic;">"test.temporary"</span>;
+    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #ffff00;">"CF"</span>);
+    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #ffff00;">"CL"</span>);
+    private final static String kTableName = <span style="color: #ffff00;">"test.temporary"</span>;
 
     private Configuration conf_ = null;
 
@@ -702,7 +706,7 @@ public class TestMaxSizeOfHBaseValue {
         int size = 2048;
         while(true){
             byte[] value = new byte[size-1];
-            Put put = new Put(Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"row"</span>));
+            Put put = new Put(Bytes.toBytes(<span style="color: #ffff00;">"row"</span>));
             put.add(kByteColumnFamily, kByteColumn, value);
             try {
                 table.put(put);
@@ -710,7 +714,7 @@ public class TestMaxSizeOfHBaseValue {
                 e.printStackTrace();
                 break;
             }
-            System.out.println(<span style="color: #00ffff; font-style: italic;">"value size = "</span>+ size +<span style="color: #00ffff; font-style: italic;">", succeed"</span>);
+            System.out.println(<span style="color: #ffff00;">"value size = "</span>+ size +<span style="color: #ffff00;">", succeed"</span>);
             if(size &gt;= 8 * 1024 * 1024) {
                 break;
             }
@@ -738,13 +742,13 @@ public class TestMaxSizeOfHBaseValue {
 <pre class="src src-Java">// validate for well-formedness
 private void validatePut(final Put put) throws IllegalArgumentException{
   if (put.isEmpty()) {
-    throw new IllegalArgumentException(<span style="color: #00ffff; font-style: italic;">"No columns to insert"</span>);
+    throw new IllegalArgumentException(<span style="color: #ffff00;">"No columns to insert"</span>);
   }
   if (maxKeyValueSize &gt; 0) {
     for (List&lt;KeyValue&gt; list : put.getFamilyMap().values()) {
       for (KeyValue kv : list) {
         if (kv.getLength() &gt; maxKeyValueSize) {
-          throw new IllegalArgumentException(<span style="color: #00ffff; font-style: italic;">"KeyValue size too large"</span>);
+          throw new IllegalArgumentException(<span style="color: #ffff00;">"KeyValue size too large"</span>);
         }
       }
     }
@@ -758,7 +762,7 @@ private void validatePut(final Put put) throws IllegalArgumentException{
 </p>
 
 
-<pre class="src src-Java">this.maxKeyValueSize = conf.getInt(<span style="color: #00ffff; font-style: italic;">"hbase.client.keyvalue.maxsize"</span>, -1);
+<pre class="src src-Java">this.maxKeyValueSize = conf.getInt(<span style="color: #ffff00;">"hbase.client.keyvalue.maxsize"</span>, -1);
 </pre>
 
 <p>
@@ -792,9 +796,9 @@ public class App  {
     Configuration conf=HBaseConfiguration.create();
     // create table.
     HBaseAdmin hbase=new HBaseAdmin(conf);
-    HTableDescriptor desc=new HTableDescriptor(<span style="color: #00ffff; font-style: italic;">"TEST"</span>);
-    desc.addFamily(new HColumnDescriptor(Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"personal"</span>)));
-    desc.addFamily(new HColumnDescriptor(Bytes.toBytes(<span style="color: #00ffff; font-style: italic;">"account"</span>)));
+    HTableDescriptor desc=new HTableDescriptor(<span style="color: #ffff00;">"TEST"</span>);
+    desc.addFamily(new HColumnDescriptor(Bytes.toBytes(<span style="color: #ffff00;">"personal"</span>)));
+    desc.addFamily(new HColumnDescriptor(Bytes.toBytes(<span style="color: #ffff00;">"account"</span>)));
     hbase.createTable(desc);
   }
 }
@@ -907,8 +911,8 @@ thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-24 22:35:08 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-12-14 12:14:00 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

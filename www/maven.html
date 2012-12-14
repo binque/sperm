@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="maven"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-07 20:12:01 CST"/>
+<meta name="generated" content="2012-12-14 12:21:20 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -100,38 +100,29 @@
 <ul>
 <li><a href="#sec-1">1 maven</a>
 <ul>
-<li><a href="#sec-1-1">1.1 FAQ</a></li>
-<li><a href="#sec-1-2">1.2 maven能够用来做什么</a></li>
-<li><a href="#sec-1-3">1.3 maven模型</a></li>
-<li><a href="#sec-1-4">1.4 maven生命周期</a></li>
-<li><a href="#sec-1-5">1.5 maven仓库</a>
+<li><a href="#sec-1-1">1.1 FAQ</a>
 <ul>
-<li><a href="#sec-1-5-1">1.5.1 本地仓库</a></li>
-<li><a href="#sec-1-5-2">1.5.2 远程仓库</a></li>
-<li><a href="#sec-1-5-3">1.5.3 分发构件至远程仓库</a></li>
-<li><a href="#sec-1-5-4">1.5.4 远程仓库搭建</a></li>
+<li><a href="#sec-1-1-1">1.1.1 maven能够用来做什么</a></li>
+<li><a href="#sec-1-1-2">1.1.2 maven模型</a></li>
+<li><a href="#sec-1-1-3">1.1.3 maven生命周期</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-6">1.6 maven常用操作</a>
+<li><a href="#sec-1-2">1.2 maven仓库</a>
 <ul>
-<li><a href="#sec-1-6-1">1.6.1 创建项目(archetype)</a></li>
-<li><a href="#sec-1-6-2">1.6.2 编译测试项目(maven-compiler-plugin)</a></li>
-<li><a href="#sec-1-6-3">1.6.3 配置多模块项目(multiple modules project)</a></li>
-<li><a href="#sec-1-6-4">1.6.4 部署项目(deploy)</a></li>
+<li><a href="#sec-1-2-1">1.2.1 本地仓库</a></li>
+<li><a href="#sec-1-2-2">1.2.2 远程仓库</a></li>
+<li><a href="#sec-1-2-3">1.2.3 分发构件至远程仓库</a></li>
+<li><a href="#sec-1-2-4">1.2.4 远程仓库搭建</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-7">1.7 maven常用插件</a>
+<li><a href="#sec-1-3">1.3 使用问题</a>
 <ul>
-<li><a href="#sec-1-7-1">1.7.1 maven-compiler-plugin</a></li>
-<li><a href="#sec-1-7-2">1.7.2 maven-surefire-plugin</a></li>
-<li><a href="#sec-1-7-3">1.7.3 maven-assembly-plugin</a></li>
-<li><a href="#sec-1-7-4">1.7.4 build-helper-maven-plugin</a></li>
-<li><a href="#sec-1-7-5">1.7.5 maven-antrun-plugin</a></li>
-<li><a href="#sec-1-7-6">1.7.6 cobertura-maven-plugin</a></li>
+<li><a href="#sec-1-3-1">1.3.1 安装maven</a></li>
+<li><a href="#sec-1-3-2">1.3.2 常用命令</a></li>
+<li><a href="#sec-1-3-3">1.3.3 常用插件</a></li>
+<li><a href="#sec-1-3-4">1.3.4 .m2/settings.xml</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-8">1.8 .m2/settings.xml</a></li>
-<li><a href="#sec-1-9">1.9 安装maven</a></li>
 </ul>
 </li>
 </ul>
@@ -158,13 +149,12 @@
 </li>
 </ul>
 
-</div>
 
 </div>
 
-<div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> maven能够用来做什么</h3>
-<div class="outline-text-3" id="text-1-2">
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> maven能够用来做什么</h4>
+<div class="outline-text-4" id="text-1-1-1">
 
 <ul>
 <li>理解项目通常是如何构建的。
@@ -190,9 +180,9 @@
 
 </div>
 
-<div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> maven模型</h3>
-<div class="outline-text-3" id="text-1-3">
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> maven模型</h4>
+<div class="outline-text-4" id="text-1-1-2">
 
 <p>maven模型分为几个部分：
 </p><ul>
@@ -211,9 +201,9 @@
 
 </div>
 
-<div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> maven生命周期</h3>
-<div class="outline-text-3" id="text-1-4">
+<div id="outline-container-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> maven生命周期</h4>
+<div class="outline-text-4" id="text-1-1-3">
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 <caption></caption>
@@ -280,12 +270,13 @@ Maven 从开源社区中汲取了十多年的项目构建管理经验。很难�
 
 
 </div>
+</div>
 
 </div>
 
-<div id="outline-container-1-5" class="outline-3">
-<h3 id="sec-1-5"><span class="section-number-3">1.5</span> maven仓库</h3>
-<div class="outline-text-3" id="text-1-5">
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> maven仓库</h3>
+<div class="outline-text-3" id="text-1-2">
 
 <p>Maven 2 仓库存储 Maven 在一个项目的依赖项解析中使用过的工件集。在本地磁盘上访问本地仓库，通过网络访问远程仓库。工件通常被打包成包含二进制库或可执行库的 JAR 文件。这被认为是工件的一个类型。但在实践中，工件也可以是 WAR、EAR 或其他代码捆绑类型。Maven 2 利用操作系统的目录结构对存储在仓库中的工件集进行快速索引。这个仓库索引系统依赖于这种能力来通过工件的坐标惟一标识工件。Maven 坐标是一组可以惟一标识工件的三元组值。坐标包含了下列三条信息：
 </p><ul>
@@ -297,7 +288,9 @@ Maven 从开源社区中汲取了十多年的项目构建管理经验。很难�
 </li>
 </ul>
 
-<p>下面是JUnit依赖项的Maven坐标：
+
+<p>
+下面是JUnit依赖项的Maven坐标：
 </p>
 
 
@@ -306,12 +299,13 @@ Maven 从开源社区中汲取了十多年的项目构建管理经验。很难�
       &lt;groupId&gt;junit&lt;/groupId&gt;
       &lt;artifactId&gt;junit&lt;/artifactId&gt;
       &lt;version&gt;3.8.1&lt;/version&gt;
+      &lt;scope&gt;test&lt;/scope&gt;
    &lt;/dependency&gt;
 &lt;/dependencies&gt;
 </pre>
 
 <p>
-NOTE(dirlt):另外两个并不常用的坐标指标是：TODO(dirlt):add some examples.
+另外两个并不常用的坐标指标是：
 </p><ul>
 <li>packaging. jar, pom etc.
 </li>
@@ -319,13 +313,30 @@ NOTE(dirlt):另外两个并不常用的坐标指标是：TODO(dirlt):add some ex
 </li>
 </ul>
 
+<p><b>NOTE(dirlt):至今这两个坐标还没有搞清楚是什么意思！！！</b>
+</p>
+<p>
+另外dependency还有scope字段，这个字段主要用来解释如何使用这个模块的：
+</p><ul>
+<li>compile. 缺省，适用于所有阶段，会随着项目一起发布。比如log4j.
+</li>
+<li>provided. 类似compile,但是期望JDK或者是使用者会提供这个依赖。比如servlet-api.
+</li>
+<li>runtime. 只是在运行时候使用。比如JDBC Driver.
+</li>
+<li>test. 只是在测试时使用。比如junit.
+</li>
+<li>system. 类似provided,但是需要显示提供所包含依赖的jar,maven不会在repo中查找它。
+</li>
+</ul>
+
 
 
 </div>
 
-<div id="outline-container-1-5-1" class="outline-4">
-<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> 本地仓库</h4>
-<div class="outline-text-4" id="text-1-5-1">
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> 本地仓库</h4>
+<div class="outline-text-4" id="text-1-2-1">
 
 <p>maven默认设置~/.m2/repository为本地仓库。将项目所需要的依赖全部都缓存下来，这样不用每次都重新下载依赖。
 </p>
@@ -352,8 +363,9 @@ drwxrwxr-x 5 dirlt dirlt 4096  6月 24 23:40 plexus
 drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 xml-apis
 </pre>
 
+
 <p>
-但是我们可以通过修改~/.m2/setting.xml来配置本地仓库位置。
+我们可以通过修改~/.m2/setting.xml来配置本地仓库位置。但是似乎没有太大必要=D
 </p>
 
 
@@ -367,9 +379,9 @@ drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 xml-apis
 
 </div>
 
-<div id="outline-container-1-5-2" class="outline-4">
-<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> 远程仓库</h4>
-<div class="outline-text-4" id="text-1-5-2">
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> 远程仓库</h4>
+<div class="outline-text-4" id="text-1-2-2">
 
 <p>参考资源 <a href="http://juvenshun.iteye.com/blog/359256">http://juvenshun.iteye.com/blog/359256</a>
 </p>
@@ -473,7 +485,7 @@ drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 xml-apis
 
 
 <p>
-当然使用上面方式在每个项目pom.xml添加就会产生重复，一种比较好的方式就是加在settings.xml下面
+<b>当然使用上面方式在每个项目pom.xml添加就会产生重复，一种比较好的方式就是加在settings.xml下面</b>
 </p><ul>
 <li>profiles
 <ul>
@@ -516,8 +528,7 @@ drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 xml-apis
 
 
 <p>
-如果你的地理位置附近有一个速度更快的central镜像，或者你想覆盖central仓库配置，或者你想为所有POM使用唯一的一个远程仓库（这个远程仓库代理的所有必要的其它仓库），
-你可以使用settings.xml中的mirror配置。以下的mirror配置用maven.net.cn覆盖了Maven自带的central：
+如果你的地理位置附近有一个速度更快的central镜像，或者你想覆盖central仓库配置，或者你想为所有POM使用唯一的一个远程仓库（这个远程仓库代理的所有必要的其它仓库），你可以使用settings.xml中的mirror配置。以下的mirror配置用maven.net.cn覆盖了Maven自带的central：
 </p><ul>
 <li>mirrors
 <ul>
@@ -557,22 +568,23 @@ drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 xml-apis
 </pre>
 
 <p>
-这里仅仅是配置了central的镜像，如果希望配置所有仓库镜像的话那么&lt;mirrorOf&gt;*&lt;/mirrorOf&gt;. 关于更加高级的镜像配置，
-可以参考：<a href="http://maven.apache.org/guides/mini/guide-mirror-settings.html">http://maven.apache.org/guides/mini/guide-mirror-settings.html</a>. TODO(dirlt):maven是如何在中央仓库和本地仓库，以及镜像之间选择下载工件的。
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-1-5-3" class="outline-4">
-<h4 id="sec-1-5-3"><span class="section-number-4">1.5.3</span> 分发构件至远程仓库</h4>
-<div class="outline-text-4" id="text-1-5-3">
-
-<p>mvn install 会将项目生成的构件安装到本地Maven仓库，mvn deploy 用来将项目生成的构件分发到远程Maven仓库。
-本地Maven仓库的构件只能供当前用户使用，在分发到远程Maven仓库之后，所有能访问该仓库的用户都能使用你的构件。
+这里仅仅是配置了central的镜像，如果希望配置所有仓库镜像的话那么&lt;mirrorOf&gt;*&lt;/mirrorOf&gt;. 关于更加高级的镜像配置，可以参考：<a href="http://maven.apache.org/guides/mini/guide-mirror-settings.html">http://maven.apache.org/guides/mini/guide-mirror-settings.html</a>. TODO(dirlt):maven是如何在中央仓库和本地仓库，以及镜像之间选择下载工件的。
 </p>
 <p>
-我们可以在settings.xml里面指定maven分发构件位置。注意这里我们通常将release和snapshot区分开来放在不同的repo下面。
+<b>NOTE（dirlt）：seems useless</b>
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-2-3" class="outline-4">
+<h4 id="sec-1-2-3"><span class="section-number-4">1.2.3</span> 分发构件至远程仓库</h4>
+<div class="outline-text-4" id="text-1-2-3">
+
+<p>mvn install 会将项目生成的构件安装到本地Maven仓库，mvn deploy 用来将项目生成的构件分发到远程Maven仓库。本地Maven仓库的构件只能供当前用户使用，在分发到远程Maven仓库之后，所有能访问该仓库的用户都能使用你的构件。 <b>安装到maven本地仓库对于使用一些下载源代码并且编译的项目非常有用</b>
+</p>
+<p>
+我们可以在pom.xml里面指定maven分发构件位置。注意这里我们通常将release和snapshot区分开来放在不同的repo下面。
 </p><ul>
 <li>distributionManagement
 <ul>
@@ -601,7 +613,7 @@ drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 xml-apis
 </ul>
 
 </li>
-<li>servers
+<li>servers 这个也可以在settings.xml里面设置
 <ul>
 <li>server(对于远程服务器的话可能需要提供用户名和密码)
 <ul>
@@ -653,13 +665,41 @@ drwxrwxr-x 3 dirlt dirlt 4096  6月 24 22:36 xml-apis
 </pre>
 
 
+<p>
+每一个项目都都需要填写上面的配置，一个比较省力的方法就是：
+</p><ul>
+<li>新建项目叫做X.Y.Z:1.0
+</li>
+<li>在这个项目的pom.xml里面填写上面部署信息
+</li>
+<li>然后将这个项目推送到repo上面。（或者是远程或者是本地）
+</li>
+</ul>
+
+<p>之后我们只需要在我们自己项目里面填写
+</p>
+
+
+<pre class="example">&lt;parent&gt;
+  &lt;groupId&gt;X.Y&lt;/groupId&gt;
+  &lt;artifactId&gt;Z&lt;/artifactId&gt;
+  &lt;version&gt;1.0&lt;/version&gt;
+&lt;/parent&gt;
+</pre>
+
+<p>
+maven会自动将父项目的pom.xml包含进来。 <b>NOTE(dirlt):实际上可以在这里填写很多公共配置。</b>
+</p>
+<p>
+完成之后执行mvn deploy即可进行部署。done!!! :)    
+</p>
 </div>
 
 </div>
 
-<div id="outline-container-1-5-4" class="outline-4">
-<h4 id="sec-1-5-4"><span class="section-number-4">1.5.4</span> 远程仓库搭建</h4>
-<div class="outline-text-4" id="text-1-5-4">
+<div id="outline-container-1-2-4" class="outline-4">
+<h4 id="sec-1-2-4"><span class="section-number-4">1.2.4</span> 远程仓库搭建</h4>
+<div class="outline-text-4" id="text-1-2-4">
 
 <p>参考资源 <a href="http://juvenshun.iteye.com/blog/34">http://juvenshun.iteye.com/blog/34</a>
 </p><ul>
@@ -691,978 +731,16 @@ nexus有下面几种repo：
 
 </div>
 
-<div id="outline-container-1-6" class="outline-3">
-<h3 id="sec-1-6"><span class="section-number-3">1.6</span> maven常用操作</h3>
-<div class="outline-text-3" id="text-1-6">
-
-<p>TODO(dirlt):add more and add more comprehensive description.
-NOTE(dirlt):似乎这些命令和maven生命周期非常相似。
-</p><ul>
-<li>mvn validate. 验证工程是否正确，所有需要的资源是否可用
-</li>
-<li>mvn compile. 编译项目源代码
-</li>
-<li>mvn test-compile. 编译测试项目源代码
-</li>
-<li>mvn test. 运行测试用例
-<ul>
-<li>mvn test -Dtest=&lt;qualified-name&gt;:&lt;test-function&gt;
-</li>
-<li>-Dmaven.test.skip=true 跳过单元测试
-</li>
-</ul>
-
-</li>
-<li>mvn package. 将编译输出打包
-</li>
-<li>mvn integration-test. 运行集成测试. TODO(dirlt):
-</li>
-<li>mvn verify. 检查是否可以发布. TODO(dirlt):
-</li>
-<li>mvn install. 将包安装到本地的repository.
-</li>
-<li>mvn deploy. 将包部署到远程的repository.
-</li>
-<li>mvn generate-sources 生成应用所需要的额外代码
-</li>
-<li>mvn archetype:create. 创建maven项目文件
-</li>
-<li>mvn clean. 清除编译输出
-</li>
-</ul>
-
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 使用问题</h3>
+<div class="outline-text-3" id="text-1-3">
 
 
 </div>
 
-<div id="outline-container-1-6-1" class="outline-4">
-<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> 创建项目(archetype)</h4>
-<div class="outline-text-4" id="text-1-6-1">
-
-<p>使用archetype插件可以很方便地创建项目。假设我们需要创建项目com.dirlt.chaos.JTest,我们可以执行下面命令
-</p>
-
-
-<pre class="example">mvn archetype:create -DarchetypeGroupId=org.apache.maven.archetypes -DgroupId=com.dirlt.chaos -DartifactId=JTest
-</pre>
-
-<p>
-NOTE(dirlt):使用archetype:generate就是使用交互式方式生成pom.xml.似乎看起来也挺不错的。
-</p>
-<p>
-那么在当前目录下面就有JTest目录，JTest目录下面有pom.xml文件，其中：
-</p><ul>
-<li>modelVersion. pom.xml使用的工程对象模型版本
-</li>
-<li>groupId. 项目名字空间
-</li>
-<li>artifactId. 项目名称
-</li>
-<li>version.可以通过-Dversion来指定，没有指定的话使用1.0-SNAPSHOT.SNAPSHOT表示当前版本并不稳定。
-</li>
-<li>packaging. 打包物的扩展名。jar单模块项目，pom多模块项目
-</li>
-<li>name. 项目显示名称，常用于maven生成的文档。
-</li>
-<li>url. 组织的站点，常用于maven生成的文档。
-</li>
-<li>description. 项目描述信息。
-</li>
-<li>dependencies. 项目依赖库.关于scope的含义后面会讲到
-</li>
-</ul>
-
-
-
-
-<pre class="src src-XML">&lt;project xmlns=<span style="color: #ffff00;">"http://maven.apache.org/POM/4.0.0"</span> xmlns:xsi=<span style="color: #ffff00;">"http://www.w3.org/2001/XMLSchema-instance"</span>
-  xsi:schemaLocation=<span style="color: #ffff00;">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span>&gt;
-  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
-
-  &lt;groupId&gt;com.dirlt.chaos&lt;/groupId&gt;
-  &lt;artifactId&gt;JTest&lt;/artifactId&gt;
-  &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
-  &lt;packaging&gt;jar&lt;/packaging&gt;
-
-  &lt;name&gt;JTest&lt;/name&gt;
-  &lt;url&gt;http://maven.apache.org&lt;/url&gt;
-
-  &lt;properties&gt;
-    &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
-  &lt;/properties&gt;
-
-  &lt;dependencies&gt;
-    &lt;dependency&gt;
-      &lt;groupId&gt;junit&lt;/groupId&gt;
-      &lt;artifactId&gt;junit&lt;/artifactId&gt;
-      &lt;version&gt;3.8.1&lt;/version&gt;
-      &lt;scope&gt;test&lt;/scope&gt;
-    &lt;/dependency&gt;
-  &lt;/dependencies&gt;
-&lt;/project&gt;
-</pre>
-
-
-<p>
-这里稍微解释一下denepdency/scope字段。这个字段主要用来解释如何使用这个模块的：
-</p>
-
-
-<pre class="src src-XML">&lt;dependency&gt;
-  &lt;groupId&gt;junit&lt;/groupId&gt;
-  &lt;artifactId&gt;junit&lt;/artifactId&gt;
-  &lt;version&gt;3.8.1&lt;/version&gt;
-  &lt;scope&gt;test&lt;/scope&gt;
-&lt;/dependency&gt;
-</pre>
-
-<ul>
-<li>compile. 缺省，适用于所有阶段，会随着项目一起发布。比如log4j.
-</li>
-<li>provided. 类似compile,但是期望JDK或者是使用者会提供这个依赖。比如servlet-api.
-</li>
-<li>runtime. 只是在运行时候使用。比如JDBC Driver.
-</li>
-<li>test. 只是在测试时使用。比如junit.
-</li>
-<li>system. 类似provided,但是需要显示提供所包含依赖的jar,maven不会在repo中查找它。
-</li>
-</ul>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-1-6-2" class="outline-4">
-<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> 编译测试项目(maven-compiler-plugin)</h4>
-<div class="outline-text-4" id="text-1-6-2">
-
-<p>在pom.xml里面加入下面代码：
-</p>
-
-
-<pre class="src src-XML">&lt;build&gt;
-  &lt;plugins&gt;
-    &lt;plugin&gt;
-      &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
-      &lt;configuration&gt;
-        &lt;source&gt;1.5&lt;/source&gt; 
-        &lt;target&gt;1.5&lt;/target&gt;
-      &lt;/configuration&gt;
-    &lt;/plugin&gt;
-  &lt;/plugins&gt;
-&lt;/build&gt;
-</pre>
-
-<p>
-然后执行
-</p>
-
-
-<pre class="example">dirlt@dirlt-virtual-machine:~/maven/JTest$ mvn compile
-[INFO] Scanning for projects...
-[INFO] ------------------------------------------------------------------------
-[INFO] Building JTest
-[INFO]    task-segment: [compile]
-[INFO] ------------------------------------------------------------------------
-[INFO] [resources:resources {execution: default-resources}]
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /home/dirlt/maven/JTest/src/main/resources
-[INFO] [compiler:compile {execution: default-compile}]
-[INFO] Nothing to compile - all classes are up to date
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESSFUL
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 1 second
-[INFO] Finished at: Mon Jun 25 00:20:42 CST 2012
-[INFO] Final Memory: 7M/18M
-[INFO] ------------------------------------------------------------------------
-</pre>
-
-
-<p>
-这个命令使 Maven 2 引擎从构建生命周期一直运行到编译阶段，并执行相应的 mojo。如果这是第一次运行，那会花点时间，因为一些依赖项需要经过 Internet 从中央仓库下载（可以查看"maven仓库"这节）。 如何需要执行测试用例的话，可以执行
-</p>
-
-
-<pre class="example">dirlt@dirlt-virtual-machine:~/maven/JTest$ mvn test
-[INFO] Scanning for projects...
-[INFO] ------------------------------------------------------------------------
-[INFO] Building JTest
-[INFO]    task-segment: [test]
-[INFO] ------------------------------------------------------------------------
-[INFO] [resources:resources {execution: default-resources}]
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /home/dirlt/maven/JTest/src/main/resources
-[INFO] [compiler:compile {execution: default-compile}]
-[INFO] Nothing to compile - all classes are up to date
-[INFO] [resources:testResources {execution: default-testResources}]
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /home/dirlt/maven/JTest/src/test/resources
-[INFO] [compiler:testCompile {execution: default-testCompile}]
-[INFO] Compiling 1 source file to /home/dirlt/maven/JTest/target/test-classes
-[INFO] [surefire:test {execution: default-test}]
-[INFO] Surefire report directory: /home/dirlt/maven/JTest/target/surefire-reports
-
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-Running com.dirlt.chaos.AppTest
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.043 sec
-
-Results :
-
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESSFUL
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time: 4 seconds
-[INFO] Finished at: Mon Jun 25 00:22:40 CST 2012
-[INFO] Final Memory: 15M/37M
-[INFO] ------------------------------------------------------------------------
-</pre>
-
-
-<p>
-为了形成jar文件的话可以执行mvn intsall,之后在target目录下面就会生成.jar文件，同时在~/.m2/repository下面也存在一份。
-当然你可以直接执行mvn package这样只是直接在target目录下面生成.jar文件。
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-1-6-3" class="outline-4">
-<h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> 配置多模块项目(multiple modules project)</h4>
-<div class="outline-text-4" id="text-1-6-3">
-
-<p>假设我们存在A,B两个项目，A需要依赖于B的话，那么组织形式可以是这样的：
-</p><ul>
-<li>pom.xml
-</li>
-<li>A
-<ul>
-<li>pom.xml
-</li>
-</ul>
-
-</li>
-<li>B
-<ul>
-<li>pom.xml
-</li>
-</ul>
-
-</li>
-</ul>
-
-<p>在最上层使用单独的pom.xml并且在下面子目录也包含相应的pom.xml.父目录的pom.xml如下(添加下面这些信息):
-</p>
-
-
-<pre class="src src-XML">&lt;packaging&gt;pom&lt;/packaging&gt;
-...
-&lt;modules&gt;
-  &lt;module&gt;A&lt;/module&gt;
-  &lt;module&gt;B&lt;/module&gt;
-&lt;/modules&gt;
-...
-&lt;dependencies&gt;
-  &lt;dependency&gt;
-    &lt;groupId&gt;com.dirlt.chaos&lt;/groupId&gt;
-    &lt;artifactId&gt;A&lt;/artifactId&gt;
-    &lt;version&gt;${project.version}&lt;/version&gt;
-  &lt;/dependency&gt;
-  &lt;dependency&gt;
-      &lt;groupId&gt;com.dirlt.chaos&lt;/groupId&gt;
-      &lt;artifactId&gt;B&lt;/artifactId&gt;
-      &lt;version&gt;${project.version}&lt;/version&gt;
-    &lt;/dependency&gt;
-  &lt;/dependencies&gt;
-&lt;/dependencyManagement&gt;
-</pre>
-
-
-<p>
-然后再目录A下面的pom.xml如下(添加下面这些信息)
-</p>
-
-
-<pre class="src src-XML">...
-&lt;parent&gt;
-  &lt;groupId&gt;com.dirlt.chaos&lt;/groupId&gt;
-  &lt;artifactId&gt;JTest&lt;/artifactId&gt;
-  &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
-&lt;/parent&gt;
-&lt;dependencies&gt;
-  &lt;dependency&gt;
-    &lt;groupId&gt;com.dirlt.chaos&lt;/groupId&gt;
-    &lt;artifactId&gt;B&lt;/artifactId&gt;
-   &lt;/dependency&gt;
-&lt;/dependencies&gt;
-</pre>
-
-
-<p>
-然后再目录B下面的pom.xml如下(添加下面这些信息)
-</p>
-
-
-<pre class="src src-XML">&lt;parent&gt;
-  &lt;groupId&gt;com.dirlt.chaos&lt;/groupId&gt;
-  &lt;artifactId&gt;JTest&lt;/artifactId&gt;
-  &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
-&lt;/parent&gt;
-</pre>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-1-6-4" class="outline-4">
-<h4 id="sec-1-6-4"><span class="section-number-4">1.6.4</span> 部署项目(deploy)</h4>
-<div class="outline-text-4" id="text-1-6-4">
-
-<p>首先需要在项目内容添加好部署的配置。
-</p>
-
-
-<pre class="src src-XML">&lt;distributionManagement&gt;
-  &lt;repository&gt;
-    &lt;id&gt;releases&lt;/id&gt;
-    &lt;url&gt;http://118.194.160.11:8088/nexus/content/repositories/releases&lt;/url&gt;
-  &lt;/repository&gt;
-  &lt;snapshotRepository&gt;
-    &lt;id&gt;snapshots&lt;/id&gt;
-    &lt;url&gt;http://118.194.160.11:8088/nexus/content/repositories/snapshots&lt;/url&gt;
-  &lt;/snapshotRepository&gt;
-&lt;/distributionManagement&gt;
-</pre>
-
-<p>
-NOTE(dirlt):注意这两个repository id的用户名和密码必须在settings.xml里面给出。
-</p>
-<p>
-但是这样有一个不好的地方，就是每一个项目都都需要填写这样的配置。一个比较好的方法就是
-</p><ul>
-<li>新建项目叫做X.Y.Z:1.0
-</li>
-<li>在这个项目的pom.xml里面填写上面部署信息
-</li>
-<li>然后将这个项目推送到repo上面。
-</li>
-</ul>
-
-<p>之后我们只需要在我们自己项目里面填写
-</p>
-
-
-<pre class="example">&lt;parent&gt;
-  &lt;groupId&gt;X.Y&lt;/groupId&gt;
-  &lt;artifactId&gt;Z&lt;/artifactId&gt;
-  &lt;version&gt;1.0&lt;/version&gt;
-&lt;/parent&gt;
-</pre>
-
-<p>
-maven会自动将父项目的pom.xml包含进来。NOTE(dirlt):实际上可以在这里填写很多公共配置。
-</p>
-<p>
-完成之后执行mvn deploy即可进行部署。done!!! :)    
-</p>
-</div>
-</div>
-
-</div>
-
-<div id="outline-container-1-7" class="outline-3">
-<h3 id="sec-1-7"><span class="section-number-3">1.7</span> maven常用插件</h3>
-<div class="outline-text-3" id="text-1-7">
-
-
-</div>
-
-<div id="outline-container-1-7-1" class="outline-4">
-<h4 id="sec-1-7-1"><span class="section-number-4">1.7.1</span> maven-compiler-plugin</h4>
-<div class="outline-text-4" id="text-1-7-1">
-
-<p>编译器插件
-</p>
-
-
-<pre class="src src-XML">&lt;plugin&gt;
-  &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
-  &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
-  &lt;configuration&gt;
-    &lt;source&gt;1.6&lt;/source&gt;
-    &lt;target&gt;1.6&lt;/target&gt;
-    &lt;encoding&gt;UTF-8&lt;/encoding&gt;
-  &lt;/configuration&gt;
-&lt;/plugin&gt;
-</pre>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-1-7-2" class="outline-4">
-<h4 id="sec-1-7-2"><span class="section-number-4">1.7.2</span> maven-surefire-plugin</h4>
-<div class="outline-text-4" id="text-1-7-2">
-
-<p>单元测试插件
-</p>
-
-
-<pre class="src src-XML">&lt;plugin&gt;
-  &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;
-  &lt;version&gt;2.10&lt;/version&gt;
-  &lt;configuration&gt;
-    &lt;argLine&gt;-Djava.library.path=lib/Linux-amd64-64&lt;/argLine&gt;
-    &lt;useFile&gt;false&lt;/useFile&gt;
-    &lt;!--
-        &lt;redirectTestOutputToFile&gt;true&lt;/redirectTestOutputToFile&gt;
-    --&gt;
-  &lt;/configuration&gt;
-&lt;/plugin&gt;
-</pre>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-1-7-3" class="outline-4">
-<h4 id="sec-1-7-3"><span class="section-number-4">1.7.3</span> maven-assembly-plugin</h4>
-<div class="outline-text-4" id="text-1-7-3">
-
-<p>打包插件
-</p>
-
-
-<pre class="src src-XML">&lt;plugin&gt;
-  &lt;artifactId&gt;maven-assembly-plugin&lt;/artifactId&gt;
-  &lt;configuration&gt;
-    &lt;descriptorRefs&gt;
-      &lt;descriptorRef&gt;jar-with-dependencies&lt;/descriptorRef&gt;
-    &lt;/descriptorRefs&gt;
-  &lt;/configuration&gt;
-  &lt;executions&gt;
-    &lt;execution&gt;
-      &lt;id&gt;make-assembly&lt;/id&gt; &lt;!-- this is used for inheritance merges --&gt;
-      &lt;phase&gt;package&lt;/phase&gt; &lt;!-- bind to the packaging phase --&gt;
-      &lt;goals&gt;
-        &lt;goal&gt;single&lt;/goal&gt;
-      &lt;/goals&gt;
-    &lt;/execution&gt;
-  &lt;/executions&gt;
-&lt;/plugin&gt;
-</pre>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-1-7-4" class="outline-4">
-<h4 id="sec-1-7-4"><span class="section-number-4">1.7.4</span> build-helper-maven-plugin</h4>
-<div class="outline-text-4" id="text-1-7-4">
-
-<p>辅助插件
-</p>
-
-
-<pre class="src src-XML">&lt;plugin&gt;
-  &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
-  &lt;artifactId&gt;build-helper-maven-plugin&lt;/artifactId&gt;
-  &lt;executions&gt;
-    &lt;execution&gt;
-      &lt;phase&gt;generate-sources&lt;/phase&gt;
-      &lt;goals&gt;&lt;goal&gt;add-source&lt;/goal&gt;&lt;/goals&gt;
-      &lt;configuration&gt;
-        &lt;sources&gt;
-          &lt;source&gt;src/main/gen-java&lt;/source&gt;
-          &lt;source&gt;src/main/resources&lt;/source&gt;
-        &lt;/sources&gt;
-      &lt;/configuration&gt;
-    &lt;/execution&gt;
-  &lt;/executions&gt;
-&lt;/plugin&gt;
-
-</pre>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-1-7-5" class="outline-4">
-<h4 id="sec-1-7-5"><span class="section-number-4">1.7.5</span> maven-antrun-plugin</h4>
-<div class="outline-text-4" id="text-1-7-5">
-
-<p>ant脚本插件
-</p>
-
-
-<pre class="src src-XML">&lt;plugin&gt;
-  &lt;artifactId&gt;maven-antrun-plugin&lt;/artifactId&gt;
-  &lt;executions&gt;
-    &lt;execution&gt;
-      &lt;id&gt;generate-sources&lt;/id&gt;
-      &lt;phase&gt;generate-sources&lt;/phase&gt;
-      &lt;configuration&gt;
-        &lt;tasks&gt;
-          &lt;mkdir dir=<span style="color: #ffff00;">"src/main/gen-java"</span>/&gt;
-          &lt;exec executable=<span style="color: #ffff00;">"protoc"</span>&gt;
-            &lt;arg value=<span style="color: #ffff00;">"--java_out=src/main/gen-java"</span>/&gt;
-            &lt;arg value=<span style="color: #ffff00;">"src/main/protobuf/ua_log.proto"</span>/&gt;
-          &lt;/exec&gt;
-        &lt;/tasks&gt;
-        &lt;sourceRoot&gt;src/main/gen-java&lt;/sourceRoot&gt;
-      &lt;/configuration&gt;
-      &lt;goals&gt;
-        &lt;goal&gt;run&lt;/goal&gt;
-      &lt;/goals&gt;
-    &lt;/execution&gt;
-  &lt;/executions&gt;
-&lt;/plugin&gt;
-</pre>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-1-7-6" class="outline-4">
-<h4 id="sec-1-7-6"><span class="section-number-4">1.7.6</span> cobertura-maven-plugin</h4>
-<div class="outline-text-4" id="text-1-7-6">
-
-<p>测试覆盖率插件
-</p>
-
-
-<pre class="src src-XML">&lt;plugin&gt;
-  &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
-  &lt;artifactId&gt;cobertura-maven-plugin&lt;/artifactId&gt;
-  &lt;version&gt;2.5.2&lt;/version&gt;
-  &lt;configuration&gt;
-    &lt;instrumentation&gt;
-    &lt;/instrumentation&gt;
-  &lt;/configuration&gt;
-  &lt;executions&gt;
-    &lt;execution&gt;
-      &lt;goals&gt;
-        &lt;goal&gt;clean&lt;/goal&gt;
-      &lt;/goals&gt;
-    &lt;/execution&gt;
-  &lt;/executions&gt;
-&lt;/plugin&gt;
-</pre>
-
-<p>
-&lt;instrumentation&gt;标签用于codehaus插入桩代码设置，其中包括：
-</p><ul>
-<li>&lt;includes&gt;&lt;/includes&gt; 比如，你想指定统计某些类的覆盖率，添加于此
-</li>
-<li>&lt;excludes&gt;&lt;/excludes&gt; 比如，你想不统计某些类的覆盖率，添加于此
-</li>
-<li>&lt;ignores&gt;&lt;ignores&gt; 比如，你不想在源码中插入桩代码，添加于此
-</li>
-</ul>
-
-
-<p>
-如果希望结果以xml展示的话，需要添加下面代码
-</p>
-
-
-<pre class="src src-XML">&lt;reporting&gt;
-  &lt;plugins&gt;
-    &lt;plugin&gt;
-      &lt;groupId&gt;org.codehaus.mojo&lt;/groupId&gt;
-      &lt;artifactId&gt;cobertura-maven-plugin&lt;/artifactId&gt;
-      &lt;version&gt;2.5.2&lt;/version&gt;
-      &lt;configuration&gt;
-        &lt;formats&gt;
-          &lt;format&gt;html&lt;/format&gt;
-          &lt;format&gt;xml&lt;/format&gt;
-        &lt;/formats&gt;
-      &lt;/configuration&gt;
-    &lt;/plugin&gt;
-  &lt;/plugins&gt;
-&lt;/reporting&gt;
-</pre>
-
-
-</div>
-</div>
-
-</div>
-
-<div id="outline-container-1-8" class="outline-3">
-<h3 id="sec-1-8"><span class="section-number-3">1.8</span> .m2/settings.xml</h3>
-<div class="outline-text-3" id="text-1-8">
-
-<p>里面有几个地方值得一提：
-</p><ul>
-<li>我们使用了nexus来搭建个人maven服务器，对于umeng.public将很多外网的repo都做了proxy并且进行了group
-</li>
-<li>我们只需要使用umeng.public来作为依赖以及插件的repo即可，非常方便。
-</li>
-<li>这里存在存在releases和snapshots的id server.主要是为了部署使用的。
-</li>
-<li>这里使用了nexus自定义域名，需要自己修改/etc/hosts来添加对应的ip。
-</li>
-</ul>
-
-
-<p>
-NOTE(dirlt):网上有很多教程如何搭建nexus maven服务器，对于企业开发的话这样的单独服务器还是非常需要的。
-</p>
-
-
-
-<pre class="src src-XML">&lt;?xml version=<span style="color: #ffff00;">"1.0"</span> encoding=<span style="color: #ffff00;">"UTF-8"</span>?&gt;
-
-&lt;!--
-Licensed to the Apache Software Foundation (ASF) under one
-or more contributor license agreements.  See the NOTICE file
-distributed with this work for additional information
-regarding copyright ownership.  The ASF licenses this file
-to you under the Apache License, Version 2.0 (the
-<span style="color: #ffff00;">"License"</span>); you may not use this file except in compliance
-with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-<span style="color: #ffff00;">"AS IS"</span> BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied.  See the License for the
-specific language governing permissions and limitations
-under the License.
---&gt;
-
-&lt;!--
- | This is the configuration file for Maven. It can be specified at two levels:
- |
- |  1. User Level. This settings.xml file provides configuration for a single user,
- |                 and is normally provided in ${user.home}/.m2/settings.xml.
- |
- |                 NOTE: This location can be overridden with the CLI option:
- |
- |                 -s /path/to/user/settings.xml
- |
- |  2. Global Level. This settings.xml file provides configuration for all Maven
- |                 users on a machine (assuming they're all using the same Maven
- |                 installation). It's normally provided in
- |                 ${maven.home}/conf/settings.xml.
- |
- |                 NOTE: This location can be overridden with the CLI option:
- |
- |                 -gs /path/to/global/settings.xml
- |
- | The sections in this sample file are intended to give you a running start at
- | getting the most out of your Maven installation. Where appropriate, the default
- | values (values used when the setting is not specified) are provided.
- |
- |--&gt;
-&lt;settings xmlns=<span style="color: #ffff00;">"http://maven.apache.org/SETTINGS/1.0.0"</span>
-          xmlns:xsi=<span style="color: #ffff00;">"http://www.w3.org/2001/XMLSchema-instance"</span>
-          xsi:schemaLocation=<span style="color: #ffff00;">"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd"</span>&gt;
-  &lt;!-- localRepository
-   | The path to the local repository maven will use to store artifacts.
-   |
-   | Default: ~/.m2/repository
-  &lt;localRepository&gt;/path/to/local/repo&lt;/localRepository&gt;
-  --&gt;
-
-  &lt;!-- interactiveMode
-   | This will determine whether maven prompts you when it needs input. If set to false,
-   | maven will use a sensible default value, perhaps based on some other setting, for
-   | the parameter in question.
-   |
-   | Default: true
-  &lt;interactiveMode&gt;true&lt;/interactiveMode&gt;
-  --&gt;
-
-  &lt;!-- offline
-   | Determines whether maven should attempt to connect to the network when executing a build.
-   | This will have an effect on artifact downloads, artifact deployment, and others.
-   |
-   | Default: false
-  &lt;offline&gt;false&lt;/offline&gt;
-  --&gt;
-
-  &lt;!-- pluginGroups
-   | This is a list of additional group identifiers that will be searched when resolving plugins by their prefix, i.e.
-   | when invoking a command line like <span style="color: #ffff00;">"mvn prefix:goal"</span>. Maven will automatically add the group identifiers
-   | <span style="color: #ffff00;">"org.apache.maven.plugins"</span> and <span style="color: #ffff00;">"org.codehaus.mojo"</span> if these are not already contained in the list.
-   |--&gt;
-  &lt;pluginGroups&gt;
-    &lt;!-- pluginGroup
-     | Specifies a further group identifier to use for plugin lookup.
-    &lt;pluginGroup&gt;com.your.plugins&lt;/pluginGroup&gt;
-    --&gt;
-  &lt;/pluginGroups&gt;
-
-  &lt;!-- proxies
-   | This is a list of proxies which can be used on this machine to connect to the network.
-   | Unless otherwise specified (by system property or command-line switch), the first proxy
-   | specification in this list marked as active will be used.
-   |--&gt;
-  &lt;proxies&gt;
-    &lt;!-- proxy
-     | Specification for one proxy, to be used in connecting to the network.
-     |
-    &lt;proxy&gt;
-      &lt;id&gt;optional&lt;/id&gt;
-      &lt;active&gt;true&lt;/active&gt;
-      &lt;protocol&gt;http&lt;/protocol&gt;
-      &lt;username&gt;proxyuser&lt;/username&gt;
-      &lt;password&gt;proxypass&lt;/password&gt;
-      &lt;host&gt;proxy.host.net&lt;/host&gt;
-      &lt;port&gt;80&lt;/port&gt;
-      &lt;nonProxyHosts&gt;local.net|some.host.com&lt;/nonProxyHosts&gt;
-    &lt;/proxy&gt;
-    --&gt;
-  &lt;/proxies&gt;
-
-  &lt;!-- servers
-   | This is a list of authentication profiles, keyed by the server-id used within the system.
-   | Authentication profiles can be used whenever maven must make a connection to a remote server.
-   |--&gt;
-  &lt;servers&gt;
-    &lt;server&gt;
-      &lt;id&gt;umeng.public&lt;/id&gt;
-      &lt;username&gt;dp&lt;/username&gt;
-      &lt;password&gt;dp1234&lt;/password&gt;      
-    &lt;/server&gt;
-
-    &lt;server&gt;
-      &lt;id&gt;releases&lt;/id&gt;
-      &lt;username&gt;dp&lt;/username&gt;
-      &lt;password&gt;dp1234&lt;/password&gt;      
-    &lt;/server&gt;
-
-    &lt;server&gt;
-      &lt;id&gt;snapshots&lt;/id&gt;
-      &lt;username&gt;dp&lt;/username&gt;
-      &lt;password&gt;dp1234&lt;/password&gt;      
-    &lt;/server&gt;
-
-    &lt;!-- server
-     | Specifies the authentication information to use when connecting to a particular server, identified by
-     | a unique name within the system (referred to by the 'id' attribute below).
-     |
-     | NOTE: You should either specify username/password OR privateKey/passphrase, since these pairings are
-     |       used together.
-     |
-    &lt;server&gt;
-      &lt;id&gt;deploymentRepo&lt;/id&gt;
-      &lt;username&gt;repouser&lt;/username&gt;
-      &lt;password&gt;repopwd&lt;/password&gt;
-    &lt;/server&gt;
-    --&gt;
-
-    &lt;!-- Another sample, using keys to authenticate.
-    &lt;server&gt;
-      &lt;id&gt;siteServer&lt;/id&gt;
-      &lt;privateKey&gt;/path/to/private/key&lt;/privateKey&gt;
-      &lt;passphrase&gt;optional; leave empty if not used.&lt;/passphrase&gt;
-    &lt;/server&gt;
-    --&gt;
-  &lt;/servers&gt;
-
-  &lt;!-- mirrors
-   | This is a list of mirrors to be used in downloading artifacts from remote repositories.
-   |
-   | It works like this: a POM may declare a repository to use in resolving certain artifacts.
-   | However, this repository may have problems with heavy traffic at times, so people have mirrored
-   | it to several places.
-   |
-   | That repository definition will have a unique id, so we can create a mirror reference for that
-   | repository, to be used as an alternate download site. The mirror site will be the preferred
-   | server for that repository.
-   |--&gt;
-  &lt;mirrors&gt;
-    &lt;!-- mirror
-     | Specifies a repository mirror site to use instead of a given repository. The repository that
-     | this mirror serves has an ID that matches the mirrorOf element of this mirror. IDs are used
-     | for inheritance and direct lookup purposes, and must be unique across the set of mirrors.
-     | 
-    &lt;mirror&gt;
-      &lt;id&gt;umeng.public&lt;/id&gt;
-      &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
-      &lt;name&gt;Umeng Public Maven Repository&lt;/name&gt;
-      &lt;url&gt;http://118.194.160.11:8088/nexus/content/groups/public&lt;/url&gt;
-    &lt;/mirror&gt;
-    --&gt;
-  &lt;/mirrors&gt;
-
-  &lt;!-- profiles
-   | This is a list of profiles which can be activated in a variety of ways, and which can modify
-   | the build process. Profiles provided in the settings.xml are intended to provide local machine-
-   | specific paths and repository locations which allow the build to work in the local environment.
-   |
-   | For example, if you have an integration testing plugin - like cactus - that needs to know where
-   | your Tomcat instance is installed, you can provide a variable here such that the variable is
-   | dereferenced during the build process to configure the cactus plugin.
-   |
-   | As noted above, profiles can be activated in a variety of ways. One way - the activeProfiles
-   | section of this document (settings.xml) - will be discussed later. Another way essentially
-   | relies on the detection of a system property, either matching a particular value for the property,
-   | or merely testing its existence. Profiles can also be activated by JDK version prefix, where a
-   | value of '1.4' might activate a profile when the build is executed on a JDK version of '1.4.2_07'.
-   | Finally, the list of active profiles can be specified directly from the command line.
-   |
-   | NOTE: For profiles defined in the settings.xml, you are restricted to specifying only artifact
-   |       repositories, plugin repositories, and free-form properties to be used as configuration
-   |       variables for plugins in the POM.
-   |
-   |--&gt;
-  &lt;profiles&gt;
-    &lt;profile&gt;
-      &lt;id&gt;default&lt;/id&gt;
-      &lt;activation&gt;
-        &lt;activeByDefault&gt;true&lt;/activeByDefault&gt;
-      &lt;/activation&gt;
-      &lt;repositories&gt;
-
-        &lt;repository&gt;
-          &lt;id&gt;umeng.public&lt;/id&gt;
-          &lt;name&gt;Umeng Public Maven Repository&lt;/name&gt;
-          &lt;url&gt;http://nexus:8088/nexus/content/groups/public/&lt;/url&gt;
-          &lt;releases&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/releases&gt;
-          &lt;snapshots&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/snapshots&gt;
-        &lt;/repository&gt;
-
-        &lt;!-- repository outside
-        &lt;repository&gt;
-          &lt;id&gt;apache.snapshots&lt;/id&gt;
-          &lt;name&gt;Apache Snapshots&lt;/name&gt;
-          &lt;url&gt;http://repository.apache.org/snapshots/&lt;/url&gt;
-        &lt;/repository&gt;        
-
-        &lt;repository&gt;
-          &lt;id&gt;codehaus.snapshots&lt;/id&gt;
-          &lt;name&gt;Codehaus Snapshots&lt;/name&gt;
-          &lt;url&gt;http://nexus.codehaus.org/snapshots/&lt;/url&gt;
-        &lt;/repository&gt;        
-
-        &lt;repository&gt;
-          &lt;id&gt;java.net2&lt;/id&gt;
-          &lt;name&gt;Java Net2&lt;/name&gt;
-          &lt;url&gt;http://download.java.net/maven/2/&lt;/url&gt;
-          &lt;/repository&gt;
-
-        &lt;repository&gt;
-          &lt;id&gt;cloudera&lt;/id&gt;
-          &lt;name&gt;cloudera repository&lt;/name&gt;
-          &lt;url&gt;https://repository.cloudera.com/artifactory/cloudera-repos/&lt;/url&gt;
-        &lt;/repository&gt;
-        --&gt; 
-      &lt;/repositories&gt;
-
-      &lt;pluginRepositories&gt;
-        &lt;pluginRepository&gt;
-          &lt;id&gt;umeng.public&lt;/id&gt;
-          &lt;name&gt;Umeng Public Maven Repository&lt;/name&gt;
-          &lt;url&gt;http://nexus:8088/nexus/content/groups/public&lt;/url&gt;
-          &lt;releases&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/releases&gt;
-          &lt;snapshots&gt;&lt;enabled&gt;true&lt;/enabled&gt;&lt;/snapshots&gt;
-        &lt;/pluginRepository&gt;
-      &lt;/pluginRepositories&gt;
-
-    &lt;/profile&gt;
-    &lt;!-- profile
-     | Specifies a set of introductions to the build process, to be activated using one or more of the
-     | mechanisms described above. For inheritance purposes, and to activate profiles via &lt;activatedProfiles/&gt;
-     | or the command line, profiles have to have an ID that is unique.
-     |
-     | An encouraged best practice for profile identification is to use a consistent naming convention
-     | for profiles, such as 'env-dev', 'env-test', 'env-production', 'user-jdcasey', 'user-brett', etc.
-     | This will make it more intuitive to understand what the set of introduced profiles is attempting
-     | to accomplish, particularly when you only have a list of profile id's for debug.
-     |
-     | This profile example uses the JDK version to trigger activation, and provides a JDK-specific repo.
-    &lt;profile&gt;
-      &lt;id&gt;jdk-1.4&lt;/id&gt;
-
-      &lt;activation&gt;
-        &lt;jdk&gt;1.4&lt;/jdk&gt;
-      &lt;/activation&gt;
-
-      &lt;repositories&gt;
-        &lt;repository&gt;
-          &lt;id&gt;jdk14&lt;/id&gt;
-          &lt;name&gt;Repository for JDK 1.4 builds&lt;/name&gt;
-          &lt;url&gt;http://www.myhost.com/maven/jdk14&lt;/url&gt;
-          &lt;layout&gt;default&lt;/layout&gt;
-          &lt;snapshotPolicy&gt;always&lt;/snapshotPolicy&gt;
-        &lt;/repository&gt;
-      &lt;/repositories&gt;
-    &lt;/profile&gt;
-    --&gt;
-
-    &lt;!--
-     | Here is another profile, activated by the system property 'target-env' with a value of 'dev',
-     | which provides a specific path to the Tomcat instance. To use this, your plugin configuration
-     | might hypothetically look like:
-     |
-     | ...
-     | &lt;plugin&gt;
-     |   &lt;groupId&gt;org.myco.myplugins&lt;/groupId&gt;
-     |   &lt;artifactId&gt;myplugin&lt;/artifactId&gt;
-     |
-     |   &lt;configuration&gt;
-     |     &lt;tomcatLocation&gt;${tomcatPath}&lt;/tomcatLocation&gt;
-     |   &lt;/configuration&gt;
-     | &lt;/plugin&gt;
-     | ...
-     |
-     | NOTE: If you just wanted to inject this configuration whenever someone set 'target-env' to
-     |       anything, you could just leave off the &lt;value/&gt; inside the activation-property.
-     |
-    &lt;profile&gt;
-      &lt;id&gt;env-dev&lt;/id&gt;
-
-      &lt;activation&gt;
-        &lt;property&gt;
-          &lt;name&gt;target-env&lt;/name&gt;
-          &lt;value&gt;dev&lt;/value&gt;
-        &lt;/property&gt;
-      &lt;/activation&gt;
-
-      &lt;properties&gt;
-        &lt;tomcatPath&gt;/path/to/tomcat/instance&lt;/tomcatPath&gt;
-      &lt;/properties&gt;
-    &lt;/profile&gt;
-    --&gt;
-  &lt;/profiles&gt;
-
-  &lt;!-- activeProfiles
-   | List of profiles that are active for all builds.
-   |
-  &lt;activeProfiles&gt;
-    &lt;activeProfile&gt;alwaysActiveProfile&lt;/activeProfile&gt;
-    &lt;activeProfile&gt;anotherAlwaysActiveProfile&lt;/activeProfile&gt;
-  &lt;/activeProfiles&gt;
-  --&gt;
-&lt;/settings&gt;
-
-</pre>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-1-9" class="outline-3">
-<h3 id="sec-1-9"><span class="section-number-3">1.9</span> 安装maven</h3>
-<div class="outline-text-3" id="text-1-9">
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> 安装maven</h4>
+<div class="outline-text-4" id="text-1-3-1">
 
 <p>如果使用的是ubuntu/debian的话，可以直接使用apt-get install maven来完成。
 </p>
@@ -1687,13 +765,116 @@ under the License.
 </li>
 </ul>
 
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> 常用命令</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+<ul>
+<li>mvn validate. 验证工程是否正确，所有需要的资源是否可用
+</li>
+<li>mvn compile. 编译项目源代码
+</li>
+<li>mvn test-compile. 编译测试项目源代码
+</li>
+<li>mvn package. 将编译输出打包
+</li>
+<li>mvn integration-test. 运行集成测试. TODO(dirlt):
+</li>
+<li>mvn verify. 检查是否可以发布. TODO(dirlt):
+</li>
+<li>mvn install. 将包安装到本地的repository. <b>NOTE（dirlt）：这个对于从github上面下载的东西非常有用</b>
+</li>
+<li>mvn deploy. 将包部署到远程的repository.
+</li>
+<li>mvn generate-sources 生成应用所需要的额外代码
+</li>
+<li>mvn eclipse
+<ul>
+<li>mvn eclipse:eclipse 生成eclipse项目文件
+</li>
+<li>mvn eclipse:clean 清除eclipse项目文件
+</li>
+<li><b>NOTE（dirlt）：自从使用了intellij就不需要这个东西了=D</b>
+</li>
+</ul>
+
+</li>
+<li>mvn clean. 清除编译输出
+</li>
+<li>mvn test. 运行测试用例
+<ul>
+<li>mvn test -Dtest=com.dirlt.java.mr.TestRunMultipleOutputs
+</li>
+<li>mvn test -Dtest=com.dirlt.java.mr.TestRunMultipleOutputs#testSample 
+</li>
+<li>-Dmaven.test.skip=true 跳过单元测试
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> 常用插件</h4>
+<div class="outline-text-4" id="text-1-3-3">
+
+<ul>
+<li>Maven Surefire Plugin <a href="http://maven.apache.org/surefire/maven-surefire-plugin/">http://maven.apache.org/surefire/maven-surefire-plugin/</a> 单元测试
+</li>
+<li>Maven Assembly plugin <a href="http://maven.apache.org/plugins/maven-assembly-plugin/">http://maven.apache.org/plugins/maven-assembly-plugin/</a> 项目打包
+</li>
+<li>Build Helper Maven Plugin <a href="http://mojo.codehaus.org/build-helper-maven-plugin/">http://mojo.codehaus.org/build-helper-maven-plugin/</a> 添加目录
+</li>
+<li>Maven AntRun Plugin <a href="http://maven.apache.org/plugins/maven-antrun-plugin/">http://maven.apache.org/plugins/maven-antrun-plugin/</a> 执行ant脚本
+</li>
+<li>Mojo's Maven plugin for Cobertura <a href="http://mojo.codehaus.org/cobertura-maven-plugin/">http://mojo.codehaus.org/cobertura-maven-plugin/</a> 单元测试覆盖率
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> .m2/settings.xml</h4>
+<div class="outline-text-4" id="text-1-3-4">
+
+<ul>
+<li>utils/mvn-settings.xml
+</li>
+<li>我们使用了nexus来搭建个人maven服务器，对于umeng.public将很多外网的repo都做了proxy并且进行了group
+</li>
+<li>我们只需要使用umeng.public来作为依赖以及插件的repo即可，非常方便。
+</li>
+<li>这里存在存在releases和snapshots的id server.主要是为了部署使用的。
+</li>
+<li>这里使用了nexus自定义域名，需要自己修改/etc/hosts来添加对应的ip。
+</li>
+</ul>
+
+
+<p>
+NOTE(dirlt):网上有很多教程如何搭建nexus maven服务器，对于企业开发的话这样的单独服务器还是非常需要的。
+</p>
+</div>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-07 20:12:01 CST</p>
+<p class="date">Date: 2012-12-14 12:21:20 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

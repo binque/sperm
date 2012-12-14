@@ -163,6 +163,8 @@ opreport包含两类参数，一类是过滤参数用于通知应用打印出关
    - opannotate -s --output-dir=. ??? //产生源文件注释.在当前目录下面产生.???是image.
 
 ** OProfile脚本
+为了方便使用oprofile编写了下面这个脚本
+
 #+BEGIN_SRC Python
 #!/usr/bin/env python
 #coding:gbk

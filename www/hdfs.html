@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hdfs"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-24 22:35:08 CST"/>
+<meta name="generated" content="2012-12-14 12:13:59 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -135,17 +135,16 @@
 <li><a href="#sec-1-1-5">1.1.5 FUTURE WORK</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-2">1.2 View</a>
+<li><a href="#sec-1-2">1.2 观点</a>
 <ul>
 <li><a href="#sec-1-2-1">1.2.1 Under the Hood: Hadoop Distributed Filesystem reliability with Namenode and Avatarnode | Facebook</a></li>
 <li><a href="#sec-1-2-2">1.2.2 HA Namenode for HDFS with Hadoop 1.0 – Part 1 | Hortonworks</a></li>
 <li><a href="#sec-1-2-3">1.2.3 Why not RAID-0? It’s about Time and Snowflakes | Hortonworks</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-3">1.3 Usage</a>
+<li><a href="#sec-1-3">1.3 使用问题</a>
 <ul>
-<li><a href="#sec-1-3-1">1.3.1 file system API</a></li>
-<li><a href="#sec-1-3-2">1.3.2 Filesystem Corruption and Missing Blocks</a></li>
+<li><a href="#sec-1-3-1">1.3.1 Filesystem Corruption and Missing Blocks</a></li>
 </ul>
 </li>
 </ul>
@@ -690,7 +689,7 @@ Whenever a read client or a block scanner detects a corrupt block, it notifies t
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> View</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 观点</h3>
 <div class="outline-text-3" id="text-1-2">
 
 
@@ -792,41 +791,15 @@ fb数据仓库故障有41%是源于HDFS，而如果有reliable namenode解决方
 </div>
 
 <div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Usage</h3>
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 使用问题</h3>
 <div class="outline-text-3" id="text-1-3">
 
 
 </div>
 
 <div id="outline-container-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> file system API</h4>
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> Filesystem Corruption and Missing Blocks</h4>
 <div class="outline-text-4" id="text-1-3-1">
-
-<p>因为hdfs本质上是一个文件系统，只不过这个文件系统是应用层面上的。获得这个文件系统之后很多操作就很明了了，因为很多概念是可以直接从linux文件系统借鉴过来的。
-</p><ol>
-<li>首先获取HDFS配置。
-</li>
-<li>然后根据配置创建FileSystem.这个是一个通用接口可以替换成为本地文件。
-</li>
-<li>FileSystem提供了一系列访问方法。
-</li>
-</ol>
-
-
-
-
-<pre class="src src-Java">Configuration conf=new Configuration();
-FileSystem hdfs=FileSystem.get(conf);
-</pre>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> Filesystem Corruption and Missing Blocks</h4>
-<div class="outline-text-4" id="text-1-3-2">
 
 <ul>
 <li>HadoopRecovery &lt; Storage &lt; TWiki <a href="https://www.opensciencegrid.org/bin/view/Storage/HadoopRecovery">https://www.opensciencegrid.org/bin/view/Storage/HadoopRecovery</a>
@@ -930,8 +903,8 @@ The filesystem under path '/hbase/.corrupt/dp18.umeng.com%3A60020.1349065853563'
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-24 22:35:08 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2012-12-14 12:13:59 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

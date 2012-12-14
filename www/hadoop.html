@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hadoop"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-03 20:11:34 CST"/>
+<meta name="generated" content="2012-12-14 12:14:00 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -107,7 +107,7 @@
 <li><a href="#sec-1-1-3">1.1.3 CDH和Apache Hadoop的关系</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-2">1.2 View</a>
+<li><a href="#sec-1-2">1.2 观点</a>
 <ul>
 <li><a href="#sec-1-2-1">1.2.1 Hadoop即将过时了吗？</a></li>
 <li><a href="#sec-1-2-2">1.2.2 MapReduce和并行数据库，朋友还是敌人？</a></li>
@@ -116,20 +116,15 @@
 <li><a href="#sec-1-2-5">1.2.5 The dark side of Hadoop - BackType Technology</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-3">1.3 Scheduler</a></li>
-<li><a href="#sec-1-4">1.4 Usage</a>
+<li><a href="#sec-1-3">1.3 使用问题</a>
 <ul>
-<li><a href="#sec-1-4-1">1.4.1 搭建单节点集群</a></li>
-<li><a href="#sec-1-4-2">1.4.2 hadoop-lzo</a>
-<ul>
-<li><a href="#sec-1-4-2-1">1.4.2.1 安装配置</a></li>
-<li><a href="#sec-1-4-2-2">1.4.2.2 编写proto文件</a></li>
-<li><a href="#sec-1-4-2-3">1.4.2.3 使用lzo</a></li>
+<li><a href="#sec-1-3-1">1.3.1 搭建单节点集群</a></li>
+<li><a href="#sec-1-3-2">1.3.2 OutOfMemoryError</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-4-3">1.4.3 多路输入</a></li>
-<li><a href="#sec-1-4-4">1.4.4 多路输出</a></li>
-<li><a href="#sec-1-4-5">1.4.5 OutOfMemoryError</a></li>
+<li><a href="#sec-1-4">1.4 Topic</a>
+<ul>
+<li><a href="#sec-1-4-1">1.4.1 Scheduler</a></li>
 </ul>
 </li>
 </ul>
@@ -267,7 +262,7 @@ TODO(dirlt):translate it!!!
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> View</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 观点</h3>
 <div class="outline-text-3" id="text-1-2">
 
 
@@ -399,7 +394,11 @@ TODO(dirlt):translate it!!!
 <div class="outline-text-4" id="text-1-2-3">
 
 <p>原文 <a href="http://apps.hi.baidu.com/share/detail/6912773">http://apps.hi.baidu.com/share/detail/6912773</a>
+</p>
+<p>
 英文 <a href="http://www.databasecolumn.com/2008/01/mapreduce-a-major-step-back.html">http://www.databasecolumn.com/2008/01/mapreduce-a-major-step-back.html</a>
+</p>
+<p>
 认为MapReduce相对于数据管理系统是一个巨大退步。
 </p>
 <p>
@@ -594,35 +593,15 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 </div>
 
 <div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Scheduler</h3>
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 使用问题</h3>
 <div class="outline-text-3" id="text-1-3">
 
-<ul>
-<li>Fair Scheduler Guide <a href="http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html">http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html</a>
-</li>
-<li>Job Scheduling in Hadoop | Apache Hadoop for the Enterprise | Cloudera <a href="http://www.cloudera.com/blog/2008/11/job-scheduling-in-hadoop/">http://www.cloudera.com/blog/2008/11/job-scheduling-in-hadoop/</a>
-</li>
-<li>Understanding Apache Hadoop’s Capacity Scheduler | Hortonworks <a href="http://hortonworks.com/blog/understanding-apache-hadoops-capacity-scheduler/">http://hortonworks.com/blog/understanding-apache-hadoops-capacity-scheduler/</a>
-</li>
-<li>Upcoming Functionality in “Fair Scheduler 2.0″ | Apache Hadoop for the Enterprise | Cloudera <a href="http://www.cloudera.com/blog/2009/04/upcoming-functionality-in-fair-scheduler-20/">http://www.cloudera.com/blog/2009/04/upcoming-functionality-in-fair-scheduler-20/</a>
-</li>
-</ul>
-
 
 </div>
 
-</div>
-
-<div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Usage</h3>
-<div class="outline-text-3" id="text-1-4">
-
-
-</div>
-
-<div id="outline-container-1-4-1" class="outline-4">
-<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> 搭建单节点集群</h4>
-<div class="outline-text-4" id="text-1-4-1">
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> 搭建单节点集群</h4>
+<div class="outline-text-4" id="text-1-3-1">
 
 <p>搭建单节点集群允许我们在单机做一些模拟或者是测试，还是非常有意义的。如何操作的话可以参考链接 <a href="http://z/home/dirlt/utils/hadoop-0.20.2-cdh3u3/docs/single_node_setup.html">http://z/home/dirlt/utils/hadoop-0.20.2-cdh3u3/docs/single_node_setup.html</a>
 这里稍微总结一下：
@@ -704,265 +683,9 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 
 </div>
 
-<div id="outline-container-1-4-2" class="outline-4">
-<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> hadoop-lzo</h4>
-<div class="outline-text-4" id="text-1-4-2">
-
-
-</div>
-
-<div id="outline-container-1-4-2-1" class="outline-5">
-<h5 id="sec-1-4-2-1"><span class="section-number-5">1.4.2.1</span> 安装配置</h5>
-<div class="outline-text-5" id="text-1-4-2-1">
-
-<ul>
-<li>安装liblzo2库，sudo apt-get install liblzo2-2(liblzo2-dev)
-</li>
-<li>安装lzop程序，sudo apt-get install lzop
-</li>
-<li>下载hadoop-lzo. git clone git://github.com/kevinweil/hadoop-lzo.git <a href="https://github.com/kevinweil/hadoop-lzo">https://github.com/kevinweil/hadoop-lzo</a>
-</li>
-<li>编译，ant compile-native tar 
-</li>
-<li>将结果build/hadoop-lzo-0.4.14的hadoop-lzo-0.4.14.jar复制到 $HADOOP_HOME/lib，将build/hadoop-lzo-0.4.14/lib/native下的文件复制到$HADOOP_HOME/lib/native (native/Linux-amd64-64)
-</li>
-<li>修改core-site.xml配置
-</li>
-</ul>
-
-
-
-
-<pre class="src src-XML">&lt;property&gt;
-&lt;name&gt;io.compression.codecs&lt;/name&gt;    
-&lt;value&gt;org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec&lt;/value&gt;
-&lt;/property&gt;
-&lt;property&gt;
-&lt;name&gt;io.compression.codec.lzo.class&lt;/name&gt;
-&lt;value&gt;com.hadoop.compression.lzo.LzoCodec&lt;/value&gt;
-&lt;/property&gt;
-</pre>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-1-4-2-2" class="outline-5">
-<h5 id="sec-1-4-2-2"><span class="section-number-5">1.4.2.2</span> 编写proto文件</h5>
-<div class="outline-text-5" id="text-1-4-2-2">
-
-<p>首先创建proto文件，比如segment_mark.proto
-</p>
-
-
-<pre class="example">package com.umeng.analytics.proto;
-
-// FATAL: This name works as a version number
-// Increase this number everytime you do a non-compatible modification!!
-// The block storage writer is responsible for write the version number.
-option java_outer_classname = "SegmentMarkProtos1";
-
-message SegmentMark {
-  enum Tag {
-    INSTALL=0;
-    DEVICE=1;
-    EVENTS=2;
-    ALL=3;
-  }
-  required string app_key=1;
-  required string umid=2;
-  repeated string marks=3;
-  required Tag tag=4;
-}
-</pre>
-
-<ul>
-<li>package 名字空间
-</li>
-<li>java_outer_classname 具体输出类名称
-</li>
-</ul>
-
-<p>使用protoc &ndash;java_out=&lt;dir&gt; segment_mark.proto就会在&lt;dir&gt;下面生成SegmentMarkProtos1.java文件。
-</p>
-<p>
-此外我们还需要为这个类写几个辅助类，但是索性的是辅助类并不是很复杂。
-</p><ul>
-<li>InputFormat
-</li>
-<li>OutputFormat
-</li>
-<li>Writable
-</li>
-</ul>
-
-
-
-
-<pre class="src src-Java">public class SegmentMarkLzoProtobufBlockInputFormat extends LzoProtobufBlockInputFormat&lt;SegmentMark&gt; {
-  public SegmentMarkLzoProtobufBlockInputFormat() {
-    super(new TypeRef&lt;SegmentMark&gt;(){});
-  }
-}
-
-public class SegmentMarkLzoProtobufBlockOutputFormat extends LzoProtobufBlockOutputFormat&lt;SegmentMark&gt; {
-  public SegmentMarkLzoProtobufBlockOutputFormat() {
-    super(new TypeRef&lt;SegmentMark&gt;(){});
-  }
-}
-
-public class SegmentMarkProtobufWritable extends ProtobufWritable&lt;SegmentMark&gt; {
-  public SegmentMarkProtobufWritable() {
-    super(new TypeRef&lt;SegmentMark&gt;(){});
-  }
-  public SegmentMarkProtobufWritable(SegmentMark m) {
-    super(m, new TypeRef&lt;SegmentMark&gt;(){});
-  }
-}
-</pre>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-1-4-2-3" class="outline-5">
-<h5 id="sec-1-4-2-3"><span class="section-number-5">1.4.2.3</span> 使用lzo</h5>
-<div class="outline-text-5" id="text-1-4-2-3">
-
-<p>做好上面的工作之后就可以开始使用了。
-</p><ul>
-<li>job.setInputFormatClass(SegmentMarkLzoProtobufBlockInputFormat.getInputFormatClass(SegmentMark.class, job.getConfiguration()));
-</li>
-<li>job.setOutputFormatClass(SegmentMarkLzoProtobufBlockOutputFormat.class);
-</li>
-</ul>
-
-
-
-
-<pre class="src src-Java">public static class XMap
-        extends
-        Mapper&lt;LongWritable, ProtobufWritable&lt;SegmentMark&gt;, Text, ProtobufWritable&lt;SegmentMark&gt;&gt; {
-    @Override
-    protected void map(LongWritable key,
-            ProtobufWritable&lt;SegmentMark&gt; value, Context context)
-            throws IOException, InterruptedException {
-        SegmentMark sm = value.get();
-        String appKey = sm.getAppKey();
-        String umid = sm.getUmid();
-        context.write(new Text(appKey + <span style="color: #ffff00;">"_"</span> + umid), value);
-    }
-}
-
-public static class Reduce
-        extends
-        Reducer&lt;Text, ProtobufWritable&lt;SegmentMark&gt;, NullWritable, ProtobufWritable&lt;SegmentMark&gt;&gt; {
-    @Override
-    protected void reduce(Text key,
-            Iterable&lt;ProtobufWritable&lt;SegmentMark&gt;&gt; values, Context context)
-            throws IOException, InterruptedException {
-        for (ProtobufWritable&lt;SegmentMark&gt; psm : values) {
-            psm.setConverter(SegmentMark.class);
-            SegmentMark sm = psm.get();
-        }
-        SegmentMark.Builder sm = null;
-        sm = SegmentMark.newBuilder();
-        sm.setAppKey(appKey);
-        sm.setUmid(umid);
-        sm.setTag(SegmentMark.Tag.ALL);
-        SegmentMark mark = sm.build();
-        info(TextFormat.printToString(mark));
-        context.write(null, new SegmentMarkProtobufWritable(mark));
-    }
-}
-</pre>
-
-<p>
-<b>NOTE（dirlt）：这里面代码不正确，只是示例</b>
-</p>
-<p>
-之后在输出目录下面会存在很多lzo文件，但是这些文件并不能够直接作为输入使用（因为hadoop不知道如何对这些lzo文件进行切分），需要对这些lzo文件进行索引。使用下面的命令来进行索引：
-</p><ul>
-<li>hadoop jar /usr/lib/hadoop/lib/hadoop-lzo-0.4.14.jar com.hadoop.compression.lzo.DistributedLzoIndexer &lt;output-dir&gt;
-</li>
-</ul>
-
-<p>完成之后对于每一个lzo文件都会存在一个.index文件。如果重复运行上面命令的话，会检查.index文件是否存在，如果存在的话那么就不会重新进行索引。
-</p>
-</div>
-</div>
-
-</div>
-
-<div id="outline-container-1-4-3" class="outline-4">
-<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> 多路输入</h4>
-<div class="outline-text-4" id="text-1-4-3">
-
-<p>多路输入分为三种情况，分别是：
-</p><ul>
-<li>多路hdfs
-</li>
-<li>多路htable
-</li>
-<li>多路hdfs和htable混合。
-</li>
-</ul>
-
-<p>第三中情况包含前面两种情况，所以下面看看第三种情况如何实现。
-</p>
-<p>
-<b>NOTE(dirlt):现在看来只是支持了多路hdfs输入以及1路的htable输入</b>
-</p>
-<p>
-实现多路输入<a href="mapred.html">非常简单</a>， 但是过程非常magic.：
-</p><ul>
-<li>使用 TableMapReduceUtil.initTableMapperJob 初始化htable输入（作用就是为了指定htable的input table name）
-</li>
-<li>之后在调用一次 MultipleInputs.addInputPath(job, new Path(kInTableName1), TableInputFormat.class, TMapper.class); 这里的kInTableName1可以随便定义，但是不要和接下来的hdfs路径重名。（作用是为了能够调整input format）
-</li>
-<li>接下来就是添加hdfs输入  MultipleInputs.addInputPath(job, new Path(kInFileName1), TextInputFormat.class, FMapper.class); 可以调用多次来添加多个hdfs输入源。
-</li>
-</ul>
-
-
-<p>
-<b>TODO（dirlt）：至于为什么这样可以就需要阅读源代码，这也意味着不保证其他hadoop版本也可以这么做</b>
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-1-4-4" class="outline-4">
-<h4 id="sec-1-4-4"><span class="section-number-4">1.4.4</span> 多路输出</h4>
-<div class="outline-text-4" id="text-1-4-4">
-
-<p>多路输出代码可以参考<a href="mapred.html">这里</a> 其中一小节"多路输出"
-</p><ul>
-<li>使用MultipleOutputs 多文件和table混合输出（和mrunit配合不好）
-</li>
-<li>使用MultipleTableOutputFormat 多table输出
-</li>
-<li>使用MultipleOutputFormat 多文件输出
-<ul>
-<li>需要继承这个类并且复写一些方法，然后设置OutputFormat为这个类
-</li>
-<li>似乎高版本被MultipleOutputs代替
-</li>
-</ul>
-
-</li>
-</ul>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-1-4-5" class="outline-4">
-<h4 id="sec-1-4-5"><span class="section-number-4">1.4.5</span> OutOfMemoryError</h4>
-<div class="outline-text-4" id="text-1-4-5">
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> OutOfMemoryError</h4>
+<div class="outline-text-4" id="text-1-3-2">
 
 <ul>
 <li>hadoop的mapreduce作业中经常出现Java heap space解决方案 <a href="http://blog.sina.com.cn/s/blog_6345041c01011bjq.html">http://blog.sina.com.cn/s/blog_6345041c01011bjq.html</a>
@@ -989,6 +712,35 @@ public static class Reduce
 </li>
 </ul>
 
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Topic</h3>
+<div class="outline-text-3" id="text-1-4">
+
+
+</div>
+
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> Scheduler</h4>
+<div class="outline-text-4" id="text-1-4-1">
+
+<ul>
+<li>Fair Scheduler Guide <a href="http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html">http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html</a>
+</li>
+<li>Job Scheduling in Hadoop | Apache Hadoop for the Enterprise | Cloudera <a href="http://www.cloudera.com/blog/2008/11/job-scheduling-in-hadoop/">http://www.cloudera.com/blog/2008/11/job-scheduling-in-hadoop/</a>
+</li>
+<li>Understanding Apache Hadoop’s Capacity Scheduler | Hortonworks <a href="http://hortonworks.com/blog/understanding-apache-hadoops-capacity-scheduler/">http://hortonworks.com/blog/understanding-apache-hadoops-capacity-scheduler/</a>
+</li>
+<li>Upcoming Functionality in “Fair Scheduler 2.0″ | Apache Hadoop for the Enterprise | Cloudera <a href="http://www.cloudera.com/blog/2009/04/upcoming-functionality-in-fair-scheduler-20/">http://www.cloudera.com/blog/2009/04/upcoming-functionality-in-fair-scheduler-20/</a>
+</li>
+</ul>
+
+
 </div>
 </div>
 </div>
@@ -996,7 +748,7 @@ public static class Reduce
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-03 20:11:34 CST</p>
+<p class="date">Date: 2012-12-14 12:14:00 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

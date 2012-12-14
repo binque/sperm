@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="mapred"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-03 20:11:32 CST"/>
+<meta name="generated" content="2012-12-14 12:13:56 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -100,26 +100,22 @@
 <ul>
 <li><a href="#sec-1">1 mapred</a>
 <ul>
-<li><a href="#sec-1-1">1.1 YARN</a>
+<li><a href="#sec-1-1">1.1 Topic</a>
 <ul>
-<li><a href="#sec-1-1-1">1.1.1 Introducing Apache Hadoop YARN | Hortonworks</a></li>
-<li><a href="#sec-1-1-2">1.1.2 Apache Hadoop YARN – Background and an Overview | Hortonworks</a></li>
-<li><a href="#sec-1-1-3">1.1.3 Apache Hadoop YARN – Concepts and Applications | Hortonworks</a></li>
-<li><a href="#sec-1-1-4">1.1.4 Apache Mesos (Twitter Open Source Open House)</a></li>
-<li><a href="#sec-1-1-5">1.1.5 Apache Hadoop YARN – NodeManager | Hortonworks</a></li>
-<li><a href="#sec-1-1-6">1.1.6 Apache Hadoop YARN – ResourceManager | Hortonworks</a></li>
+<li><a href="#sec-1-1-1">1.1.1 YARN</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-2">1.2 Source Analysis</a>
+<li><a href="#sec-1-2">1.2 代码分析</a>
 <ul>
 <li><a href="#sec-1-2-1">1.2.1 task如何向tasktracker进行定时汇报</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-3">1.3 Usage</a>
+<li><a href="#sec-1-3">1.3 使用问题</a>
 <ul>
-<li><a href="#sec-1-3-1">1.3.1 多路输入</a></li>
-<li><a href="#sec-1-3-2">1.3.2 多路输出</a></li>
-<li><a href="#sec-1-3-3">1.3.3 获取集群运行状况</a></li>
+<li><a href="#sec-1-3-1">1.3.1 hadoop-lzo</a></li>
+<li><a href="#sec-1-3-2">1.3.2 多路输入</a></li>
+<li><a href="#sec-1-3-3">1.3.3 多路输出</a></li>
+<li><a href="#sec-1-3-4">1.3.4 获取集群运行状况</a></li>
 </ul>
 </li>
 </ul>
@@ -136,32 +132,30 @@
 </div>
 
 <div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> YARN</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Topic</h3>
 <div class="outline-text-3" id="text-1-1">
 
 
 </div>
 
 <div id="outline-container-1-1-1" class="outline-4">
-<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Introducing Apache Hadoop YARN | Hortonworks</h4>
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> YARN</h4>
 <div class="outline-text-4" id="text-1-1-1">
 
-<p><a href="http://hortonworks.com/blog/introducing-apache-hadoop-yarn/">http://hortonworks.com/blog/introducing-apache-hadoop-yarn/</a> 
-</p>
+<ul>
+<li id="sec-1-1-1-1">Introducing Apache Hadoop YARN | Hortonworks<br/>
+<a href="http://hortonworks.com/blog/introducing-apache-hadoop-yarn/">http://hortonworks.com/blog/introducing-apache-hadoop-yarn/</a> 
+
 <p>
 看起来YARN的主要目的是将Hadoop不仅仅用于map-reduce的计算方式，还包括MPI，graph-processing，simple services等，
 而MR仅仅是作为其中一种计算方式。底层依然是使用HDFS。发布方式的话还是将HDFS，YARN，MR，以及Common一起统一发布。
 </p>
-</div>
+</li>
+</ul>
+<ul>
+<li id="sec-1-1-1-2">Apache Hadoop YARN – Background and an Overview | Hortonworks<br/>
+<a href="http://hortonworks.com/blog/apache-hadoop-yarn-background-and-an-overview/">http://hortonworks.com/blog/apache-hadoop-yarn-background-and-an-overview/</a>
 
-</div>
-
-<div id="outline-container-1-1-2" class="outline-4">
-<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> Apache Hadoop YARN – Background and an Overview | Hortonworks</h4>
-<div class="outline-text-4" id="text-1-1-2">
-
-<p><a href="http://hortonworks.com/blog/apache-hadoop-yarn-background-and-an-overview/">http://hortonworks.com/blog/apache-hadoop-yarn-background-and-an-overview/</a>
-</p>
 <p>
 对于MR来说，最关键的一点就是lack of data motion。通过将任务放在数据所在的机器上面，而不是将数据移动到任务所在的机器上面，可以节省带宽提高计算效率。现在来说MR分为下面三个部分：
 </p><ul>
@@ -216,16 +210,12 @@ YARN主要做的工作就是在资源利用的改进上面，将资源利用已�
 <p>     
 <img src="./images/YARNArch.png"  alt="./images/YARNArch.png" />
 </p>
-</div>
+</li>
+</ul>
+<ul>
+<li id="sec-1-1-1-3">Apache Hadoop YARN – Concepts and Applications | Hortonworks<br/>
+<a href="http://hortonworks.com/blog/apache-hadoop-yarn-concepts-and-applications/">http://hortonworks.com/blog/apache-hadoop-yarn-concepts-and-applications/</a>
 
-</div>
-
-<div id="outline-container-1-1-3" class="outline-4">
-<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> Apache Hadoop YARN – Concepts and Applications | Hortonworks</h4>
-<div class="outline-text-4" id="text-1-1-3">
-
-<p><a href="http://hortonworks.com/blog/apache-hadoop-yarn-concepts-and-applications/">http://hortonworks.com/blog/apache-hadoop-yarn-concepts-and-applications/</a>
-</p>
 <p>
 将AM和RM分离的好处在于：一方面减轻RM的压力这样可以让RM管理更多的集群，另外一方面可以让AM支持更多类型的计算而不仅仅是MR
 </p>
@@ -308,26 +298,18 @@ Let’s walk through an application execution sequence (steps are illustrated in
 <p>
 <img src="./images/yarnflow.png"  alt="./images/yarnflow.png" />
 </p>
-</div>
+</li>
+</ul>
+<ul>
+<li id="sec-1-1-1-4">Apache Mesos (Twitter Open Source Open House)<br/>
+<a href="https://speakerdeck.com/u/benh/p/apache-mesos-twitter-open-source-open-house">https://speakerdeck.com/u/benh/p/apache-mesos-twitter-open-source-open-house</a>
 
-</div>
+</li>
+</ul>
+<ul>
+<li id="sec-1-1-1-5">Apache Hadoop YARN – NodeManager | Hortonworks<br/>
+<a href="http://hortonworks.com/blog/apache-hadoop-yarn-nodemanager/">http://hortonworks.com/blog/apache-hadoop-yarn-nodemanager/</a>
 
-<div id="outline-container-1-1-4" class="outline-4">
-<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> Apache Mesos (Twitter Open Source Open House)</h4>
-<div class="outline-text-4" id="text-1-1-4">
-
-<p><a href="https://speakerdeck.com/u/benh/p/apache-mesos-twitter-open-source-open-house">https://speakerdeck.com/u/benh/p/apache-mesos-twitter-open-source-open-house</a>
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-1-1-5" class="outline-4">
-<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> Apache Hadoop YARN – NodeManager | Hortonworks</h4>
-<div class="outline-text-4" id="text-1-1-5">
-
-<p><a href="http://hortonworks.com/blog/apache-hadoop-yarn-nodemanager/">http://hortonworks.com/blog/apache-hadoop-yarn-nodemanager/</a>
-</p>
 <p>
 <img src="./images/yarn-nodemanager-arch.png"  alt="./images/yarn-nodemanager-arch.png" />
 </p>
@@ -369,16 +351,12 @@ Let’s walk through an application execution sequence (steps are illustrated in
 </ul>
 
 
-</div>
+</li>
+</ul>
+<ul>
+<li id="sec-1-1-1-6">Apache Hadoop YARN – ResourceManager | Hortonworks<br/>
+<a href="http://hortonworks.com/blog/apache-hadoop-yarn-resourcemanager/">http://hortonworks.com/blog/apache-hadoop-yarn-resourcemanager/</a>
 
-</div>
-
-<div id="outline-container-1-1-6" class="outline-4">
-<h4 id="sec-1-1-6"><span class="section-number-4">1.1.6</span> Apache Hadoop YARN – ResourceManager | Hortonworks</h4>
-<div class="outline-text-4" id="text-1-1-6">
-
-<p><a href="http://hortonworks.com/blog/apache-hadoop-yarn-resourcemanager/">http://hortonworks.com/blog/apache-hadoop-yarn-resourcemanager/</a>
-</p>
 <p>
 <img src="./images/yarn-resourcemanager-arch.png"  alt="./images/yarn-resourcemanager-arch.png" />
 </p>
@@ -448,13 +426,15 @@ Let’s walk through an application execution sequence (steps are illustrated in
 </ul>
 
 
+</li>
+</ul>
 </div>
 </div>
 
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Source Analysis</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 代码分析</h3>
 <div class="outline-text-3" id="text-1-2">
 
 
@@ -479,551 +459,223 @@ Let’s walk through an application execution sequence (steps are illustrated in
 
 <p>简单地来说，有单独的汇报线程，然后在mapper以及reducer里面每次读取一个kv的话都会调用progress，之后汇报线程就可以向tasktracker汇报状态。因此如果自己某个任务耗时过长的话，可以调用context.progress().
 </p>
-
 </div>
 </div>
 
 </div>
 
 <div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Usage</h3>
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 使用问题</h3>
 <div class="outline-text-3" id="text-1-3">
 
 
 </div>
 
 <div id="outline-container-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> 多路输入</h4>
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> hadoop-lzo</h4>
 <div class="outline-text-4" id="text-1-3-1">
 
-<p>多路输入包括从多路hbase以及多路hdfs输入：
-</p><ul>
-<li>编写hbase以及hdfs对应的mapper
+<ul>
+<li id="sec-1-3-1-1">安装配置<br/>
+<ul>
+<li>安装liblzo2库，sudo apt-get install liblzo2-2(liblzo2-dev)
 </li>
-<li>构造两个htable以及hdfs file
+<li>安装lzop程序，sudo apt-get install lzop
 </li>
-<li>mapper效果就是将内容直接转发出去
+<li>下载hadoop-lzo. git clone git://github.com/kevinweil/hadoop-lzo.git <a href="https://github.com/kevinweil/hadoop-lzo">https://github.com/kevinweil/hadoop-lzo</a>
 </li>
-<li>reducer将输出结果写入到hdfs文件
+<li>编译，ant compile-native tar 
 </li>
-<li>设置1个reducer这样可以容易地验证结果。
+<li>将结果build/hadoop-lzo-0.4.14的hadoop-lzo-0.4.14.jar复制到 $HADOOP_HOME/lib，将build/hadoop-lzo-0.4.14/lib/native下的文件复制到$HADOOP_HOME/lib/native (native/Linux-amd64-64)
+</li>
+<li>修改core-site.xml配置
 </li>
 </ul>
 
-<p><b>NOTE（dirlt）：现在似乎只能够实现多个hdfs，1个htable作为输入</b>
+
+
+
+<pre class="src src-XML">&lt;property&gt;
+&lt;name&gt;io.compression.codecs&lt;/name&gt;    
+&lt;value&gt;org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+&lt;name&gt;io.compression.codec.lzo.class&lt;/name&gt;
+&lt;value&gt;com.hadoop.compression.lzo.LzoCodec&lt;/value&gt;
+&lt;/property&gt;
+</pre>
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-1-2">编写proto文件<br/>
+首先创建proto文件，比如message.proto
+
+
+
+<pre class="example">package com.dirlt.java.mr.proto;
+
+// FATAL: This name works as a version number
+// Increase this number everytime you do a non-compatible modification!!
+// The block storage writer is responsible for write the version number.
+option java_outer_classname = "MessageProtos1";
+
+message Message {
+  required string text = 1;
+}
+</pre>
+
+<ul>
+<li>package 名字空间
+</li>
+<li>java_outer_classname 具体输出类名称
+</li>
+</ul>
+
+<p>使用protoc &ndash;java_out=&lt;dir&gt; message.proto就会在&lt;dir&gt;下面生成MessageProtos1.java文件。
 </p>
+<p>
+此外我们还需要为这个类写几个辅助类，但是索性的是辅助类并不是很复杂。
+</p><ul>
+<li>InputFormat com.dirlt.java.mr.MessageLzoProtobufInputFormat
+</li>
+</ul>
 
 
 
-<pre class="src src-Java">package com.umeng.dp.helper;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
-import org.apache.hadoop.hbase.mapreduce.TableInputFormat;
-import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
-import org.apache.hadoop.hbase.mapreduce.TableMapper;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import org.apache.hadoop.util.GenericOptionsParser;
-
-public class TestHBaseInputAndHDFSInputMR {
-    public static final String kInTableName1 = <span style="color: #ffff00;">"test.temporary.in1"</span>;
-    public static final String kInTableName2 = <span style="color: #ffff00;">"test.temporary.in2"</span>;
-    public static final String kInFileName1 = <span style="color: #ffff00;">"/tmp/test.temporary.in1"</span>;
-    public static final String kInFileName2 = <span style="color: #ffff00;">"/tmp/test.temporary.in2"</span>;
-    public static final String kOutFileName = <span style="color: #ffff00;">"/tmp/test.temporary.out"</span>;
-    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #ffff00;">"CF"</span>);
-    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #ffff00;">"CL"</span>);
-
-    public static class FMapper extends Mapper&lt;LongWritable, Text, Text, Text&gt; {
-        @Override
-        protected void map(LongWritable key, Text value, Context context)
-                throws IOException, InterruptedException {
-            context.write(new Text(<span style="color: #ffff00;">"0"</span>),
-                    new Text(<span style="color: #ffff00;">"file mapper value="</span> + value.toString()));
-        }
-    }
-
-    public static class TMapper extends TableMapper&lt;Text, Text&gt; {
-        @Override
-        protected void map(ImmutableBytesWritable key, Result result,
-                Context context) throws IOException, InterruptedException {
-            context.write(
-                    new Text(<span style="color: #ffff00;">"0"</span>),
-                    new Text(<span style="color: #ffff00;">"table mapper key = "</span>
-                            + Bytes.toString(key.get())
-                            + <span style="color: #ffff00;">", value="</span>
-                            + Bytes.toString(result.getValue(kByteColumnFamily,
-                                    kByteColumn))));
-        }
-    }
-
-    public static class TMapper2 extends TMapper {
-    }
-
-    public static class FTReducer extends
-            Reducer&lt;Text, Text, NullWritable, Text&gt; {
-        @Override
-        protected void reduce(Text key, Iterable&lt;Text&gt; values, Context context)
-                throws IOException, InterruptedException {
-            for (Text v : values) {
-                context.write(null, v);
-            }
-        }
-    }
-
-    public static void createTable(String name, Configuration conf)
-            throws IOException {
-        HBaseAdmin admin = new HBaseAdmin(conf);
-        if (admin.isTableAvailable(name)) {
-            admin.disableTable(name);
-            admin.deleteTable(name);
-        }
-        HTableDescriptor dp = new HTableDescriptor(name);
-        dp.addFamily(new HColumnDescriptor(kByteColumnFamily));
-        admin.createTable(dp);
-
-        HTable table = new HTable(name);
-        Put put = new Put(Bytes.toBytes(name + <span style="color: #ffff00;">".rowkey"</span>));
-        put.add(kByteColumnFamily, kByteColumn, Bytes.toBytes(name + <span style="color: #ffff00;">".tvalue"</span>));
-        table.put(put);
-        table.close();
-    }
-
-    public static void createFile(String name, Configuration conf)
-            throws IOException {
-        FileSystem fs = FileSystem.get(conf);
-        Path p = new Path(name);
-        if (fs.exists(p)) {
-            fs.delete(p, true);
-        }
-        FSDataOutputStream fos = fs.create(p);
-        fos.writeBytes(name + <span style="color: #ffff00;">".fvalue\n"</span>);
-        fos.close();
-        fs.close();
-    }
-
-    public static void deleteFile(String name, Configuration conf)
-            throws IOException {
-        FileSystem fs = FileSystem.get(conf);
-        Path p = new Path(name);
-        if (fs.exists(p)) {
-            fs.delete(p, true);
-        }
-        fs.close();
-    }
-
-    public static Job configureJob(Configuration conf, String[] args)
-            throws IOException {
-         // fill htable some data.
-         createTable(kInTableName1, conf);
-         createTable(kInTableName2, conf);
-         // write hdfs some data.
-         createFile(kInFileName1, conf);
-         createFile(kInFileName2, conf);
-        // delete out
-        deleteFile(kOutFileName, conf);
-
-        String jobName = <span style="color: #ffff00;">"TestHBaseInputAndHDFSInputMR#"</span>
-                + new SimpleDateFormat(<span style="color: #ffff00;">"yyyyMMddHHmmss"</span>).format(new Date());
-        // setup environment.
-        Job job = new Job(conf);
-        job.setJobName(jobName);
-        job.setJarByClass(TestHBaseInputAndHDFSInputMR.class);
-
-        // mapper option.
-        Scan scan = new Scan();
-        scan.setCaching(500); // 1 is the default in Scan, which will be bad for
-                              // MapReduce jobs
-                              // TableMapReduceUtil.initTableMapperJob(kInTableName1,
-                              // scan,
-        TableMapReduceUtil.initTableMapperJob(kInTableName1, scan,
-                TMapper.class, Text.class, Text.class, job);
-        // simplest way.
-        MultipleInputs.addInputPath(job, new Path(kInTableName1),
-                TableInputFormat.class, TMapper.class);
-
-        MultipleInputs.addInputPath(job, new Path(kInFileName1),
-                TextInputFormat.class, FMapper.class);
-        MultipleInputs.addInputPath(job, new Path(kInFileName2),
-                TextInputFormat.class, FMapper.class);
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(Text.class);
-        // reducer option.
-        job.setReducerClass(Reducer.class);
-        job.setOutputKeyClass(NullWritable.class);
-        job.setOutputValueClass(Text.class);
-        job.setNumReduceTasks(1); // just one reducer.
-        // output option.
-        job.setOutputFormatClass(TextOutputFormat.class);
-        TextOutputFormat.setOutputPath(job, new Path(kOutFileName));
-        return job;
-    }
-
-    public static void main(String[] args) {
-        try {
-            Configuration conf = HBaseConfiguration.create();
-            args = new GenericOptionsParser(conf, args).getRemainingArgs();
-            Job job = configureJob(conf, args);
-            job.submit();
-            System.exit(job.waitForCompletion(true) ? 0 : 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+<pre class="src src-Java">public class MessageLzoProtobufInputFormat extends LzoProtobufBlockInputFormat&lt;MessageProtos1.Message&gt; {
+    public MessageLzoProtobufInputFormat() {
+        super(new TypeRef&lt;MessageProtos1.Message&gt;() {
+        });
     }
 }
 </pre>
 
 
+<ul>
+<li>OutputFormat com.dirlt.java.mr.MessageLzoProtobufOutputFormat
+</li>
+</ul>
+
+
+
+
+<pre class="src src-Java">public class MessageLzoProtobufOutputFormat extends LzoProtobufBlockOutputFormat&lt;MessageProtos1.Message&gt; {
+    public MessageLzoProtobufOutputFormat() {
+        super(new TypeRef&lt;MessageProtos1.Message&gt;() {
+        });
+    }
+}
+</pre>
+
+
+<ul>
+<li>Writable com.dirlt.java.mr.MessageLzoProtobufWritable
+</li>
+</ul>
+
+
+
+
+<pre class="src src-Java">public class MessageLzoProtobufWritable extends ProtobufWritable&lt;MessageProtos1.Message&gt; {
+    public MessageLzoProtobufWritable() {
+        super(new TypeRef&lt;MessageProtos1.Message&gt;() {
+        });
+    }
+
+    public MessageLzoProtobufWritable(MessageProtos1.Message message) {
+        super(message, new TypeRef&lt;MessageProtos1.Message&gt;() {
+        });
+    }
+}
+
+</pre>
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-1-3">使用lzo<br/>
+关于如何使用lzo可以参看代码示例， com.dirlt.java.mr.UseLzoProtobuf . 下面几点需要说明：
+<ul>
+<li>如果输入为lzo文件的话，那么类型是ProtobufWritable&lt;M&gt;（泛型），如果需要取值的话必须通过setConverter提供类信息
+</li>
+<li>如果使用本地测试集群的话，那么需要提供lzo encoder/decoder. 
+<ul>
+<li>Configuration conf = new Configuration(); // 如果是本地测试集群的话，那么是没有读取core-site.xml的，因此也就是没有编码解码信息，需要通过下面语句提供
+</li>
+<li>conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.GzipCodec,com.hadoop.compression.lzo.LzopCodec");
+</li>
+<li>conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
+</li>
+</ul>
+
+</li>
+<li>LzoIndexer.main(new String[]{kOutputFileName}); // 如果需要在程序里面进行indexer的话，那么可以直接调用LzoIndexer
+<ul>
+<li>如果是分布式的话可以调用 DistributedLzoIndexer.main
+</li>
+<li>当然也可以按照下面的方法通过程序调用
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+<p>
+之后在输出目录下面会存在很多lzo文件，但是这些文件并不能够直接作为输入使用（因为hadoop不知道如何对这些lzo文件进行切分），需要对这些lzo文件进行索引。使用下面的命令来进行索引：
+</p><ul>
+<li>hadoop jar /usr/lib/hadoop/lib/hadoop-lzo-0.4.14.jar com.hadoop.compression.lzo.DistributedLzoIndexer &lt;output-dir&gt;
+</li>
+</ul>
+
+<p>完成之后对于每一个lzo文件都会存在一个.index文件。如果重复运行上面命令的话，会检查.index文件是否存在，如果存在的话那么就不会重新进行索引。
+</p>
+</li>
+</ul>
 </div>
 
 </div>
 
 <div id="outline-container-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> 多路输出</h4>
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> 多路输入</h4>
 <div class="outline-text-4" id="text-1-3-2">
 
-<p>多路输出包括输出到hdfs和htable
-</p><ul>
-<li>构造一个输入文件
+<ul>
+<li id="sec-1-3-2-1">MultipleInputs<br/>
+<ul>
+<li>参考代码 com.dirlt.java.mr.RunMultipleInputs1
 </li>
-<li>从这个文件读取内容并且在mapper里面写到file和table里面
+<li>支持一个htable和多个文件（但是对于htable不支持设置scan范围）
 </li>
-<li>没有设置任何reducer
+<li>代码大致过程：
+<ul>
+<li>使用 TableMapReduceUtil.initTableMapperJob 初始化htable输入（作用就是为了指定htable的input table name）
+</li>
+<li>之后在调用一次 MultipleInputs.addInputPath(job, new Path(kInTableName1), TableInputFormat.class, TMapper.class); 这里的kInTableName1可以随便定义，但是不要和接下来的hdfs路径重名。（作用是为了能够调整input format）
+</li>
+<li>接下来就是添加hdfs输入  MultipleInputs.addInputPath(job, new Path(kInFileName1), TextInputFormat.class, FMapper.class); 可以调用多次来添加多个hdfs输入源。
 </li>
 </ul>
 
-
+</li>
+<li>原理解释：
 <ul>
-<li id="sec-1-3-2-1">MultipleOutputs<br/>
-<ul>
-<li>支持多个htable，
+<li>使用MultipleInputs的话，hadoop会在环境变量中将输入内容设置成为inputPath=className, inputPath=className这样的字符串
 </li>
-<li>如果使用write(String namedOutput, K key, V value)会写到FileOutputFormat设置的目录下面，文件附上前缀namedOutput-，编号从0开始
+<li>MultipleInputs底层将InputFormat替换成为了自己的DelegateInputFormat.
 </li>
-<li>如果使用write(String namedOutput, K key, V value, String baseOutputPath) 会写到baseOutputPath目录下面，文件名没有前缀，编号还是从0开始
+<li>DelegateInputFormat根据每个className初始化实例并且将inputPath给这个实例，这些对于FileInputFormat工作很好
 </li>
-<li>因为最后输出是调用MultipleOutputs.write而非Context.write，因此和mrunit配合不太好
+<li>而对于TableInputFormat没有使用这个inputPath，而是直接读取configuration里面设置的TableOutputFormat.OUTPUT_TABLE这个值 
 </li>
 </ul>
 
-
-
-
-
-<pre class="example">[dirlt@umeng-ubuntu-pc] &gt; hadoop fs -ls /tmp/test/temporary.out/
-12/10/08 16:59:00 INFO security.UserGroupInformation: JAAS Configuration already set up for Hadoop, not re-installing.
-Found 4 items
--rw-r--r--   1 dirlt supergroup          0 2012-10-08 16:58 /tmp/test/temporary.out/_SUCCESS
-drwxr-xr-x   - dirlt supergroup          0 2012-10-08 16:57 /tmp/test/temporary.out/_logs
--rw-r--r--   1 dirlt supergroup         35 2012-10-08 16:57 /tmp/test/temporary.out/f-m-00000
--rw-r--r--   1 dirlt supergroup          0 2012-10-08 16:57 /tmp/test/temporary.out/part-m-00000
-</pre>
-
-<p>
-可以看到在mapper输出里面，以f来作为前缀而没有使用part来作为前缀作为输出（虽然存在part这个文件，但是我们没有使用context进行输出）
-</p>
-
-
-
-<pre class="src src-Java">package com.umeng.dp.offline;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
-import org.apache.hadoop.hbase.mapreduce.MultiTableOutputFormat;
-import org.apache.hadoop.hbase.mapreduce.TableOutputFormat;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import org.apache.hadoop.util.GenericOptionsParser;
-
-public class TestHBaseOutputAndHDFSOutputMR {
-    public static final String kInputFileName = <span style="color: #ffff00;">"/tmp/test/temporary.in"</span>;
-    public static final String kOutputTableName = <span style="color: #ffff00;">"test.temporary.out"</span>;
-    public static final String kOutputTableName2 = <span style="color: #ffff00;">"test.temporary.out2"</span>;
-    public static final String kOutputFileName = <span style="color: #ffff00;">"/tmp/test/temporary.out"</span>;
-    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #ffff00;">"CF"</span>);
-    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #ffff00;">"CL"</span>);
-
-    public static void createTable(String name, Configuration conf)
-            throws IOException {
-        HBaseAdmin admin = new HBaseAdmin(conf);
-        if (admin.isTableAvailable(name)) {
-            admin.disableTable(name);
-            admin.deleteTable(name);
-        }
-        HTableDescriptor dp = new HTableDescriptor(name);
-        dp.addFamily(new HColumnDescriptor(kByteColumnFamily));
-        admin.createTable(dp);
-        admin.close();
-    }
-
-    public static void createFile(String name, Configuration conf)
-            throws IOException {
-        FileSystem fs = FileSystem.get(conf);
-        Path p = new Path(name);
-        if (fs.exists(p)) {
-            fs.delete(p, true);
-        }
-        FSDataOutputStream fos = fs.create(p);
-        fos.writeBytes(name + <span style="color: #ffff00;">".fvalue\n"</span>);
-        fos.close();
-        fs.close();
-    }
-
-    public static void deleteFile(String name, Configuration conf)
-            throws IOException {
-        FileSystem fs = FileSystem.get(conf);
-        Path p = new Path(name);
-        if (fs.exists(p)) {
-            fs.delete(p, true);
-        }
-        fs.close();
-    }
-
-    public static class XMap extends Mapper&lt;LongWritable, Text, NullWritable, NullWritable &gt; {
-        private MultipleOutputs&lt;NullWritable, NullWritable&gt; mos = null;
-        @Override
-        public void setup(Context ctx) throws IOException, InterruptedException {
-            super.setup(ctx);
-            mos = new MultipleOutputs&lt;NullWritable, NullWritable&gt;(ctx);
-        }
-
-        @Override
-        public void map(LongWritable k, Text v, Context ctx) throws IOException, InterruptedException {
-            mos.write(<span style="color: #ffff00;">"f"</span>, new Text(<span style="color: #ffff00;">"fkey"</span>), v);
-            mos.write(<span style="color: #ffff00;">"f2"</span>, new Text(<span style="color: #ffff00;">"fkey"</span>), v);
-            Put put = new Put(Bytes.toBytes(<span style="color: #ffff00;">"tkey"</span>));
-            put.add(kByteColumnFamily, kByteColumn, v.getBytes());
-            mos.write(<span style="color: #ffff00;">"t"</span>, new ImmutableBytesWritable(Bytes.toBytes(kOutputTableName)), put);
-            mos.write(<span style="color: #ffff00;">"t"</span>, new ImmutableBytesWritable(Bytes.toBytes(kOutputTableName2)), put);
-        }
-
-        @Override
-        public void cleanup(Context ctx) throws IOException, InterruptedException {
-            super.cleanup(ctx);
-            mos.close();           
-        }
-    }
-
-    public static Job configureJob(Configuration conf, String[] args)
-            throws IOException {
-        createTable(kOutputTableName,conf);
-        createTable(kOutputTableName2,conf);
-        deleteFile(kOutputFileName, conf);
-        createFile(kInputFileName, conf);
-
-        String jobName = <span style="color: #ffff00;">"TestHBaseOutputAndHDFSOutputMR#"</span>
-                + new SimpleDateFormat(<span style="color: #ffff00;">"yyyyMMddHHmmss"</span>).format(new Date());
-        // setup environment.
-        Job job = new Job(conf);
-        job.setJobName(jobName);
-        job.setJarByClass(TestHBaseOutputAndHDFSOutputMR.class);        
-        job.setMapperClass(TestHBaseOutputAndHDFSOutputMR.XMap.class);
-        FileInputFormat.setInputPaths(job, new Path(kInputFileName));
-
-        MultipleOutputs.addNamedOutput(job, <span style="color: #ffff00;">"f"</span>, TextOutputFormat.class, Text.class, Text.class);
-        MultipleOutputs.addNamedOutput(job, <span style="color: #ffff00;">"f2"</span>, TextOutputFormat.class, Text.class, Text.class);
-        MultipleOutputs.addNamedOutput(job, <span style="color: #ffff00;">"t"</span>, MultiTableOutputFormat.class, ImmutableBytesWritable.class, Put.class);
-        MultipleOutputs.addNamedOutput(job, <span style="color: #ffff00;">"t2"</span>, MultiTableOutputFormat.class, ImmutableBytesWritable.class, Put.class);
-        FileOutputFormat.setOutputPath(job, new Path(kOutputFileName));        
-
-        job.setNumReduceTasks(0);
-        return job;
-    }
-
-    public static void main(String[] args) {
-        try {
-            Configuration conf = HBaseConfiguration.create();
-            args = new GenericOptionsParser(conf, args).getRemainingArgs();
-            Job job = configureJob(conf, args);
-            job.submit();
-            System.exit(job.waitForCompletion(true) ? 0 : 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-}
-
-</pre>
-
-
-<p>
-但是上面这种方式实际上并不太好进行测试。一种可以测试的方法就是MultipleOutputs进行mock，修改其write的方法将结果缓存起来。
-</p>
 </li>
 </ul>
-<ul>
-<li id="sec-1-3-2-2">MultipleTableOutputFormat<br/>
-但是如果我们只是输出到多个表的话，还是可以使用mrunit来进行测试的，下面是如果只有htable输出的情况，这样更加方面做ut
-
-
-
-<pre class="src src-Java">package com.umeng.dp.offline;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import junit.framework.TestCase;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataOutputStream;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
-import org.apache.hadoop.hbase.mapreduce.MultiTableOutputFormat;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.apache.hadoop.io.LongWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.util.GenericOptionsParser;
-
-public class TestHBaseOutputAndHDFSOutputMR extends TestCase {
-    public static final String kInputFileName = <span style="color: #ffff00;">"/tmp/test/temporary.in"</span>;
-    public static final String kOutputTableName = <span style="color: #ffff00;">"test.temporary.out"</span>;
-    public static final String kOutputTableName2 = <span style="color: #ffff00;">"test.temporary.out2"</span>;
-    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #ffff00;">"CF"</span>);
-    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #ffff00;">"CL"</span>);
-
-    public static void createTable(String name, Configuration conf)
-            throws IOException {
-        HBaseAdmin admin = new HBaseAdmin(conf);
-        if (admin.isTableAvailable(name)) {
-            admin.disableTable(name);
-            admin.deleteTable(name);
-        }
-        HTableDescriptor dp = new HTableDescriptor(name);
-        dp.addFamily(new HColumnDescriptor(kByteColumnFamily));
-        admin.createTable(dp);
-        admin.close();
-    }
-
-    public static void createFile(String name, Configuration conf)
-            throws IOException {
-        FileSystem fs = FileSystem.get(conf);
-        Path p = new Path(name);
-        if (fs.exists(p)) {
-            fs.delete(p, true);
-        }
-        FSDataOutputStream fos = fs.create(p);
-        fos.writeBytes(name + <span style="color: #ffff00;">".fvalue\n"</span>);
-        fos.close();
-        fs.close();
-    }
-
-    public static void deleteFile(String name, Configuration conf)
-            throws IOException {
-        FileSystem fs = FileSystem.get(conf);
-        Path p = new Path(name);
-        if (fs.exists(p)) {
-            fs.delete(p, true);
-        }
-        fs.close();
-    }
-
-    public static class XMap extends Mapper&lt;LongWritable, Text, ImmutableBytesWritable, Put &gt; {
-        @Override
-        public void setup(Context ctx) throws IOException, InterruptedException {
-            super.setup(ctx);
-        }
-
-        @Override
-        public void map(LongWritable k, Text v, Context ctx) throws IOException, InterruptedException {            
-            Put put = new Put(Bytes.toBytes(<span style="color: #ffff00;">"tkey"</span>));
-            put.add(kByteColumnFamily, kByteColumn, v.getBytes());
-            ctx.write(new ImmutableBytesWritable(Bytes.toBytes(kOutputTableName)), put);
-            ctx.write(new ImmutableBytesWritable(Bytes.toBytes(kOutputTableName2)), put);
-        }
-
-        @Override
-        public void cleanup(Context ctx) throws IOException, InterruptedException {
-            super.cleanup(ctx);   
-        }
-    }
-
-    public static Job configureJob(Configuration conf, String[] args)
-            throws IOException {
-        createTable(kOutputTableName,conf);
-        createTable(kOutputTableName2,conf);
-        createFile(kInputFileName, conf);
-
-        String jobName = <span style="color: #ffff00;">"TestHBaseOutputAndHDFSOutputMR#"</span>
-                + new SimpleDateFormat(<span style="color: #ffff00;">"yyyyMMddHHmmss"</span>).format(new Date());
-        // setup environment.
-        Job job = new Job(conf);
-        job.setJobName(jobName);
-        job.setJarByClass(TestHBaseOutputAndHDFSOutputMR.class);        
-        job.setMapperClass(TestHBaseOutputAndHDFSOutputMR.XMap.class);
-        FileInputFormat.setInputPaths(job, new Path(kInputFileName));
-        job.setOutputFormatClass(MultiTableOutputFormat.class);               
-        job.setNumReduceTasks(0);
-        return job;
-    }
-
-    public static void main(String[] args) {
-        try {
-            Configuration conf = HBaseConfiguration.create();
-            args = new GenericOptionsParser(conf, args).getRemainingArgs();
-            Job job = configureJob(conf, args);
-            job.submit();
-            System.exit(job.waitForCompletion(true) ? 0 : 1);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-}
-
-</pre>
 
 
 </li>
@@ -1033,42 +685,76 @@ public class TestHBaseOutputAndHDFSOutputMR extends TestCase {
 </div>
 
 <div id="outline-container-1-3-3" class="outline-4">
-<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> 获取集群运行状况</h4>
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> 多路输出</h4>
 <div class="outline-text-4" id="text-1-3-3">
 
-<p>可以通过JobClient这个对象来获得集群和上面的作业运行状况，更多信息可以详细阅读一下JobClient的API部分
-</p>
+<ul>
+<li id="sec-1-3-3-1">MultipleOutputs<br/>
+<ul>
+<li>参考代码 com.dirlt.java.mr.RunMultipleOutputs
+</li>
+<li>支持多个htable和多个文件
+</li>
+<li>如果使用write(String namedOutput, K key, V value)会写到FileOutputFormat设置的目录下面，文件附上前缀namedOutput-，
+</li>
+<li>如果使用write(String namedOutput, K key, V value, String baseOutputPath) 
+<ul>
+<li>如果baseOutputPath以/开头的话比如/a/b/c的话，那么输出文件为/a/b/c-m-00000
+</li>
+<li>如果baseOutputPath以/结尾的话比如/ab/c/的话，那么输出文件为/a/b/c/-m-00000.
+</li>
+<li>如果baseOutputPath没有以/开头的话，那么写到FileOutputFormat设置的目录下面，文件附上前缀baseOutputPath-.
+</li>
+</ul>
+
+</li>
+<li>因为最后输出是调用MultipleOutputs.write而非Context.write，因此和mrunit配合不太好
+<ul>
+<li>可以通过MockMultipleOutputs来进行测试 参考代码 com.dirlt.java.mr.MockMultipleOutput
+</li>
+</ul>
+
+</li>
+</ul>
 
 
-<pre class="src src-Java">package com.dirlt.mapreduce;
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-2">MultipleTableOutputFormat<br/>
+<ul>
+<li>参考代码 com.dirlt.java.mr.RunMultipleTableOutput
+</li>
+<li>支持多个htable
+</li>
+<li>调用context.write的key需要指定outputTable
+<ul>
+<li>其实这也意味着如果是单表输出的话那么key为null即可
+</li>
+<li>前提是需要使用conf.set(TableOutputFormat.OUTPUT_TABLE,tableName);
+</li>
+</ul>
 
-import java.io.IOException;
+</li>
+</ul>
 
-import org.apache.hadoop.mapred.ClusterStatus;
-import org.apache.hadoop.mapred.JobClient;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.JobStatus;
 
-public class Cluster {
-    public static void main(String[] args) throws IOException {
-        JobConf jconf = new JobConf();
-        JobClient jclient = new JobClient(jconf);
-        JobStatus[] js = jclient.getAllJobs();
-        for (JobStatus j : js) {
-            System.out.println(<span style="color: #ffff00;">"JOB=jobid:"</span> + j.getJobID().toString() + <span style="color: #ffff00;">",setup:"</span>
-                    + j.setupProgress() + <span style="color: #ffff00;">",cleanup:"</span> + j.cleanupProgress()
-                    + <span style="color: #ffff00;">",map:"</span> + j.mapProgress() + <span style="color: #ffff00;">",reduce:"</span>
-                    + j.reduceProgress() + <span style="color: #ffff00;">",status:"</span>
-                    + JobStatus.getJobRunState(j.getRunState()));
-        }
-        ClusterStatus cs = jclient.getClusterStatus(true);
-        System.out.println(<span style="color: #ffff00;">"CSR=map-cap:"</span> + cs.getMaxMapTasks() + <span style="color: #ffff00;">",map-used:"</span>
-                + cs.getMapTasks() + <span style="color: #ffff00;">",reduce-cap:"</span> + cs.getMaxReduceTasks()
-                + <span style="color: #ffff00;">",reduce-used:"</span> + cs.getReduceTasks());
-    }
-}
+</li>
+</ul>
+</div>
 
-</pre>
+</div>
+
+<div id="outline-container-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> 获取集群运行状况</h4>
+<div class="outline-text-4" id="text-1-3-4">
+
+<ul>
+<li>参考代码 com.dirlt.java.mr.ClusterSummary
+</li>
+<li>获取更多信息可以阅读JobClient API
+</li>
+</ul>
 
 
 </div>
@@ -1078,7 +764,7 @@ public class Cluster {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-03 20:11:32 CST</p>
+<p class="date">Date: 2012-12-14 12:13:56 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
