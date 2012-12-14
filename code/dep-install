@@ -5,9 +5,8 @@
 import os
 import string
 import sys
-#curdir=os.path.dirname(__file__)
-#readme=os.path.join(curdir,'README.org')
-readme='./README'
+curdir=os.path.dirname(__file__)
+readme=os.path.join(curdir,'README.org')
 xs=map(lambda x:string.strip(x),open(readme).readlines())
 deps=['scons','g++','python']
 prefix='- sudo apt-get install '

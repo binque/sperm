@@ -5,10 +5,10 @@
 import message_pb2
 
 request = message_pb2.Request()
-request.table_name='t1'
-request.row_key='r1'
-request.column_family='cf'
-request.qualifiers.append('key')
+request.table_name='appbenchmark'
+request.row_key='2012-04-08_YULE'
+request.column_family='stat'
+request.qualifiers.append('14_day_active_count_avg')
 
 data = request.SerializeToString()
 
@@ -18,7 +18,7 @@ def raiseHTTPRequest(url,data=None,timeout=3):
     f=urllib2.urlopen(url,data,timeout)
     return f.read()
 
-back = raiseHTTPRequest('http://localhost:8000',data,timeout=20)
+back = raiseHTTPRequest('http://dp0:12345',data,timeout=20)
 
 response = message_pb2.Response()
 response.ParseFromString(back)

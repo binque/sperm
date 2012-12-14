@@ -21,10 +21,10 @@
    - linux perf
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
-** TODO 快速编写MR
+** TODO 快速编写MR（学习clojure)
 ** TODO netbsd/plan9
 ** TODO 如何优化当前dp任务
-** TODO 详细说明分群任务
+** TODO 详细说明分群任务(这个可能需要整体优化）
 ** TODO installhistory的改造跟进
 ** TODO 下一代计算平台的设计
 ** TODO 查询过年飞机
@@ -40,12 +40,11 @@
 ** TODO umid服务,db research.probelm.
 ** TODO 调研memcached. and netty and thrift.
 ** TODO 分析htable代码put.
-** TODO 完成游戏模版代码
-** TODO hbase testing utility.
+** TODO hbase testing utility.（是否可以不使用这个东西）
 ** TODO netty的线程池问题以及使用总结。
-** TODO 游戏统计部分
+** TODO 游戏统计部分上线
 ** TODO appsync的任务，
 ** TODO 在tasktracker机器上面建立新人关系
-** TODO 没有使用hadoop jar提交可以直接写本地文件
+** TODO 没有使用hadoop jar提交可以直接写本地文件(本地集群，验证本地集群是否可以跑hbase以及使用lzo等文件）
 ** TODO 尝试编写多个table输入的情况
 ** TODO 整理hbase以及hdfs部分

@@ -48,8 +48,8 @@ public class RestServer {
 
     static {
         logger.xdebug = false;
-        logger.xinfo = false;
-        logger.xwarn = false;
+        //logger.xinfo = false;
+        //logger.xwarn = false;
     }
 
     public static void runHttpServer(Configuration configuration) {
