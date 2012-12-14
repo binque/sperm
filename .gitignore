@@ -65,6 +65,7 @@ code/cc/sasuke/test/rpc_client
 code/cc/sasuke/test/rpc_server
 code/cc/sasuke/test/test_zmq
 code/cc/nasty/test/test_parser
+code/cc/playboard/runnable_so
 
 code/java/*/target
 

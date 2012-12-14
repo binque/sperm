@@ -15,9 +15,8 @@ u'\u4e2d\u56fd'
 涓浗
 #+END_EXAMPLE
 
-这里一个比较难处理的问题就是字符编码的识别，这个在我的项目[[file:./dsgm.org][dsgm]] 遇到过。个人现在处理的办法就是尝试全部转换成为utf8来进行处理。实现办法就是首先尝试转换
-到gb18030,如果转换失败的话那么转换成为utf8（当然这不是最好的，使用chardet这样的模块似乎是更合理的选择），这样的操作对于我们中国大陆用户来说基本上应该
-OK，就我所知道的系统XP都是GB2312编码，linux/mac通常设置成为utf8，而cygwin这样架在windows上面的系统通常也是gb2312。
+这里一个比较难处理的问题就是字符编码的识别，现在处理的办法就是尝试全部转换成为utf8来进行处理。实现办法就是首先尝试转换到gb18030,如果转换失败的话那么转换成为utf8（当然这不是最好的，使用chardet这样的模块似乎是更合理的选择），
+这样的操作对于我们中国大陆用户来说基本上应该OK，就我所知道的系统XP都是GB2312编码，linux/mac通常设置成为utf8，而cygwin这样架在windows上面的系统通常也是gb2312。
 
 #+BEGIN_SRC Python
 def toUTF8(s):
@@ -95,7 +94,7 @@ def run():
 2012-08-30 23:19:09 [16116] [INFO] Shutting down: Master
 #+END_EXAMPLE
 
-** read excel
+** excel
 分析excel文件在实际生活中还是比较常见的，通常我们的问题就是卡在读取上面（主要原因是因为我对COM接口不太熟悉，不太了解windows编程）。使用xlrd可以通过python来访问excel文件。
 
    - xlrd http://pypi.python.org/pypi/xlrd
@@ -151,47 +150,3 @@ for i in range(0,book.nsheets):
                 print '%s '%(cell.value),
         print ''
 #+END_SRC
-
-** datetime/tiemstamp
-时间戳相对UTC而不是相对于本地时区， seconds since 1970-01-01 00:00:00 UTC. 效果相当于date +%s
-#+BEGIN_SRC Python
-from datetime import datetime
-import calendar
-import time
-def convertDateTimeToTimeStamp(s):
-    dt = datetime.strptime(s,'%Y-%m-%d %H:%M:%S')
-    return calendar.timegm(dt.timetuple())
-    
-def convertTimeStampToDateTime(ts):
-    # in seconds.
-    dt = datetime.utcfromtimestamp(ts)
-    return dt.strftime('%Y-%m-%d %H:%M:%S')
-
-def convertTimeStampToDateTime2(ts):
-    # in seconds.
-    st = time.gmtime(ts)
-    return time.strftime('%Y-%m-%d %H:%M:%S',st)
-
-ts = convertDateTimeToTimeStamp('2012-10-12 16:00:00')
-print convertTimeStampToDateTime(ts)
-print convertTimeStampToDateTime2(ts)
-#+END_SRC
-
-下面代码相对本地时区
-#+BEGIN_SRC Python
-import time
-def convertDateTimeToTimeStamp(s):
-    st = time.strptime(s,'%Y-%m-%d %H:%M:%S')
-    return time.mktime(st)
-
-def convertTimeStampToDateTime(ts):
-    # in seconds.
-    st = time.localtime(ts)
-    return time.strftime('%Y-%m-%d %H:%M:%S',st)
-
-ts = convertDateTimeToTimeStamp('2012-10-12 16:00:00')
-print convertTimeStampToDateTime(ts)
-#+END_SRC
-
-*NOTE（dirlt）：感觉这个部分的API十分混乱*
-
