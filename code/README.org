@@ -19,16 +19,20 @@
    - nasty // lisp-like language frontend used flex + bison.
 
 * py
-   - dsgm // Documentation Synchronize based on Google Mail. http://dirlt.com/dsgm.html
    - b2p // encode byte into picture and vice verse.
 
 * java
    - finagle // test code on finagle
    - netty // test code on netty
    - playboard // test code on java and jvm.
-   - util // some utility may be useful.
+   - asynchbase // test code on asynchbase
+   - fast-hbase-rest // fast hbase access layer based on netty using asynchbase and protobuf
+   - guava // test code on google amazing library
+   - jredis // redis java client
+   - memcached // test memcached
+   - mr // mapreduce 
 
-* project name
+* reserved project name
    - madara //
    - uchiha // 
    - orochi //
