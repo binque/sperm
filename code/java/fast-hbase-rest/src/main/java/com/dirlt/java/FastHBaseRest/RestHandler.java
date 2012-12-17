@@ -42,7 +42,7 @@ public class RestHandler extends SimpleChannelHandler {
         client.code = AsyncClient.Status.kHttpRequest;
         client.channel = channel;
         client.httpRequest = request;
-        client.queryStartTimestamp = RestServer.now();
+        client.queryStartTimestamp = System.currentTimeMillis();
         CpuWorkerPool.getInstance().submit(client);
     }
 
@@ -53,7 +53,7 @@ public class RestHandler extends SimpleChannelHandler {
 
         if (client.code != AsyncClient.Status.kStat) {
             StatStore.getInstance().addCounter("rpc.out.count", 1);
-            client.queryEndTimestamp = RestServer.now();
+            client.queryEndTimestamp = System.currentTimeMillis();
             StatStore.getInstance().addCounter("rpc.query.duration", client.queryEndTimestamp - client.queryStartTimestamp);
         }
     }
@@ -63,7 +63,7 @@ public class RestHandler extends SimpleChannelHandler {
         RestServer.logger.debug("connection open");
 
         StatStore.getInstance().addCounter("session.in.count", 1);
-        client.sessionStartTimestamp = RestServer.now();
+        client.sessionStartTimestamp = System.currentTimeMillis();
 
     }
 
@@ -72,7 +72,7 @@ public class RestHandler extends SimpleChannelHandler {
         RestServer.logger.debug("connection closed");
 
         StatStore.getInstance().addCounter("session.out.count", 1);
-        client.sessionEndTimestamp = RestServer.now();
+        client.sessionEndTimestamp = System.currentTimeMillis();
         StatStore.getInstance().addCounter("session.duration",
                 client.sessionEndTimestamp - client.sessionStartTimestamp);
         e.getChannel().close();

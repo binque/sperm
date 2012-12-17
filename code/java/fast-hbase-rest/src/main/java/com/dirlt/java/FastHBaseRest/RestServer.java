@@ -46,10 +46,6 @@ public class RestServer {
 
     public static Logger logger = new Logger();
 
-    public static long now() {
-        return System.currentTimeMillis();
-    }
-
     public static void runHttpServer(Configuration configuration) {
         ChannelFactory factory = new NioServerSocketChannelFactory(
                 Executors.newCachedThreadPool(),
