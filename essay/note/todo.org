@@ -48,3 +48,4 @@
 ** TODO 没有使用hadoop jar提交可以直接写本地文件(本地集群，验证本地集群是否可以跑hbase以及使用lzo等文件）
 ** TODO 尝试编写多个table输入的情况
 ** TODO 整理hbase以及hdfs部分
+** TODO 羽绒服，书籍，

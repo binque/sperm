@@ -15,6 +15,7 @@ import org.jboss.netty.handler.codec.http.*;
 
 public class RestHandler extends SimpleChannelHandler {
     private AsyncClient client = new AsyncClient(); // each handler corresponding a channel or a connection.
+    // binding to the channel pipeline.
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
