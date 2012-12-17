@@ -46,10 +46,8 @@ public class RestServer {
 
     public static Logger logger = new Logger();
 
-    static {
-        logger.xdebug = false;
-        //logger.xinfo = false;
-        //logger.xwarn = false;
+    public static long now() {
+        return System.currentTimeMillis();
     }
 
     public static void runHttpServer(Configuration configuration) {
@@ -76,9 +74,14 @@ public class RestServer {
             Configuration.usage();
             return;
         }
+        // easy way!!
+        if (!configuration.isDebug()) {
+            logger.xdebug = false;
+        }
         LocalCache.init(configuration);
         CpuWorkerPool.init(configuration);
         HBaseService.init(configuration);
+        StatStore.init(configuration);
         runHttpServer(configuration);
     }
 }

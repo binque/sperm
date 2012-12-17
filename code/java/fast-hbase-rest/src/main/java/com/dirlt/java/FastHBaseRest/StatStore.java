@@ -16,55 +16,19 @@ public class StatStore {
     // singleton.
     private Map<String, Long> counter = new TreeMap<String, Long>();
     private Map<String, String> status = new TreeMap<String, String>();
-    private static StatStore instance = new StatStore();
-
-    public static final String kRpcInCount = "rpc.in.count";
-    public static final String kRpcOutCount = "rpc.out.count";
-    public static final String kRpcInBytes = "rpc.in.bytes";
-    public static final String kRpcOutBytes = "rpc.out.bytes";
-    public static final String kConnectionCount = "connection.count";
-    public static final String kProtobufInvalidCount = "protobuf.invalid.count";
-    public static final String kQueryCount = "query.count";
-    public static final String kQueryLocalCacheCount = "query.local.cache.count";
-
-    public static void incRpcInCount() {
-        instance.addCounter(kRpcInCount, 1);
-    }
-
-    public static void addRpcInBytes(long bytes) {
-        instance.addCounter(kRpcInBytes, bytes);
-    }
-
-    public static void incRpcOutCount() {
-        instance.addCounter(kRpcOutCount, 1);
-    }
-
-    public static void addRpcOutBytes(long bytes) {
-        instance.addCounter(kRpcOutBytes, bytes);
-    }
-
-    public static void incConnectionCount() {
-        instance.addCounter(kConnectionCount, 1);
-    }
-
-    public static void decConnectionCount() {
-        instance.addCounter(kConnectionCount, -1);
-    }
-
-    public static void incProtobufInvalidCount() {
-        instance.addCounter(kProtobufInvalidCount, 1);
-    }
-
-    public static void addQueryCount(int count) {
-        instance.addCounter(kQueryCount, count);
-    }
-
-    public static void addQueryLocalCacheCount(int count) {
-        instance.addCounter(kQueryLocalCacheCount, count);
-    }
+    private String serviceName = null;
+    private static StatStore instance = null;
 
     public static StatStore getInstance() {
         return instance;
+    }
+
+    public StatStore(Configuration configuration) {
+        this.serviceName = configuration.getServiceName();
+    }
+
+    public static void init(Configuration configuration) {
+        instance = new StatStore(configuration);
     }
 
     public void addCounter(String name, long value) {

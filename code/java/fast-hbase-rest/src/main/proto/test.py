@@ -6,9 +6,9 @@ import message_pb2
 
 request = message_pb2.Request()
 request.table_name='t1'
-request.row_key='r1'
+request.row_key='t1.fk'
 request.column_family='cf'
-request.qualifiers.append('key')
+request.qualifiers.append('cl')
 
 data = request.SerializeToString()
 
