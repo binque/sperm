@@ -3,48 +3,8 @@
 # do publish
 emacs --batch --script publish.el
 ./appbdstat # append baidu stat(tongji.baidu.com)
-rm -rf ../www/images
-rm -rf ../www/note/private.html
-rm -rf ../www/note/plan.html
-
 cd ../www/
+rm -rf images
 ln -s ../essay/images/ images
 cd ../essay/
-
-if [ $1"X" != "siteX" ]
-then
-    exit 0
-fi
-
-# publish to dirlt.com
-# use git to sync.:(
-
-# publish to sae.
-cd ..
-if [ ! -d sae/1 ]
-then
-    svn co https://svn.sinaapp.com/dirlt/ sae
-    mkdir -p sae/1
-    mkdir -p sae/1/note
-    mkdir -p sae/1/images
-    cd sae
-    svn add 1/
-    svn add 1/note
-    svn add 1/images
-    cd ..
-fi
-cd sae/1
-svn up
-cd ../../
-rsync -arzv www/ sae/1/
-rsync -arzv essay/images/ sae/1/images/
-cd sae/1
-svn add *
-svn add note/*
-svn add images/*
-svn ci -m 'ci sae'
-cd ../../essay
-
-
-
 

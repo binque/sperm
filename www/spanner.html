@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="spanner"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-07 10:38:25 CST"/>
+<meta name="generated" content="2012-12-19 10:21:13 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -98,7 +98,32 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 spanner</a></li>
+<li><a href="#sec-1">1 spanner</a>
+<ul>
+<li><a href="#sec-1-1">1.1 Abstract</a></li>
+<li><a href="#sec-1-2">1.2 Introduction</a></li>
+<li><a href="#sec-1-3">1.3 Implementation</a>
+<ul>
+<li><a href="#sec-1-3-1">1.3.1 Spanserver Software Stack</a></li>
+<li><a href="#sec-1-3-2">1.3.2 Directories and Placement</a></li>
+<li><a href="#sec-1-3-3">1.3.3 Data Model</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-4">1.4 TrueTime</a></li>
+<li><a href="#sec-1-5">1.5 Concurrency Control</a></li>
+<li><a href="#sec-1-6">1.6 Evaluation</a>
+<ul>
+<li><a href="#sec-1-6-1">1.6.1 Microbenchmarks</a></li>
+<li><a href="#sec-1-6-2">1.6.2 Availability</a></li>
+<li><a href="#sec-1-6-3">1.6.3 TrueTime</a></li>
+<li><a href="#sec-1-6-4">1.6.4 F1</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-7">1.7 Related Work</a></li>
+<li><a href="#sec-1-8">1.8 Future Work</a></li>
+<li><a href="#sec-1-9">1.9 Conclusions</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -128,12 +153,283 @@
 </ul>
 
 
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Abstract</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<ul>
+<li>Spanner is Google’s scalable, multi-version, globally-distributed, and synchronously-replicated database. It is the first system to distribute data at global scale and sup-port externally-consistent distributed transactions.  <b>(可扩展，多版本，全局分布式，同步复制的数据库系统，扩展性到全球级别，并且支持外部一致性的分布式事务）</b>
+</li>
+<li>This paper describes how Spanner is structured, its feature set, the rationale underlying various design decisions, and a novel time API that exposes clock uncertainty. （主要分为两个方面，一个方面是组织结构以及关键特性还有各种设计上的权衡，另外一个就是支持时钟不确定性的时间API）
+</li>
+<li>This API and its implementation are critical to supporting exter-nal consistency and a variety of powerful features: non-blocking reads in the past, lock-free read-only transac-tions, and atomic schema changes, across all of Spanner.（主要是使用这个API才能够保证外部一致性以及一些非常强大的功能，non-blocking read历史数据，lock-free read-only事务，以及原子schema变化）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Introduction</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<ul>
+<li>At the high-est level of abstraction, it is a database that shards data across many sets of Paxos state machines in data- centers spread all over the world. Replication is used for global availability and geographic locality; clients auto-matically failover between replicas. （数据是进行shard的，每个shard实例之间的同步都是通过paxos状态机来完成的，实例可能散步于世界的各个地方。replication主要是为了提供全球可用性以及地理位置上的局部性，client能够自动地在replicas之间做failover切换）
+</li>
+<li>Spanner automati-cally reshards data across machines as the amount of data or the number of servers changes, and it automatically migrates data across machines (even across datacenters) to balance load and in response to failures. （spanner对于data shard是自动完成的，当server数量变化的时候会reshard然后重新做balance)
+</li>
+<li>Spanner is designed to scale up to millions of machines across hun-dreds of datacenters and trillions of database rows.(扩展到百万机器，上百个数据中心，10^12 rows）
+</li>
+<li>Spanner’s main focus is managing cross-datacenter replicated data, but we have also spent a great deal of time in designing and implementing important database features on top of our distributed-systems infrastructure（虽然spanner主要focus是在跨机房的数据replication上，但是也花了相当多的时间来在分布式结构上设计和实现很多database特性，
+<ul>
+<li>Bigtable不能够支持复杂并且变化的schema，并且对于wide-area下面不能够很好地实现强一致性
+</li>
+<li>Megastore可以解决Bigtable这个问题但是write throughput太差（使用MVCC方式造成的冲突）
+</li>
+<li>Spanner has evolved from a Bigtable-like versioned key-value store into a temporal multi-version database. <b>TODO（dirlt）：什么叫做temporal?</b>
+</li>
+<li>Data is stored in schematized semi-relational tables; 数据存放在schema化的半关系表里面 <b>NOTE（dirlt）：table是有schema的，但是table之间的关系并不像数据库table之间那么的具有关系性，可以认为是改良吧</b>
+</li>
+<li>data is versioned, and each version is automati-cally timestamped with its commit time; old versions of data are subject to configurable garbage-collection poli-cies; and applications can read data at old timestamps.  （data都通过timestamp进行version，这样允许application读取历史数据，而old version数据能够被GC清除）
+</li>
+<li>Spanner supports general-purpose transactions, and pro-vides a SQL-based query language.（支持ACID事务，上层提供查询语言）
+</li>
+</ul>
+
+</li>
+<li>As a globally-distributed database, Spanner provides several interesting features.（在扩展性和并发方面还提供了下面几个特性）
+<ul>
+<li>First, the replication con-figurations for data can be dynamically controlled at a fine grain by applications. （application能够精确控制data方式位置以及replication方式）
+<ul>
+<li>which datacenters contain which data
+</li>
+<li>how far data is from its users (to control read latency)
+</li>
+<li>how far replicas are from each other (to control write la-tency)
+</li>
+<li>how many replicas are maintained (to con-trol durability, availability, and read performance).
+</li>
+</ul>
+
+</li>
+<li>Second, Spanner has two features that are difficult to implement in a distributed database: 
+<ul>
+<li>provides externally consistent reads and writes, （读写外部一致性）
+</li>
+<li>and globally-consistent reads across the database at a time-stamp.（全局一致性地读取历史数据）
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+<li>These features are enabled by the fact that Spanner as-signs globally-meaningful commit timestamps to trans-actions, even though transactions may be distributed. The timestamps reflect serialization order.（上面这些特性主要是因为spanner为事务提供了全局的提交时间戳，时间戳的顺序决定了串行顺序）
+</li>
+<li>The key enabler of these properties is a new TrueTime API and its implementation. The API directly exposes clock uncertainty, and the guarantees on Spanner’s times-tamps depend on the bounds that the implementation pro- vides. （提供全局时间戳关键就是TrueTime API，API实现上暴露了时钟的不确定性，提供当前时钟的范围）
+<ul>
+<li>If the uncertainty is large, Spanner slows down to wait out that uncertainty. Google’s cluster-management software provides an implementation of the TrueTime API. 如果这个不确定性太大的话，那么spanner就需要slowdown等待这个uncertainty降下来
+</li>
+<li>This implementation keeps uncertainty small (gen-erally less than 10ms) by using multiple modern clock references (GPS and atomic clocks). 通过GPS和原子钟来keep uncertainty small
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Implementation</h3>
+<div class="outline-text-3" id="text-1-3">
+
+<ul>
+<li>A Spanner deployment is called a universe. Given that Spanner manages data globally, there will be only a handful of running universes. We currently run a test/playground universe, a development/production uni-
+</li>
+</ul>
+
+<p>verse, and a production-only universe.（一个spanner实例称为universe）
+</p><ul>
+<li>Spanner is organized as a set of zones, where each zone is the rough analog of a deployment of Bigtable servers（spanner由多个zones组成，每个zone可以认为是一个bigtable servers的部署实例）
+<ul>
+<li>Zones are the unit of administrative deploy-ment. The set of zones is also the set of locations across which data can be replicated. （zone是用管理和部署的单元， <b>可以认为数据的每个replication在一个zone里面最多存在一份</b> ）
+</li>
+<li>Zones can be added to or removed from a running system as new datacenters are brought into service and old ones are turned off, respec-tively. （zone能够自由地进入和从数据中心移除）
+</li>
+<li>Zones are also the unit of physical isolation: there may be one or more zones in a datacenter, for example, if different applications’ data must be partitioned across different sets of servers in the same datacenter.（zone也是物理隔离的单元，可以在一个datacenter里面存在几个zone实例，这样在一个datacenter就可以存在同一个数据的replication多份）
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+
+<hr/>
+
+<p>
+<img src="./images/spanner-server-organization.png"  alt="./images/spanner-server-organization.png" />
+</p>
+<ul>
+<li>zonemaster 选择spanserver来serve data
+</li>
+<li>spanserver serve data
+</li>
+<li>location proxy 用来定位spanserver location <b>TODO（dirlt）：confuse with zonemaster</b>
+</li>
+<li>universe master和plaecment driver都是单例
+<ul>
+<li>The universe master is primarily a console that displays status information about all the zones for inter-active debugging. （汇总信息）
+</li>
+<li>The placement driver handles auto-mated movement of data across zones on the timescale of minutes. （在zone之间进行分钟级别自动balance）
+</li>
+<li>The placement driver periodically commu-nicates with the spanservers to find data that needs to be moved, either to meet updated replication constraints or to balance load.（直接和spanserver通信）
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> Spanserver Software Stack</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+<p><img src="./images/spanserver-software-stack.png"  alt="./images/spanserver-software-stack.png" />
+</p>
+<ul>
+<li>At the bottom, each spanserver is responsible for between 100 and 1000 instances of a data structure called a tablet.(每个spanserver管理100-1000个tablet实例）
+<ul>
+<li>tablet和bigtable tablet概念非常类似，也是map数据结构并且value存储了多个版本 <b>这里的tablet是否为sorted-map?</b>
+</li>
+<li>tablet’s state is stored in set of B-tree-like files and a write-ahead log, all on a distributed file system called Colossus (the successor to the Google File System) 状态保存在文件以及log上面存储在GFS2
+</li>
+</ul>
+
+</li>
+<li>To support replication, each spanserver implements a single Paxos state machine on top of each tablet. Each state machine stores its metadata and log in its corresponding tablet. （每个tablet上面实现paxos实例，状态机的实例将metadata以及operation log保存在管理的tablet里面）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> Directories and Placement</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> Data Model</h4>
+<div class="outline-text-4" id="text-1-3-3">
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> TrueTime</h3>
+<div class="outline-text-3" id="text-1-4">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> Concurrency Control</h3>
+<div class="outline-text-3" id="text-1-5">
+
+<p><b>NOTE(dirlt):并发控制是关键部分，但是这个部分我没有仔细阅读，主要是对paxos没有很好的理解</b>
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> Evaluation</h3>
+<div class="outline-text-3" id="text-1-6">
+
+
+</div>
+
+<div id="outline-container-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> Microbenchmarks</h4>
+<div class="outline-text-4" id="text-1-6-1">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-6-2" class="outline-4">
+<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> Availability</h4>
+<div class="outline-text-4" id="text-1-6-2">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-6-3" class="outline-4">
+<h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> TrueTime</h4>
+<div class="outline-text-4" id="text-1-6-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-6-4" class="outline-4">
+<h4 id="sec-1-6-4"><span class="section-number-4">1.6.4</span> F1</h4>
+<div class="outline-text-4" id="text-1-6-4">
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> Related Work</h3>
+<div class="outline-text-3" id="text-1-7">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> Future Work</h3>
+<div class="outline-text-3" id="text-1-8">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-9" class="outline-3">
+<h3 id="sec-1-9"><span class="section-number-3">1.9</span> Conclusions</h3>
+<div class="outline-text-3" id="text-1-9">
+
+</div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-07 10:38:25 CST</p>
+<p class="date">Date: 2012-12-19 10:21:13 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
