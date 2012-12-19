@@ -8,31 +8,662 @@ public final class MessageProtos1 {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
   }
-  public static final class Request extends
+  public static final class Message extends
       com.google.protobuf.GeneratedMessage {
-    // Use Request.newBuilder() to construct.
-    private Request() {
+    // Use Message.newBuilder() to construct.
+    private Message() {
       initFields();
     }
-    private Request(boolean noInit) {}
+    private Message(boolean noInit) {}
     
-    private static final Request defaultInstance;
-    public static Request getDefaultInstance() {
+    private static final Message defaultInstance;
+    public static Message getDefaultInstance() {
       return defaultInstance;
     }
     
-    public Request getDefaultInstanceForType() {
+    public Message getDefaultInstanceForType() {
       return defaultInstance;
     }
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_Request_descriptor;
+      return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_Message_descriptor;
     }
     
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_Request_fieldAccessorTable;
+      return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_Message_fieldAccessorTable;
+    }
+    
+    public enum Type
+        implements com.google.protobuf.ProtocolMessageEnum {
+      kReadRequest(0, 0),
+      kWriteRequest(1, 1),
+      kReadResponse(2, 2),
+      kWriteResponse(3, 3),
+      ;
+      
+      
+      public final int getNumber() { return value; }
+      
+      public static Type valueOf(int value) {
+        switch (value) {
+          case 0: return kReadRequest;
+          case 1: return kWriteRequest;
+          case 2: return kReadResponse;
+          case 3: return kWriteResponse;
+          default: return null;
+        }
+      }
+      
+      public static com.google.protobuf.Internal.EnumLiteMap<Type>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static com.google.protobuf.Internal.EnumLiteMap<Type>
+          internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<Type>() {
+              public Type findValueByNumber(int number) {
+                return Type.valueOf(number)
+      ;        }
+            };
+      
+      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(index);
+      }
+      public final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.Message.getDescriptor().getEnumTypes().get(0);
+      }
+      
+      private static final Type[] VALUES = {
+        kReadRequest, kWriteRequest, kReadResponse, kWriteResponse, 
+      };
+      public static Type valueOf(
+          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        return VALUES[desc.getIndex()];
+      }
+      private final int index;
+      private final int value;
+      private Type(int index, int value) {
+        this.index = index;
+        this.value = value;
+      }
+      
+      static {
+        com.dirlt.java.FastHbaseRest.MessageProtos1.getDescriptor();
+      }
+      
+      // @@protoc_insertion_point(enum_scope:com.dirlt.java.FastHbaseRest.Message.Type)
+    }
+    
+    // required .com.dirlt.java.FastHbaseRest.Message.Type type = 1;
+    public static final int TYPE_FIELD_NUMBER = 1;
+    private boolean hasType;
+    private com.dirlt.java.FastHbaseRest.MessageProtos1.Message.Type type_;
+    public boolean hasType() { return hasType; }
+    public com.dirlt.java.FastHbaseRest.MessageProtos1.Message.Type getType() { return type_; }
+    
+    // optional .com.dirlt.java.FastHbaseRest.ReadRequest readRequest = 2;
+    public static final int READREQUEST_FIELD_NUMBER = 2;
+    private boolean hasReadRequest;
+    private com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest readRequest_;
+    public boolean hasReadRequest() { return hasReadRequest; }
+    public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest getReadRequest() { return readRequest_; }
+    
+    // optional .com.dirlt.java.FastHbaseRest.ReadResponse readResponse = 3;
+    public static final int READRESPONSE_FIELD_NUMBER = 3;
+    private boolean hasReadResponse;
+    private com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse readResponse_;
+    public boolean hasReadResponse() { return hasReadResponse; }
+    public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse getReadResponse() { return readResponse_; }
+    
+    // optional .com.dirlt.java.FastHbaseRest.WriteRequest writeRequest = 4;
+    public static final int WRITEREQUEST_FIELD_NUMBER = 4;
+    private boolean hasWriteRequest;
+    private com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest writeRequest_;
+    public boolean hasWriteRequest() { return hasWriteRequest; }
+    public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest getWriteRequest() { return writeRequest_; }
+    
+    // optional .com.dirlt.java.FastHbaseRest.WriteResponse writeResponse = 5;
+    public static final int WRITERESPONSE_FIELD_NUMBER = 5;
+    private boolean hasWriteResponse;
+    private com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse writeResponse_;
+    public boolean hasWriteResponse() { return hasWriteResponse; }
+    public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse getWriteResponse() { return writeResponse_; }
+    
+    private void initFields() {
+      type_ = com.dirlt.java.FastHbaseRest.MessageProtos1.Message.Type.kReadRequest;
+      readRequest_ = com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest.getDefaultInstance();
+      readResponse_ = com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.getDefaultInstance();
+      writeRequest_ = com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.getDefaultInstance();
+      writeResponse_ = com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse.getDefaultInstance();
+    }
+    public final boolean isInitialized() {
+      if (!hasType) return false;
+      if (hasReadRequest()) {
+        if (!getReadRequest().isInitialized()) return false;
+      }
+      if (hasReadResponse()) {
+        if (!getReadResponse().isInitialized()) return false;
+      }
+      if (hasWriteRequest()) {
+        if (!getWriteRequest().isInitialized()) return false;
+      }
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (hasType()) {
+        output.writeEnum(1, getType().getNumber());
+      }
+      if (hasReadRequest()) {
+        output.writeMessage(2, getReadRequest());
+      }
+      if (hasReadResponse()) {
+        output.writeMessage(3, getReadResponse());
+      }
+      if (hasWriteRequest()) {
+        output.writeMessage(4, getWriteRequest());
+      }
+      if (hasWriteResponse()) {
+        output.writeMessage(5, getWriteResponse());
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (hasType()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(1, getType().getNumber());
+      }
+      if (hasReadRequest()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(2, getReadRequest());
+      }
+      if (hasReadResponse()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(3, getReadResponse());
+      }
+      if (hasWriteRequest()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, getWriteRequest());
+      }
+      if (hasWriteResponse()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(5, getWriteResponse());
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Message parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Message parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Message parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Message parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Message parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Message parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Message parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Message parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Message parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Message parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.dirlt.java.FastHbaseRest.MessageProtos1.Message prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      private com.dirlt.java.FastHbaseRest.MessageProtos1.Message result;
+      
+      // Construct using com.dirlt.java.FastHbaseRest.MessageProtos1.Message.newBuilder()
+      private Builder() {}
+      
+      private static Builder create() {
+        Builder builder = new Builder();
+        builder.result = new com.dirlt.java.FastHbaseRest.MessageProtos1.Message();
+        return builder;
+      }
+      
+      protected com.dirlt.java.FastHbaseRest.MessageProtos1.Message internalGetResult() {
+        return result;
+      }
+      
+      public Builder clear() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "Cannot call clear() after build().");
+        }
+        result = new com.dirlt.java.FastHbaseRest.MessageProtos1.Message();
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(result);
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.Message.getDescriptor();
+      }
+      
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.Message getDefaultInstanceForType() {
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.Message.getDefaultInstance();
+      }
+      
+      public boolean isInitialized() {
+        return result.isInitialized();
+      }
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.Message build() {
+        if (result != null && !isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return buildPartial();
+      }
+      
+      private com.dirlt.java.FastHbaseRest.MessageProtos1.Message buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.Message buildPartial() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "build() has already been called on this Builder.");
+        }
+        com.dirlt.java.FastHbaseRest.MessageProtos1.Message returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.dirlt.java.FastHbaseRest.MessageProtos1.Message) {
+          return mergeFrom((com.dirlt.java.FastHbaseRest.MessageProtos1.Message)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(com.dirlt.java.FastHbaseRest.MessageProtos1.Message other) {
+        if (other == com.dirlt.java.FastHbaseRest.MessageProtos1.Message.getDefaultInstance()) return this;
+        if (other.hasType()) {
+          setType(other.getType());
+        }
+        if (other.hasReadRequest()) {
+          mergeReadRequest(other.getReadRequest());
+        }
+        if (other.hasReadResponse()) {
+          mergeReadResponse(other.getReadResponse());
+        }
+        if (other.hasWriteRequest()) {
+          mergeWriteRequest(other.getWriteRequest());
+        }
+        if (other.hasWriteResponse()) {
+          mergeWriteResponse(other.getWriteResponse());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                return this;
+              }
+              break;
+            }
+            case 8: {
+              int rawValue = input.readEnum();
+              com.dirlt.java.FastHbaseRest.MessageProtos1.Message.Type value = com.dirlt.java.FastHbaseRest.MessageProtos1.Message.Type.valueOf(rawValue);
+              if (value == null) {
+                unknownFields.mergeVarintField(1, rawValue);
+              } else {
+                setType(value);
+              }
+              break;
+            }
+            case 18: {
+              com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest.Builder subBuilder = com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest.newBuilder();
+              if (hasReadRequest()) {
+                subBuilder.mergeFrom(getReadRequest());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setReadRequest(subBuilder.buildPartial());
+              break;
+            }
+            case 26: {
+              com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.Builder subBuilder = com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.newBuilder();
+              if (hasReadResponse()) {
+                subBuilder.mergeFrom(getReadResponse());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setReadResponse(subBuilder.buildPartial());
+              break;
+            }
+            case 34: {
+              com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.Builder subBuilder = com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.newBuilder();
+              if (hasWriteRequest()) {
+                subBuilder.mergeFrom(getWriteRequest());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setWriteRequest(subBuilder.buildPartial());
+              break;
+            }
+            case 42: {
+              com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse.Builder subBuilder = com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse.newBuilder();
+              if (hasWriteResponse()) {
+                subBuilder.mergeFrom(getWriteResponse());
+              }
+              input.readMessage(subBuilder, extensionRegistry);
+              setWriteResponse(subBuilder.buildPartial());
+              break;
+            }
+          }
+        }
+      }
+      
+      
+      // required .com.dirlt.java.FastHbaseRest.Message.Type type = 1;
+      public boolean hasType() {
+        return result.hasType();
+      }
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.Message.Type getType() {
+        return result.getType();
+      }
+      public Builder setType(com.dirlt.java.FastHbaseRest.MessageProtos1.Message.Type value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        result.hasType = true;
+        result.type_ = value;
+        return this;
+      }
+      public Builder clearType() {
+        result.hasType = false;
+        result.type_ = com.dirlt.java.FastHbaseRest.MessageProtos1.Message.Type.kReadRequest;
+        return this;
+      }
+      
+      // optional .com.dirlt.java.FastHbaseRest.ReadRequest readRequest = 2;
+      public boolean hasReadRequest() {
+        return result.hasReadRequest();
+      }
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest getReadRequest() {
+        return result.getReadRequest();
+      }
+      public Builder setReadRequest(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        result.hasReadRequest = true;
+        result.readRequest_ = value;
+        return this;
+      }
+      public Builder setReadRequest(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest.Builder builderForValue) {
+        result.hasReadRequest = true;
+        result.readRequest_ = builderForValue.build();
+        return this;
+      }
+      public Builder mergeReadRequest(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest value) {
+        if (result.hasReadRequest() &&
+            result.readRequest_ != com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest.getDefaultInstance()) {
+          result.readRequest_ =
+            com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest.newBuilder(result.readRequest_).mergeFrom(value).buildPartial();
+        } else {
+          result.readRequest_ = value;
+        }
+        result.hasReadRequest = true;
+        return this;
+      }
+      public Builder clearReadRequest() {
+        result.hasReadRequest = false;
+        result.readRequest_ = com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest.getDefaultInstance();
+        return this;
+      }
+      
+      // optional .com.dirlt.java.FastHbaseRest.ReadResponse readResponse = 3;
+      public boolean hasReadResponse() {
+        return result.hasReadResponse();
+      }
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse getReadResponse() {
+        return result.getReadResponse();
+      }
+      public Builder setReadResponse(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        result.hasReadResponse = true;
+        result.readResponse_ = value;
+        return this;
+      }
+      public Builder setReadResponse(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.Builder builderForValue) {
+        result.hasReadResponse = true;
+        result.readResponse_ = builderForValue.build();
+        return this;
+      }
+      public Builder mergeReadResponse(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse value) {
+        if (result.hasReadResponse() &&
+            result.readResponse_ != com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.getDefaultInstance()) {
+          result.readResponse_ =
+            com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.newBuilder(result.readResponse_).mergeFrom(value).buildPartial();
+        } else {
+          result.readResponse_ = value;
+        }
+        result.hasReadResponse = true;
+        return this;
+      }
+      public Builder clearReadResponse() {
+        result.hasReadResponse = false;
+        result.readResponse_ = com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.getDefaultInstance();
+        return this;
+      }
+      
+      // optional .com.dirlt.java.FastHbaseRest.WriteRequest writeRequest = 4;
+      public boolean hasWriteRequest() {
+        return result.hasWriteRequest();
+      }
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest getWriteRequest() {
+        return result.getWriteRequest();
+      }
+      public Builder setWriteRequest(com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        result.hasWriteRequest = true;
+        result.writeRequest_ = value;
+        return this;
+      }
+      public Builder setWriteRequest(com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.Builder builderForValue) {
+        result.hasWriteRequest = true;
+        result.writeRequest_ = builderForValue.build();
+        return this;
+      }
+      public Builder mergeWriteRequest(com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest value) {
+        if (result.hasWriteRequest() &&
+            result.writeRequest_ != com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.getDefaultInstance()) {
+          result.writeRequest_ =
+            com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.newBuilder(result.writeRequest_).mergeFrom(value).buildPartial();
+        } else {
+          result.writeRequest_ = value;
+        }
+        result.hasWriteRequest = true;
+        return this;
+      }
+      public Builder clearWriteRequest() {
+        result.hasWriteRequest = false;
+        result.writeRequest_ = com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.getDefaultInstance();
+        return this;
+      }
+      
+      // optional .com.dirlt.java.FastHbaseRest.WriteResponse writeResponse = 5;
+      public boolean hasWriteResponse() {
+        return result.hasWriteResponse();
+      }
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse getWriteResponse() {
+        return result.getWriteResponse();
+      }
+      public Builder setWriteResponse(com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        result.hasWriteResponse = true;
+        result.writeResponse_ = value;
+        return this;
+      }
+      public Builder setWriteResponse(com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse.Builder builderForValue) {
+        result.hasWriteResponse = true;
+        result.writeResponse_ = builderForValue.build();
+        return this;
+      }
+      public Builder mergeWriteResponse(com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse value) {
+        if (result.hasWriteResponse() &&
+            result.writeResponse_ != com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse.getDefaultInstance()) {
+          result.writeResponse_ =
+            com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse.newBuilder(result.writeResponse_).mergeFrom(value).buildPartial();
+        } else {
+          result.writeResponse_ = value;
+        }
+        result.hasWriteResponse = true;
+        return this;
+      }
+      public Builder clearWriteResponse() {
+        result.hasWriteResponse = false;
+        result.writeResponse_ = com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse.getDefaultInstance();
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:com.dirlt.java.FastHbaseRest.Message)
+    }
+    
+    static {
+      defaultInstance = new Message(true);
+      com.dirlt.java.FastHbaseRest.MessageProtos1.internalForceInit();
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.Message)
+  }
+  
+  public static final class ReadRequest extends
+      com.google.protobuf.GeneratedMessage {
+    // Use ReadRequest.newBuilder() to construct.
+    private ReadRequest() {
+      initFields();
+    }
+    private ReadRequest(boolean noInit) {}
+    
+    private static final ReadRequest defaultInstance;
+    public static ReadRequest getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public ReadRequest getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_ReadRequest_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_ReadRequest_fieldAccessorTable;
     }
     
     // required string table_name = 1;
@@ -56,8 +687,8 @@ public final class MessageProtos1 {
     public boolean hasColumnFamily() { return hasColumnFamily; }
     public java.lang.String getColumnFamily() { return columnFamily_; }
     
-    // repeated string qualifiers = 5;
-    public static final int QUALIFIERS_FIELD_NUMBER = 5;
+    // repeated string qualifiers = 4;
+    public static final int QUALIFIERS_FIELD_NUMBER = 4;
     private java.util.List<java.lang.String> qualifiers_ =
       java.util.Collections.emptyList();
     public java.util.List<java.lang.String> getQualifiersList() {
@@ -90,7 +721,7 @@ public final class MessageProtos1 {
         output.writeString(3, getColumnFamily());
       }
       for (java.lang.String element : getQualifiersList()) {
-        output.writeString(5, element);
+        output.writeString(4, element);
       }
       getUnknownFields().writeTo(output);
     }
@@ -127,41 +758,41 @@ public final class MessageProtos1 {
       return size;
     }
     
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Request parseFrom(
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Request parseFrom(
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Request parseFrom(byte[] data)
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Request parseFrom(
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Request parseFrom(java.io.InputStream input)
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Request parseFrom(
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Request parseDelimitedFrom(java.io.InputStream input)
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       Builder builder = newBuilder();
       if (builder.mergeDelimitedFrom(input)) {
@@ -170,7 +801,7 @@ public final class MessageProtos1 {
         return null;
       }
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Request parseDelimitedFrom(
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -181,12 +812,12 @@ public final class MessageProtos1 {
         return null;
       }
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Request parseFrom(
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Request parseFrom(
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -196,25 +827,25 @@ public final class MessageProtos1 {
     
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(com.dirlt.java.FastHbaseRest.MessageProtos1.Request prototype) {
+    public static Builder newBuilder(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      private com.dirlt.java.FastHbaseRest.MessageProtos1.Request result;
+      private com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest result;
       
-      // Construct using com.dirlt.java.FastHbaseRest.MessageProtos1.Request.newBuilder()
+      // Construct using com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest.newBuilder()
       private Builder() {}
       
       private static Builder create() {
         Builder builder = new Builder();
-        builder.result = new com.dirlt.java.FastHbaseRest.MessageProtos1.Request();
+        builder.result = new com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest();
         return builder;
       }
       
-      protected com.dirlt.java.FastHbaseRest.MessageProtos1.Request internalGetResult() {
+      protected com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest internalGetResult() {
         return result;
       }
       
@@ -223,7 +854,7 @@ public final class MessageProtos1 {
           throw new IllegalStateException(
             "Cannot call clear() after build().");
         }
-        result = new com.dirlt.java.FastHbaseRest.MessageProtos1.Request();
+        result = new com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest();
         return this;
       }
       
@@ -233,24 +864,24 @@ public final class MessageProtos1 {
       
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return com.dirlt.java.FastHbaseRest.MessageProtos1.Request.getDescriptor();
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest.getDescriptor();
       }
       
-      public com.dirlt.java.FastHbaseRest.MessageProtos1.Request getDefaultInstanceForType() {
-        return com.dirlt.java.FastHbaseRest.MessageProtos1.Request.getDefaultInstance();
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest getDefaultInstanceForType() {
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest.getDefaultInstance();
       }
       
       public boolean isInitialized() {
         return result.isInitialized();
       }
-      public com.dirlt.java.FastHbaseRest.MessageProtos1.Request build() {
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest build() {
         if (result != null && !isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return buildPartial();
       }
       
-      private com.dirlt.java.FastHbaseRest.MessageProtos1.Request buildParsed()
+      private com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw newUninitializedMessageException(
@@ -259,7 +890,7 @@ public final class MessageProtos1 {
         return buildPartial();
       }
       
-      public com.dirlt.java.FastHbaseRest.MessageProtos1.Request buildPartial() {
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest buildPartial() {
         if (result == null) {
           throw new IllegalStateException(
             "build() has already been called on this Builder.");
@@ -268,22 +899,22 @@ public final class MessageProtos1 {
           result.qualifiers_ =
             java.util.Collections.unmodifiableList(result.qualifiers_);
         }
-        com.dirlt.java.FastHbaseRest.MessageProtos1.Request returnMe = result;
+        com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest returnMe = result;
         result = null;
         return returnMe;
       }
       
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.dirlt.java.FastHbaseRest.MessageProtos1.Request) {
-          return mergeFrom((com.dirlt.java.FastHbaseRest.MessageProtos1.Request)other);
+        if (other instanceof com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest) {
+          return mergeFrom((com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(com.dirlt.java.FastHbaseRest.MessageProtos1.Request other) {
-        if (other == com.dirlt.java.FastHbaseRest.MessageProtos1.Request.getDefaultInstance()) return this;
+      public Builder mergeFrom(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest other) {
+        if (other == com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest.getDefaultInstance()) return this;
         if (other.hasTableName()) {
           setTableName(other.getTableName());
         }
@@ -336,7 +967,7 @@ public final class MessageProtos1 {
               setColumnFamily(input.readString());
               break;
             }
-            case 42: {
+            case 34: {
               addQualifiers(input.readString());
               break;
             }
@@ -408,7 +1039,7 @@ public final class MessageProtos1 {
         return this;
       }
       
-      // repeated string qualifiers = 5;
+      // repeated string qualifiers = 4;
       public java.util.List<java.lang.String> getQualifiersList() {
         return java.util.Collections.unmodifiableList(result.qualifiers_);
       }
@@ -448,43 +1079,43 @@ public final class MessageProtos1 {
         return this;
       }
       
-      // @@protoc_insertion_point(builder_scope:com.dirlt.java.FastHbaseRest.Request)
+      // @@protoc_insertion_point(builder_scope:com.dirlt.java.FastHbaseRest.ReadRequest)
     }
     
     static {
-      defaultInstance = new Request(true);
+      defaultInstance = new ReadRequest(true);
       com.dirlt.java.FastHbaseRest.MessageProtos1.internalForceInit();
       defaultInstance.initFields();
     }
     
-    // @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.Request)
+    // @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.ReadRequest)
   }
   
-  public static final class Response extends
+  public static final class ReadResponse extends
       com.google.protobuf.GeneratedMessage {
-    // Use Response.newBuilder() to construct.
-    private Response() {
+    // Use ReadResponse.newBuilder() to construct.
+    private ReadResponse() {
       initFields();
     }
-    private Response(boolean noInit) {}
+    private ReadResponse(boolean noInit) {}
     
-    private static final Response defaultInstance;
-    public static Response getDefaultInstance() {
+    private static final ReadResponse defaultInstance;
+    public static ReadResponse getDefaultInstance() {
       return defaultInstance;
     }
     
-    public Response getDefaultInstanceForType() {
+    public ReadResponse getDefaultInstanceForType() {
       return defaultInstance;
     }
     
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_Response_descriptor;
+      return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_descriptor;
     }
     
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_Response_fieldAccessorTable;
+      return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_fieldAccessorTable;
     }
     
     public static final class KeyValue extends
@@ -506,12 +1137,12 @@ public final class MessageProtos1 {
       
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_Response_KeyValue_descriptor;
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_KeyValue_descriptor;
       }
       
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_Response_KeyValue_fieldAccessorTable;
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_KeyValue_fieldAccessorTable;
       }
       
       // required string qualifier = 1;
@@ -521,8 +1152,8 @@ public final class MessageProtos1 {
       public boolean hasQualifier() { return hasQualifier; }
       public java.lang.String getQualifier() { return qualifier_; }
       
-      // required bytes content = 3;
-      public static final int CONTENT_FIELD_NUMBER = 3;
+      // required bytes content = 2;
+      public static final int CONTENT_FIELD_NUMBER = 2;
       private boolean hasContent;
       private com.google.protobuf.ByteString content_ = com.google.protobuf.ByteString.EMPTY;
       public boolean hasContent() { return hasContent; }
@@ -543,7 +1174,7 @@ public final class MessageProtos1 {
           output.writeString(1, getQualifier());
         }
         if (hasContent()) {
-          output.writeBytes(3, getContent());
+          output.writeBytes(2, getContent());
         }
         getUnknownFields().writeTo(output);
       }
@@ -560,48 +1191,48 @@ public final class MessageProtos1 {
         }
         if (hasContent()) {
           size += com.google.protobuf.CodedOutputStream
-            .computeBytesSize(3, getContent());
+            .computeBytesSize(2, getContent());
         }
         size += getUnknownFields().getSerializedSize();
         memoizedSerializedSize = size;
         return size;
       }
       
-      public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue parseFrom(
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue parseFrom(
           com.google.protobuf.ByteString data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return newBuilder().mergeFrom(data).buildParsed();
       }
-      public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue parseFrom(
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue parseFrom(
           com.google.protobuf.ByteString data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return newBuilder().mergeFrom(data, extensionRegistry)
                  .buildParsed();
       }
-      public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue parseFrom(byte[] data)
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue parseFrom(byte[] data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return newBuilder().mergeFrom(data).buildParsed();
       }
-      public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue parseFrom(
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue parseFrom(
           byte[] data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return newBuilder().mergeFrom(data, extensionRegistry)
                  .buildParsed();
       }
-      public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue parseFrom(java.io.InputStream input)
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue parseFrom(java.io.InputStream input)
           throws java.io.IOException {
         return newBuilder().mergeFrom(input).buildParsed();
       }
-      public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue parseFrom(
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue parseFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return newBuilder().mergeFrom(input, extensionRegistry)
                  .buildParsed();
       }
-      public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue parseDelimitedFrom(java.io.InputStream input)
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue parseDelimitedFrom(java.io.InputStream input)
           throws java.io.IOException {
         Builder builder = newBuilder();
         if (builder.mergeDelimitedFrom(input)) {
@@ -610,7 +1241,7 @@ public final class MessageProtos1 {
           return null;
         }
       }
-      public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue parseDelimitedFrom(
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue parseDelimitedFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
@@ -621,12 +1252,12 @@ public final class MessageProtos1 {
           return null;
         }
       }
-      public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue parseFrom(
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue parseFrom(
           com.google.protobuf.CodedInputStream input)
           throws java.io.IOException {
         return newBuilder().mergeFrom(input).buildParsed();
       }
-      public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue parseFrom(
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue parseFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
@@ -636,25 +1267,25 @@ public final class MessageProtos1 {
       
       public static Builder newBuilder() { return Builder.create(); }
       public Builder newBuilderForType() { return newBuilder(); }
-      public static Builder newBuilder(com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue prototype) {
+      public static Builder newBuilder(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue prototype) {
         return newBuilder().mergeFrom(prototype);
       }
       public Builder toBuilder() { return newBuilder(this); }
       
       public static final class Builder extends
           com.google.protobuf.GeneratedMessage.Builder<Builder> {
-        private com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue result;
+        private com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue result;
         
-        // Construct using com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue.newBuilder()
+        // Construct using com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue.newBuilder()
         private Builder() {}
         
         private static Builder create() {
           Builder builder = new Builder();
-          builder.result = new com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue();
+          builder.result = new com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue();
           return builder;
         }
         
-        protected com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue internalGetResult() {
+        protected com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue internalGetResult() {
           return result;
         }
         
@@ -663,7 +1294,7 @@ public final class MessageProtos1 {
             throw new IllegalStateException(
               "Cannot call clear() after build().");
           }
-          result = new com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue();
+          result = new com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue();
           return this;
         }
         
@@ -673,24 +1304,24 @@ public final class MessageProtos1 {
         
         public com.google.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-          return com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue.getDescriptor();
+          return com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue.getDescriptor();
         }
         
-        public com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue getDefaultInstanceForType() {
-          return com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue.getDefaultInstance();
+        public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue getDefaultInstanceForType() {
+          return com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue.getDefaultInstance();
         }
         
         public boolean isInitialized() {
           return result.isInitialized();
         }
-        public com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue build() {
+        public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue build() {
           if (result != null && !isInitialized()) {
             throw newUninitializedMessageException(result);
           }
           return buildPartial();
         }
         
-        private com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue buildParsed()
+        private com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue buildParsed()
             throws com.google.protobuf.InvalidProtocolBufferException {
           if (!isInitialized()) {
             throw newUninitializedMessageException(
@@ -699,27 +1330,27 @@ public final class MessageProtos1 {
           return buildPartial();
         }
         
-        public com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue buildPartial() {
+        public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue buildPartial() {
           if (result == null) {
             throw new IllegalStateException(
               "build() has already been called on this Builder.");
           }
-          com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue returnMe = result;
+          com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue returnMe = result;
           result = null;
           return returnMe;
         }
         
         public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue) {
-            return mergeFrom((com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue)other);
+          if (other instanceof com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue) {
+            return mergeFrom((com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue)other);
           } else {
             super.mergeFrom(other);
             return this;
           }
         }
         
-        public Builder mergeFrom(com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue other) {
-          if (other == com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue.getDefaultInstance()) return this;
+        public Builder mergeFrom(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue other) {
+          if (other == com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue.getDefaultInstance()) return this;
           if (other.hasQualifier()) {
             setQualifier(other.getQualifier());
           }
@@ -755,7 +1386,7 @@ public final class MessageProtos1 {
                 setQualifier(input.readString());
                 break;
               }
-              case 26: {
+              case 18: {
                 setContent(input.readBytes());
                 break;
               }
@@ -785,7 +1416,7 @@ public final class MessageProtos1 {
           return this;
         }
         
-        // required bytes content = 3;
+        // required bytes content = 2;
         public boolean hasContent() {
           return result.hasContent();
         }
@@ -806,7 +1437,7 @@ public final class MessageProtos1 {
           return this;
         }
         
-        // @@protoc_insertion_point(builder_scope:com.dirlt.java.FastHbaseRest.Response.KeyValue)
+        // @@protoc_insertion_point(builder_scope:com.dirlt.java.FastHbaseRest.ReadResponse.KeyValue)
       }
       
       static {
@@ -815,7 +1446,7 @@ public final class MessageProtos1 {
         defaultInstance.initFields();
       }
       
-      // @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.Response.KeyValue)
+      // @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.ReadResponse.KeyValue)
     }
     
     // required string table_name = 1;
@@ -839,15 +1470,15 @@ public final class MessageProtos1 {
     public boolean hasColumnFamily() { return hasColumnFamily; }
     public java.lang.String getColumnFamily() { return columnFamily_; }
     
-    // repeated .com.dirlt.java.FastHbaseRest.Response.KeyValue kvs = 5;
-    public static final int KVS_FIELD_NUMBER = 5;
-    private java.util.List<com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue> kvs_ =
+    // repeated .com.dirlt.java.FastHbaseRest.ReadResponse.KeyValue kvs = 4;
+    public static final int KVS_FIELD_NUMBER = 4;
+    private java.util.List<com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue> kvs_ =
       java.util.Collections.emptyList();
-    public java.util.List<com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue> getKvsList() {
+    public java.util.List<com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue> getKvsList() {
       return kvs_;
     }
     public int getKvsCount() { return kvs_.size(); }
-    public com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue getKvs(int index) {
+    public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue getKvs(int index) {
       return kvs_.get(index);
     }
     
@@ -857,7 +1488,7 @@ public final class MessageProtos1 {
       if (!hasTableName) return false;
       if (!hasRowKey) return false;
       if (!hasColumnFamily) return false;
-      for (com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue element : getKvsList()) {
+      for (com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue element : getKvsList()) {
         if (!element.isInitialized()) return false;
       }
       return true;
@@ -875,8 +1506,8 @@ public final class MessageProtos1 {
       if (hasColumnFamily()) {
         output.writeString(3, getColumnFamily());
       }
-      for (com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue element : getKvsList()) {
-        output.writeMessage(5, element);
+      for (com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue element : getKvsList()) {
+        output.writeMessage(4, element);
       }
       getUnknownFields().writeTo(output);
     }
@@ -899,50 +1530,50 @@ public final class MessageProtos1 {
         size += com.google.protobuf.CodedOutputStream
           .computeStringSize(3, getColumnFamily());
       }
-      for (com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue element : getKvsList()) {
+      for (com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue element : getKvsList()) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(5, element);
+          .computeMessageSize(4, element);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
       return size;
     }
     
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response parseFrom(
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response parseFrom(
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response parseFrom(byte[] data)
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data).buildParsed();
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response parseFrom(
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return newBuilder().mergeFrom(data, extensionRegistry)
                .buildParsed();
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response parseFrom(java.io.InputStream input)
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response parseFrom(
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input, extensionRegistry)
                .buildParsed();
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response parseDelimitedFrom(java.io.InputStream input)
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       Builder builder = newBuilder();
       if (builder.mergeDelimitedFrom(input)) {
@@ -951,7 +1582,7 @@ public final class MessageProtos1 {
         return null;
       }
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response parseDelimitedFrom(
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -962,12 +1593,12 @@ public final class MessageProtos1 {
         return null;
       }
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response parseFrom(
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return newBuilder().mergeFrom(input).buildParsed();
     }
-    public static com.dirlt.java.FastHbaseRest.MessageProtos1.Response parseFrom(
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -977,25 +1608,25 @@ public final class MessageProtos1 {
     
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(com.dirlt.java.FastHbaseRest.MessageProtos1.Response prototype) {
+    public static Builder newBuilder(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
     
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> {
-      private com.dirlt.java.FastHbaseRest.MessageProtos1.Response result;
+      private com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse result;
       
-      // Construct using com.dirlt.java.FastHbaseRest.MessageProtos1.Response.newBuilder()
+      // Construct using com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.newBuilder()
       private Builder() {}
       
       private static Builder create() {
         Builder builder = new Builder();
-        builder.result = new com.dirlt.java.FastHbaseRest.MessageProtos1.Response();
+        builder.result = new com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse();
         return builder;
       }
       
-      protected com.dirlt.java.FastHbaseRest.MessageProtos1.Response internalGetResult() {
+      protected com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse internalGetResult() {
         return result;
       }
       
@@ -1004,7 +1635,7 @@ public final class MessageProtos1 {
           throw new IllegalStateException(
             "Cannot call clear() after build().");
         }
-        result = new com.dirlt.java.FastHbaseRest.MessageProtos1.Response();
+        result = new com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse();
         return this;
       }
       
@@ -1014,24 +1645,24 @@ public final class MessageProtos1 {
       
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return com.dirlt.java.FastHbaseRest.MessageProtos1.Response.getDescriptor();
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.getDescriptor();
       }
       
-      public com.dirlt.java.FastHbaseRest.MessageProtos1.Response getDefaultInstanceForType() {
-        return com.dirlt.java.FastHbaseRest.MessageProtos1.Response.getDefaultInstance();
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse getDefaultInstanceForType() {
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.getDefaultInstance();
       }
       
       public boolean isInitialized() {
         return result.isInitialized();
       }
-      public com.dirlt.java.FastHbaseRest.MessageProtos1.Response build() {
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse build() {
         if (result != null && !isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return buildPartial();
       }
       
-      private com.dirlt.java.FastHbaseRest.MessageProtos1.Response buildParsed()
+      private com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse buildParsed()
           throws com.google.protobuf.InvalidProtocolBufferException {
         if (!isInitialized()) {
           throw newUninitializedMessageException(
@@ -1040,7 +1671,7 @@ public final class MessageProtos1 {
         return buildPartial();
       }
       
-      public com.dirlt.java.FastHbaseRest.MessageProtos1.Response buildPartial() {
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse buildPartial() {
         if (result == null) {
           throw new IllegalStateException(
             "build() has already been called on this Builder.");
@@ -1049,22 +1680,22 @@ public final class MessageProtos1 {
           result.kvs_ =
             java.util.Collections.unmodifiableList(result.kvs_);
         }
-        com.dirlt.java.FastHbaseRest.MessageProtos1.Response returnMe = result;
+        com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse returnMe = result;
         result = null;
         return returnMe;
       }
       
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof com.dirlt.java.FastHbaseRest.MessageProtos1.Response) {
-          return mergeFrom((com.dirlt.java.FastHbaseRest.MessageProtos1.Response)other);
+        if (other instanceof com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse) {
+          return mergeFrom((com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
       
-      public Builder mergeFrom(com.dirlt.java.FastHbaseRest.MessageProtos1.Response other) {
-        if (other == com.dirlt.java.FastHbaseRest.MessageProtos1.Response.getDefaultInstance()) return this;
+      public Builder mergeFrom(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse other) {
+        if (other == com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.getDefaultInstance()) return this;
         if (other.hasTableName()) {
           setTableName(other.getTableName());
         }
@@ -1076,7 +1707,7 @@ public final class MessageProtos1 {
         }
         if (!other.kvs_.isEmpty()) {
           if (result.kvs_.isEmpty()) {
-            result.kvs_ = new java.util.ArrayList<com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue>();
+            result.kvs_ = new java.util.ArrayList<com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue>();
           }
           result.kvs_.addAll(other.kvs_);
         }
@@ -1117,8 +1748,8 @@ public final class MessageProtos1 {
               setColumnFamily(input.readString());
               break;
             }
-            case 42: {
-              com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue.Builder subBuilder = com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue.newBuilder();
+            case 34: {
+              com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue.Builder subBuilder = com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
               addKvs(subBuilder.buildPartial());
               break;
@@ -1191,48 +1822,48 @@ public final class MessageProtos1 {
         return this;
       }
       
-      // repeated .com.dirlt.java.FastHbaseRest.Response.KeyValue kvs = 5;
-      public java.util.List<com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue> getKvsList() {
+      // repeated .com.dirlt.java.FastHbaseRest.ReadResponse.KeyValue kvs = 4;
+      public java.util.List<com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue> getKvsList() {
         return java.util.Collections.unmodifiableList(result.kvs_);
       }
       public int getKvsCount() {
         return result.getKvsCount();
       }
-      public com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue getKvs(int index) {
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue getKvs(int index) {
         return result.getKvs(index);
       }
-      public Builder setKvs(int index, com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue value) {
+      public Builder setKvs(int index, com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue value) {
         if (value == null) {
           throw new NullPointerException();
         }
         result.kvs_.set(index, value);
         return this;
       }
-      public Builder setKvs(int index, com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue.Builder builderForValue) {
+      public Builder setKvs(int index, com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue.Builder builderForValue) {
         result.kvs_.set(index, builderForValue.build());
         return this;
       }
-      public Builder addKvs(com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue value) {
+      public Builder addKvs(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue value) {
         if (value == null) {
           throw new NullPointerException();
         }
         if (result.kvs_.isEmpty()) {
-          result.kvs_ = new java.util.ArrayList<com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue>();
+          result.kvs_ = new java.util.ArrayList<com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue>();
         }
         result.kvs_.add(value);
         return this;
       }
-      public Builder addKvs(com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue.Builder builderForValue) {
+      public Builder addKvs(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue.Builder builderForValue) {
         if (result.kvs_.isEmpty()) {
-          result.kvs_ = new java.util.ArrayList<com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue>();
+          result.kvs_ = new java.util.ArrayList<com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue>();
         }
         result.kvs_.add(builderForValue.build());
         return this;
       }
       public Builder addAllKvs(
-          java.lang.Iterable<? extends com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue> values) {
+          java.lang.Iterable<? extends com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue> values) {
         if (result.kvs_.isEmpty()) {
-          result.kvs_ = new java.util.ArrayList<com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue>();
+          result.kvs_ = new java.util.ArrayList<com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue>();
         }
         super.addAll(values, result.kvs_);
         return this;
@@ -1242,33 +1873,1092 @@ public final class MessageProtos1 {
         return this;
       }
       
-      // @@protoc_insertion_point(builder_scope:com.dirlt.java.FastHbaseRest.Response)
+      // @@protoc_insertion_point(builder_scope:com.dirlt.java.FastHbaseRest.ReadResponse)
     }
     
     static {
-      defaultInstance = new Response(true);
+      defaultInstance = new ReadResponse(true);
       com.dirlt.java.FastHbaseRest.MessageProtos1.internalForceInit();
       defaultInstance.initFields();
     }
     
-    // @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.Response)
+    // @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.ReadResponse)
+  }
+  
+  public static final class WriteRequest extends
+      com.google.protobuf.GeneratedMessage {
+    // Use WriteRequest.newBuilder() to construct.
+    private WriteRequest() {
+      initFields();
+    }
+    private WriteRequest(boolean noInit) {}
+    
+    private static final WriteRequest defaultInstance;
+    public static WriteRequest getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public WriteRequest getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_fieldAccessorTable;
+    }
+    
+    public static final class KeyValue extends
+        com.google.protobuf.GeneratedMessage {
+      // Use KeyValue.newBuilder() to construct.
+      private KeyValue() {
+        initFields();
+      }
+      private KeyValue(boolean noInit) {}
+      
+      private static final KeyValue defaultInstance;
+      public static KeyValue getDefaultInstance() {
+        return defaultInstance;
+      }
+      
+      public KeyValue getDefaultInstanceForType() {
+        return defaultInstance;
+      }
+      
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_KeyValue_descriptor;
+      }
+      
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_KeyValue_fieldAccessorTable;
+      }
+      
+      // required string qualifier = 1;
+      public static final int QUALIFIER_FIELD_NUMBER = 1;
+      private boolean hasQualifier;
+      private java.lang.String qualifier_ = "";
+      public boolean hasQualifier() { return hasQualifier; }
+      public java.lang.String getQualifier() { return qualifier_; }
+      
+      // required bytes content = 2;
+      public static final int CONTENT_FIELD_NUMBER = 2;
+      private boolean hasContent;
+      private com.google.protobuf.ByteString content_ = com.google.protobuf.ByteString.EMPTY;
+      public boolean hasContent() { return hasContent; }
+      public com.google.protobuf.ByteString getContent() { return content_; }
+      
+      private void initFields() {
+      }
+      public final boolean isInitialized() {
+        if (!hasQualifier) return false;
+        if (!hasContent) return false;
+        return true;
+      }
+      
+      public void writeTo(com.google.protobuf.CodedOutputStream output)
+                          throws java.io.IOException {
+        getSerializedSize();
+        if (hasQualifier()) {
+          output.writeString(1, getQualifier());
+        }
+        if (hasContent()) {
+          output.writeBytes(2, getContent());
+        }
+        getUnknownFields().writeTo(output);
+      }
+      
+      private int memoizedSerializedSize = -1;
+      public int getSerializedSize() {
+        int size = memoizedSerializedSize;
+        if (size != -1) return size;
+      
+        size = 0;
+        if (hasQualifier()) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeStringSize(1, getQualifier());
+        }
+        if (hasContent()) {
+          size += com.google.protobuf.CodedOutputStream
+            .computeBytesSize(2, getContent());
+        }
+        size += getUnknownFields().getSerializedSize();
+        memoizedSerializedSize = size;
+        return size;
+      }
+      
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue parseFrom(
+          com.google.protobuf.ByteString data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data).buildParsed();
+      }
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue parseFrom(
+          com.google.protobuf.ByteString data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data, extensionRegistry)
+                 .buildParsed();
+      }
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue parseFrom(byte[] data)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data).buildParsed();
+      }
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue parseFrom(
+          byte[] data,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return newBuilder().mergeFrom(data, extensionRegistry)
+                 .buildParsed();
+      }
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue parseFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input).buildParsed();
+      }
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue parseFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input, extensionRegistry)
+                 .buildParsed();
+      }
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue parseDelimitedFrom(java.io.InputStream input)
+          throws java.io.IOException {
+        Builder builder = newBuilder();
+        if (builder.mergeDelimitedFrom(input)) {
+          return builder.buildParsed();
+        } else {
+          return null;
+        }
+      }
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue parseDelimitedFrom(
+          java.io.InputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        Builder builder = newBuilder();
+        if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+          return builder.buildParsed();
+        } else {
+          return null;
+        }
+      }
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue parseFrom(
+          com.google.protobuf.CodedInputStream input)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input).buildParsed();
+      }
+      public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue parseFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        return newBuilder().mergeFrom(input, extensionRegistry)
+                 .buildParsed();
+      }
+      
+      public static Builder newBuilder() { return Builder.create(); }
+      public Builder newBuilderForType() { return newBuilder(); }
+      public static Builder newBuilder(com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue prototype) {
+        return newBuilder().mergeFrom(prototype);
+      }
+      public Builder toBuilder() { return newBuilder(this); }
+      
+      public static final class Builder extends
+          com.google.protobuf.GeneratedMessage.Builder<Builder> {
+        private com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue result;
+        
+        // Construct using com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue.newBuilder()
+        private Builder() {}
+        
+        private static Builder create() {
+          Builder builder = new Builder();
+          builder.result = new com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue();
+          return builder;
+        }
+        
+        protected com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue internalGetResult() {
+          return result;
+        }
+        
+        public Builder clear() {
+          if (result == null) {
+            throw new IllegalStateException(
+              "Cannot call clear() after build().");
+          }
+          result = new com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue();
+          return this;
+        }
+        
+        public Builder clone() {
+          return create().mergeFrom(result);
+        }
+        
+        public com.google.protobuf.Descriptors.Descriptor
+            getDescriptorForType() {
+          return com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue.getDescriptor();
+        }
+        
+        public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue getDefaultInstanceForType() {
+          return com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue.getDefaultInstance();
+        }
+        
+        public boolean isInitialized() {
+          return result.isInitialized();
+        }
+        public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue build() {
+          if (result != null && !isInitialized()) {
+            throw newUninitializedMessageException(result);
+          }
+          return buildPartial();
+        }
+        
+        private com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue buildParsed()
+            throws com.google.protobuf.InvalidProtocolBufferException {
+          if (!isInitialized()) {
+            throw newUninitializedMessageException(
+              result).asInvalidProtocolBufferException();
+          }
+          return buildPartial();
+        }
+        
+        public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue buildPartial() {
+          if (result == null) {
+            throw new IllegalStateException(
+              "build() has already been called on this Builder.");
+          }
+          com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue returnMe = result;
+          result = null;
+          return returnMe;
+        }
+        
+        public Builder mergeFrom(com.google.protobuf.Message other) {
+          if (other instanceof com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue) {
+            return mergeFrom((com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue)other);
+          } else {
+            super.mergeFrom(other);
+            return this;
+          }
+        }
+        
+        public Builder mergeFrom(com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue other) {
+          if (other == com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue.getDefaultInstance()) return this;
+          if (other.hasQualifier()) {
+            setQualifier(other.getQualifier());
+          }
+          if (other.hasContent()) {
+            setContent(other.getContent());
+          }
+          this.mergeUnknownFields(other.getUnknownFields());
+          return this;
+        }
+        
+        public Builder mergeFrom(
+            com.google.protobuf.CodedInputStream input,
+            com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+            throws java.io.IOException {
+          com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+            com.google.protobuf.UnknownFieldSet.newBuilder(
+              this.getUnknownFields());
+          while (true) {
+            int tag = input.readTag();
+            switch (tag) {
+              case 0:
+                this.setUnknownFields(unknownFields.build());
+                return this;
+              default: {
+                if (!parseUnknownField(input, unknownFields,
+                                       extensionRegistry, tag)) {
+                  this.setUnknownFields(unknownFields.build());
+                  return this;
+                }
+                break;
+              }
+              case 10: {
+                setQualifier(input.readString());
+                break;
+              }
+              case 18: {
+                setContent(input.readBytes());
+                break;
+              }
+            }
+          }
+        }
+        
+        
+        // required string qualifier = 1;
+        public boolean hasQualifier() {
+          return result.hasQualifier();
+        }
+        public java.lang.String getQualifier() {
+          return result.getQualifier();
+        }
+        public Builder setQualifier(java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasQualifier = true;
+          result.qualifier_ = value;
+          return this;
+        }
+        public Builder clearQualifier() {
+          result.hasQualifier = false;
+          result.qualifier_ = getDefaultInstance().getQualifier();
+          return this;
+        }
+        
+        // required bytes content = 2;
+        public boolean hasContent() {
+          return result.hasContent();
+        }
+        public com.google.protobuf.ByteString getContent() {
+          return result.getContent();
+        }
+        public Builder setContent(com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasContent = true;
+          result.content_ = value;
+          return this;
+        }
+        public Builder clearContent() {
+          result.hasContent = false;
+          result.content_ = getDefaultInstance().getContent();
+          return this;
+        }
+        
+        // @@protoc_insertion_point(builder_scope:com.dirlt.java.FastHbaseRest.WriteRequest.KeyValue)
+      }
+      
+      static {
+        defaultInstance = new KeyValue(true);
+        com.dirlt.java.FastHbaseRest.MessageProtos1.internalForceInit();
+        defaultInstance.initFields();
+      }
+      
+      // @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.WriteRequest.KeyValue)
+    }
+    
+    // required string table_name = 1;
+    public static final int TABLE_NAME_FIELD_NUMBER = 1;
+    private boolean hasTableName;
+    private java.lang.String tableName_ = "";
+    public boolean hasTableName() { return hasTableName; }
+    public java.lang.String getTableName() { return tableName_; }
+    
+    // required string row_key = 2;
+    public static final int ROW_KEY_FIELD_NUMBER = 2;
+    private boolean hasRowKey;
+    private java.lang.String rowKey_ = "";
+    public boolean hasRowKey() { return hasRowKey; }
+    public java.lang.String getRowKey() { return rowKey_; }
+    
+    // required string column_family = 3;
+    public static final int COLUMN_FAMILY_FIELD_NUMBER = 3;
+    private boolean hasColumnFamily;
+    private java.lang.String columnFamily_ = "";
+    public boolean hasColumnFamily() { return hasColumnFamily; }
+    public java.lang.String getColumnFamily() { return columnFamily_; }
+    
+    // repeated .com.dirlt.java.FastHbaseRest.WriteRequest.KeyValue kvs = 4;
+    public static final int KVS_FIELD_NUMBER = 4;
+    private java.util.List<com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue> kvs_ =
+      java.util.Collections.emptyList();
+    public java.util.List<com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue> getKvsList() {
+      return kvs_;
+    }
+    public int getKvsCount() { return kvs_.size(); }
+    public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue getKvs(int index) {
+      return kvs_.get(index);
+    }
+    
+    private void initFields() {
+    }
+    public final boolean isInitialized() {
+      if (!hasTableName) return false;
+      if (!hasRowKey) return false;
+      if (!hasColumnFamily) return false;
+      for (com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue element : getKvsList()) {
+        if (!element.isInitialized()) return false;
+      }
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (hasTableName()) {
+        output.writeString(1, getTableName());
+      }
+      if (hasRowKey()) {
+        output.writeString(2, getRowKey());
+      }
+      if (hasColumnFamily()) {
+        output.writeString(3, getColumnFamily());
+      }
+      for (com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue element : getKvsList()) {
+        output.writeMessage(4, element);
+      }
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      if (hasTableName()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(1, getTableName());
+      }
+      if (hasRowKey()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(2, getRowKey());
+      }
+      if (hasColumnFamily()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeStringSize(3, getColumnFamily());
+      }
+      for (com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue element : getKvsList()) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(4, element);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      private com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest result;
+      
+      // Construct using com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.newBuilder()
+      private Builder() {}
+      
+      private static Builder create() {
+        Builder builder = new Builder();
+        builder.result = new com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest();
+        return builder;
+      }
+      
+      protected com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest internalGetResult() {
+        return result;
+      }
+      
+      public Builder clear() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "Cannot call clear() after build().");
+        }
+        result = new com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest();
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(result);
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.getDescriptor();
+      }
+      
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest getDefaultInstanceForType() {
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.getDefaultInstance();
+      }
+      
+      public boolean isInitialized() {
+        return result.isInitialized();
+      }
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest build() {
+        if (result != null && !isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return buildPartial();
+      }
+      
+      private com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest buildPartial() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "build() has already been called on this Builder.");
+        }
+        if (result.kvs_ != java.util.Collections.EMPTY_LIST) {
+          result.kvs_ =
+            java.util.Collections.unmodifiableList(result.kvs_);
+        }
+        com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest) {
+          return mergeFrom((com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest other) {
+        if (other == com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.getDefaultInstance()) return this;
+        if (other.hasTableName()) {
+          setTableName(other.getTableName());
+        }
+        if (other.hasRowKey()) {
+          setRowKey(other.getRowKey());
+        }
+        if (other.hasColumnFamily()) {
+          setColumnFamily(other.getColumnFamily());
+        }
+        if (!other.kvs_.isEmpty()) {
+          if (result.kvs_.isEmpty()) {
+            result.kvs_ = new java.util.ArrayList<com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue>();
+          }
+          result.kvs_.addAll(other.kvs_);
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                return this;
+              }
+              break;
+            }
+            case 10: {
+              setTableName(input.readString());
+              break;
+            }
+            case 18: {
+              setRowKey(input.readString());
+              break;
+            }
+            case 26: {
+              setColumnFamily(input.readString());
+              break;
+            }
+            case 34: {
+              com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue.Builder subBuilder = com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue.newBuilder();
+              input.readMessage(subBuilder, extensionRegistry);
+              addKvs(subBuilder.buildPartial());
+              break;
+            }
+          }
+        }
+      }
+      
+      
+      // required string table_name = 1;
+      public boolean hasTableName() {
+        return result.hasTableName();
+      }
+      public java.lang.String getTableName() {
+        return result.getTableName();
+      }
+      public Builder setTableName(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasTableName = true;
+        result.tableName_ = value;
+        return this;
+      }
+      public Builder clearTableName() {
+        result.hasTableName = false;
+        result.tableName_ = getDefaultInstance().getTableName();
+        return this;
+      }
+      
+      // required string row_key = 2;
+      public boolean hasRowKey() {
+        return result.hasRowKey();
+      }
+      public java.lang.String getRowKey() {
+        return result.getRowKey();
+      }
+      public Builder setRowKey(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasRowKey = true;
+        result.rowKey_ = value;
+        return this;
+      }
+      public Builder clearRowKey() {
+        result.hasRowKey = false;
+        result.rowKey_ = getDefaultInstance().getRowKey();
+        return this;
+      }
+      
+      // required string column_family = 3;
+      public boolean hasColumnFamily() {
+        return result.hasColumnFamily();
+      }
+      public java.lang.String getColumnFamily() {
+        return result.getColumnFamily();
+      }
+      public Builder setColumnFamily(java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasColumnFamily = true;
+        result.columnFamily_ = value;
+        return this;
+      }
+      public Builder clearColumnFamily() {
+        result.hasColumnFamily = false;
+        result.columnFamily_ = getDefaultInstance().getColumnFamily();
+        return this;
+      }
+      
+      // repeated .com.dirlt.java.FastHbaseRest.WriteRequest.KeyValue kvs = 4;
+      public java.util.List<com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue> getKvsList() {
+        return java.util.Collections.unmodifiableList(result.kvs_);
+      }
+      public int getKvsCount() {
+        return result.getKvsCount();
+      }
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue getKvs(int index) {
+        return result.getKvs(index);
+      }
+      public Builder setKvs(int index, com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        result.kvs_.set(index, value);
+        return this;
+      }
+      public Builder setKvs(int index, com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue.Builder builderForValue) {
+        result.kvs_.set(index, builderForValue.build());
+        return this;
+      }
+      public Builder addKvs(com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        if (result.kvs_.isEmpty()) {
+          result.kvs_ = new java.util.ArrayList<com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue>();
+        }
+        result.kvs_.add(value);
+        return this;
+      }
+      public Builder addKvs(com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue.Builder builderForValue) {
+        if (result.kvs_.isEmpty()) {
+          result.kvs_ = new java.util.ArrayList<com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue>();
+        }
+        result.kvs_.add(builderForValue.build());
+        return this;
+      }
+      public Builder addAllKvs(
+          java.lang.Iterable<? extends com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue> values) {
+        if (result.kvs_.isEmpty()) {
+          result.kvs_ = new java.util.ArrayList<com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue>();
+        }
+        super.addAll(values, result.kvs_);
+        return this;
+      }
+      public Builder clearKvs() {
+        result.kvs_ = java.util.Collections.emptyList();
+        return this;
+      }
+      
+      // @@protoc_insertion_point(builder_scope:com.dirlt.java.FastHbaseRest.WriteRequest)
+    }
+    
+    static {
+      defaultInstance = new WriteRequest(true);
+      com.dirlt.java.FastHbaseRest.MessageProtos1.internalForceInit();
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.WriteRequest)
+  }
+  
+  public static final class WriteResponse extends
+      com.google.protobuf.GeneratedMessage {
+    // Use WriteResponse.newBuilder() to construct.
+    private WriteResponse() {
+      initFields();
+    }
+    private WriteResponse(boolean noInit) {}
+    
+    private static final WriteResponse defaultInstance;
+    public static WriteResponse getDefaultInstance() {
+      return defaultInstance;
+    }
+    
+    public WriteResponse getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+    
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_WriteResponse_descriptor;
+    }
+    
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return com.dirlt.java.FastHbaseRest.MessageProtos1.internal_static_com_dirlt_java_FastHbaseRest_WriteResponse_fieldAccessorTable;
+    }
+    
+    private void initFields() {
+    }
+    public final boolean isInitialized() {
+      return true;
+    }
+    
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      getUnknownFields().writeTo(output);
+    }
+    
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+    
+      size = 0;
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+    
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data).buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return newBuilder().mergeFrom(data, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      Builder builder = newBuilder();
+      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
+        return builder.buildParsed();
+      } else {
+        return null;
+      }
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input).buildParsed();
+    }
+    public static com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return newBuilder().mergeFrom(input, extensionRegistry)
+               .buildParsed();
+    }
+    
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+    
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder> {
+      private com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse result;
+      
+      // Construct using com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse.newBuilder()
+      private Builder() {}
+      
+      private static Builder create() {
+        Builder builder = new Builder();
+        builder.result = new com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse();
+        return builder;
+      }
+      
+      protected com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse internalGetResult() {
+        return result;
+      }
+      
+      public Builder clear() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "Cannot call clear() after build().");
+        }
+        result = new com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse();
+        return this;
+      }
+      
+      public Builder clone() {
+        return create().mergeFrom(result);
+      }
+      
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse.getDescriptor();
+      }
+      
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse getDefaultInstanceForType() {
+        return com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse.getDefaultInstance();
+      }
+      
+      public boolean isInitialized() {
+        return result.isInitialized();
+      }
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse build() {
+        if (result != null && !isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return buildPartial();
+      }
+      
+      private com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse buildParsed()
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        if (!isInitialized()) {
+          throw newUninitializedMessageException(
+            result).asInvalidProtocolBufferException();
+        }
+        return buildPartial();
+      }
+      
+      public com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse buildPartial() {
+        if (result == null) {
+          throw new IllegalStateException(
+            "build() has already been called on this Builder.");
+        }
+        com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse returnMe = result;
+        result = null;
+        return returnMe;
+      }
+      
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse) {
+          return mergeFrom((com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+      
+      public Builder mergeFrom(com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse other) {
+        if (other == com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse.getDefaultInstance()) return this;
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+      
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder(
+            this.getUnknownFields());
+        while (true) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              this.setUnknownFields(unknownFields.build());
+              return this;
+            default: {
+              if (!parseUnknownField(input, unknownFields,
+                                     extensionRegistry, tag)) {
+                this.setUnknownFields(unknownFields.build());
+                return this;
+              }
+              break;
+            }
+          }
+        }
+      }
+      
+      
+      // @@protoc_insertion_point(builder_scope:com.dirlt.java.FastHbaseRest.WriteResponse)
+    }
+    
+    static {
+      defaultInstance = new WriteResponse(true);
+      com.dirlt.java.FastHbaseRest.MessageProtos1.internalForceInit();
+      defaultInstance.initFields();
+    }
+    
+    // @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.WriteResponse)
   }
   
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_dirlt_java_FastHbaseRest_Request_descriptor;
+    internal_static_com_dirlt_java_FastHbaseRest_Message_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_com_dirlt_java_FastHbaseRest_Request_fieldAccessorTable;
+      internal_static_com_dirlt_java_FastHbaseRest_Message_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_dirlt_java_FastHbaseRest_Response_descriptor;
+    internal_static_com_dirlt_java_FastHbaseRest_ReadRequest_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_com_dirlt_java_FastHbaseRest_Response_fieldAccessorTable;
+      internal_static_com_dirlt_java_FastHbaseRest_ReadRequest_fieldAccessorTable;
   private static com.google.protobuf.Descriptors.Descriptor
-    internal_static_com_dirlt_java_FastHbaseRest_Response_KeyValue_descriptor;
+    internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_com_dirlt_java_FastHbaseRest_Response_KeyValue_fieldAccessorTable;
+      internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_KeyValue_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_KeyValue_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_KeyValue_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_KeyValue_fieldAccessorTable;
+  private static com.google.protobuf.Descriptors.Descriptor
+    internal_static_com_dirlt_java_FastHbaseRest_WriteResponse_descriptor;
+  private static
+    com.google.protobuf.GeneratedMessage.FieldAccessorTable
+      internal_static_com_dirlt_java_FastHbaseRest_WriteResponse_fieldAccessorTable;
   
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -1279,44 +2969,92 @@ public final class MessageProtos1 {
   static {
     java.lang.String[] descriptorData = {
       "\n\034src/main/proto/message.proto\022\034com.dirl" +
-      "t.java.FastHbaseRest\"Y\n\007Request\022\022\n\ntable" +
-      "_name\030\001 \002(\t\022\017\n\007row_key\030\002 \002(\t\022\025\n\rcolumn_f" +
-      "amily\030\003 \002(\t\022\022\n\nqualifiers\030\005 \003(\t\"\264\001\n\010Resp" +
-      "onse\022\022\n\ntable_name\030\001 \002(\t\022\017\n\007row_key\030\002 \002(" +
-      "\t\022\025\n\rcolumn_family\030\003 \002(\t\022<\n\003kvs\030\005 \003(\0132/." +
-      "com.dirlt.java.FastHbaseRest.Response.Ke" +
-      "yValue\032.\n\010KeyValue\022\021\n\tqualifier\030\001 \002(\t\022\017\n" +
-      "\007content\030\003 \002(\014B\020B\016MessageProtos1"
+      "t.java.FastHbaseRest\"\237\003\n\007Message\0228\n\004type" +
+      "\030\001 \002(\0162*.com.dirlt.java.FastHbaseRest.Me" +
+      "ssage.Type\022>\n\013readRequest\030\002 \001(\0132).com.di" +
+      "rlt.java.FastHbaseRest.ReadRequest\022@\n\014re" +
+      "adResponse\030\003 \001(\0132*.com.dirlt.java.FastHb" +
+      "aseRest.ReadResponse\022@\n\014writeRequest\030\004 \001" +
+      "(\0132*.com.dirlt.java.FastHbaseRest.WriteR" +
+      "equest\022B\n\rwriteResponse\030\005 \001(\0132+.com.dirl" +
+      "t.java.FastHbaseRest.WriteResponse\"R\n\004Ty",
+      "pe\022\020\n\014kReadRequest\020\000\022\021\n\rkWriteRequest\020\001\022" +
+      "\021\n\rkReadResponse\020\002\022\022\n\016kWriteResponse\020\003\"]" +
+      "\n\013ReadRequest\022\022\n\ntable_name\030\001 \002(\t\022\017\n\007row" +
+      "_key\030\002 \002(\t\022\025\n\rcolumn_family\030\003 \002(\t\022\022\n\nqua" +
+      "lifiers\030\004 \003(\t\"\274\001\n\014ReadResponse\022\022\n\ntable_" +
+      "name\030\001 \002(\t\022\017\n\007row_key\030\002 \002(\t\022\025\n\rcolumn_fa" +
+      "mily\030\003 \002(\t\022@\n\003kvs\030\004 \003(\01323.com.dirlt.java" +
+      ".FastHbaseRest.ReadResponse.KeyValue\032.\n\010" +
+      "KeyValue\022\021\n\tqualifier\030\001 \002(\t\022\017\n\007content\030\002" +
+      " \002(\014\"\274\001\n\014WriteRequest\022\022\n\ntable_name\030\001 \002(",
+      "\t\022\017\n\007row_key\030\002 \002(\t\022\025\n\rcolumn_family\030\003 \002(" +
+      "\t\022@\n\003kvs\030\004 \003(\01323.com.dirlt.java.FastHbas" +
+      "eRest.WriteRequest.KeyValue\032.\n\010KeyValue\022" +
+      "\021\n\tqualifier\030\001 \002(\t\022\017\n\007content\030\002 \002(\014\"\017\n\rW" +
+      "riteResponseB\020B\016MessageProtos1"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
         public com.google.protobuf.ExtensionRegistry assignDescriptors(
             com.google.protobuf.Descriptors.FileDescriptor root) {
           descriptor = root;
-          internal_static_com_dirlt_java_FastHbaseRest_Request_descriptor =
+          internal_static_com_dirlt_java_FastHbaseRest_Message_descriptor =
             getDescriptor().getMessageTypes().get(0);
-          internal_static_com_dirlt_java_FastHbaseRest_Request_fieldAccessorTable = new
+          internal_static_com_dirlt_java_FastHbaseRest_Message_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_com_dirlt_java_FastHbaseRest_Request_descriptor,
-              new java.lang.String[] { "TableName", "RowKey", "ColumnFamily", "Qualifiers", },
-              com.dirlt.java.FastHbaseRest.MessageProtos1.Request.class,
-              com.dirlt.java.FastHbaseRest.MessageProtos1.Request.Builder.class);
-          internal_static_com_dirlt_java_FastHbaseRest_Response_descriptor =
+              internal_static_com_dirlt_java_FastHbaseRest_Message_descriptor,
+              new java.lang.String[] { "Type", "ReadRequest", "ReadResponse", "WriteRequest", "WriteResponse", },
+              com.dirlt.java.FastHbaseRest.MessageProtos1.Message.class,
+              com.dirlt.java.FastHbaseRest.MessageProtos1.Message.Builder.class);
+          internal_static_com_dirlt_java_FastHbaseRest_ReadRequest_descriptor =
             getDescriptor().getMessageTypes().get(1);
-          internal_static_com_dirlt_java_FastHbaseRest_Response_fieldAccessorTable = new
+          internal_static_com_dirlt_java_FastHbaseRest_ReadRequest_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_com_dirlt_java_FastHbaseRest_Response_descriptor,
+              internal_static_com_dirlt_java_FastHbaseRest_ReadRequest_descriptor,
+              new java.lang.String[] { "TableName", "RowKey", "ColumnFamily", "Qualifiers", },
+              com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest.class,
+              com.dirlt.java.FastHbaseRest.MessageProtos1.ReadRequest.Builder.class);
+          internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_descriptor =
+            getDescriptor().getMessageTypes().get(2);
+          internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_descriptor,
               new java.lang.String[] { "TableName", "RowKey", "ColumnFamily", "Kvs", },
-              com.dirlt.java.FastHbaseRest.MessageProtos1.Response.class,
-              com.dirlt.java.FastHbaseRest.MessageProtos1.Response.Builder.class);
-          internal_static_com_dirlt_java_FastHbaseRest_Response_KeyValue_descriptor =
-            internal_static_com_dirlt_java_FastHbaseRest_Response_descriptor.getNestedTypes().get(0);
-          internal_static_com_dirlt_java_FastHbaseRest_Response_KeyValue_fieldAccessorTable = new
+              com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.class,
+              com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.Builder.class);
+          internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_KeyValue_descriptor =
+            internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_descriptor.getNestedTypes().get(0);
+          internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_KeyValue_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_com_dirlt_java_FastHbaseRest_Response_KeyValue_descriptor,
+              internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_KeyValue_descriptor,
               new java.lang.String[] { "Qualifier", "Content", },
-              com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue.class,
-              com.dirlt.java.FastHbaseRest.MessageProtos1.Response.KeyValue.Builder.class);
+              com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue.class,
+              com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue.Builder.class);
+          internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_descriptor =
+            getDescriptor().getMessageTypes().get(3);
+          internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_descriptor,
+              new java.lang.String[] { "TableName", "RowKey", "ColumnFamily", "Kvs", },
+              com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.class,
+              com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.Builder.class);
+          internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_KeyValue_descriptor =
+            internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_descriptor.getNestedTypes().get(0);
+          internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_KeyValue_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_com_dirlt_java_FastHbaseRest_WriteRequest_KeyValue_descriptor,
+              new java.lang.String[] { "Qualifier", "Content", },
+              com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue.class,
+              com.dirlt.java.FastHbaseRest.MessageProtos1.WriteRequest.KeyValue.Builder.class);
+          internal_static_com_dirlt_java_FastHbaseRest_WriteResponse_descriptor =
+            getDescriptor().getMessageTypes().get(4);
+          internal_static_com_dirlt_java_FastHbaseRest_WriteResponse_fieldAccessorTable = new
+            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+              internal_static_com_dirlt_java_FastHbaseRest_WriteResponse_descriptor,
+              new java.lang.String[] { },
+              com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse.class,
+              com.dirlt.java.FastHbaseRest.MessageProtos1.WriteResponse.Builder.class);
           return null;
         }
       };

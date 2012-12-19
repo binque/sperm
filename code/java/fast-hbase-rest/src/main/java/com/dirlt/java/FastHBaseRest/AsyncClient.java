@@ -7,6 +7,7 @@ import com.stumbleupon.async.Callback;
 import com.stumbleupon.async.Deferred;
 import org.hbase.async.GetRequest;
 import org.hbase.async.KeyValue;
+import org.hbase.async.PutRequest;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
@@ -31,23 +32,33 @@ public class AsyncClient implements Runnable {
     enum Status {
         kStat,
         kHttpRequest,
-        kLocalCache,
-        kCacheService,
-        kHBaseService,
+        kQueryLocalCache,
+        kQueryCacheService,
+        kQueryHBaseService,
+        kWriteHBaseService,
         kHttpResponse,
     }
 
     public Status code = Status.kStat; // default value.
     public Channel channel;
+
     public HttpRequest httpRequest;
-    public MessageProtos1.Request pbRequest;
-    public MessageProtos1.Response.Builder pbResponseBuilder;
+    public MessageProtos1.Message pbRequest;
+    public MessageProtos1.ReadRequest rdReq;
+    public MessageProtos1.WriteRequest wrReq;
+
+    public MessageProtos1.Message.Builder pbResponse;
+    public MessageProtos1.ReadResponse.Builder rdRes;
+    public MessageProtos1.WriteResponse.Builder wrRes;
+
     public long sessionStartTimestamp;
     public long sessionEndTimestamp;
     public long queryStartTimestamp;
     public long queryEndTimestamp;
     public long queryHBaseServiceStartTimestamp;
     public long queryHBaseServiceEndTimestamp;
+    public long writeHBaseServiceStartTimestamp;
+    public long writeHBaseServiceEndTimestamp;
 
 
     public String tableName;
@@ -66,17 +77,20 @@ public class AsyncClient implements Runnable {
 
     private List<String> queryCacheQualifiers; // qualifiers that to be queried from cache.
     private List<String> queryHBaseQualifiers; // qualifiers that to be queried from hbase.
+    // if == null, then query column family.
 
     @Override
     public void run() {
         if (code == Status.kHttpRequest) {
             handleHttpRequest();
-        } else if (code == Status.kLocalCache) {
+        } else if (code == Status.kQueryLocalCache) {
             queryLocalCache();
-        } else if (code == Status.kCacheService) {
+        } else if (code == Status.kQueryCacheService) {
             queryCacheService();
-        } else if (code == Status.kHBaseService) {
+        } else if (code == Status.kQueryHBaseService) {
             queryHBaseService();
+        } else if (code == Status.kWriteHBaseService) {
+            writeHBaseService();
         } else if (code == Status.kHttpResponse) {
             handleHttpResponse();
         }
@@ -93,7 +107,7 @@ public class AsyncClient implements Runnable {
 
         // parse request.
         try {
-            MessageProtos1.Request.Builder builder = MessageProtos1.Request.newBuilder();
+            MessageProtos1.Message.Builder builder = MessageProtos1.Message.newBuilder();
             builder.mergeFrom(bs);
             pbRequest = builder.build();
         } catch (InvalidProtocolBufferException e) {
@@ -103,30 +117,62 @@ public class AsyncClient implements Runnable {
             channel.close();
         }
 
-        tableName = pbRequest.getTableName();
-        rowKey = pbRequest.getRowKey();
-        columnFamily = pbRequest.getColumnFamily();
+        if (pbRequest.getType() == MessageProtos1.Message.Type.kReadRequest) {
+            rdReq = pbRequest.getReadRequest();
 
-        pbResponseBuilder = MessageProtos1.Response.newBuilder();
-        pbResponseBuilder.setTableName(tableName);
-        pbResponseBuilder.setRowKey(rowKey);
-        pbResponseBuilder.setColumnFamily(columnFamily);
-        prefix = makeCacheKeyPrefix(tableName, rowKey, columnFamily);
+            tableName = rdReq.getTableName();
+            rowKey = rdReq.getRowKey();
+            columnFamily = rdReq.getColumnFamily();
 
-        // raise local cache request.
-        code = Status.kLocalCache;
-        run();
+            pbResponse = MessageProtos1.Message.newBuilder();
+            pbResponse.setType(MessageProtos1.Message.Type.kReadResponse);
+            rdRes = MessageProtos1.ReadResponse.newBuilder();
+            rdRes.setTableName(tableName);
+            rdRes.setRowKey(rowKey);
+            rdRes.setColumnFamily(columnFamily);
+            prefix = makeCacheKeyPrefix(tableName, rowKey, columnFamily);
+
+            // reset qualifiers.
+            queryCacheQualifiers = null;
+            queryHBaseQualifiers = null;
+            if (rdReq.getQualifiersCount() == 0) {
+                // query column family
+                // then we can't do cache.
+                code = Status.kQueryHBaseService;
+            } else {
+                // raise local cache request.
+                code = Status.kQueryLocalCache;
+            }
+            StatStore.getInstance().addCounter("rpc.query.count", 1);
+            run();
+        } else {
+            wrReq = pbRequest.getWriteRequest();
+
+            tableName = wrReq.getTableName();
+            rowKey = wrReq.getRowKey();
+            columnFamily = wrReq.getColumnFamily();
+
+            // prepare the result.
+            pbResponse = MessageProtos1.Message.newBuilder();
+            pbResponse.setType(MessageProtos1.Message.Type.kWriteResponse);
+            wrRes = MessageProtos1.WriteResponse.newBuilder();
+            pbResponse.setWriteResponse(wrRes);
+
+            code = Status.kWriteHBaseService;
+            StatStore.getInstance().addCounter("rpc.write.count",1);
+            run();
+        }
     }
 
     public void queryLocalCache() {
-        RestServer.logger.debug("local cache");
+        RestServer.logger.debug("query local cache");
 
         queryCacheQualifiers = new ArrayList<String>();
 
         // check local cache mean while fill the cache request.
         int queryCount = 0;
         int cacheCount = 0;
-        for (String q : pbRequest.getQualifiersList()) {
+        for (String q : rdReq.getQualifiersList()) {
             String cacheKey = makeCacheKey(prefix, q);
             RestServer.logger.debug("search cache with key = " + cacheKey);
             byte[] b = LocalCache.getInstance().get(cacheKey);
@@ -134,21 +180,22 @@ public class AsyncClient implements Runnable {
             if (b != null) {
                 RestServer.logger.debug("cache hit!");
                 cacheCount += 1;
-                MessageProtos1.Response.KeyValue.Builder bd = MessageProtos1.Response.KeyValue.newBuilder();
+                MessageProtos1.ReadResponse.KeyValue.Builder bd = MessageProtos1.ReadResponse.KeyValue.newBuilder();
                 bd.setQualifier(q);
                 bd.setContent(ByteString.copyFrom(b));
-                pbResponseBuilder.addKvs(bd);
+                rdRes.addKvs(bd);
             } else {
                 RestServer.logger.debug("query hbase qualifier: " + q);
                 queryCacheQualifiers.add(q);
             }
         }
-        StatStore.getInstance().addCounter("rpc.query.count", queryCount);
-        StatStore.getInstance().addCounter("rpc.query.count.local-cache", cacheCount);
+        StatStore.getInstance().addCounter("query.count", queryCount);
+        StatStore.getInstance().addCounter("query.count.local-cache", cacheCount);
 
         if (!queryCacheQualifiers.isEmpty()) {
-            code = Status.kCacheService; // query cache service.
+            code = Status.kQueryCacheService; // query cache service.
         } else {
+            pbResponse.setReadResponse(rdRes);
             code = Status.kHttpResponse; // return directly.
         }
         run();
@@ -161,29 +208,33 @@ public class AsyncClient implements Runnable {
         // but you also have to think about the access pattern.
 
         // raise hbase service request.
-        code = Status.kHBaseService;
+        code = Status.kQueryHBaseService;
         run();
     }
 
 
     public void queryHBaseService() {
-        RestServer.logger.debug("hbase service");
+        RestServer.logger.debug("query hbase service");
         RestServer.logger.debug("tableName = " + tableName + ", rowKey = " + rowKey + ", columnFamily = " + columnFamily);
 
         GetRequest getRequest = new GetRequest(tableName, rowKey);
         getRequest.family(columnFamily);
-        // a little bit tedious.
-        byte[][] qualifiers = new byte[queryHBaseQualifiers.size()][];
-        int idx = 0;
-        for (String q : queryHBaseQualifiers) {
-            qualifiers[idx] = q.getBytes();
-            idx += 1;
+        if (queryHBaseQualifiers != null) { // query qualifiers.
+            // otherwise we query all qualifiers from column family.
+            // a little bit tedious.
+            byte[][] qualifiers = new byte[queryHBaseQualifiers.size()][];
+            int idx = 0;
+            for (String q : queryHBaseQualifiers) {
+                qualifiers[idx] = q.getBytes();
+                idx += 1;
+            }
+            getRequest.qualifiers(qualifiers);
+            StatStore.getInstance().addCounter("query.count.hbase.column", qualifiers.length);
+        } else {
+            StatStore.getInstance().addCounter("query.count.hbase.column-family", 1);
         }
-        getRequest.qualifiers(qualifiers);
-        StatStore.getInstance().addCounter("rpc.query.count.hbase", qualifiers.length);
+
         Deferred<ArrayList<KeyValue>> deferred = HBaseService.getInstance().get(getRequest);
-
-
         final AsyncClient client = this;
         client.queryHBaseServiceStartTimestamp = System.currentTimeMillis();
         // if failed, we don't return.
@@ -192,21 +243,75 @@ public class AsyncClient implements Runnable {
             public Object call(ArrayList<KeyValue> keyValues) throws Exception {
                 // we don't return because we put into CpuWorkerPool.
                 client.code = Status.kHttpResponse;
-                // fill the cache and builder.
-                for (KeyValue kv : keyValues) {
-                    String k = new String(kv.qualifier()); // not kv.key(), that's rowkey.
-                    String cacheKey = makeCacheKey(prefix, k);
-                    byte[] value = kv.value();
-                    RestServer.logger.debug("fill cache with key = " + cacheKey);
-                    LocalCache.getInstance().set(cacheKey, value);
-                    MessageProtos1.Response.KeyValue.Builder bd = MessageProtos1.Response.KeyValue.newBuilder();
-                    bd.setQualifier(k);
-                    bd.setContent(ByteString.copyFrom(value));
-                    client.pbResponseBuilder.addKvs(bd);
-                }
                 client.queryHBaseServiceEndTimestamp = System.currentTimeMillis();
-                StatStore.getInstance().addCounter("rpc.query.duration.hbase",
-                        client.queryHBaseServiceEndTimestamp - client.queryHBaseServiceStartTimestamp);
+                if (queryHBaseQualifiers != null) { // query qualifiers.
+                    // fill the cache and builder.
+                    for (KeyValue kv : keyValues) {
+                        String k = new String(kv.qualifier()); // not kv.key(), that's rowkey.
+                        String cacheKey = makeCacheKey(prefix, k);
+                        byte[] value = kv.value();
+                        RestServer.logger.debug("fill cache with key = " + cacheKey);
+                        LocalCache.getInstance().set(cacheKey, value);
+                        MessageProtos1.ReadResponse.KeyValue.Builder bd = MessageProtos1.ReadResponse.KeyValue.newBuilder();
+                        bd.setQualifier(k);
+                        bd.setContent(ByteString.copyFrom(value));
+                        client.rdRes.addKvs(bd);
+                    }
+                    StatStore.getInstance().addCounter("query.duration.hbase.column",
+                            client.queryHBaseServiceEndTimestamp - client.queryHBaseServiceStartTimestamp);
+                } else {
+                    // just fill the builder. don't save them to cache.
+                    for (KeyValue kv : keyValues) {
+                        String k = new String(kv.qualifier());
+                        byte[] value = kv.value();
+                        MessageProtos1.ReadResponse.KeyValue.Builder bd = MessageProtos1.ReadResponse.KeyValue.newBuilder();
+                        bd.setQualifier(k);
+                        bd.setContent(ByteString.copyFrom(value));
+                        client.rdRes.addKvs(bd);
+                    }
+                    StatStore.getInstance().addCounter("query.duration.hbase.column-family",
+                            client.queryHBaseServiceEndTimestamp - client.queryHBaseServiceStartTimestamp);
+                }
+                client.pbResponse.setReadResponse(client.rdRes);
+                CpuWorkerPool.getInstance().submit(client);
+                return null;
+            }
+        });
+        deferred.addErrback(new Callback<Object, Exception>() {
+            @Override
+            public Object call(Exception o) throws Exception {
+                // we don't care.
+                return null;
+            }
+        });
+    }
+
+    public void writeHBaseService() {
+        RestServer.logger.debug("write hbase service");
+        RestServer.logger.debug("tableName = " + tableName + ", rowKey = " + rowKey + ", columnFamily = " + columnFamily);
+
+        byte[][] qualifiers = new byte[wrReq.getKvsCount()][];
+        byte[][] values = new byte[wrReq.getKvsCount()][];
+        for (int i = 0; i < wrReq.getKvsCount(); i++) {
+            qualifiers[i] = wrReq.getKvs(i).getQualifier().getBytes();
+            values[i] = wrReq.getKvs(i).getContent().toByteArray();
+        }
+        StatStore.getInstance().addCounter("write.count", wrReq.getKvsCount());
+
+        PutRequest putRequest = new PutRequest(tableName.getBytes(), rowKey.getBytes(), columnFamily.getBytes(), qualifiers, values);
+
+        Deferred<Object> deferred = HBaseService.getInstance().put(putRequest);
+        final AsyncClient client = this;
+        client.writeHBaseServiceStartTimestamp = System.currentTimeMillis();
+        // if failed, we don't return.
+        deferred.addCallback(new Callback<Object, Object>() {
+            @Override
+            public Object call(Object obj) throws Exception {
+                // we don't return because we put into CpuWorkerPool.
+                client.code = Status.kHttpResponse;
+                client.writeHBaseServiceEndTimestamp = System.currentTimeMillis();
+                StatStore.getInstance().addCounter("write.duration",
+                        client.writeHBaseServiceEndTimestamp - client.writeHBaseServiceStartTimestamp);
                 CpuWorkerPool.getInstance().submit(client);
                 return null;
             }
@@ -225,7 +330,7 @@ public class AsyncClient implements Runnable {
 
         HttpResponse response = new DefaultHttpResponse(
                 HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
-        MessageProtos1.Response msg = pbResponseBuilder.build();
+        MessageProtos1.Message msg = pbResponse.build();
         int size = msg.getSerializedSize();
         response.setHeader("Content-Length", size);
         ByteArrayOutputStream os = new ByteArrayOutputStream(size);

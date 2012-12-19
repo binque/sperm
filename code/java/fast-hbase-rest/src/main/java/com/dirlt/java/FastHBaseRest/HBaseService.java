@@ -4,6 +4,7 @@ import com.stumbleupon.async.Deferred;
 import org.hbase.async.GetRequest;
 import org.hbase.async.HBaseClient;
 import org.hbase.async.KeyValue;
+import org.hbase.async.PutRequest;
 
 import java.util.ArrayList;
 
@@ -36,5 +37,9 @@ public class HBaseService {
     // simple wrapper.
     public Deferred<ArrayList<KeyValue>> get(GetRequest request) {
         return client.get(request);
+    }
+
+    public Deferred<Object> put(PutRequest putRequest) {
+        return client.put(putRequest);
     }
 }

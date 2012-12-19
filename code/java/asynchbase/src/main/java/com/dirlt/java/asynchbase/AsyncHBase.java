@@ -23,7 +23,7 @@ public class AsyncHBase {
     private static final String quorum = "localhost:2181";
     private static HBaseClient client = new HBaseClient(quorum);
     private static final String table = "t1";
-    private static final String cf = "f1";
+    private static final String cf = "cf";
 
     public static void main(String[] args) throws Exception {
         // request1
@@ -59,7 +59,8 @@ public class AsyncHBase {
                                     public Object call(Object obj) {
                                         // put over. try to get it.
                                         GetRequest get = new GetRequest(Bytes.toBytes(table), Bytes.toBytes("r2"));
-                                        get.family(cf).qualifier("key");
+                                        get.family(cf);
+                                        //qualifier("key");
                                         Deferred<ArrayList<KeyValue>> getFuture = client.get(get);
                                         getFuture.addCallback(new Callback<Object, ArrayList<KeyValue>>() {
                                             // get over. try to validate it.

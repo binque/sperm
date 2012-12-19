@@ -8,44 +8,130 @@ from google.protobuf import descriptor_pb2
 
 
 DESCRIPTOR = descriptor.FileDescriptor(
-  name='src/main/proto/message.proto',
+  name='message.proto',
   package='com.dirlt.java.FastHbaseRest',
-  serialized_pb='\n\x1csrc/main/proto/message.proto\x12\x1c\x63om.dirlt.java.FastHbaseRest\"Y\n\x07Request\x12\x12\n\ntable_name\x18\x01 \x02(\t\x12\x0f\n\x07row_key\x18\x02 \x02(\t\x12\x15\n\rcolumn_family\x18\x03 \x02(\t\x12\x12\n\nqualifiers\x18\x05 \x03(\t\"\xb4\x01\n\x08Response\x12\x12\n\ntable_name\x18\x01 \x02(\t\x12\x0f\n\x07row_key\x18\x02 \x02(\t\x12\x15\n\rcolumn_family\x18\x03 \x02(\t\x12<\n\x03kvs\x18\x05 \x03(\x0b\x32/.com.dirlt.java.FastHbaseRest.Response.KeyValue\x1a.\n\x08KeyValue\x12\x11\n\tqualifier\x18\x01 \x02(\t\x12\x0f\n\x07\x63ontent\x18\x03 \x02(\x0c\x42\x10\x42\x0eMessageProtos1')
+  serialized_pb='\n\rmessage.proto\x12\x1c\x63om.dirlt.java.FastHbaseRest\"\x9f\x03\n\x07Message\x12\x38\n\x04type\x18\x01 \x02(\x0e\x32*.com.dirlt.java.FastHbaseRest.Message.Type\x12>\n\x0breadRequest\x18\x02 \x01(\x0b\x32).com.dirlt.java.FastHbaseRest.ReadRequest\x12@\n\x0creadResponse\x18\x03 \x01(\x0b\x32*.com.dirlt.java.FastHbaseRest.ReadResponse\x12@\n\x0cwriteRequest\x18\x04 \x01(\x0b\x32*.com.dirlt.java.FastHbaseRest.WriteRequest\x12\x42\n\rwriteResponse\x18\x05 \x01(\x0b\x32+.com.dirlt.java.FastHbaseRest.WriteResponse\"R\n\x04Type\x12\x10\n\x0ckReadRequest\x10\x00\x12\x11\n\rkWriteRequest\x10\x01\x12\x11\n\rkReadResponse\x10\x02\x12\x12\n\x0ekWriteResponse\x10\x03\"]\n\x0bReadRequest\x12\x12\n\ntable_name\x18\x01 \x02(\t\x12\x0f\n\x07row_key\x18\x02 \x02(\t\x12\x15\n\rcolumn_family\x18\x03 \x02(\t\x12\x12\n\nqualifiers\x18\x04 \x03(\t\"\xbc\x01\n\x0cReadResponse\x12\x12\n\ntable_name\x18\x01 \x02(\t\x12\x0f\n\x07row_key\x18\x02 \x02(\t\x12\x15\n\rcolumn_family\x18\x03 \x02(\t\x12@\n\x03kvs\x18\x04 \x03(\x0b\x32\x33.com.dirlt.java.FastHbaseRest.ReadResponse.KeyValue\x1a.\n\x08KeyValue\x12\x11\n\tqualifier\x18\x01 \x02(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x02(\x0c\"\xbc\x01\n\x0cWriteRequest\x12\x12\n\ntable_name\x18\x01 \x02(\t\x12\x0f\n\x07row_key\x18\x02 \x02(\t\x12\x15\n\rcolumn_family\x18\x03 \x02(\t\x12@\n\x03kvs\x18\x04 \x03(\x0b\x32\x33.com.dirlt.java.FastHbaseRest.WriteRequest.KeyValue\x1a.\n\x08KeyValue\x12\x11\n\tqualifier\x18\x01 \x02(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x02(\x0c\"\x0f\n\rWriteResponseB\x10\x42\x0eMessageProtos1')
 
 
 
+_MESSAGE_TYPE = descriptor.EnumDescriptor(
+  name='Type',
+  full_name='com.dirlt.java.FastHbaseRest.Message.Type',
+  filename=None,
+  file=DESCRIPTOR,
+  values=[
+    descriptor.EnumValueDescriptor(
+      name='kReadRequest', index=0, number=0,
+      options=None,
+      type=None),
+    descriptor.EnumValueDescriptor(
+      name='kWriteRequest', index=1, number=1,
+      options=None,
+      type=None),
+    descriptor.EnumValueDescriptor(
+      name='kReadResponse', index=2, number=2,
+      options=None,
+      type=None),
+    descriptor.EnumValueDescriptor(
+      name='kWriteResponse', index=3, number=3,
+      options=None,
+      type=None),
+  ],
+  containing_type=None,
+  options=None,
+  serialized_start=381,
+  serialized_end=463,
+)
 
-_REQUEST = descriptor.Descriptor(
-  name='Request',
-  full_name='com.dirlt.java.FastHbaseRest.Request',
+
+_MESSAGE = descriptor.Descriptor(
+  name='Message',
+  full_name='com.dirlt.java.FastHbaseRest.Message',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     descriptor.FieldDescriptor(
-      name='table_name', full_name='com.dirlt.java.FastHbaseRest.Request.table_name', index=0,
+      name='type', full_name='com.dirlt.java.FastHbaseRest.Message.type', index=0,
+      number=1, type=14, cpp_type=8, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='readRequest', full_name='com.dirlt.java.FastHbaseRest.Message.readRequest', index=1,
+      number=2, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='readResponse', full_name='com.dirlt.java.FastHbaseRest.Message.readResponse', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='writeRequest', full_name='com.dirlt.java.FastHbaseRest.Message.writeRequest', index=3,
+      number=4, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='writeResponse', full_name='com.dirlt.java.FastHbaseRest.Message.writeResponse', index=4,
+      number=5, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+    _MESSAGE_TYPE,
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=48,
+  serialized_end=463,
+)
+
+
+_READREQUEST = descriptor.Descriptor(
+  name='ReadRequest',
+  full_name='com.dirlt.java.FastHbaseRest.ReadRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    descriptor.FieldDescriptor(
+      name='table_name', full_name='com.dirlt.java.FastHbaseRest.ReadRequest.table_name', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
-      name='row_key', full_name='com.dirlt.java.FastHbaseRest.Request.row_key', index=1,
+      name='row_key', full_name='com.dirlt.java.FastHbaseRest.ReadRequest.row_key', index=1,
       number=2, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
-      name='column_family', full_name='com.dirlt.java.FastHbaseRest.Request.column_family', index=2,
+      name='column_family', full_name='com.dirlt.java.FastHbaseRest.ReadRequest.column_family', index=2,
       number=3, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
-      name='qualifiers', full_name='com.dirlt.java.FastHbaseRest.Request.qualifiers', index=3,
-      number=5, type=9, cpp_type=9, label=3,
+      name='qualifiers', full_name='com.dirlt.java.FastHbaseRest.ReadRequest.qualifiers', index=3,
+      number=4, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -59,28 +145,28 @@ _REQUEST = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=62,
-  serialized_end=151,
+  serialized_start=465,
+  serialized_end=558,
 )
 
 
-_RESPONSE_KEYVALUE = descriptor.Descriptor(
+_READRESPONSE_KEYVALUE = descriptor.Descriptor(
   name='KeyValue',
-  full_name='com.dirlt.java.FastHbaseRest.Response.KeyValue',
+  full_name='com.dirlt.java.FastHbaseRest.ReadResponse.KeyValue',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     descriptor.FieldDescriptor(
-      name='qualifier', full_name='com.dirlt.java.FastHbaseRest.Response.KeyValue.qualifier', index=0,
+      name='qualifier', full_name='com.dirlt.java.FastHbaseRest.ReadResponse.KeyValue.qualifier', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
-      name='content', full_name='com.dirlt.java.FastHbaseRest.Response.KeyValue.content', index=1,
-      number=3, type=12, cpp_type=9, label=2,
+      name='content', full_name='com.dirlt.java.FastHbaseRest.ReadResponse.KeyValue.content', index=1,
+      number=2, type=12, cpp_type=9, label=2,
       has_default_value=False, default_value="",
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -94,41 +180,41 @@ _RESPONSE_KEYVALUE = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=288,
-  serialized_end=334,
+  serialized_start=703,
+  serialized_end=749,
 )
 
-_RESPONSE = descriptor.Descriptor(
-  name='Response',
-  full_name='com.dirlt.java.FastHbaseRest.Response',
+_READRESPONSE = descriptor.Descriptor(
+  name='ReadResponse',
+  full_name='com.dirlt.java.FastHbaseRest.ReadResponse',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   fields=[
     descriptor.FieldDescriptor(
-      name='table_name', full_name='com.dirlt.java.FastHbaseRest.Response.table_name', index=0,
+      name='table_name', full_name='com.dirlt.java.FastHbaseRest.ReadResponse.table_name', index=0,
       number=1, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
-      name='row_key', full_name='com.dirlt.java.FastHbaseRest.Response.row_key', index=1,
+      name='row_key', full_name='com.dirlt.java.FastHbaseRest.ReadResponse.row_key', index=1,
       number=2, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
-      name='column_family', full_name='com.dirlt.java.FastHbaseRest.Response.column_family', index=2,
+      name='column_family', full_name='com.dirlt.java.FastHbaseRest.ReadResponse.column_family', index=2,
       number=3, type=9, cpp_type=9, label=2,
       has_default_value=False, default_value=unicode("", "utf-8"),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     descriptor.FieldDescriptor(
-      name='kvs', full_name='com.dirlt.java.FastHbaseRest.Response.kvs', index=3,
-      number=5, type=11, cpp_type=10, label=3,
+      name='kvs', full_name='com.dirlt.java.FastHbaseRest.ReadResponse.kvs', index=3,
+      number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -136,36 +222,172 @@ _RESPONSE = descriptor.Descriptor(
   ],
   extensions=[
   ],
-  nested_types=[_RESPONSE_KEYVALUE, ],
+  nested_types=[_READRESPONSE_KEYVALUE, ],
   enum_types=[
   ],
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=154,
-  serialized_end=334,
+  serialized_start=561,
+  serialized_end=749,
 )
 
 
-_RESPONSE_KEYVALUE.containing_type = _RESPONSE;
-_RESPONSE.fields_by_name['kvs'].message_type = _RESPONSE_KEYVALUE
+_WRITEREQUEST_KEYVALUE = descriptor.Descriptor(
+  name='KeyValue',
+  full_name='com.dirlt.java.FastHbaseRest.WriteRequest.KeyValue',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    descriptor.FieldDescriptor(
+      name='qualifier', full_name='com.dirlt.java.FastHbaseRest.WriteRequest.KeyValue.qualifier', index=0,
+      number=1, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='content', full_name='com.dirlt.java.FastHbaseRest.WriteRequest.KeyValue.content', index=1,
+      number=2, type=12, cpp_type=9, label=2,
+      has_default_value=False, default_value="",
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=703,
+  serialized_end=749,
+)
 
-class Request(message.Message):
+_WRITEREQUEST = descriptor.Descriptor(
+  name='WriteRequest',
+  full_name='com.dirlt.java.FastHbaseRest.WriteRequest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    descriptor.FieldDescriptor(
+      name='table_name', full_name='com.dirlt.java.FastHbaseRest.WriteRequest.table_name', index=0,
+      number=1, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='row_key', full_name='com.dirlt.java.FastHbaseRest.WriteRequest.row_key', index=1,
+      number=2, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='column_family', full_name='com.dirlt.java.FastHbaseRest.WriteRequest.column_family', index=2,
+      number=3, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    descriptor.FieldDescriptor(
+      name='kvs', full_name='com.dirlt.java.FastHbaseRest.WriteRequest.kvs', index=3,
+      number=4, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[_WRITEREQUEST_KEYVALUE, ],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=752,
+  serialized_end=940,
+)
+
+
+_WRITERESPONSE = descriptor.Descriptor(
+  name='WriteResponse',
+  full_name='com.dirlt.java.FastHbaseRest.WriteResponse',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=942,
+  serialized_end=957,
+)
+
+
+_MESSAGE.fields_by_name['type'].enum_type = _MESSAGE_TYPE
+_MESSAGE.fields_by_name['readRequest'].message_type = _READREQUEST
+_MESSAGE.fields_by_name['readResponse'].message_type = _READRESPONSE
+_MESSAGE.fields_by_name['writeRequest'].message_type = _WRITEREQUEST
+_MESSAGE.fields_by_name['writeResponse'].message_type = _WRITERESPONSE
+_MESSAGE_TYPE.containing_type = _MESSAGE;
+_READRESPONSE_KEYVALUE.containing_type = _READRESPONSE;
+_READRESPONSE.fields_by_name['kvs'].message_type = _READRESPONSE_KEYVALUE
+_WRITEREQUEST_KEYVALUE.containing_type = _WRITEREQUEST;
+_WRITEREQUEST.fields_by_name['kvs'].message_type = _WRITEREQUEST_KEYVALUE
+
+class Message(message.Message):
   __metaclass__ = reflection.GeneratedProtocolMessageType
-  DESCRIPTOR = _REQUEST
+  DESCRIPTOR = _MESSAGE
   
-  # @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.Request)
+  # @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.Message)
 
-class Response(message.Message):
+class ReadRequest(message.Message):
+  __metaclass__ = reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _READREQUEST
+  
+  # @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.ReadRequest)
+
+class ReadResponse(message.Message):
   __metaclass__ = reflection.GeneratedProtocolMessageType
   
   class KeyValue(message.Message):
     __metaclass__ = reflection.GeneratedProtocolMessageType
-    DESCRIPTOR = _RESPONSE_KEYVALUE
+    DESCRIPTOR = _READRESPONSE_KEYVALUE
     
-    # @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.Response.KeyValue)
-  DESCRIPTOR = _RESPONSE
+    # @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.ReadResponse.KeyValue)
+  DESCRIPTOR = _READRESPONSE
   
-  # @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.Response)
+  # @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.ReadResponse)
+
+class WriteRequest(message.Message):
+  __metaclass__ = reflection.GeneratedProtocolMessageType
+  
+  class KeyValue(message.Message):
+    __metaclass__ = reflection.GeneratedProtocolMessageType
+    DESCRIPTOR = _WRITEREQUEST_KEYVALUE
+    
+    # @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.WriteRequest.KeyValue)
+  DESCRIPTOR = _WRITEREQUEST
+  
+  # @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.WriteRequest)
+
+class WriteResponse(message.Message):
+  __metaclass__ = reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _WRITERESPONSE
+  
+  # @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.WriteResponse)
 
 # @@protoc_insertion_point(module_scope)
