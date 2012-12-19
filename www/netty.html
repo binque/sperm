@@ -1,13 +1,13 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>netty</title>
-<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="netty"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-18 08:49:09 CST"/>
+<meta name="generated" content="2012-12-19 14:37:44 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -98,7 +98,24 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 netty</a></li>
+<li><a href="#sec-1">1 netty</a>
+<ul>
+<li><a href="#sec-1-1">1.1 concept</a>
+<ul>
+<li><a href="#sec-1-1-1">1.1.1 Channel</a></li>
+<li><a href="#sec-1-1-2">1.1.2 ChannelHandler</a></li>
+<li><a href="#sec-1-1-3">1.1.3 ChannelPipeline</a></li>
+<li><a href="#sec-1-1-4">1.1.4 ChannelEvent</a></li>
+<li><a href="#sec-1-1-5">1.1.5 ChannelBuffer</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-2">1.2 使用问题</a>
+<ul>
+<li><a href="#sec-1-2-1">1.2.1 boss/worker executor</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -110,14 +127,159 @@
 <ul>
 <li>Netty: Home (Main.WebHome) <a href="https://netty.io/">https://netty.io/</a>
 </li>
+<li>The Netty Project 3.x User Guide <a href="http://static.netty.io/3.5/guide/">http://static.netty.io/3.5/guide/</a>
+</li>
 </ul>
 
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> concept</h3>
+<div class="outline-text-3" id="text-1-1">
+
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Channel</h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+<p>可以认为是一个connection，这个connection上面有socket fd可以所以进行读写。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> ChannelHandler</h4>
+<div class="outline-text-4" id="text-1-1-2">
+
+<p>在这个connection上面的处理逻辑对象。总的来说有下面两种类型的handler
+</p><ul>
+<li>ChannelUpstreamHandler 从net layer到app layer的数据流动处理逻辑
+</li>
+<li>ChannelDownstreamHandler 从app layer到net layer的数据流动处理逻辑
+</li>
+</ul>
+
+
+<p>
+然后在这两种类型的handler上面派生很多其他的handler，比如
+</p><ul>
+<li>SimpleChannelHandler 可以同时处理upstream和downstream
+</li>
+<li>Encoder/Decoder 协议的编码和解码
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> ChannelPipeline</h4>
+<div class="outline-text-4" id="text-1-1-3">
+
+<p>1 Channel  + N ChannelHandler，连接和这个连接上所有的处理逻辑对象。
+所有的Handler组成为了链表，不管是upstream还是downstream都会流过所有的handler.netty框架会判断这个handler是否需要处理某个事件
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-1-4" class="outline-4">
+<h4 id="sec-1-1-4"><span class="section-number-4">1.1.4</span> ChannelEvent</h4>
+<div class="outline-text-4" id="text-1-1-4">
+
+<p>连接上所有触发的事件，可以是但是不仅限于下面几种类型
+</p><ul>
+<li>ChannelStateEvent 连接状态的变化事件
+</li>
+<li>MessageEvent 消息可读（可以是ChannelBuffer读取字节流，也可以是已经成帧的消息）
+</li>
+<li>WriteCompletionEvent 数据写完
+</li>
+<li>ExceptionEvent 异常事件，可能是IO线程问题也可能是ChannelHandler处理异常
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-5" class="outline-4">
+<h4 id="sec-1-1-5"><span class="section-number-4">1.1.5</span> ChannelBuffer</h4>
+<div class="outline-text-4" id="text-1-1-5">
+
+<p>这个和Channel倒是没有太大关系，比较偏向buffer的管理，主要针对网络通信这种read/write交互场景进行优化。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> 使用问题</h3>
+<div class="outline-text-3" id="text-1-2">
+
+
+</div>
+
+<div id="outline-container-1-2-1" class="outline-4">
+<h4 id="sec-1-2-1"><span class="section-number-4">1.2.1</span> boss/worker executor</h4>
+<div class="outline-text-4" id="text-1-2-1">
+
+<p>NioServerSocketChannelFactory构造函数需要指定boss/worker两个executor，有必要解释一下这两个对象的含义。
+</p>
+<p>
+首先了解一下netty的网络模型
+</p><ul>
+<li>boss创建accept fd之后阻塞调用accept. 一旦accept一个connection之后，将这个connection fd交给worker.
+<ul>
+<li>NOTE（dirlt）： <b>猜测分摊到哪个worker上的算法应该是round robin</b>
+</li>
+</ul>
+
+</li>
+<li>worker将这个connection fd加入到自己的epoll/selector里面，检测可读可写事件的发生
+</li>
+<li>boss/worker都是runnable对象，需要外部提供线程池来执行
+</li>
+</ul>
+
+
+<p>
+worker的数量如果没有指定的话，with 2 * the number of available processors in the machine. The number of available processors is obtained by Runtime.availableProcessors()
+也可以用这个构造函数可以指定 public NioServerSocketChannelFactory(Executor bossExecutor,  Executor workerExecutor, int workerCount)
+</p>
+<p>
+所以如果传入的worker executor使用newFixedThreadPool并且线程数目比较小的话，那么就会出现这个问题 "netty的固定个数的worker线程阻塞大量的并发连接" <a href="http://www.oschina.net/question/241182_40955">http://www.oschina.net/question/241182_40955</a>
+现象就是如果你的CPU core为4，那么就会创建8个worker对象，而如果线程数目使用5,那么浏览器创建第6个连接之后没有办法正常都写，原因就是因为boss创建第6个连接的时候，给第6个worker处理，而这个worker没有线程池可以run起来。
+</p>
+<p>
+这个问题解决办法也非常简单，要不就使用newCachedThreadPool()，要不就自己指定worker IO thread数目，要不确保创建的线程数目&gt;=2*CPU core.
+</p>
+
+
+
+
+
+
+
+
+
+</div>
+</div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-18 08:49:09 CST</p>
+<p class="date">Date: 2012-12-19 14:37:44 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
