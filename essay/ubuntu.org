@@ -1,6 +1,7 @@
 * ubuntu
 #+OPTIONS: H:5
 
+** 写在前面
 千万不要抱有一朝一兮就可以搞定的想法。最好的话身边有一个群体，大家都使用Ubuntu这个东西。
 这样如果有什么问题的话，大家就比较容易找到解决办法，直到自己完全适应为止。推荐安装下面这些软件：
 
@@ -239,7 +240,7 @@ NOTE（dirlt）：其实thunderbird超过一定大小就会自动提醒是否需
 使用virtualbox，通过加载windows xp的镜像安装，这个非常简单。
 或者是直接使用别人生成好的.vdi文件。vdi全称应该是virtual disk image。
 
-** windows虚拟机共享文件夹
+** virtualbox设置共享文件夹
 设置共享文件夹主要是为了数据可以进行同步。通过windows虚拟机，安装同步软件比如GDrive。
 然后通过共享文件夹，将GDrive的同步目录隐射到Linux文件系统上面，完成数据同步。
 

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="cpp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-14 14:10:01 CST"/>
+<meta name="generated" content="2012-12-18 18:11:23 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -102,31 +102,25 @@
 <ul>
 <li><a href="#sec-1-1">1.1 相关资料</a></li>
 <li><a href="#sec-1-2">1.2 TC++PL</a></li>
-<li><a href="#sec-1-3">1.3 local static object</a></li>
-<li><a href="#sec-1-4">1.4 hook function</a>
+<li><a href="#sec-1-3">1.3 language</a>
 <ul>
-<li><a href="#sec-1-4-1">1.4.1 hook编译时函数</a></li>
-<li><a href="#sec-1-4-2">1.4.2 hook运行时函数</a></li>
+<li><a href="#sec-1-3-1">1.3.1 new/delete</a></li>
+<li><a href="#sec-1-3-2">1.3.2 static assert</a></li>
+<li><a href="#sec-1-3-3">1.3.3 renew static_cast</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-5">1.5 undefined reference to static const class member</a></li>
-<li><a href="#sec-1-6">1.6 new/delete</a>
+<li><a href="#sec-1-4">1.4 runtime</a>
 <ul>
-<li><a href="#sec-1-6-1">1.6.1 new重载</a></li>
-<li><a href="#sec-1-6-2">1.6.2 new异常规格</a></li>
-<li><a href="#sec-1-6-3">1.6.3 内存分配失败</a></li>
-<li><a href="#sec-1-6-4">1.6.4 operator new与new operator</a></li>
+<li><a href="#sec-1-4-1">1.4.1 local static object</a></li>
+<li><a href="#sec-1-4-2">1.4.2 hook function</a></li>
+<li><a href="#sec-1-4-3">1.4.3 undefined reference to static const class member</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-7">1.7 static assert</a></li>
-<li><a href="#sec-1-8">1.8 boost::bind</a></li>
-<li><a href="#sec-1-9">1.9 试用boost::spirit</a></li>
-<li><a href="#sec-1-10">1.10 google::protobuf动态编译</a></li>
-<li><a href="#sec-1-11">1.11 重新认识static_cast</a>
+<li><a href="#sec-1-5">1.5 library</a>
 <ul>
-<li><a href="#sec-1-11-1">1.11.1 正确的例子</a></li>
-<li><a href="#sec-1-11-2">1.11.2 当处理多继承时</a></li>
-<li><a href="#sec-1-11-3">1.11.3 应该怎么做</a></li>
+<li><a href="#sec-1-5-1">1.5.1 boost::bind</a></li>
+<li><a href="#sec-1-5-2">1.5.2 boost::spirit</a></li>
+<li><a href="#sec-1-5-3">1.5.3 google::protobuf dynamic usage</a></li>
 </ul>
 </li>
 </ul>
@@ -194,8 +188,347 @@ OOP允许程序员用问题本身的属于来描述问题，而不是要用运�
 </div>
 
 <div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> local static object</h3>
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> language</h3>
 <div class="outline-text-3" id="text-1-3">
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> new/delete</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+<p>new/delete和C的内存分配有很多区别，主要的改进在进行了很多可定制化的内容:
+</p><ul>
+<li>new/delete作为运算符而不是函数存在，因此可以重载来进行内存分配的定制
+</li>
+<li>在new/delete对象的时候会调用分配对象的构造和析构函数
+</li>
+<li>new/delete对象的时候区分了new/delete和new/delete [](主要原因还是因为需要调用构造和析构函数):-)
+</li>
+<li>支持放置语法，就是传入一个信息告诉分配函数希望在哪个地方进行分配
+</li>
+<li>加入了异常分配失败抛出bad_alloc
+</li>
+<li>提供了一种方法设置handler在分配失败的时候调用set_new_handler()
+</li>
+<li>默认的new还进行检查以确信在传递地址给构造函数之前内存分配成功
+</li>
+<li>允许重载全局new/delete和某个类的new/delete 
+</li>
+</ul>
+
+
+<ul>
+<li id="sec-1-3-1-1">new重载<br/>
+用户可以重载new/delete来实现全局new/delete或者是某个类的new/delete.原型有下面这些
+
+
+
+<pre class="src src-C++">// #include &lt;new&gt;
+void* operator new(std::size_t) throw (std::bad_alloc);
+void* operator new[](std::size_t) throw (std::bad_alloc);
+void operator delete(void*) throw();
+void operator delete[](void*) throw();
+void* operator new(std::size_t, const std::nothrow_t&amp;) throw();
+void* operator new[](std::size_t, const std::nothrow_t&amp;) throw();
+void operator delete(void*, const std::nothrow_t&amp;) throw();
+void operator delete[](void*, const std::nothrow_t&amp;) throw();
+
+// Default placement versions of operator new.
+inline void* operator new(std::size_t, void* __p) throw() { return __p; }
+inline void* operator new[](std::size_t, void* __p) throw() { return __p; }
+
+// Default placement versions of operator delete.
+inline void  operator delete  (void*, void*) throw() { }
+inline void  operator delete[](void*, void*) throw() { }
+</pre>
+
+
+<p>
+new/delete如果作为类成员的话被重载的话，始终是静态成员，即使你不这样声明也是如此，这个事实意味着这些运算符不接受this指针。其实这也是非常容易考虑到的，new/delete本来就是来分配内存使用的。new在初始化构造之前调用，而delete是在析构函数调用之后调用，所以非静态数据成员肯定不能够被访问:-)此外new/delete是可以继承的,调用的还是基类的new/delete函数，只不过内存大小不同。
+</p>
+
+
+
+<pre class="src src-C++">#include &lt;iostream&gt;
+#include &lt;new&gt;
+class A{
+ public:
+  void* operator new(size_t s,int arg) throw(std::bad_alloc) {
+    std::cout &lt;&lt; <span style="color: #ffff00;">"size : "</span> &lt;&lt; s &lt;&lt; <span style="color: #ffff00;">", arg : "</span> &lt;&lt; arg &lt;&lt; std::endl;
+    return ::operator new(s);
+  }
+  void* operator new(size_t s,int arg,const std::nothrow_t&amp; nothrow){
+    std::cout &lt;&lt; <span style="color: #ffff00;">"[nothrow]size : "</span> &lt;&lt; s &lt;&lt; <span style="color: #ffff00;">", arg : "</span> &lt;&lt; arg &lt;&lt; std::endl;
+    return ::operator new(s,nothrow);
+  }
+  void operator delete(void* p) {
+    ::operator delete(p);
+  }
+  int x;
+};
+class B: public A{
+  int y;
+};
+
+int main(){
+  A* a=new (10,std::nothrow)A();
+  B* b=new (20)B();
+  delete a;
+  delete b;
+}
+</pre>
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-1-2">new异常规格<br/>
+从new的异常规格可以看到，如果是普通的调用的话可能会抛出std::bad_alloc这个异常，但是原型里面还有
+
+
+
+<pre class="src src-C++">void* operator new(std::size_t, const std::nothrow_t&amp;) throw(); 
+</pre>
+
+<p>
+这种使用placement来通知new不抛出异常的的接口，语义是返回NULL来告诉app分配失败。要使用这个函数也非常简单
+</p>
+
+
+<pre class="src src-C++">// #include &lt;new&gt;
+//  struct nothrow_t { };
+//  extern const nothrow_t nothrow;
+void* p=new (std::nothrow) int(); // &#36825;&#37324;std::nothrow&#23601;&#26159;std::nothrow_t&#30340;&#23454;&#20363;
+</pre>
+
+<p>
+通过函数重载来达到这个目的，这个方法值得借鉴。
+</p>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-1-3">内存分配失败<br/>
+C++来提供了内存分配失败的回调函数，但是这个只能够处理全局new分配失败的情况
+
+
+
+<pre class="src src-C++">/** If you write your own error handler to be called by @c new, it must
+ *  be of this type.  */
+typedef void (*new_handler)();
+/// Takes a replacement handler as the argument, returns the previous handler.
+new_handler set_new_handler(new_handler) throw();
+</pre>
+
+
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-1-4">operator new与new operator<br/>
+此外在很多书籍里面会提到operator new和new operator这两个说法，这两个是不一样的概念。operator new就是我们重写运算符函数，而new operator使我们调用new这个表达式。本质上说new这个表达式调用了分配类型里面的operator new函数，同时调用这个类型的初始化构造函数。同理operator delete和delete operator差别也是一样的。通常new operator的动作是这样的:
+<ul>
+<li>void *raw=operaotor new(sizeof(A)); //使用operator new进行内存分配
+</li>
+<li>call A::A on *raw; //在raw上面调用构造函数
+</li>
+<li>A *a=static_castraw; //最后进行一次强制转换
+</li>
+</ul>
+
+<p>同理通常delete operator的动作是这样的:
+</p><ul>
+<li>a-&gt;~A();//调用一次析构函数
+</li>
+<li>operator delete(a);//进行内存释放
+</li>
+</ul>
+
+<p>说到这里，我们需要清楚为什么需要有new []和delete []的方法了。对于operator new和delete来说真的不关心这些，因为只是分配内存，而对于new operator和delete operator就需要关心了，因为需要关心有多少个对象，这样的话才能够调用每个对象的构造函数。调用了new []分配的对象也一定需要使用delete []来释放，不然只会调用第一个元素析构函数和释放它的空间。
+</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> static assert</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+
+
+
+<pre class="src src-C++">#define STATIC_ASSERT(_cond,_name)      typedef char STATIC_ASSERT_FAILED_ ## _name [ (_cond) ? 1 : -1 ]
+#define STATIC_SIZE_ASSERT(_type,_size) STATIC_ASSERT ( sizeof(_type)==_size, _type ## _MUST_BE_ ## _size ## _BYTES )
+</pre>
+
+
+<p>
+这个宏用来检测sizeof(_type)==_size这个假设，这个可以在编译代码的时候可以进行断言。好比下面这段程序
+</p>
+
+
+
+<pre class="src src-C++">int main() {
+  STATIC_SIZE_ASSERT(int,8);
+  return 0;
+}
+</pre>
+
+
+<p>
+那么编译就会出现
+</p>
+
+
+<pre class="example">main.cc:5: error: size of array `STATIC_ASSERT_FAILED_int_MUST_BE_8_BYTES’ is negative
+</pre>
+
+
+<p>
+当然错误信息并不是非常的优美，但是已经提供了足够多的信息了。不过这种编译断言可能只是比较适合用于简单断言比如sizeof等，对于复杂断言话可能还是需要依赖于configure这种工具比如系统是否有libunwind库。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> renew static_cast</h4>
+<div class="outline-text-4" id="text-1-3-3">
+
+<p>学习C的时候总是认为强转不过就是二进制层面的强转。开始学习C++之后就认为C语言的强转对应的就是reinterpret_cast.而static_cast和reinterpret_cast的差别不过就是static_cast可以做一些类型上面的检查，所以在大多数的时候都习惯使用reinterpret_cast而非static_cast.直到在编写itachi（一个异步网络编程框架）的时候，才发现并不是这么回事。下面的例子是我遇到问题的一个抽象。
+</p>
+<ul>
+<li id="sec-1-3-3-1">正确的例子<br/>
+
+
+
+<pre class="src src-C++">#include &lt;cstdio&gt;
+struct A{
+}; // class A
+
+struct B: public A{
+  int g;
+}; // class B
+
+void onComplete(A* o){
+  B* pb=reinterpret_cast&lt;B*&gt;(o);
+  printf(<span style="color: #ffff00;">"%p\n"</span>,&amp;(pb-&gt;g));
+}
+
+int main() {
+  B b;
+  onComplete(&amp;b);
+  printf(<span style="color: #ffff00;">"%p\n"</span>,&amp;(b.g));
+  return 0;
+}
+
+</pre>
+
+
+<p>
+运行结果是
+</p>
+
+
+<pre class="example">[dirlt@localhost ~]$ ./a.out
+0xbff031b0
+0xbff031b0 
+</pre>
+
+
+<p>
+在onComplete这里我们希望处理一个A*抽象类型。假设我们从外围上面保证传入onComplete是一个B或者是B的子类型。
+</p>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-2">当处理多继承时<br/>
+处理B类型没有问题，但是处理B的子类型的话，那么上面代码可能就会出现问题。因为对于B子类型而言的话很可能在 <b>对象模型</b> 之前添加了一些字段，按照reintrepret_cast语义的话是直接二进制映射，字段没有虚方法所以是直接按照偏移来取的，因此可能存在问题。但是看看下面这个例子
+
+
+
+<pre class="src src-C++">#include &lt;cstdio&gt;
+struct A{
+}; // class A
+
+struct B: public A{
+  int g;
+}; // class B
+
+struct Holder{
+  int dummy;
+};
+struct C: public Holder,
+          public B{
+}; // class C
+
+void onComplete(A* o){
+  B* pb=reinterpret_cast&lt;B*&gt;(o);
+  printf(<span style="color: #ffff00;">"o:%p pb-&gt;g:%p\n"</span>,pb, &amp;(pb-&gt;g));
+}
+
+int main() {
+  C c;
+  onComplete(&amp;c);
+  printf(<span style="color: #ffff00;">"c:%p c.g:%p\n"</span>,&amp;c, &amp;(c.g));
+  return 0;
+}
+</pre>
+
+
+<p>
+运行结果
+</p>
+
+
+<pre class="example">[dirlt@localhost ~]$ ./a.out
+o:0xbfff9aa0 pb-&gt;g:0xbfff9aa0
+c:0xbfff9a9c c.g:0xbfff9aa0 
+</pre>
+
+
+<p>
+问题出来了，并不像我们想的那样，pb-&gt;g和c.g的地址是一样的。但是神奇的是，o和c的地址是不一样的。这是为什么呢？原因就在于static_cast.在传参的时候，根据形参和实参之间的类型信息来进行指针的转换。 <b>也就是说，static_cast能够正确处理类型系统。而这点reintrepret_cast是做不到的。</b>
+</p>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-3-3">应该怎么做<br/>
+<b>因为自己也缺乏C++对象模型方面的知识，所以也没有办法从底层解释原因。</b> 但是结论我想说的就是，尽量地执行static_cast而非reinterpret_cast.reinterpret_cast对于继承方面基本没有做任何事情，而使用static_cast的话则能够检测到类型系统，然后根据类型系统来进行正确的转换。 <b>要是想对于static_cast有更多认识的话，必须看看C++对象模型的实现。</b>
+
+<p>
+下面我总结了一下各种cast应该使用的场景：
+</p><ol>
+<li>static_cast无论如何应该首先考虑使用，而且编译器在生成函数调用时候内部也是在用static_cast.
+</li>
+<li>reinterpret_cast只有在你确定只处理某两种final类型时候，两者之间的转换。比如在内存操作时候uint8_t*和char*之间的转换
+</li>
+<li>const_cast只有在消除const以及volatile这些标记时候有用。
+</li>
+<li>dynamic_cast得到父类型但是不确定子类型的时候，你需要逐个尝试转换可以使用。但是如果外部存在字符串比如type这样的字段表示类型的话，那么可以直接使用static_cast.
+</li>
+</ol>
+
+
+</li>
+</ul>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> runtime</h3>
+<div class="outline-text-3" id="text-1-4">
+
+
+</div>
+
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> local static object</h4>
+<div class="outline-text-4" id="text-1-4-1">
 
 <p>局部静态对象在C里面初始化只允许是常数，所以这个在编译期就可以搞定。在C++里面局部静态对象允许是一个类对象，那么就涉及到类的初始化等问题，这个是在编译期搞不定的只能够在运行期解决。
 </p>
@@ -278,21 +611,16 @@ _Z3foov:
 
 </div>
 
-<div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> hook function</h3>
-<div class="outline-text-3" id="text-1-4">
+<div id="outline-container-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> hook function</h4>
+<div class="outline-text-4" id="text-1-4-2">
 
 <p>hook函数调用有两种方式，一种是hook我们代码内部的函数，这意味这这个函数是由我们来编译的，当然我们不能够修改需要hook的函数实现否则就没有意义了。另外一种hook函数是动态库里面的函数，静态库里面的函数因为完全进入了可执行程序，所以修改起来比较麻烦一些。我们QA写过这样的程序用libbfd库修改可执行程序本身，在函数调用之间加上跳板，但是相比本文介绍的两种方式更加复杂。（复杂就以为着容易出错，而且这种修改可执行程序应该是不值得提倡的）。
 </p>
-
-</div>
-
-<div id="outline-container-1-4-1" class="outline-4">
-<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> hook编译时函数</h4>
-<div class="outline-text-4" id="text-1-4-1">
-
-<p>在gcc编译的时候需要加入-finstrument-functions这个选项之后，那么每个函数调用之前和之后都会调用
-</p><ul>
+<ul>
+<li id="sec-1-4-2-1">hook编译时函数<br/>
+在gcc编译的时候需要加入-finstrument-functions这个选项之后，那么每个函数调用之前和之后都会调用
+<ul>
 <li>__cyg_profile_func_enter
 </li>
 <li>__cyg_profile_func_exit 
@@ -339,16 +667,12 @@ extern <span style="color: #ffff00;">"C"</span> {
 </pre>
 
 
-</div>
+</li>
+</ul>
+<ul>
+<li id="sec-1-4-2-2">hook运行时函数<br/>
+可以使用dlopen截获函数入口，然后使用dlsym(RTLD_NEXT)来获得下一个入口.我们以截获malloc为例。
 
-</div>
-
-<div id="outline-container-1-4-2" class="outline-4">
-<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> hook运行时函数</h4>
-<div class="outline-text-4" id="text-1-4-2">
-
-<p>可以使用dlopen截获函数入口，然后使用dlsym(RTLD_NEXT)来获得下一个入口.我们以截获malloc为例。
-</p>
 
 
 <pre class="src src-C++">#include &lt;unistd.h&gt;
@@ -376,14 +700,15 @@ void free(void *p){
 </pre>
 
 
-</div>
+</li>
+</ul>
 </div>
 
 </div>
 
-<div id="outline-container-1-5" class="outline-3">
-<h3 id="sec-1-5"><span class="section-number-3">1.5</span> undefined reference to static const class member</h3>
-<div class="outline-text-3" id="text-1-5">
+<div id="outline-container-1-4-3" class="outline-4">
+<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> undefined reference to static const class member</h4>
+<div class="outline-text-4" id="text-1-4-3">
 
 <p>类型静态常量成员只允许是标量内容,而不允许是字符串数组或者是结构体等。但是下面代码会存在链接问题
 </p>
@@ -427,227 +752,20 @@ int main() {
 这里(s1+s2)生成了一个临时对象但是却没有存放的内容，所以后续继续引用s是会出问题的。
 </p>
 </div>
-
-</div>
-
-<div id="outline-container-1-6" class="outline-3">
-<h3 id="sec-1-6"><span class="section-number-3">1.6</span> new/delete</h3>
-<div class="outline-text-3" id="text-1-6">
-
-<p>new/delete和C的内存分配有很多区别，主要的改进在进行了很多可定制化的内容:
-</p><ul>
-<li>new/delete作为运算符而不是函数存在，因此可以重载来进行内存分配的定制
-</li>
-<li>在new/delete对象的时候会调用分配对象的构造和析构函数
-</li>
-<li>new/delete对象的时候区分了new/delete和new/delete [](主要原因还是因为需要调用构造和析构函数):-)
-</li>
-<li>支持放置语法，就是传入一个信息告诉分配函数希望在哪个地方进行分配
-</li>
-<li>加入了异常分配失败抛出bad_alloc
-</li>
-<li>提供了一种方法设置handler在分配失败的时候调用set_new_handler()
-</li>
-<li>默认的new还进行检查以确信在传递地址给构造函数之前内存分配成功
-</li>
-<li>允许重载全局new/delete和某个类的new/delete 
-</li>
-</ul>
-
-
-
-</div>
-
-<div id="outline-container-1-6-1" class="outline-4">
-<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> new重载</h4>
-<div class="outline-text-4" id="text-1-6-1">
-
-<p>用户可以重载new/delete来实现全局new/delete或者是某个类的new/delete.原型有下面这些
-</p>
-
-
-<pre class="src src-C++">// #include &lt;new&gt;
-void* operator new(std::size_t) throw (std::bad_alloc);
-void* operator new[](std::size_t) throw (std::bad_alloc);
-void operator delete(void*) throw();
-void operator delete[](void*) throw();
-void* operator new(std::size_t, const std::nothrow_t&amp;) throw();
-void* operator new[](std::size_t, const std::nothrow_t&amp;) throw();
-void operator delete(void*, const std::nothrow_t&amp;) throw();
-void operator delete[](void*, const std::nothrow_t&amp;) throw();
-
-// Default placement versions of operator new.
-inline void* operator new(std::size_t, void* __p) throw() { return __p; }
-inline void* operator new[](std::size_t, void* __p) throw() { return __p; }
-
-// Default placement versions of operator delete.
-inline void  operator delete  (void*, void*) throw() { }
-inline void  operator delete[](void*, void*) throw() { }
-</pre>
-
-
-<p>
-new/delete如果作为类成员的话被重载的话，始终是静态成员，即使你不这样声明也是如此，这个事实意味着这些运算符不接受this指针。其实这也是非常容易考虑到的，new/delete本来就是来分配内存使用的。new在初始化构造之前调用，而delete是在析构函数调用之后调用，所以非静态数据成员肯定不能够被访问:-)此外new/delete是可以继承的,调用的还是基类的new/delete函数，只不过内存大小不同。
-</p>
-
-
-
-<pre class="src src-C++">#include &lt;iostream&gt;
-#include &lt;new&gt;
-class A{
- public:
-  void* operator new(size_t s,int arg) throw(std::bad_alloc) {
-    std::cout &lt;&lt; <span style="color: #ffff00;">"size : "</span> &lt;&lt; s &lt;&lt; <span style="color: #ffff00;">", arg : "</span> &lt;&lt; arg &lt;&lt; std::endl;
-    return ::operator new(s);
-  }
-  void* operator new(size_t s,int arg,const std::nothrow_t&amp; nothrow){
-    std::cout &lt;&lt; <span style="color: #ffff00;">"[nothrow]size : "</span> &lt;&lt; s &lt;&lt; <span style="color: #ffff00;">", arg : "</span> &lt;&lt; arg &lt;&lt; std::endl;
-    return ::operator new(s,nothrow);
-  }
-  void operator delete(void* p) {
-    ::operator delete(p);
-  }
-  int x;
-};
-class B: public A{
-  int y;
-};
-
-int main(){
-  A* a=new (10,std::nothrow)A();
-  B* b=new (20)B();
-  delete a;
-  delete b;
-}
-</pre>
-
-
 </div>
 
 </div>
 
-<div id="outline-container-1-6-2" class="outline-4">
-<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> new异常规格</h4>
-<div class="outline-text-4" id="text-1-6-2">
-
-<p>从new的异常规格可以看到，如果是普通的调用的话可能会抛出std::bad_alloc这个异常，但是原型里面还有
-</p>
-
-
-<pre class="src src-C++">void* operator new(std::size_t, const std::nothrow_t&amp;) throw(); 
-</pre>
-
-<p>
-这种使用placement来通知new不抛出异常的的接口，语义是返回NULL来告诉app分配失败。要使用这个函数也非常简单
-</p>
-
-
-<pre class="src src-C++">// #include &lt;new&gt;
-//  struct nothrow_t { };
-//  extern const nothrow_t nothrow;
-void* p=new (std::nothrow) int(); // &#36825;&#37324;std::nothrow&#23601;&#26159;std::nothrow_t&#30340;&#23454;&#20363;
-</pre>
-
-<p>
-通过函数重载来达到这个目的，这个方法值得借鉴。
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-1-6-3" class="outline-4">
-<h4 id="sec-1-6-3"><span class="section-number-4">1.6.3</span> 内存分配失败</h4>
-<div class="outline-text-4" id="text-1-6-3">
-
-<p>C++来提供了内存分配失败的回调函数，但是这个只能够处理全局new分配失败的情况
-</p>
-
-
-<pre class="src src-C++">/** If you write your own error handler to be called by @c new, it must
- *  be of this type.  */
-typedef void (*new_handler)();
-/// Takes a replacement handler as the argument, returns the previous handler.
-new_handler set_new_handler(new_handler) throw();
-</pre>
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> library</h3>
+<div class="outline-text-3" id="text-1-5">
 
 
 </div>
 
-</div>
-
-<div id="outline-container-1-6-4" class="outline-4">
-<h4 id="sec-1-6-4"><span class="section-number-4">1.6.4</span> operator new与new operator</h4>
-<div class="outline-text-4" id="text-1-6-4">
-
-<p>此外在很多书籍里面会提到operator new和new operator这两个说法，这两个是不一样的概念。operator new就是我们重写运算符函数，而new operator使我们调用new这个表达式。本质上说new这个表达式调用了分配类型里面的operator new函数，同时调用这个类型的初始化构造函数。同理operator delete和delete operator差别也是一样的。通常new operator的动作是这样的:
-</p><ul>
-<li>void *raw=operaotor new(sizeof(A)); //使用operator new进行内存分配
-</li>
-<li>call A::A on *raw; //在raw上面调用构造函数
-</li>
-<li>A *a=static_castraw; //最后进行一次强制转换
-</li>
-</ul>
-
-<p>同理通常delete operator的动作是这样的:
-</p><ul>
-<li>a-&gt;~A();//调用一次析构函数
-</li>
-<li>operator delete(a);//进行内存释放
-</li>
-</ul>
-
-<p>说到这里，我们需要清楚为什么需要有new []和delete []的方法了。对于operator new和delete来说真的不关心这些，因为只是分配内存，而对于new operator和delete operator就需要关心了，因为需要关心有多少个对象，这样的话才能够调用每个对象的构造函数。调用了new []分配的对象也一定需要使用delete []来释放，不然只会调用第一个元素析构函数和释放它的空间。
-</p>
-</div>
-</div>
-
-</div>
-
-<div id="outline-container-1-7" class="outline-3">
-<h3 id="sec-1-7"><span class="section-number-3">1.7</span> static assert</h3>
-<div class="outline-text-3" id="text-1-7">
-
-
-
-
-<pre class="src src-C++">#define STATIC_ASSERT(_cond,_name)      typedef char STATIC_ASSERT_FAILED_ ## _name [ (_cond) ? 1 : -1 ]
-#define STATIC_SIZE_ASSERT(_type,_size) STATIC_ASSERT ( sizeof(_type)==_size, _type ## _MUST_BE_ ## _size ## _BYTES )
-</pre>
-
-
-<p>
-这个宏用来检测sizeof(_type)==_size这个假设，这个可以在编译代码的时候可以进行断言。好比下面这段程序
-</p>
-
-
-
-<pre class="src src-C++">int main() {
-  STATIC_SIZE_ASSERT(int,8);
-  return 0;
-}
-</pre>
-
-
-<p>
-那么编译就会出现
-</p>
-
-
-<pre class="example">main.cc:5: error: size of array `STATIC_ASSERT_FAILED_int_MUST_BE_8_BYTES’ is negative
-</pre>
-
-
-<p>
-当然错误信息并不是非常的优美，但是已经提供了足够多的信息了。不过这种编译断言可能只是比较适合用于简单断言比如sizeof等，对于复杂断言话可能还是需要依赖于configure这种工具比如系统是否有libunwind库。
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-1-8" class="outline-3">
-<h3 id="sec-1-8"><span class="section-number-3">1.8</span> boost::bind</h3>
-<div class="outline-text-3" id="text-1-8">
+<div id="outline-container-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> boost::bind</h4>
+<div class="outline-text-4" id="text-1-5-1">
 
 <p>之前看到陈硕同学在<a href="http://blog.csdn.net/solstice/">博客</a> 给出的C++工程实践推荐，使用boost::function和boost::bind代替虚函数。之所以我们需要使用虚函数，无非就是希望统一执行接口。统一接口通过虚函数是一种方法，而使用boost::function和boost::bind也可以达到相同的目的。
 </p>
@@ -700,9 +818,9 @@ x.push(boost::bind(&amp;B::fun,&amp;b,_1,456));
 
 </div>
 
-<div id="outline-container-1-9" class="outline-3">
-<h3 id="sec-1-9"><span class="section-number-3">1.9</span> 试用boost::spirit</h3>
-<div class="outline-text-3" id="text-1-9">
+<div id="outline-container-1-5-2" class="outline-4">
+<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> boost::spirit</h4>
+<div class="outline-text-4" id="text-1-5-2">
 
 <p>今天被Dr. Yang推荐使用boost::spirit，模板编程实现的语法解析器。Dr. Yang推荐我看看hypertable里面实现的hql，里面就是使用spirit实现的hql(hypertable query language)，在src/cc/Hypertable/Lib/HqlParser.h里面。粗看一下功能还是非常强大的，对于很多使用flex/bison完成的工作都可以通过spirit来完成。看上去是LALR解析器，现在不太清楚就是如果出现shift/reduce或者是reduce/reduce冲突的话spirit是怎么解决的。NOTE(dirlt):事实上是LL解析器，而且如果没有猜错应该是LL(1)解析器。
 </p>
@@ -716,9 +834,9 @@ x.push(boost::bind(&amp;B::fun,&amp;b,_1,456));
 
 </div>
 
-<div id="outline-container-1-10" class="outline-3">
-<h3 id="sec-1-10"><span class="section-number-3">1.10</span> google::protobuf动态编译</h3>
-<div class="outline-text-3" id="text-1-10">
+<div id="outline-container-1-5-3" class="outline-4">
+<h4 id="sec-1-5-3"><span class="section-number-4">1.5.3</span> google::protobuf dynamic usage</h4>
+<div class="outline-text-4" id="text-1-5-3">
 
 <p>使用google::protobuf如果我们不知道生成消息schema的话，那么就需要依赖于google::protobuf动态编译的能力了。google::protobuf支持动态地读取某个proto文件并且进行动态编译。其实这里说编译有点不太恰当，因为内部并没有生成native code,不过确实使得我们有能力去动态构造一个消息。
 </p>
@@ -756,150 +874,13 @@ x.push(boost::bind(&amp;B::fun,&amp;b,_1,456));
 具体代码可以参考 code/cc/common/proto_dynamic.h 以及 code/cc/common/test/test_proto_dynamic.cc
 </p>
 </div>
-
-</div>
-
-<div id="outline-container-1-11" class="outline-3">
-<h3 id="sec-1-11"><span class="section-number-3">1.11</span> 重新认识static_cast</h3>
-<div class="outline-text-3" id="text-1-11">
-
-<p>学习C的时候总是认为强转不过就是二进制层面的强转。开始学习C++之后就认为C语言的强转对应的就是reinterpret_cast.而static_cast和reinterpret_cast的差别不过就是static_cast可以做一些类型上面的检查，所以在大多数的时候都习惯使用reinterpret_cast而非static_cast.直到在编写itachi（一个异步网络编程框架）的时候，才发现并不是这么回事。下面的例子是我遇到问题的一个抽象。
-</p>
-
-</div>
-
-<div id="outline-container-1-11-1" class="outline-4">
-<h4 id="sec-1-11-1"><span class="section-number-4">1.11.1</span> 正确的例子</h4>
-<div class="outline-text-4" id="text-1-11-1">
-
-
-
-
-<pre class="src src-C++">#include &lt;cstdio&gt;
-struct A{
-}; // class A
-
-struct B: public A{
-  int g;
-}; // class B
-
-void onComplete(A* o){
-  B* pb=reinterpret_cast&lt;B*&gt;(o);
-  printf(<span style="color: #ffff00;">"%p\n"</span>,&amp;(pb-&gt;g));
-}
-
-int main() {
-  B b;
-  onComplete(&amp;b);
-  printf(<span style="color: #ffff00;">"%p\n"</span>,&amp;(b.g));
-  return 0;
-}
-
-</pre>
-
-
-<p>
-运行结果是
-</p>
-
-
-<pre class="example">[dirlt@localhost ~]$ ./a.out
-0xbff031b0
-0xbff031b0 
-</pre>
-
-
-<p>
-在onComplete这里我们希望处理一个A*抽象类型。假设我们从外围上面保证传入onComplete是一个B或者是B的子类型。
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-1-11-2" class="outline-4">
-<h4 id="sec-1-11-2"><span class="section-number-4">1.11.2</span> 当处理多继承时</h4>
-<div class="outline-text-4" id="text-1-11-2">
-
-<p>处理B类型没有问题，但是处理B的子类型的话，那么上面代码可能就会出现问题。因为对于B子类型而言的话很可能在 <b>对象模型</b> 之前添加了一些字段，按照reintrepret_cast语义的话是直接二进制映射，字段没有虚方法所以是直接按照偏移来取的，因此可能存在问题。但是看看下面这个例子
-</p>
-
-
-<pre class="src src-C++">#include &lt;cstdio&gt;
-struct A{
-}; // class A
-
-struct B: public A{
-  int g;
-}; // class B
-
-struct Holder{
-  int dummy;
-};
-struct C: public Holder,
-          public B{
-}; // class C
-
-void onComplete(A* o){
-  B* pb=reinterpret_cast&lt;B*&gt;(o);
-  printf(<span style="color: #ffff00;">"o:%p pb-&gt;g:%p\n"</span>,pb, &amp;(pb-&gt;g));
-}
-
-int main() {
-  C c;
-  onComplete(&amp;c);
-  printf(<span style="color: #ffff00;">"c:%p c.g:%p\n"</span>,&amp;c, &amp;(c.g));
-  return 0;
-}
-</pre>
-
-
-<p>
-运行结果
-</p>
-
-
-<pre class="example">[dirlt@localhost ~]$ ./a.out
-o:0xbfff9aa0 pb-&gt;g:0xbfff9aa0
-c:0xbfff9a9c c.g:0xbfff9aa0 
-</pre>
-
-
-<p>
-问题出来了，并不像我们想的那样，pb-&gt;g和c.g的地址是一样的。但是神奇的是，o和c的地址是不一样的。这是为什么呢？原因就在于static_cast.在传参的时候，根据形参和实参之间的类型信息来进行指针的转换。 <b>也就是说，static_cast能够正确处理类型系统。而这点reintrepret_cast是做不到的。</b>
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-1-11-3" class="outline-4">
-<h4 id="sec-1-11-3"><span class="section-number-4">1.11.3</span> 应该怎么做</h4>
-<div class="outline-text-4" id="text-1-11-3">
-
-<p><b>因为自己也缺乏C++对象模型方面的知识，所以也没有办法从底层解释原因。</b> 但是结论我想说的就是，尽量地执行static_cast而非reinterpret_cast.reinterpret_cast对于继承方面基本没有做任何事情，而使用static_cast的话则能够检测到类型系统，然后根据类型系统来进行正确的转换。 <b>要是想对于static_cast有更多认识的话，必须看看C++对象模型的实现。</b>
-</p>
-<p>
-下面我总结了一下各种cast应该使用的场景：
-</p><ol>
-<li>static_cast无论如何应该首先考虑使用，而且编译器在生成函数调用时候内部也是在用static_cast.
-</li>
-<li>reinterpret_cast只有在你确定只处理某两种final类型时候，两者之间的转换。比如在内存操作时候uint8_t*和char*之间的转换
-</li>
-<li>const_cast只有在消除const以及volatile这些标记时候有用。
-</li>
-<li>dynamic_cast得到父类型但是不确定子类型的时候，你需要逐个尝试转换可以使用。但是如果外部存在字符串比如type这样的字段表示类型的话，那么可以直接使用static_cast.
-</li>
-</ol>
-
-
-
-</div>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-14 14:10:01 CST</p>
+<p class="date">Date: 2012-12-18 18:11:23 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
