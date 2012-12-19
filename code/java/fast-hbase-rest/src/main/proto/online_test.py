@@ -21,7 +21,24 @@ def queryColumn():
     request.column_family='stat'
     request.qualifiers.append('14_day_active_count_avg')
 
-    data = request.SerializeToString()
+    data = msg.SerializeToString()
+    data2 = raiseHTTPRequest('http://dp0:12345',data,timeout=20)
+
+    msg = message_pb2.Message()    
+    msg.ParseFromString(data2)
+    print msg
+
+def queryColumnFamily():
+    print '----------queryColumnFamily----------'
+    msg = message_pb2.Message()
+    msg.type = message_pb2.Message.kReadRequest
+    request = msg.readRequest
+    
+    request.table_name='appbenchmark'
+    request.row_key='2012-04-08_YULE'
+    request.column_family='stat'
+
+    data = msg.SerializeToString()
     data2 = raiseHTTPRequest('http://dp0:12345',data,timeout=20)
 
     msg = message_pb2.Message()    
@@ -30,7 +47,4 @@ def queryColumn():
 
 if __name__=='__main__':
     queryColumn()
-    
-
-
-
+    queryColumnFamily()
