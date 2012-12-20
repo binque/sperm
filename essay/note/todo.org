@@ -4,12 +4,8 @@
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
     - http://www.rethinkdb.com/blog/
 ** TODO 阅读完Core Java I
-** TODO spanner
-   - http://www.yankay.com/google-spanner%E5%8E%9F%E7%90%86-%E5%85%A8%E7%90%83%E7%BA%A7%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93/
-   - Google Research Publication: Spanner http://research.google.com/archive/spanner.html
-   - Spanner——Google的全球化分布式数据库 - Sun Yongyue - 博客园 http://www.cnblogs.com/sunyongyue/archive/2012/09/20/spanner_note.html
 ** TODO search on planet.
-** TODO dynamo, cassandra, 
+** TODO dynamo, cassandra, dynamo文章似乎有点难懂，可能需要查阅一下资料才行
 ** TODO The anatomy of google
 ** TODO RSS system we make
 ** TODO RSS paper planes
@@ -22,7 +18,6 @@
    - linux perf
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
-** TODO 快速编写MR（学习clojure)
 ** TODO netbsd/plan9
 ** TODO 如何优化当前dp任务
 ** TODO 详细说明分群任务(这个可能需要整体优化）
@@ -31,7 +26,7 @@
 ** TODO 查询过年飞机
 ** TODO 独单租房可能在年前
 ** TODO 找中医并且调理身体
-** TODO 更换Android手机
+** TODO 更换Android手机（MX2？）
 ** TODO 安装一些生活类型服务
 ** TODO 阅读systemtap论文，简单阅读=D
 ** TODO linux tcp implementation.
@@ -45,3 +40,5 @@
 ** TODO 在tasktracker机器上面建立新人关系
 ** TODO 没有使用hadoop jar提交可以直接写本地文件(本地集群，验证本地集群是否可以跑hbase以及使用lzo等文件）
 ** TODO 尝试编写多个table输入的情况
+** TODO 博弈论学习
+** TODO clojure

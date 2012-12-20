@@ -88,11 +88,45 @@ file:./images/spanner-directory-movement.png
    - A directory is also the smallest unit whose geographic-replication properties (or placement, for short) can be specified by an application. The design of our placement-specification language separates responsibil-ities for managing replication configurations. Adminis-trators control two dimensions: the number and types of replicas, and the geographic placement of those replicas.（directory也是能够制定replication方案的最小单元，replication方案包括两个维度replicas的数目以及replicas的地理位置）
    - For expository clarity we have over-simplified. In fact, Spanner will shard a directory into multiple fragments if it grows too large. Fragments may be served from different Paxos groups (and therefore different servers). Movedir actually moves fragments, and not whole direc-tories, between groups.（ *NOTE（dirlt）：我觉得这个是否可以理解成为directory能够自己进行分裂？因为既然directory是placement的最小单元，那似乎没有必要再引入fragement这个概念了！* ）
 
-
-
-
 *** Data Model
+   - Spanner exposes the following set of data features to applications: a data model based on schematized semi-relational tables, a query language, and general-purpose transactions（数据模型基于schema化的半关系表结构，有query语言，并且支持通用事务） 
+     - schematized semi-relational tables 并且支持强一致性的replication是因为大部分服务都使用了megastore,而megastore是提供这些特性的。
+     - query language 则是因为dremel提供了这个特性。
+     - general purpose transaction 则是因为很多application都需要cross row的事务而bigtable没有提供，这也是为什么后面有percolator的原因。
+       - Some authors have claimed that general two-phase commit is too ex-pensive to support, because of the performance or avail-ability problems that it brings （一些作者宣称使用2PC代价太高，因为其引入的性能和availability）
+       - We believe it is better to have application programmers deal with per-formance problems due to overuse of transactions as bot-tlenecks arise, rather than always coding around the lack of transactions. （让程序员了解事务的代价然后来选择性地使用事务，总比没有提供事务要好）
+       - Running two-phase commit over Paxos mitigates the availability problems（而使用paxos实现的2PC能够缓解availability的问题） *应该是传统2PC需要有master节点造成的availability的问题吧！*
+   - An application creates one or more databases in a universe. Each database can contain an unlimited number of schematized tables. Tables look like relational-database tables, with rows, columns, and versioned values.（应用在universe里面创建一个或者是多个databases，每个databases包含了无限制个数的table,这些table都是有schema的。table看上去非常类似关系数据库的table，有row，column，每个value都带上了version number）
+   - Spanner’s data model is not purely relational, in that rows must have names. More precisely, every table is re-quired to have an ordered set of one or more primary-key columns. This requirement is where Spanner still looks like a key-value store: the primary keys form the name for a row, and each table defines a mapping from the primary-key columns to the non-primary-key columns（但是table却又不完全是纯关系的，非常类似于bigtable的模型，table定义了primary key，每个row都有primary key之能够通过这个key找到，找到之后有很多columns可以访问，所以看上去又有点类似key-value store，因此称为semi-relational tables)
+
+file:./images/spanner-data-model-example.png
+
+顶层的table标记为"DIRECTORY",所有的subtable primary key都必须以directory table的primary开头，然后subtable都和table放在一起， *非常类似megastore的数据模型* 。这样顶层的table每行成为一个directory可以任意移动。
+
 ** TrueTime
+file:./images/spanner-true-time-api.png
+
+true time api看上去非常简洁，也非常好理解。就是说请求当前时间点的时候，得到的不是具体的时间点而是一个区间[a,b]. 没有办法准确地告诉这个时间点，但是可以确信这个时间点是在我[a,b]之间，也就是clock uncertainty.
+
+   - The underlying time references used by TrueTime are GPS and atomic clocks. TrueTime uses two forms of time reference because they have different failure modes. (TTAPI底层实现上使用了两个计时工具，GPS和atomic clock，之所以使用两种不同的工具是因为他们失效的方式不同）
+     - GPS reference-source vulnerabilities include an-tenna and receiver failures, local radio interference, cor-related failures (e.g., design faults such as incorrect leap-second handling and spoofing), and GPS system outage （GPS的失效主要是因为参考源抵抗力不好，包括天线或者是接收器的失效，本地电波的干扰，cor-related失效就是说其他错误造成的失败，设计失误比如不正确的闰秒处理和 *欺骗（GPS欺骗？）*  ，还有GPS系统的掉电）
+     - Atomic clocks can fail in ways uncorrelated to GPS and each other, and over long periods of time can drift signif- icantly due to frequency error.（而atomic block和GPS失效方式没有关系，主要是因为频率错误造成的时间漂移）
+     - 简单地说就是GPS时间非常精确但是容易受到外部的影响，而atomic可能不非常精确但是不容易受到外部的影响，时钟的参考应该主要着重在GPS，而atomic clock应该只是为了能够应急一些GPS出现问题的情况。
+   - TrueTime is implemented by a set of time master ma-chines per datacenter and a timeslave daemon per ma-chine. （多个time master机器会部署在一个datacenter，和一个timeslave机器。time master机器用来相互之间校准时间，而timeslave则是同来提供始终查询服务）
+     - The majority of masters have GPS receivers with dedicated antennas; these masters are separated physi-cally to reduce the effects of antenna failures, radio in-terference, and spoofing.（大部分机器使用GPS来校准时钟）
+     - The remaining masters (which we refer to as Armageddon masters) are equipped with atomic clocks. An atomic clock is not that expensive: the cost of an Armageddon master is of the same order as that of a GPS master. （剩余的机器使用atomic clock，这些机器相比GPS并没有贵很多）
+   - All masters’ time references are regularly compared against each other. Each mas-ter also cross-checks the rate at which its reference ad-vances time against its own local clock, and evicts itself if there is substantial divergence. （所有的机器都会相互之间进行交叉校准，如果偏差较大的话那么就停止工作）
+   - Between synchroniza-tions, Armageddon masters advertise a slowly increasing time uncertainty that is derived from conservatively ap-plied worst-case clock drift. GPS masters advertise un-certainty that is typically close to zero.（在实际同步的过程中，使用atomic clock的机器有缓慢增长的时间偏差区间因为时钟漂移，而GPS的机器的时间偏差基本为0）
+   - Every daemon polls a variety of masters to re-duce vulnerability to errors from any one master. Some are GPS masters chosen from nearby datacenters; the rest are GPS masters from farther datacenters, as well as some Armageddon masters. （timeslave daemon轮询一系列的master来确定时间以降低因为任何一台master出现错误的风险，一些是从附近的datacenter GPS master，一些是从更远的datacenter GPS master，还有一些是armageddon也就是配备atomic clock master.
+   - Daemons apply a variant of Marzullo’s algorithm to detect and reject liars, and synchronize the local machine clocks to the non-liars.(daemon使用marzullo算法来检测liars，并且将本地时钟同步到non-liars) To protect against broken local clocks, machines that exhibit frequency excursions larger than the worst-case bound derived from component specifications and operating environment are evicted.(为了防止错误的本地时钟带来的影响，那些时钟偏差超过worst-case bound的频繁发生的机器会直接下线，具体worst-case bound是根据组件规格和操作环境推算出来的）
+   - Between synchronizations, a daemon advertises a slowly increasing time uncertainty. e is derived from conservatively applied worst-case local clock drift. also depends on time-master uncertainty and communication delay to the time masters.（在两次同步期间，daemon会反应出缓慢增长的time uncertainty,这个范围可以从本地时钟偏移worst-case保守地计算出来，也取决于time-master uncertainty以及comminucation的延迟）
+     - In our production environ-ment, is typically a sawtooth function of time, varying from about 1 to 7 ms over each poll interval. is there-fore 4 ms most of the time. （实际生产环境下面这个延迟呈现一个锯齿状的，从1增加到7ms, 平均值在4ms）
+     - The daemon’s poll interval is currently 30 seconds, and the current applied drift rate is set at 200 microseconds/second, which together account for the sawtooth bounds from 0 to 6 ms. The remain-ing 1 ms comes from the communication delay to the time masters.（上面的计算是这样出来的，平均30s同步一次，估算出来当前偏移是200us / s,因此30s是从0-6ms的偏移，在加上和master的1ms的延迟）
+     - Excursions from this sawtooth are possi-ble in the presence of failures. For example, occasional time-master unavailability can cause datacenter-wide in-creases in . Similarly, overloaded machines and network
+links can result in occasional localized spikes.（但是如果出现故障的话那么超过这个锯齿装的还是可能的，比如偶尔的timemaster不可用，或者是机器和网络出现overload的情况会造成延迟加大等）
+
+*NOTE（dirlt）：感觉他们在设计这个的时候就是胆大心细*
+
 ** Concurrency Control
 *NOTE(dirlt):并发控制是关键部分，但是这个部分我没有仔细阅读，主要是对paxos没有很好的理解*
 
@@ -100,6 +134,14 @@ file:./images/spanner-directory-movement.png
 *** Microbenchmarks
 *** Availability
 *** TrueTime
+   - Two questions must be answered with respect to True- Time: is e truly a bound on clock uncertainty, and how bad e does get?（两个关键的问题就是偏移是否可以按照我们估算范围给出上界，另外就是偏移最坏能到什么情况）
+   - For the former, the most serious prob-lem would be if a local clock’s drift were greater than 200us/sec that would break assumptions made by True-Time （对于第一个问题我们假设clock drift在200us/s, 如果这个假设不能够成立的话那么我们没有办法给出上界）
+     - Our machine statistics show that bad CPUs are 6 times more likely than bad clocks. （但是机器统计发现坏的CPU数量是clock有问题的CPU数量的6倍）
+     - That is, clock issues are extremely infrequent, relative to much more serious hardware problems. （因此相对于更加严重的硬件鼓掌来说，clock issume问题非常小）
+   - several thou-sand spanserver machines across datacenters up to 2200 km apart. It plots the 90th, 99th, and 99.9th percentiles of  sampled at timeslave daemons immediately after polling the time masters（下面的图统计出了跨越2200km的spanner机器的时间偏移统计，这些时间偏移都是在和timeslave在同步timemaster之后立刻描绘出来的，统计了90%,99%,99.9%的时间偏移，可以看到是非常小的。另外一张图里面的高峰主要是因为当时改进网络减少网络阻塞）
+
+file:./images/spanner-true-time-benchmark.png
+
 *** F1
 
 ** Related Work
