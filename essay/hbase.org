@@ -238,6 +238,7 @@ Traceback (most recent call last):
   File "/usr/local/lib/python2.7/dist-packages/happybase/hbase/Hbase.py", line 1733, in recv_scannerOpenWithScan
     raise x
 thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
+#+END_EXAMPLE
 
 ** 代码分析
 *** put限制

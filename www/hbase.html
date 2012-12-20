@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hbase"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-18 08:49:16 CST"/>
+<meta name="generated" content="2012-12-21 00:05:13 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -115,16 +115,19 @@
 <li><a href="#sec-1-2-3">1.2.3 HBase Write Path | Apache Hadoop for the Enterprise | Cloudera</a></li>
 <li><a href="#sec-1-2-4">1.2.4 HBase Log Splitting | Apache Hadoop for the Enterprise | Cloudera</a></li>
 <li><a href="#sec-1-2-5">1.2.5 clock skew</a></li>
+<li><a href="#sec-1-2-6">1.2.6 hbase join</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-3">1.3 使用问题</a>
 <ul>
 <li><a href="#sec-1-3-1">1.3.1 hbase shell</a></li>
 <li><a href="#sec-1-3-2">1.3.2 hbase increment</a></li>
-<li><a href="#sec-1-3-3">1.3.3 hbase join</a></li>
-<li><a href="#sec-1-3-4">1.3.4 hbase的kv大小限制</a></li>
-<li><a href="#sec-1-3-5">1.3.5 create table API</a></li>
-<li><a href="#sec-1-3-6">1.3.6 use python</a></li>
+<li><a href="#sec-1-3-3">1.3.3 python client</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-4">1.4 代码分析</a>
+<ul>
+<li><a href="#sec-1-4-1">1.4.1 put限制</a></li>
 </ul>
 </li>
 </ul>
@@ -583,59 +586,12 @@ Caused by: org.apache.hadoop.ipc.RemoteException: org.apache.hadoop.hbase.ClockO
 rs2最近写入的数据是v2，而接下来如果从rs2查询"latest"的数据的话返回的是v1。
 </p>
 </div>
-</div>
 
 </div>
 
-<div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 使用问题</h3>
-<div class="outline-text-3" id="text-1-3">
-
-
-</div>
-
-<div id="outline-container-1-3-1" class="outline-4">
-<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> hbase shell</h4>
-<div class="outline-text-4" id="text-1-3-1">
-
-<ul>
-<li>scan 'test'
-</li>
-<li>scan 'test' , { LIMIT=&gt;10 }
-</li>
-<li>scan 'test' , { COLUMN=&gt;['cf:url'] }
-</li>
-<li>scan 'test' , { STARTROW=&gt;'xyz' , ENDROW=&gt;'uvw' }
-</li>
-<li>count 'test'
-</li>
-<li>create 'test', { NAME=&gt;'cf' }
-</li>
-<li>get 'test', {COLUMN = &gt; ['cf:url']}
-</li>
-</ul>
-
-
-<p>
-如果需要输入二进制的话，可以使用\x1e这样的方式表示，但是务必使用". 比如"stat:abc\x1exyz"
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-1-3-2" class="outline-4">
-<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> hbase increment</h4>
-<div class="outline-text-4" id="text-1-3-2">
-
-<p><a href="http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html">http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html</a>
-</p>
-</div>
-
-</div>
-
-<div id="outline-container-1-3-3" class="outline-4">
-<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> hbase join</h4>
-<div class="outline-text-4" id="text-1-3-3">
+<div id="outline-container-1-2-6" class="outline-4">
+<h4 id="sec-1-2-6"><span class="section-number-4">1.2.6</span> hbase join</h4>
+<div class="outline-text-4" id="text-1-2-6">
 
 <p><a href="http://stackoverflow.com/questions/11327316/how-to-join-tables-in-hbase">http://stackoverflow.com/questions/11327316/how-to-join-tables-in-hbase</a>
 </p>
@@ -655,88 +611,107 @@ rs2最近写入的数据是v2，而接下来如果从rs2查询"latest"的数据�
 对于MR来说，个人认为sort join通常是效率最高的方式，而hash join次之（hbase的read效率不是很高）。
 </p>
 </div>
+</div>
 
 </div>
 
-<div id="outline-container-1-3-4" class="outline-4">
-<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> hbase的kv大小限制</h4>
-<div class="outline-text-4" id="text-1-3-4">
-
-<p>下面代码可以进行检测
-</p>
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 使用问题</h3>
+<div class="outline-text-3" id="text-1-3">
 
 
-<pre class="src src-Java">package com.umeng.dp.helper;
+</div>
 
-import java.io.IOException;
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> hbase shell</h4>
+<div class="outline-text-4" id="text-1-3-1">
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.util.Bytes;
+<ul>
+<li>scan 'test' , { STARTROW=&gt;'xyz' , ENDROW=&gt;'uvw' , COLUMN=&gt;['cf:url'], LIMIT=&gt;10 }
+</li>
+<li>count 'test'
+</li>
+<li>create 'test', { NAME=&gt;'cf' }
+</li>
+<li>get 'test', 'rowkey', {COLUMN = &gt; ['cf:url']}
+</li>
+<li>get 'test', 'rowkey', 'cf:url'
+</li>
+<li>put 'test', 'rowkey', 'cf:url', 'value'
+</li>
+</ul>
 
-// dirlt: we should know what's the max size of hbase value.
-// turns out max size is 10M. 
-// refers to the HTable::validatePut this method.
-public class TestMaxSizeOfHBaseValue {
-    private final static byte[] kByteColumnFamily = Bytes.toBytes(<span style="color: #ffff00;">"CF"</span>);
-    private final static byte[] kByteColumn = Bytes.toBytes(<span style="color: #ffff00;">"CL"</span>);
-    private final static String kTableName = <span style="color: #ffff00;">"test.temporary"</span>;
-
-    private Configuration conf_ = null;
-
-    public TestMaxSizeOfHBaseValue(Configuration conf) {
-        conf_ = conf;
-    }
-
-    public void run() throws IOException {
-        HBaseAdmin admin = new HBaseAdmin(conf_);
-        if (admin.isTableAvailable(kTableName)) {
-            admin.disableTable(kTableName);
-            admin.deleteTable(kTableName);
-        }
-        HTableDescriptor dp = new HTableDescriptor(kTableName);
-        dp.addFamily(new HColumnDescriptor(kByteColumnFamily));
-        admin.createTable(dp);
-        HTable table = new HTable(kTableName);
-        int size = 2048;
-        while(true){
-            byte[] value = new byte[size-1];
-            Put put = new Put(Bytes.toBytes(<span style="color: #ffff00;">"row"</span>));
-            put.add(kByteColumnFamily, kByteColumn, value);
-            try {
-                table.put(put);
-            }catch(IllegalArgumentException e) {
-                e.printStackTrace();
-                break;
-            }
-            System.out.println(<span style="color: #ffff00;">"value size = "</span>+ size +<span style="color: #ffff00;">", succeed"</span>);
-            if(size &gt;= 8 * 1024 * 1024) {
-                break;
-            }
-            size *= 2;
-        }
-        table.close();
-        admin.disableTable(kTableName);
-        admin.deleteTable(kTableName);
-    }
-
-    public static void main(String[] args) throws IOException {
-        Configuration conf = HBaseConfiguration.create();
-        TestMaxSizeOfHBaseValue test = new TestMaxSizeOfHBaseValue(conf);
-        test.run();
-    }
-}
-</pre>
 
 <p>
-对于默认配置的集群是8M。其实跟进table.put这个方法的话，可以发现实际上在validatePut这里进行了验证。
+如果需要输入二进制的话，可以使用\x1e这样的方式表示，但是务必使用". 比如"stat:abc\x1exyz"
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> hbase increment</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+<p><a href="http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html">http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html</a>
+</p>
+<p>
+可以用来做原子更新
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> python client</h4>
+<div class="outline-text-4" id="text-1-3-3">
+
+<p>使用python来访问hbase确实可以很大地提高开发效率，但是通过thrift server来进行中转的话对于性能还是存在影响的，因此比较适合测试。
+</p><ul>
+<li>首先需要启动thrift server。hbase-deamon.sh start thrift
+</li>
+<li>然后安装happybase。pip install happybase github: <a href="https://github.com/wbolster/happybase">https://github.com/wbolster/happybase</a> doc: <a href="http://happybase.readthedocs.org/en/latest/index.html">http://happybase.readthedocs.org/en/latest/index.html</a>
+</li>
+</ul>
+
+<p>使用起来还是比较简单的，documentation里面的说明也非常详细。具体代码可以参考 code/py/happybase/main.py
+</p>
+<p>
+<b>NOTE（dirlt）：发现还是存在一些不兼容的thrift协议，比如使用scan似乎就存在问题</b>
 </p>
 
+
+<pre class="example">Traceback (most recent call last):
+  File "./hbase.py", line 20, in &lt;module&gt;
+    for k,v in iters:
+  File "/usr/local/lib/python2.7/dist-packages/happybase/api.py", line 567, in scan
+    scan_id = client.scannerOpenWithScan(self.name, scan)
+  File "/usr/local/lib/python2.7/dist-packages/happybase/hbase/Hbase.py", line 1716, in scannerOpenWithScan
+    return self.recv_scannerOpenWithScan()
+  File "/usr/local/lib/python2.7/dist-packages/happybase/hbase/Hbase.py", line 1733, in recv_scannerOpenWithScan
+    raise x
+thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
+</pre>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 代码分析</h3>
+<div class="outline-text-3" id="text-1-4">
+
+
+</div>
+
+<div id="outline-container-1-4-1" class="outline-4">
+<h4 id="sec-1-4-1"><span class="section-number-4">1.4.1</span> put限制</h4>
+<div class="outline-text-4" id="text-1-4-1">
+
+<p>在HTable.validatePut对put大小进行了限制
+</p>
 
 
 <pre class="src src-Java">// validate for well-formedness
@@ -758,151 +733,12 @@ private void validatePut(final Put put) throws IllegalArgumentException{
 
 
 <p>
-这里maxKeyValueSize是从配置文件里面读取出来的。
+这里maxKeyValueSize是从配置文件里面读取出来的， this.maxKeyValueSize = conf.getInt("hbase.client.keyvalue.maxsize", -1);
+因此可以修改hbase.client.keyvalue.maxsize来修改大小。 <b>从实现上看这个大小应该是在client端进行限制的，个人推测在server端应该是没有大小限制的。</b>
 </p>
-
-
-<pre class="src src-Java">this.maxKeyValueSize = conf.getInt(<span style="color: #ffff00;">"hbase.client.keyvalue.maxsize"</span>, -1);
-</pre>
-
 <p>
-因此可以修改hbase.client.keyvalue.maxsize来修改大小。从名字上看这个大小应该是在client端进行限制的，个人推测在server端应该是没有大小限制的。
+另外如果put是empty的话会抛出异常，因此在调用put之前最好判断put.isEmpty().
 </p>
-</div>
-
-</div>
-
-<div id="outline-container-1-3-5" class="outline-4">
-<h4 id="sec-1-3-5"><span class="section-number-4">1.3.5</span> create table API</h4>
-<div class="outline-text-4" id="text-1-3-5">
-
-
-
-
-<pre class="src src-Java">import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.util.Bytes;
-import java.util.Date;
-
-public class App  {
-  public static void main( String[] args ) throws java.io.IOException {
-    Configuration conf=HBaseConfiguration.create();
-    // create table.
-    HBaseAdmin hbase=new HBaseAdmin(conf);
-    HTableDescriptor desc=new HTableDescriptor(<span style="color: #ffff00;">"TEST"</span>);
-    desc.addFamily(new HColumnDescriptor(Bytes.toBytes(<span style="color: #ffff00;">"personal"</span>)));
-    desc.addFamily(new HColumnDescriptor(Bytes.toBytes(<span style="color: #ffff00;">"account"</span>)));
-    hbase.createTable(desc);
-  }
-}
-</pre>
-
-
-</div>
-
-</div>
-
-<div id="outline-container-1-3-6" class="outline-4">
-<h4 id="sec-1-3-6"><span class="section-number-4">1.3.6</span> use python</h4>
-<div class="outline-text-4" id="text-1-3-6">
-
-<p>使用python来访问hbase确实可以很大地提高开发效率，但是通过thrift server来进行中转的话对于性能还是存在影响的，因此比较适合测试。
-</p><ul>
-<li>首先需要启动thrift server。hbase-deamon.sh start thrift
-</li>
-<li>然后安装happybase。pip install happybase github: <a href="https://github.com/wbolster/happybase">https://github.com/wbolster/happybase</a> doc: <a href="http://happybase.readthedocs.org/en/latest/index.html">http://happybase.readthedocs.org/en/latest/index.html</a>
-</li>
-</ul>
-
-<p>使用起来还是比较简单的，documentation里面的说明也非常详细。
-</p>
-
-
-
-<pre class="src src-Python">#!/usr/bin/env python
-#coding:utf-8
-#Copyright (C) dirlt
-
-import happybase
-
-# create connection.
-connection = happybase.Connection('localhost', autoconnect = False)
-connection.open()
-
-# create table.
-kTableName = 'for-test'
-kColumnFamily = 'cf'
-
-if(kTableName in connection.tables()):
-    connection.disable_table('for-test')
-    connection.delete_table('for-test')
-connection.create_table(kTableName, {kColumnFamily:{}})
-table = connection.table(kTableName)
-
-# put data.
-table.put('row1', {kColumnFamily+':c1':'value1'})
-
-# get data.
-row = table.row('row1')
-assert(row[kColumnFamily + ':c1'] == 'value1')
-</pre>
-
-
-
-<hr/>
-<p>
-<b>NOTE（dirlt）：发现还是存在一些不兼容的thrift协议，比如使用scan似乎就存在问题</b>
-</p>
-
-
-
-<pre class="src src-Python">#!/usr/bin/env python
-#coding:utf-8
-#Copyright (C) dirlt
-
-import happybase
-
-# create connection.
-connection = happybase.Connection('localhost', autoconnect = False)
-connection.open()
-
-print connection.tables()
-
-table = connection.table('for-test')
-iters = table.scan()
-
-for k,v in iters:
-    print k,v
-
-</pre>
-
-
-<p>
-出现了下面这些问题：
-</p>
-
-
-<pre class="example">Traceback (most recent call last):
-  File "./hbase.py", line 20, in &lt;module&gt;
-    for k,v in iters:
-  File "/usr/local/lib/python2.7/dist-packages/happybase/api.py", line 567, in scan
-    scan_id = client.scannerOpenWithScan(self.name, scan)
-  File "/usr/local/lib/python2.7/dist-packages/happybase/hbase/Hbase.py", line 1716, in scannerOpenWithScan
-    return self.recv_scannerOpenWithScan()
-  File "/usr/local/lib/python2.7/dist-packages/happybase/hbase/Hbase.py", line 1733, in recv_scannerOpenWithScan
-    raise x
-thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
-</pre>
-
-
-
 
 </div>
 </div>
@@ -911,7 +747,7 @@ thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-18 08:49:16 CST</p>
+<p class="date">Date: 2012-12-21 00:05:13 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

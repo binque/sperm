@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="maven"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-18 08:49:10 CST"/>
+<meta name="generated" content="2012-12-21 00:05:10 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -82,7 +82,47 @@
  }
 /*]]>*///-->
 </script>
+<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js">
+<!--/*--><![CDATA[/*><!--*/
+    MathJax.Hub.Config({
+        // Only one of the two following lines, depending on user settings
+        // First allows browser-native MathML display, second forces HTML/CSS
+        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
+            jax: ["input/TeX", "output/HTML-CSS"],
+        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
+                     "TeX/noUndefined.js"],
+        tex2jax: {
+            inlineMath: [ ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
+            skipTags: ["script","noscript","style","textarea","pre","code"],
+            ignoreClass: "tex2jax_ignore",
+            processEscapes: false,
+            processEnvironments: true,
+            preview: "TeX"
+        },
+        showProcessingMessages: true,
+        displayAlign: "center",
+        displayIndent: "2em",
 
+        "HTML-CSS": {
+             scale: 100,
+             availableFonts: ["STIX","TeX"],
+             preferredFont: "TeX",
+             webFont: "TeX",
+             imageFont: "TeX",
+             showMathMenu: true,
+        },
+        MMLorHTML: {
+             prefer: {
+                 MSIE:    "MML",
+                 Firefox: "MML",
+                 Opera:   "HTML",
+                 other:   "HTML"
+             }
+        }
+    });
+/*]]>*///-->
+</script>
 </head>
 <body>
 
@@ -817,6 +857,22 @@ nexus有下面几种repo：
 </ul>
 
 </li>
+<li>mvn dependency
+<ul>
+<li>mvn dependency:copy-dependencies 将依赖的jar copy到target/dependency目录下面
+</li>
+<li>mvn dependency:unpack-dependencies 和上面一样但是会unpack这些jar
+<ul>
+<li>有时候上面这个命令可能不work因为可能会将一些pom引入，这样的话可以通过下面命令来解决
+</li>
+<li>mvn dependency:copy-dependencies ; cd ./target/dependency ; for x in *.jar ; do echo "jar xf $$x ..." ; jar xf $$x ; done
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
 </ul>
 
 
@@ -838,6 +894,8 @@ nexus有下面几种repo：
 <li>Maven AntRun Plugin <a href="http://maven.apache.org/plugins/maven-antrun-plugin/">http://maven.apache.org/plugins/maven-antrun-plugin/</a> 执行ant脚本
 </li>
 <li>Mojo's Maven plugin for Cobertura <a href="http://mojo.codehaus.org/cobertura-maven-plugin/">http://mojo.codehaus.org/cobertura-maven-plugin/</a> 单元测试覆盖率
+</li>
+<li>Maven Dependency plugin <a href="http://maven.apache.org/plugins/maven-dependency-plugin/">http://maven.apache.org/plugins/maven-dependency-plugin/</a> 依赖管理
 </li>
 </ul>
 
@@ -874,7 +932,7 @@ NOTE(dirlt):网上有很多教程如何搭建nexus maven服务器，对于企业
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-18 08:49:10 CST</p>
+<p class="date">Date: 2012-12-21 00:05:10 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
