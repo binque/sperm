@@ -3,6 +3,7 @@
 #Copyright (C) dirlt
 
 import message_pb2
+import time
 
 import urllib2
 def raiseHTTPRequest(url,data=None,timeout=3):
@@ -24,7 +25,7 @@ def queryColumn():
 
     response = message_pb2.ReadResponse()
     response.ParseFromString(data2)
-    print response
+    #print response
 
 def queryColumnFamily():
     print '----------queryColumnFamily----------'
@@ -39,8 +40,8 @@ def queryColumnFamily():
 
     response = message_pb2.ReadResponse()
     response.ParseFromString(data2)
-    print response
-
+    #print response
+    
 if __name__=='__main__':
     queryColumn()
     queryColumnFamily()

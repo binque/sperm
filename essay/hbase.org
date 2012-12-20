@@ -194,6 +194,16 @@ Caused by: org.apache.hadoop.ipc.RemoteException: org.apache.hadoop.hbase.ClockO
 #+END_VERSE
 rs2最近写入的数据是v2，而接下来如果从rs2查询"latest"的数据的话返回的是v1。
 
+*** hbase join
+http://stackoverflow.com/questions/11327316/how-to-join-tables-in-hbase
+
+其实对于join来说无非三种：
+   - sort join 两路排序，之后进行merge。
+   - loop join 没有任何排序，直接循环匹配。
+   - hash join 遍历一路的时候去查另外一路。
+
+对于MR来说，个人认为sort join通常是效率最高的方式，而hash join次之（hbase的read效率不是很高）。
+
 ** 使用问题
 *** hbase shell
    - scan 'test' , { STARTROW=>'xyz' , ENDROW=>'uvw' , COLUMN=>['cf:url'], LIMIT=>10 }
@@ -208,87 +218,28 @@ rs2最近写入的数据是v2，而接下来如果从rs2查询"latest"的数据�
 *** hbase increment
 http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html
 
-*** hbase join
-http://stackoverflow.com/questions/11327316/how-to-join-tables-in-hbase
+*** python client
+使用python来访问hbase确实可以很大地提高开发效率，但是通过thrift server来进行中转的话对于性能还是存在影响的，因此比较适合测试。
+   - 首先需要启动thrift server。hbase-deamon.sh start thrift
+   - 然后安装happybase。pip install happybase github: https://github.com/wbolster/happybase doc: http://happybase.readthedocs.org/en/latest/index.html
+使用起来还是比较简单的，documentation里面的说明也非常详细。具体代码可以参考 code/py/happybase/main.py
 
-其实对于join来说无非三种：
-   - sort join 两路排序，之后进行merge。
-   - loop join 没有任何排序，直接循环匹配。
-   - hash join 遍历一路的时候去查另外一路。
+*NOTE（dirlt）：发现还是存在一些不兼容的thrift协议，比如使用scan似乎就存在问题*
+#+BEGIN_EXAMPLE
+Traceback (most recent call last):
+  File "./hbase.py", line 20, in <module>
+    for k,v in iters:
+  File "/usr/local/lib/python2.7/dist-packages/happybase/api.py", line 567, in scan
+    scan_id = client.scannerOpenWithScan(self.name, scan)
+  File "/usr/local/lib/python2.7/dist-packages/happybase/hbase/Hbase.py", line 1716, in scannerOpenWithScan
+    return self.recv_scannerOpenWithScan()
+  File "/usr/local/lib/python2.7/dist-packages/happybase/hbase/Hbase.py", line 1733, in recv_scannerOpenWithScan
+    raise x
+thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
 
-对于MR来说，个人认为sort join通常是效率最高的方式，而hash join次之（hbase的read效率不是很高）。
-
-*** hbase的kv大小限制
-下面代码可以进行检测
-#+BEGIN_SRC Java
-package com.umeng.dp.helper;
-
-import java.io.IOException;
-
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.util.Bytes;
-
-// dirlt: we should know what's the max size of hbase value.
-// turns out max size is 10M. 
-// refers to the HTable::validatePut this method.
-public class TestMaxSizeOfHBaseValue {
-    private final static byte[] kByteColumnFamily = Bytes.toBytes("CF");
-    private final static byte[] kByteColumn = Bytes.toBytes("CL");
-    private final static String kTableName = "test.temporary";
-
-    private Configuration conf_ = null;
-
-    public TestMaxSizeOfHBaseValue(Configuration conf) {
-        conf_ = conf;
-    }
-
-    public void run() throws IOException {
-        HBaseAdmin admin = new HBaseAdmin(conf_);
-        if (admin.isTableAvailable(kTableName)) {
-            admin.disableTable(kTableName);
-            admin.deleteTable(kTableName);
-        }
-        HTableDescriptor dp = new HTableDescriptor(kTableName);
-        dp.addFamily(new HColumnDescriptor(kByteColumnFamily));
-        admin.createTable(dp);
-        HTable table = new HTable(kTableName);
-        int size = 2048;
-        while(true){
-            byte[] value = new byte[size-1];
-            Put put = new Put(Bytes.toBytes("row"));
-            put.add(kByteColumnFamily, kByteColumn, value);
-            try {
-                table.put(put);
-            }catch(IllegalArgumentException e) {
-                e.printStackTrace();
-                break;
-            }
-            System.out.println("value size = "+ size +", succeed");
-            if(size >= 8 * 1024 * 1024) {
-                break;
-            }
-            size *= 2;
-        }
-        table.close();
-        admin.disableTable(kTableName);
-        admin.deleteTable(kTableName);
-    }
-    
-    public static void main(String[] args) throws IOException {
-        Configuration conf = HBaseConfiguration.create();
-        TestMaxSizeOfHBaseValue test = new TestMaxSizeOfHBaseValue(conf);
-        test.run();
-    }
-}
-#+END_SRC
-对于默认配置的集群是8M。其实跟进table.put这个方法的话，可以发现实际上在validatePut这里进行了验证。
-
+** 代码分析
+*** put限制
+在HTable.validatePut对put大小进行了限制
 #+BEGIN_SRC Java
   // validate for well-formedness
   private void validatePut(final Put put) throws IllegalArgumentException{
@@ -307,111 +258,9 @@ public class TestMaxSizeOfHBaseValue {
   }
 #+END_SRC
 
-这里maxKeyValueSize是从配置文件里面读取出来的。
-#+BEGIN_SRC Java
-this.maxKeyValueSize = conf.getInt("hbase.client.keyvalue.maxsize", -1);
-#+END_SRC
-因此可以修改hbase.client.keyvalue.maxsize来修改大小。从名字上看这个大小应该是在client端进行限制的，个人推测在server端应该是没有大小限制的。
+这里maxKeyValueSize是从配置文件里面读取出来的， this.maxKeyValueSize = conf.getInt("hbase.client.keyvalue.maxsize", -1);
+因此可以修改hbase.client.keyvalue.maxsize来修改大小。 *从实现上看这个大小应该是在client端进行限制的，个人推测在server端应该是没有大小限制的。*
 
-*** create table API
-#+BEGIN_SRC Java
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.HTable;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.util.Bytes;
-import java.util.Date;
-
-public class App  {
-  public static void main( String[] args ) throws java.io.IOException {
-    Configuration conf=HBaseConfiguration.create();
-    // create table.
-    HBaseAdmin hbase=new HBaseAdmin(conf);
-    HTableDescriptor desc=new HTableDescriptor("TEST");
-    desc.addFamily(new HColumnDescriptor(Bytes.toBytes("personal")));
-    desc.addFamily(new HColumnDescriptor(Bytes.toBytes("account")));
-    hbase.createTable(desc);
-  }
-}
-#+END_SRC
-
-*** use python
-使用python来访问hbase确实可以很大地提高开发效率，但是通过thrift server来进行中转的话对于性能还是存在影响的，因此比较适合测试。
-   - 首先需要启动thrift server。hbase-deamon.sh start thrift
-   - 然后安装happybase。pip install happybase github: https://github.com/wbolster/happybase doc: http://happybase.readthedocs.org/en/latest/index.html
-使用起来还是比较简单的，documentation里面的说明也非常详细。
-
-#+BEGIN_SRC Python
-#!/usr/bin/env python
-#coding:utf-8
-#Copyright (C) dirlt
-
-import happybase
-
-# create connection.
-connection = happybase.Connection('localhost', autoconnect = False)
-connection.open()
-
-# create table.
-kTableName = 'for-test'
-kColumnFamily = 'cf'
-
-if(kTableName in connection.tables()):
-    connection.disable_table('for-test')
-    connection.delete_table('for-test')
-connection.create_table(kTableName, {kColumnFamily:{}})
-table = connection.table(kTableName)
-
-# put data.
-table.put('row1', {kColumnFamily+':c1':'value1'})
-
-# get data.
-row = table.row('row1')
-assert(row[kColumnFamily + ':c1'] == 'value1')
-#+END_SRC
-
---------------------
-*NOTE（dirlt）：发现还是存在一些不兼容的thrift协议，比如使用scan似乎就存在问题*
-
-#+BEGIN_SRC Python
-#!/usr/bin/env python
-#coding:utf-8
-#Copyright (C) dirlt
-
-import happybase
-
-# create connection.
-connection = happybase.Connection('localhost', autoconnect = False)
-connection.open()
-
-print connection.tables()
-
-table = connection.table('for-test')
-iters = table.scan()
-
-for k,v in iters:
-    print k,v
-
-#+END_SRC
-
-出现了下面这些问题：
-#+BEGIN_EXAMPLE
-Traceback (most recent call last):
-  File "./hbase.py", line 20, in <module>
-    for k,v in iters:
-  File "/usr/local/lib/python2.7/dist-packages/happybase/api.py", line 567, in scan
-    scan_id = client.scannerOpenWithScan(self.name, scan)
-  File "/usr/local/lib/python2.7/dist-packages/happybase/hbase/Hbase.py", line 1716, in scannerOpenWithScan
-    return self.recv_scannerOpenWithScan()
-  File "/usr/local/lib/python2.7/dist-packages/happybase/hbase/Hbase.py", line 1733, in recv_scannerOpenWithScan
-    raise x
-thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
-#+END_EXAMPLE
-
+另外如果put是empty的话会抛出异常，因此在调用put之前最好判断put.isEmpty().
 
 

@@ -15,6 +15,8 @@ public class Configuration {
     private int cacheExpireTime = 3600;
     private int cacheMaxCapacity = 2 * 1024 * 1024; // 2M
     private String serviceName = "unknown";
+    private boolean stat = true;
+    private boolean cache = true;
     private boolean debug = false;
 
     public boolean parse(String[] args) {
@@ -33,6 +35,10 @@ public class Configuration {
                 cacheMaxCapacity = Integer.valueOf(arg.substring("--cache-max-capacity=".length()));
             } else if (arg.startsWith("--service-name=")) {
                 serviceName = arg.substring("--service-name=".length());
+            } else if (arg.startsWith("--no-stat")) {
+                stat = false;
+            } else if (arg.startsWith("--no-cache")) {
+                cache = false;
             } else if (arg.startsWith("--debug")) {
                 debug = true;
             } else {
@@ -52,6 +58,10 @@ public class Configuration {
         System.out.println("\t--cpu-queue-size # default 4096");
         System.out.println("\t--cache-expire-time # default 3600 in seconds");
         System.out.println("\t--cache-max-capacity # default 2 * 1024 * 1024");
+        System.out.println("\t--service-name # set service name");
+        System.out.println("\t--no-stat # turn off statistics");
+        System.out.println("\t--no-cache # turn off cache");
+        System.out.println("\t--debug # debug mode");
     }
 
     public int getPort() {
@@ -84,5 +94,13 @@ public class Configuration {
 
     public boolean isDebug() {
         return debug;
+    }
+
+    public boolean isStat() {
+        return stat;
+    }
+
+    public boolean isCache() {
+        return cache;
     }
 }

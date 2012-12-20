@@ -27,8 +27,13 @@ public class RestHandler extends SimpleChannelHandler {
         allowedPath.add("/write");
     }
 
-    private AsyncClient client = new AsyncClient(); // each handler corresponding a channel or a connection.
-    // binding to the channel pipeline.
+    private Configuration configuration;
+    private AsyncClient client; // binding to the channel pipeline.
+
+    public RestHandler(Configuration configuration) {
+        this.configuration = configuration;
+        client = new AsyncClient(configuration); // each handler corresponding a channel or a connection.
+    }
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
@@ -47,7 +52,6 @@ public class RestHandler extends SimpleChannelHandler {
             channel.close();
             return;
         }
-        System.out.println(path);
 
         if (!allowedPath.contains(path)) {
             stat.addCounter("uri.unknown.count", 1);

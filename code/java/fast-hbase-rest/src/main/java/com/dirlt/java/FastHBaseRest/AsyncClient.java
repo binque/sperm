@@ -29,6 +29,10 @@ import java.util.List;
 public class AsyncClient implements Runnable {
     public static final String kSep = String.format("%c", 0x0);
 
+    public AsyncClient(Configuration configuration) {
+        cache = configuration.isCache();
+    }
+
     // state of each step.
     enum Status {
         kStat,
@@ -44,6 +48,7 @@ public class AsyncClient implements Runnable {
         kHttpResponse,
     }
 
+    private boolean cache; // whether to cache it.
     public Status code = Status.kStat; // default value.
     public Channel channel;
 
@@ -87,26 +92,39 @@ public class AsyncClient implements Runnable {
 
     @Override
     public void run() {
-        if (code == Status.kHttpRequest) {
-            handleHttpRequest();
-        } else if (code == Status.kReadRequest) {
-            readRequest();
-        } else if (code == Status.kWriteRequest) {
-            writeRequest();
-        } else if (code == Status.kReadLocalCache) {
-            readLocalCache();
-        } else if (code == Status.kReadCacheService) {
-            readCacheService();
-        } else if (code == Status.kReadHBaseService) {
-            readHBaseService();
-        } else if (code == Status.kWriteHBaseService) {
-            writeHBaseService();
-        } else if (code == Status.kReadResponse) {
-            readResponse();
-        } else if (code == Status.kWriteResponse) {
-            writeResponse();
-        } else if (code == Status.kHttpResponse) {
-            handleHttpResponse();
+        switch (code) {
+            case kHttpRequest:
+                handleHttpRequest();
+                break;
+            case kReadRequest:
+                readRequest();
+                break;
+            case kWriteRequest:
+                writeRequest();
+                break;
+            case kReadLocalCache:
+                readLocalCache();
+                break;
+            case kReadCacheService:
+                readCacheService();
+                break;
+            case kReadHBaseService:
+                readHBaseService();
+                break;
+            case kWriteHBaseService:
+                writeHBaseService();
+                break;
+            case kReadResponse:
+                readResponse();
+                break;
+            case kWriteResponse:
+                writeResponse();
+                break;
+            case kHttpResponse:
+                handleHttpResponse();
+                break;
+            default:
+                break;
         }
     }
 
@@ -201,9 +219,12 @@ public class AsyncClient implements Runnable {
         int readCount = 0;
         int cacheCount = 0;
         for (String q : rdReq.getQualifiersList()) {
-            String cacheKey = makeCacheKey(prefix, q);
-            RestServer.logger.debug("search cache with key = " + cacheKey);
-            byte[] b = LocalCache.getInstance().get(cacheKey);
+            byte[] b = null;
+            if (cache) {
+                String cacheKey = makeCacheKey(prefix, q);
+                RestServer.logger.debug("search cache with key = " + cacheKey);
+                b = LocalCache.getInstance().get(cacheKey);
+            }
             readCount += 1;
             if (b != null) {
                 RestServer.logger.debug("cache hit!");
@@ -275,10 +296,12 @@ public class AsyncClient implements Runnable {
                     // fill the cache and builder.
                     for (KeyValue kv : keyValues) {
                         String k = new String(kv.qualifier()); // not kv.key(), that's rowkey.
-                        String cacheKey = makeCacheKey(prefix, k);
                         byte[] value = kv.value();
-                        RestServer.logger.debug("fill cache with key = " + cacheKey);
-                        LocalCache.getInstance().set(cacheKey, value);
+                        if (cache) {
+                            String cacheKey = makeCacheKey(prefix, k);
+                            RestServer.logger.debug("fill cache with key = " + cacheKey);
+                            LocalCache.getInstance().set(cacheKey, value);
+                        }
                         MessageProtos1.ReadResponse.KeyValue.Builder bd = MessageProtos1.ReadResponse.KeyValue.newBuilder();
                         bd.setQualifier(k);
                         bd.setContent(ByteString.copyFrom(value));

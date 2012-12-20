@@ -46,7 +46,7 @@ public class RestServer {
 
     public static Logger logger = new Logger();
 
-    public static void runHttpServer(Configuration configuration) {
+    public static void runHttpServer(final Configuration configuration) {
         ChannelFactory factory = new NioServerSocketChannelFactory(
                 Executors.newCachedThreadPool(),
                 Executors.newCachedThreadPool());
@@ -56,7 +56,7 @@ public class RestServer {
                 ChannelPipeline pipeline = Channels.pipeline();
                 pipeline.addLast("decoder", new HttpRequestDecoder());
                 pipeline.addLast("encoder", new HttpResponseEncoder());
-                pipeline.addLast("handler", new RestHandler());
+                pipeline.addLast("handler", new RestHandler(configuration));
                 return pipeline;
             }
         });

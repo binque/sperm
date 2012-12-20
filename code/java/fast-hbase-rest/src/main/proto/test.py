@@ -3,6 +3,7 @@
 #Copyright (C) dirlt
 
 import message_pb2
+import time
 
 import urllib2
 def raiseHTTPRequest(url,data=None,timeout=3):
@@ -21,7 +22,6 @@ def queryColumn():
 
     data = request.SerializeToString()
     data2 = raiseHTTPRequest('http://localhost:8000/read',data,timeout=20)
-
     response = message_pb2.ReadResponse()
     response.ParseFromString(data2)
     print response

@@ -18,20 +18,36 @@ import java.io.IOException;
  */
 public class TableManager {
     private static Configuration configuration = HBaseConfiguration.create();
-    private static final String kTableName = 't1';
-    private static final String kColumnFamily = 'cf';
+    private static final String kTableName = "t1";
+    private static final String kColumnFamily = "cf";
+    private static HBaseAdmin admin;
+
+    static {
+        try {
+            admin = new HBaseAdmin(configuration);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static void createTable() throws IOException {
-        HBaseAdmin hbase = new HBaseAdmin(conf);
-        HTableDescriptor desc = new HTableDescriptor("t1");
-        desc.addFamily(new HColumnDescriptor(Bytes.toBytes("personal")));
-        desc.addFamily(new HColumnDescriptor(Bytes.toBytes("account")));
-        hbase.createTable(desc);
+        HTableDescriptor desc = new HTableDescriptor(kTableName);
+        desc.addFamily(new HColumnDescriptor(Bytes.toBytes(kColumnFamily)));
+        admin.createTable(desc);
     }
 
     public static void deleteTable() throws IOException {
-        HBaseAdmin hbase = new HBaseAdmin(conf);
-        if(hbase.tableExists())
+        if (admin.tableExists(kTableName)) {
+            if (admin.isTableEnabled(kTableName)) {
+                admin.disableTable(kTableName);
+            }
+            admin.deleteTable(kTableName);
+        }
+    }
 
+    public static void main(String[] args) throws IOException {
+        deleteTable();
+        createTable();
     }
 }

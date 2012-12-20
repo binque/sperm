@@ -17,6 +17,7 @@ public class StatStore {
     private Map<String, Long> counter = new TreeMap<String, Long>();
     private Map<String, String> status = new TreeMap<String, String>();
     private String serviceName = null;
+    private boolean stat = true;
     private static StatStore instance = null;
 
     public static StatStore getInstance() {
@@ -25,6 +26,7 @@ public class StatStore {
 
     public StatStore(Configuration configuration) {
         this.serviceName = configuration.getServiceName();
+        this.stat = configuration.isStat();
     }
 
     public static void init(Configuration configuration) {
@@ -32,6 +34,9 @@ public class StatStore {
     }
 
     public void addCounter(String name, long value) {
+        if (!stat) {
+            return;
+        }
         synchronized (counter) {
             if (counter.containsKey(name)) {
                 counter.put(name, counter.get(name) + value);
@@ -41,30 +46,20 @@ public class StatStore {
         }
     }
 
-    public long getCounter(String name) {
-        synchronized (counter) {
-            if (!counter.containsKey(name)) {
-                return 0L;
-            } else {
-                return counter.get(name);
-            }
-        }
-    }
-
     public void updateStatus(String name, String value) {
+        if (!stat) {
+            return;
+        }
         synchronized (status) {
             status.put(name, value);
         }
     }
 
-    public void getStatus(String name) {
-        synchronized (status) {
-            status.get(name);
-        }
-    }
-
     // well a little too simple.:).
     public String toString() {
+        if (!stat) {
+            return "statistics off";
+        }
         StringBuffer sb = new StringBuffer();
 //        sb.append("----------counter----------\n");
         synchronized (counter) {
