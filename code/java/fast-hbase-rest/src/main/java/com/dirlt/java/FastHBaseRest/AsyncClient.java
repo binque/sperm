@@ -173,9 +173,6 @@ public class AsyncClient implements Runnable {
         columnFamily = rdReq.getColumnFamily();
 
         rdRes = MessageProtos1.ReadResponse.newBuilder();
-        rdRes.setTableName(tableName);
-        rdRes.setRowKey(rowKey);
-        rdRes.setColumnFamily(columnFamily);
         prefix = makeCacheKeyPrefix(tableName, rowKey, columnFamily);
 
         // reset qualifiers.

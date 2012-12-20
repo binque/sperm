@@ -10,7 +10,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = descriptor.FileDescriptor(
   name='message.proto',
   package='com.dirlt.java.FastHbaseRest',
-  serialized_pb='\n\rmessage.proto\x12\x1c\x63om.dirlt.java.FastHbaseRest\"]\n\x0bReadRequest\x12\x12\n\ntable_name\x18\x01 \x02(\t\x12\x0f\n\x07row_key\x18\x02 \x02(\t\x12\x15\n\rcolumn_family\x18\x03 \x02(\t\x12\x12\n\nqualifiers\x18\x04 \x03(\t\"\xbc\x01\n\x0cReadResponse\x12\x12\n\ntable_name\x18\x01 \x02(\t\x12\x0f\n\x07row_key\x18\x02 \x02(\t\x12\x15\n\rcolumn_family\x18\x03 \x02(\t\x12@\n\x03kvs\x18\x04 \x03(\x0b\x32\x33.com.dirlt.java.FastHbaseRest.ReadResponse.KeyValue\x1a.\n\x08KeyValue\x12\x11\n\tqualifier\x18\x01 \x02(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x02(\x0c\"\xbc\x01\n\x0cWriteRequest\x12\x12\n\ntable_name\x18\x01 \x02(\t\x12\x0f\n\x07row_key\x18\x02 \x02(\t\x12\x15\n\rcolumn_family\x18\x03 \x02(\t\x12@\n\x03kvs\x18\x04 \x03(\x0b\x32\x33.com.dirlt.java.FastHbaseRest.WriteRequest.KeyValue\x1a.\n\x08KeyValue\x12\x11\n\tqualifier\x18\x01 \x02(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x02(\x0c\"\x0f\n\rWriteResponseB\x10\x42\x0eMessageProtos1')
+  serialized_pb='\n\rmessage.proto\x12\x1c\x63om.dirlt.java.FastHbaseRest\"]\n\x0bReadRequest\x12\x12\n\ntable_name\x18\x01 \x02(\t\x12\x0f\n\x07row_key\x18\x02 \x02(\t\x12\x15\n\rcolumn_family\x18\x03 \x02(\t\x12\x12\n\nqualifiers\x18\x04 \x03(\t\"\x80\x01\n\x0cReadResponse\x12@\n\x03kvs\x18\x04 \x03(\x0b\x32\x33.com.dirlt.java.FastHbaseRest.ReadResponse.KeyValue\x1a.\n\x08KeyValue\x12\x11\n\tqualifier\x18\x01 \x02(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x02(\x0c\"\xbc\x01\n\x0cWriteRequest\x12\x12\n\ntable_name\x18\x01 \x02(\t\x12\x0f\n\x07row_key\x18\x02 \x02(\t\x12\x15\n\rcolumn_family\x18\x03 \x02(\t\x12@\n\x03kvs\x18\x04 \x03(\x0b\x32\x33.com.dirlt.java.FastHbaseRest.WriteRequest.KeyValue\x1a.\n\x08KeyValue\x12\x11\n\tqualifier\x18\x01 \x02(\t\x12\x0f\n\x07\x63ontent\x18\x02 \x02(\x0c\"\x0f\n\rWriteResponseB\x10\x42\x0eMessageProtos1')
 
 
 
@@ -94,8 +94,8 @@ _READRESPONSE_KEYVALUE = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=285,
-  serialized_end=331,
+  serialized_start=225,
+  serialized_end=271,
 )
 
 _READRESPONSE = descriptor.Descriptor(
@@ -106,28 +106,7 @@ _READRESPONSE = descriptor.Descriptor(
   containing_type=None,
   fields=[
     descriptor.FieldDescriptor(
-      name='table_name', full_name='com.dirlt.java.FastHbaseRest.ReadResponse.table_name', index=0,
-      number=1, type=9, cpp_type=9, label=2,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='row_key', full_name='com.dirlt.java.FastHbaseRest.ReadResponse.row_key', index=1,
-      number=2, type=9, cpp_type=9, label=2,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='column_family', full_name='com.dirlt.java.FastHbaseRest.ReadResponse.column_family', index=2,
-      number=3, type=9, cpp_type=9, label=2,
-      has_default_value=False, default_value=unicode("", "utf-8"),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      options=None),
-    descriptor.FieldDescriptor(
-      name='kvs', full_name='com.dirlt.java.FastHbaseRest.ReadResponse.kvs', index=3,
+      name='kvs', full_name='com.dirlt.java.FastHbaseRest.ReadResponse.kvs', index=0,
       number=4, type=11, cpp_type=10, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
@@ -143,7 +122,7 @@ _READRESPONSE = descriptor.Descriptor(
   is_extendable=False,
   extension_ranges=[],
   serialized_start=143,
-  serialized_end=331,
+  serialized_end=271,
 )
 
 
@@ -177,8 +156,8 @@ _WRITEREQUEST_KEYVALUE = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=285,
-  serialized_end=331,
+  serialized_start=225,
+  serialized_end=271,
 )
 
 _WRITEREQUEST = descriptor.Descriptor(
@@ -225,8 +204,8 @@ _WRITEREQUEST = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=334,
-  serialized_end=522,
+  serialized_start=274,
+  serialized_end=462,
 )
 
 
@@ -246,8 +225,8 @@ _WRITERESPONSE = descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=524,
-  serialized_end=539,
+  serialized_start=464,
+  serialized_end=479,
 )
 
 

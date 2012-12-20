@@ -18,7 +18,7 @@ def queryColumn():
     request.table_name='t1'
     request.row_key='r1'
     request.column_family='cf'
-    request.qualifiers.append('key')
+    request.qualifiers.append('c1')
 
     data = request.SerializeToString()
     data2 = raiseHTTPRequest('http://localhost:8000/read',data,timeout=20)

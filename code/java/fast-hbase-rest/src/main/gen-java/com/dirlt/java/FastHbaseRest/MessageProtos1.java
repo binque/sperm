@@ -818,27 +818,6 @@ public final class MessageProtos1 {
       // @@protoc_insertion_point(class_scope:com.dirlt.java.FastHbaseRest.ReadResponse.KeyValue)
     }
     
-    // required string table_name = 1;
-    public static final int TABLE_NAME_FIELD_NUMBER = 1;
-    private boolean hasTableName;
-    private java.lang.String tableName_ = "";
-    public boolean hasTableName() { return hasTableName; }
-    public java.lang.String getTableName() { return tableName_; }
-    
-    // required string row_key = 2;
-    public static final int ROW_KEY_FIELD_NUMBER = 2;
-    private boolean hasRowKey;
-    private java.lang.String rowKey_ = "";
-    public boolean hasRowKey() { return hasRowKey; }
-    public java.lang.String getRowKey() { return rowKey_; }
-    
-    // required string column_family = 3;
-    public static final int COLUMN_FAMILY_FIELD_NUMBER = 3;
-    private boolean hasColumnFamily;
-    private java.lang.String columnFamily_ = "";
-    public boolean hasColumnFamily() { return hasColumnFamily; }
-    public java.lang.String getColumnFamily() { return columnFamily_; }
-    
     // repeated .com.dirlt.java.FastHbaseRest.ReadResponse.KeyValue kvs = 4;
     public static final int KVS_FIELD_NUMBER = 4;
     private java.util.List<com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue> kvs_ =
@@ -854,9 +833,6 @@ public final class MessageProtos1 {
     private void initFields() {
     }
     public final boolean isInitialized() {
-      if (!hasTableName) return false;
-      if (!hasRowKey) return false;
-      if (!hasColumnFamily) return false;
       for (com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue element : getKvsList()) {
         if (!element.isInitialized()) return false;
       }
@@ -866,15 +842,6 @@ public final class MessageProtos1 {
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
-      if (hasTableName()) {
-        output.writeString(1, getTableName());
-      }
-      if (hasRowKey()) {
-        output.writeString(2, getRowKey());
-      }
-      if (hasColumnFamily()) {
-        output.writeString(3, getColumnFamily());
-      }
       for (com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue element : getKvsList()) {
         output.writeMessage(4, element);
       }
@@ -887,18 +854,6 @@ public final class MessageProtos1 {
       if (size != -1) return size;
     
       size = 0;
-      if (hasTableName()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeStringSize(1, getTableName());
-      }
-      if (hasRowKey()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeStringSize(2, getRowKey());
-      }
-      if (hasColumnFamily()) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeStringSize(3, getColumnFamily());
-      }
       for (com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue element : getKvsList()) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(4, element);
@@ -1065,15 +1020,6 @@ public final class MessageProtos1 {
       
       public Builder mergeFrom(com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse other) {
         if (other == com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.getDefaultInstance()) return this;
-        if (other.hasTableName()) {
-          setTableName(other.getTableName());
-        }
-        if (other.hasRowKey()) {
-          setRowKey(other.getRowKey());
-        }
-        if (other.hasColumnFamily()) {
-          setColumnFamily(other.getColumnFamily());
-        }
         if (!other.kvs_.isEmpty()) {
           if (result.kvs_.isEmpty()) {
             result.kvs_ = new java.util.ArrayList<com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue>();
@@ -1105,18 +1051,6 @@ public final class MessageProtos1 {
               }
               break;
             }
-            case 10: {
-              setTableName(input.readString());
-              break;
-            }
-            case 18: {
-              setRowKey(input.readString());
-              break;
-            }
-            case 26: {
-              setColumnFamily(input.readString());
-              break;
-            }
             case 34: {
               com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue.Builder subBuilder = com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue.newBuilder();
               input.readMessage(subBuilder, extensionRegistry);
@@ -1127,69 +1061,6 @@ public final class MessageProtos1 {
         }
       }
       
-      
-      // required string table_name = 1;
-      public boolean hasTableName() {
-        return result.hasTableName();
-      }
-      public java.lang.String getTableName() {
-        return result.getTableName();
-      }
-      public Builder setTableName(java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  result.hasTableName = true;
-        result.tableName_ = value;
-        return this;
-      }
-      public Builder clearTableName() {
-        result.hasTableName = false;
-        result.tableName_ = getDefaultInstance().getTableName();
-        return this;
-      }
-      
-      // required string row_key = 2;
-      public boolean hasRowKey() {
-        return result.hasRowKey();
-      }
-      public java.lang.String getRowKey() {
-        return result.getRowKey();
-      }
-      public Builder setRowKey(java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  result.hasRowKey = true;
-        result.rowKey_ = value;
-        return this;
-      }
-      public Builder clearRowKey() {
-        result.hasRowKey = false;
-        result.rowKey_ = getDefaultInstance().getRowKey();
-        return this;
-      }
-      
-      // required string column_family = 3;
-      public boolean hasColumnFamily() {
-        return result.hasColumnFamily();
-      }
-      public java.lang.String getColumnFamily() {
-        return result.getColumnFamily();
-      }
-      public Builder setColumnFamily(java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  result.hasColumnFamily = true;
-        result.columnFamily_ = value;
-        return this;
-      }
-      public Builder clearColumnFamily() {
-        result.hasColumnFamily = false;
-        result.columnFamily_ = getDefaultInstance().getColumnFamily();
-        return this;
-      }
       
       // repeated .com.dirlt.java.FastHbaseRest.ReadResponse.KeyValue kvs = 4;
       public java.util.List<com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.KeyValue> getKvsList() {
@@ -2335,18 +2206,16 @@ public final class MessageProtos1 {
       "\n\034src/main/proto/message.proto\022\034com.dirl" +
       "t.java.FastHbaseRest\"]\n\013ReadRequest\022\022\n\nt" +
       "able_name\030\001 \002(\t\022\017\n\007row_key\030\002 \002(\t\022\025\n\rcolu" +
-      "mn_family\030\003 \002(\t\022\022\n\nqualifiers\030\004 \003(\t\"\274\001\n\014" +
-      "ReadResponse\022\022\n\ntable_name\030\001 \002(\t\022\017\n\007row_" +
-      "key\030\002 \002(\t\022\025\n\rcolumn_family\030\003 \002(\t\022@\n\003kvs\030" +
-      "\004 \003(\01323.com.dirlt.java.FastHbaseRest.Rea" +
-      "dResponse.KeyValue\032.\n\010KeyValue\022\021\n\tqualif" +
-      "ier\030\001 \002(\t\022\017\n\007content\030\002 \002(\014\"\274\001\n\014WriteRequ" +
-      "est\022\022\n\ntable_name\030\001 \002(\t\022\017\n\007row_key\030\002 \002(\t",
-      "\022\025\n\rcolumn_family\030\003 \002(\t\022@\n\003kvs\030\004 \003(\01323.c" +
-      "om.dirlt.java.FastHbaseRest.WriteRequest" +
-      ".KeyValue\032.\n\010KeyValue\022\021\n\tqualifier\030\001 \002(\t" +
-      "\022\017\n\007content\030\002 \002(\014\"\017\n\rWriteResponseB\020B\016Me" +
-      "ssageProtos1"
+      "mn_family\030\003 \002(\t\022\022\n\nqualifiers\030\004 \003(\t\"\200\001\n\014" +
+      "ReadResponse\022@\n\003kvs\030\004 \003(\01323.com.dirlt.ja" +
+      "va.FastHbaseRest.ReadResponse.KeyValue\032." +
+      "\n\010KeyValue\022\021\n\tqualifier\030\001 \002(\t\022\017\n\007content" +
+      "\030\002 \002(\014\"\274\001\n\014WriteRequest\022\022\n\ntable_name\030\001 " +
+      "\002(\t\022\017\n\007row_key\030\002 \002(\t\022\025\n\rcolumn_family\030\003 " +
+      "\002(\t\022@\n\003kvs\030\004 \003(\01323.com.dirlt.java.FastHb",
+      "aseRest.WriteRequest.KeyValue\032.\n\010KeyValu" +
+      "e\022\021\n\tqualifier\030\001 \002(\t\022\017\n\007content\030\002 \002(\014\"\017\n" +
+      "\rWriteResponseB\020B\016MessageProtos1"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -2366,7 +2235,7 @@ public final class MessageProtos1 {
           internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_descriptor,
-              new java.lang.String[] { "TableName", "RowKey", "ColumnFamily", "Kvs", },
+              new java.lang.String[] { "Kvs", },
               com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.class,
               com.dirlt.java.FastHbaseRest.MessageProtos1.ReadResponse.Builder.class);
           internal_static_com_dirlt_java_FastHbaseRest_ReadResponse_KeyValue_descriptor =

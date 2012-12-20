@@ -6,70 +6,82 @@ import message_pb2
 import time
 
 import urllib2
+import httplib
+
 def raiseHTTPRequest(url,data=None,timeout=3):
     # if we do post, we have to provide data.
     f=urllib2.urlopen(url,data,timeout)
     return f.read()
 
-def queryColumn(times = 50):
+def queryColumn(times=50):
     print '----------queryColumn----------'
     request = message_pb2.ReadRequest()
 
     request.table_name='appuserstat'
-    request.row_key='2012-10-26_4db949a2112cf75caa00002a'
+    request.row_key='2012-12-19_4c14d4471d41c86c6400072b'
     request.column_family='stat'
-    request.qualifiers.append('models_1_lanCnt')
+    request.qualifiers.append('duTime_d_1_3')
+    request.qualifiers.append('duTime_d_4_10')
+    request.qualifiers.append('duTime_d_11_30')
+    request.qualifiers.append('duTime_d_31_60')
+    request.qualifiers.append('duTime_d_61_180')
+    request.qualifiers.append('duTime_d_181_600')
+    request.qualifiers.append('duTime_d_601_1800')
+    request.qualifiers.append('duTime_d_1801_')
 
     data = request.SerializeToString()
-    all = 0
+    # long-lived connection.
+    conn = httplib.HTTPConnection('dp0',12345,timeout=20)
+    s = time.time()
     for i in xrange(0,times):
-        s = time.time()
-        data2 = raiseHTTPRequest('http://dp0:12345/read',data,timeout=20)
-        e = time.time()
-        all += (e-s)
-    print 'fast time spent %.2lf'%(all)
+        conn.request('GET','/read',data)
+        data2=conn.getresponse().read()
+    e = time.time()
+    print 'fast time spent %lf, avg %lf'%((e-s),(e-s)/times)
 
     response = message_pb2.ReadResponse()
     response.ParseFromString(data2)
     #print response
 
-    all = 0
+    s = time.time()
+    conn = httplib.HTTPConnection('dp30',8080,timeout=20)    
     for i in xrange(0,times):
-        s = time.time()
-        data2 = raiseHTTPRequest('http://dp30:8080/appuserstat/2012-10-26_4db949a2112cf75caa00002a/stat:models_1_lanCnt')
-        e = time.time()
-        all += (e-s)
-    print 'rest time spent %.2lf'%(all)
+        conn.request('GET','/appuserstat/2012-12-19_4c14d4471d41c86c6400072b/stat:duTime_d_1_3,stat:duTime_d_4_10,stat:duTime_d_11_30,stat:duTime_d_31_60,stat:duTime_d_61_180,stat:duTime_d_181_600,stat:duTime_d_601_1800,stat:duTime_d_1801_?v=1',
+                     headers = {'Keep-Alive':'timeout=10'})
+        data2 = conn.getresponse().read()
+    e = time.time()
+    print 'rest time spent %lf, avg %lf'%((e-s),(e-s)/times)
 
-def queryColumnFamily(times = 100):
+def queryColumnFamily(times=2):
     print '----------queryColumnFamily----------'
     request = message_pb2.ReadRequest()
 
-    request.table_name='appbenchmark'
-    request.row_key='2012-04-08_YULE'
+    request.table_name='appuserstat'
+    request.row_key='2012-12-19_4c14d4471d41c86c6400072b'
     request.column_family='stat'
 
     data = request.SerializeToString()
-    all = 0
-    for i in xrange(0,times):    
-        s = time.time()
-        data2 = raiseHTTPRequest('http://dp0:12345/read',data,timeout=20)
-        e = time.time()
-        all += (e-s)
-    print 'fast time spent %.2lf'%(all)
-    
+    # long-lived connection.
+    conn = httplib.HTTPConnection('dp0',12345,timeout=20)
+    s = time.time()
+    for i in xrange(0,times):
+        conn.request('GET','/read',data)
+        data2=conn.getresponse().read()
+    e = time.time()
+    print 'fast time spent %lf, avg %lf'%((e-s),(e-s)/times)
+
     response = message_pb2.ReadResponse()
     response.ParseFromString(data2)
     #print response
 
-    all = 0
+    s = time.time()
+    conn = httplib.HTTPConnection('dp30',8080,timeout=20)    
     for i in xrange(0,times):
-        s = time.time()
-        data2 = raiseHTTPRequest('http://dp30:8080/appbenchmark/2012-04-08_YULE/stat:')
-        e = time.time()
-        all += (e-s)
-    print 'rest time spent %.2lf'%(all)
-
+        conn.request('GET','/appuserstat/2012-12-19_4c14d4471d41c86c6400072b/stat:',
+                     headers = {'Keep-Alive':'timeout=10'})
+        data2 = conn.getresponse().read()
+    e = time.time()
+    print 'rest time spent %lf, avg %lf'%((e-s),(e-s)/times)
 
 if __name__=='__main__':
     queryColumn()
