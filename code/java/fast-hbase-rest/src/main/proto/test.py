@@ -12,45 +12,38 @@ def raiseHTTPRequest(url,data=None,timeout=3):
 
 def queryColumn():
     print '----------queryColumn----------'
-    msg = message_pb2.Message()
-    msg.type = message_pb2.Message.kReadRequest
-    request = msg.readRequest
+    request = message_pb2.ReadRequest()
 
     request.table_name='t1'
     request.row_key='r1'
     request.column_family='cf'
     request.qualifiers.append('key')
 
-    data = msg.SerializeToString()
-    data2 = raiseHTTPRequest('http://localhost:8000',data,timeout=20)
-    
-    msg = message_pb2.Message()
-    msg.ParseFromString(data2)
-    print msg
+    data = request.SerializeToString()
+    data2 = raiseHTTPRequest('http://localhost:8000/read',data,timeout=20)
+
+    response = message_pb2.ReadResponse()
+    response.ParseFromString(data2)
+    print response
 
 def queryColumnFamily():
     print '----------queryColumnFamily----------'
-    msg = message_pb2.Message()
-    msg.type = message_pb2.Message.kReadRequest
-    request = msg.readRequest
+    request = message_pb2.ReadRequest()
 
     request.table_name='t1'
     request.row_key='r1'
     request.column_family='cf'
-        
 
-    data = msg.SerializeToString()
-    data2 = raiseHTTPRequest('http://localhost:8000',data,timeout=20)
-    
-    msg = message_pb2.Message()
-    msg.ParseFromString(data2)
-    print msg
+    data = request.SerializeToString()
+    data2 = raiseHTTPRequest('http://localhost:8000/read',data,timeout=20)
+
+    response = message_pb2.ReadResponse()
+    response.ParseFromString(data2)
+    print response
 
 def write():
     print '----------write----------'
-    msg = message_pb2.Message()
-    msg.type = message_pb2.Message.kWriteRequest
-    request = msg.writeRequest
+    request = message_pb2.WriteRequest()
 
     request.table_name = 't1'
     request.row_key = 'r0'
@@ -59,18 +52,15 @@ def write():
     kv.qualifier = 'key'
     kv.content = 'value'
 
-    data = msg.SerializeToString()
-    data2 = raiseHTTPRequest('http://localhost:8000',data,timeout=20)
+    data = request.SerializeToString()
+    data2 = raiseHTTPRequest('http://localhost:8000/write',data,timeout=20)
 
-    msg = message_pb2.Message()
-    msg.ParseFromString(data2)
-    print msg
+    response = message_pb2.WriteResponse()
+    response.ParseFromString(data2)
+    print response
     
 
 if __name__=='__main__':
     queryColumn()
     queryColumnFamily()
     write()
-
-
-

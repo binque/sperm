@@ -196,13 +196,12 @@ rs2最近写入的数据是v2，而接下来如果从rs2查询"latest"的数据�
 
 ** 使用问题
 *** hbase shell
-   - scan 'test'
-   - scan 'test' , { LIMIT=>10 }
-   - scan 'test' , { COLUMN=>['cf:url'] }
-   - scan 'test' , { STARTROW=>'xyz' , ENDROW=>'uvw' }
+   - scan 'test' , { STARTROW=>'xyz' , ENDROW=>'uvw' , COLUMN=>['cf:url'], LIMIT=>10 }
    - count 'test'
    - create 'test', { NAME=>'cf' }
-   - get 'test', {COLUMN = > ['cf:url']}
+   - get 'test', 'rowkey', {COLUMN = > ['cf:url']}
+   - get 'test', 'rowkey', 'cf:url'
+   - put 'test', 'rowkey', 'cf:url', 'value'
 
 如果需要输入二进制的话，可以使用\x1e这样的方式表示，但是务必使用". 比如"stat:abc\x1exyz"
 

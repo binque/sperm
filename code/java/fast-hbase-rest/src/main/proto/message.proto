@@ -6,20 +6,6 @@ package com.dirlt.java.FastHbaseRest;
 
 option java_outer_classname = "MessageProtos1";
 
-message Message {
-  enum Type {
-    kReadRequest = 0;
-    kWriteRequest = 1;
-    kReadResponse = 2;
-    kWriteResponse = 3;
-  }
-  required Type type = 1;
-  optional ReadRequest readRequest = 2;
-  optional ReadResponse readResponse = 3;
-  optional WriteRequest writeRequest = 4;
-  optional WriteResponse writeResponse = 5;
-}
-
 // --------------------
 message ReadRequest {  
   required string table_name = 1;

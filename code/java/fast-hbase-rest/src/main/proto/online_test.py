@@ -12,38 +12,34 @@ def raiseHTTPRequest(url,data=None,timeout=3):
 
 def queryColumn():
     print '----------queryColumn----------'
-    msg = message_pb2.Message()
-    msg.type = message_pb2.Message.kReadRequest
-    request = msg.readRequest
-    
+    request = message_pb2.ReadRequest()
+
     request.table_name='appbenchmark'
     request.row_key='2012-04-08_YULE'
     request.column_family='stat'
     request.qualifiers.append('14_day_active_count_avg')
 
-    data = msg.SerializeToString()
-    data2 = raiseHTTPRequest('http://dp0:12345',data,timeout=20)
+    data = request.SerializeToString()
+    data2 = raiseHTTPRequest('http://dp0:12345/read',data,timeout=20)
 
-    msg = message_pb2.Message()    
-    msg.ParseFromString(data2)
-    print msg
+    response = message_pb2.ReadResponse()
+    response.ParseFromString(data2)
+    print response
 
 def queryColumnFamily():
     print '----------queryColumnFamily----------'
-    msg = message_pb2.Message()
-    msg.type = message_pb2.Message.kReadRequest
-    request = msg.readRequest
-    
+    request = message_pb2.ReadRequest()
+
     request.table_name='appbenchmark'
     request.row_key='2012-04-08_YULE'
     request.column_family='stat'
 
-    data = msg.SerializeToString()
-    data2 = raiseHTTPRequest('http://dp0:12345',data,timeout=20)
+    data = request.SerializeToString()
+    data2 = raiseHTTPRequest('http://dp0:12345/read',data,timeout=20)
 
-    msg = message_pb2.Message()    
-    msg.ParseFromString(data2)
-    print msg
+    response = message_pb2.ReadResponse()
+    response.ParseFromString(data2)
+    print response
 
 if __name__=='__main__':
     queryColumn()

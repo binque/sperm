@@ -5,6 +5,9 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.*;
 import org.jboss.netty.handler.codec.http.*;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  * Created with IntelliJ IDEA.
  * User: dirlt
@@ -14,18 +17,31 @@ import org.jboss.netty.handler.codec.http.*;
  */
 
 public class RestHandler extends SimpleChannelHandler {
+    private static final Set<String> allowedPath = new TreeSet<String>();
+
+    static {
+        allowedPath.add("/stat");
+        allowedPath.add("/read");
+        allowedPath.add("/write");
+    }
+
     private AsyncClient client = new AsyncClient(); // each handler corresponding a channel or a connection.
     // binding to the channel pipeline.
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
         RestServer.logger.debug("message received");
-
         HttpRequest request = (HttpRequest) e.getMessage();
         Channel channel = e.getChannel();
         StatStore stat = StatStore.getInstance();
-        client.code = AsyncClient.Status.kStat;
+        client.code = AsyncClient.Status.kStat; // default status code.
 
+        if (!allowedPath.contains(request.getUri())) {
+            channel.close(); // just close the connection.
+            return;
+        }
+
+        // as stat, we can easily handle it.
         if (request.getUri().equals("/stat")) {
             HttpResponse response = new DefaultHttpResponse(
                     HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
@@ -43,7 +59,6 @@ public class RestHandler extends SimpleChannelHandler {
         client.code = AsyncClient.Status.kHttpRequest;
         client.channel = channel;
         client.httpRequest = request;
-        client.queryStartTimestamp = System.currentTimeMillis();
         CpuWorkerPool.getInstance().submit(client);
     }
 
@@ -54,8 +69,6 @@ public class RestHandler extends SimpleChannelHandler {
 
         if (client.code != AsyncClient.Status.kStat) {
             StatStore.getInstance().addCounter("rpc.out.count", 1);
-            client.queryEndTimestamp = System.currentTimeMillis();
-            StatStore.getInstance().addCounter("rpc.query.duration", client.queryEndTimestamp - client.queryStartTimestamp);
         }
     }
 
