@@ -41,7 +41,7 @@ def queryColumn(times = 50):
         all += (e-s)
     print 'rest time spent %.2lf'%(all)
 
-def queryColumnFamily(times = 10):
+def queryColumnFamily(times = 100):
     print '----------queryColumnFamily----------'
     request = message_pb2.ReadRequest()
 
