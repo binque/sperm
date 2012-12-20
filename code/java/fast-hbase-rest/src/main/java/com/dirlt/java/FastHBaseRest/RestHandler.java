@@ -5,6 +5,8 @@ import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.*;
 import org.jboss.netty.handler.codec.http.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -34,15 +36,27 @@ public class RestHandler extends SimpleChannelHandler {
         HttpRequest request = (HttpRequest) e.getMessage();
         Channel channel = e.getChannel();
         StatStore stat = StatStore.getInstance();
-        client.code = AsyncClient.Status.kStat; // default status code.
+        String path = null;
 
-        if (!allowedPath.contains(request.getUri())) {
+        try {
+            URI uri = new URI(request.getUri());
+            path = uri.getPath();
+        } catch (URISyntaxException ex) {
+            // ignore.
+            stat.addCounter("uri.invalid.count", 1);
+            channel.close();
+            return;
+        }
+        System.out.println(path);
+
+        if (!allowedPath.contains(path)) {
+            stat.addCounter("uri.unknown.count", 1);
             channel.close(); // just close the connection.
             return;
         }
 
         // as stat, we can easily handle it.
-        if (request.getUri().equals("/stat")) {
+        if (path.equals("/stat")) {
             HttpResponse response = new DefaultHttpResponse(
                     HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
             // handle it in the same thread.
@@ -59,6 +73,7 @@ public class RestHandler extends SimpleChannelHandler {
         client.code = AsyncClient.Status.kHttpRequest;
         client.channel = channel;
         client.httpRequest = request;
+        client.path = path;
         CpuWorkerPool.getInstance().submit(client);
     }
 

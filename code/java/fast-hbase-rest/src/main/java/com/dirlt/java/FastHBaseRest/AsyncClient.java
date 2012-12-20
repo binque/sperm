@@ -48,6 +48,7 @@ public class AsyncClient implements Runnable {
     public Channel channel;
 
     public HttpRequest httpRequest;
+    public String path;
     public byte[] bs;
     public MessageProtos1.ReadRequest rdReq;
     public MessageProtos1.WriteRequest wrReq;
@@ -118,7 +119,7 @@ public class AsyncClient implements Runnable {
         bs = new byte[size];
         buffer.readBytes(bs);
 
-        if (httpRequest.getUri().equals("/write")) {
+        if (path.equals("/write")) {
             code = Status.kWriteRequest;
         } else {
             // default is read request.
