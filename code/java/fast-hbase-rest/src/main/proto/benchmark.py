@@ -36,8 +36,8 @@ def queryColumn(times=50):
     for i in xrange(0,times):
         conn.request('GET','/read',data)
         data2=conn.getresponse().read()
-    e = time.time()
-    print 'fast time spent %lf, avg %lf'%((e-s),(e-s)/times)
+    e = time.time()    
+    print 'fast time spent %lf, avg %.4lf'%((e-s),(e-s)/times)
 
     response = message_pb2.ReadResponse()
     response.ParseFromString(data2)
@@ -50,7 +50,7 @@ def queryColumn(times=50):
                      headers = {'Keep-Alive':'timeout=10'})
         data2 = conn.getresponse().read()
     e = time.time()
-    print 'rest time spent %lf, avg %lf'%((e-s),(e-s)/times)
+    print 'rest time spent %lf, avg %.4lf'%((e-s),(e-s)/times)
 
 def queryColumnFamily(times=2):
     print '----------queryColumnFamily----------'
