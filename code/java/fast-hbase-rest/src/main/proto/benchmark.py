@@ -13,7 +13,7 @@ def raiseHTTPRequest(url,data=None,timeout=3):
     f=urllib2.urlopen(url,data,timeout)
     return f.read()
 
-def queryColumn(times=50):
+def queryColumn(times=100):
     print '----------queryColumn----------'
     request = message_pb2.ReadRequest()
 
@@ -35,9 +35,12 @@ def queryColumn(times=50):
     s = time.time()
     for i in xrange(0,times):
         conn.request('GET','/read',data)
-        data2=conn.getresponse().read()
+        try:
+            data2=conn.getresponse().read()
+        except:
+            print 'fast timeout'
     e = time.time()    
-    print 'fast time spent %lf, avg %.4lf'%((e-s),(e-s)/times)
+    print 'fast time spent %lf / %d, avg %.4lf'%((e-s),times, (e-s)/times)
 
     response = message_pb2.ReadResponse()
     response.ParseFromString(data2)
@@ -48,11 +51,15 @@ def queryColumn(times=50):
     for i in xrange(0,times):
         conn.request('GET','/appuserstat/2012-12-19_4c14d4471d41c86c6400072b/stat:duTime_d_1_3,stat:duTime_d_4_10,stat:duTime_d_11_30,stat:duTime_d_31_60,stat:duTime_d_61_180,stat:duTime_d_181_600,stat:duTime_d_601_1800,stat:duTime_d_1801_?v=1',
                      headers = {'Keep-Alive':'timeout=10'})
-        data2 = conn.getresponse().read()
+        try:
+            data2 = conn.getresponse().read()
+        except:
+            print 'rest timeout'
+        
     e = time.time()
-    print 'rest time spent %lf, avg %.4lf'%((e-s),(e-s)/times)
+    print 'rest time spent %lf / %d, avg %.4lf'%((e-s),times,(e-s)/times)
 
-def queryColumnFamily(times=2):
+def queryColumnFamily(times=5):
     print '----------queryColumnFamily----------'
     request = message_pb2.ReadRequest()
 
@@ -66,9 +73,12 @@ def queryColumnFamily(times=2):
     s = time.time()
     for i in xrange(0,times):
         conn.request('GET','/read',data)
-        data2=conn.getresponse().read()
+        try:
+            data2=conn.getresponse().read()
+        except:
+            print 'fast timeout'
     e = time.time()
-    print 'fast time spent %lf, avg %lf'%((e-s),(e-s)/times)
+    print 'fast time spent %lf / %d, avg %.4lf'%((e-s),times, (e-s)/times)
 
     response = message_pb2.ReadResponse()
     response.ParseFromString(data2)
@@ -77,11 +87,14 @@ def queryColumnFamily(times=2):
     s = time.time()
     conn = httplib.HTTPConnection('dp30',8080,timeout=20)    
     for i in xrange(0,times):
-        conn.request('GET','/appuserstat/2012-12-19_4c14d4471d41c86c6400072b/stat:',
-                     headers = {'Keep-Alive':'timeout=10'})
+        try:
+            conn.request('GET','/appuserstat/2012-12-19_4c14d4471d41c86c6400072b/stat:',
+                         headers = {'Keep-Alive':'timeout=10'})
+        except:
+            print 'resr timeout'
         data2 = conn.getresponse().read()
     e = time.time()
-    print 'rest time spent %lf, avg %lf'%((e-s),(e-s)/times)
+    print 'rest time spent %lf / %d, avg %.4lf'%((e-s),times,(e-s)/times)
 
 if __name__=='__main__':
     queryColumn()
