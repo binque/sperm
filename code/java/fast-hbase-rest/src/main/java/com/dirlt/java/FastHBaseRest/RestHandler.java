@@ -78,7 +78,7 @@ public class RestHandler extends SimpleChannelHandler {
         client.channel = channel;
         client.httpRequest = request;
         client.path = path;
-        CpuWorkerPool.getInstance().submit(client);
+        client.run();
     }
 
     @Override

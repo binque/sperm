@@ -31,6 +31,7 @@ public class AsyncClient implements Runnable {
 
     public AsyncClient(Configuration configuration) {
         cache = configuration.isCache();
+        async = configuration.isAsync();
     }
 
     // state of each step.
@@ -49,6 +50,7 @@ public class AsyncClient implements Runnable {
     }
 
     private boolean cache; // whether to cache it.
+    private boolean async; // whether async mode.
     public Status code = Status.kStat; // default value.
     public Channel channel;
 
@@ -143,7 +145,13 @@ public class AsyncClient implements Runnable {
             // default is read request.
             code = Status.kReadRequest;
         }
-        run();
+        // entry. if we want async mode, we put into cpu thread
+        // otherwise we just run.
+        if (async) {
+            CpuWorkerPool.getInstance().submit(this);
+        } else {
+            run();
+        }
     }
 
     public void readRequest() {
@@ -322,7 +330,11 @@ public class AsyncClient implements Runnable {
                     StatStore.getInstance().addCounter("read.duration.hbase.column-family",
                             client.readHBaseServiceEndTimestamp - client.readHBaseServiceStartTimestamp);
                 }
-                CpuWorkerPool.getInstance().submit(client);
+                if (async) {
+                    CpuWorkerPool.getInstance().submit(client);
+                } else {
+                    run();
+                }
                 return null;
             }
         });
@@ -361,7 +373,11 @@ public class AsyncClient implements Runnable {
                 client.writeHBaseServiceEndTimestamp = System.currentTimeMillis();
                 StatStore.getInstance().addCounter("write.duration",
                         client.writeHBaseServiceEndTimestamp - client.writeHBaseServiceStartTimestamp);
-                CpuWorkerPool.getInstance().submit(client);
+                if (async) {
+                    CpuWorkerPool.getInstance().submit(client);
+                } else {
+                    run();
+                }
                 return null;
             }
         });

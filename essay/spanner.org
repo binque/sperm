@@ -74,13 +74,15 @@ file:./images/spanserver-software-stack.png
      -  The state of each trans-action manager is stored in the underlying Paxos group (and therefore is replicated).（transaction manager的log记录在底层的paxos group)
 	
 *** Directories and Placement
+file:./images/spanner-directory-movement.png
+
    - On top of the bag of key-value mappings, the Spanner implementation supports a bucketing abstraction called a directory, which is a set of contiguous keys that share a common prefix.（directory定义为连续key的集合，对应到directory就可以认为是一个region，但是一个tablet可以包含多个directory)
    - A directory is the unit of data placement. All data in a directory has the same replication configuration. When data is moved between Paxos groups, it is moved direc-tory by directory (directory是data placement的最小单元，一个directory里面的data有相同的replication configuration.在paxos group之间移动的话也是按照directory作为单位移动的）
      - Spanner might move a directory to shed load from a Paxos group; 将dir移动到低负载的paxos group上面
      - to put directories that are frequently accessed together into the same group; 将经常一起访问的dir放在一个group上面
-     - or to move a directory into a group that is closer to its accessors. 
-     - Directories can be moved while client operations are ongoing. 
-     - One could expect that50MB directory can be moved in a few seconds.
+     - or to move a directory into a group that is closer to its accessors. 将dir放在离accessor近的位置
+     - Directories can be moved while client operations are ongoing. 在dir迁移的时候不会影响client访问
+     - One could expect that 50MB directory can be moved in a few seconds. 传输50MB的目录大概需要几秒钟就可以完成
    - The fact that a Paxos group may contain multiple di-rectories implies that a Spanner tablet is different from a Bigtable tablet: the former is not necessarily a single lexicographically contiguous partition of the row space. Instead, a Spanner tablet is a container that may encap-sulate multiple partitions of the row space. We made this decision so that it would be possible to colocate multiple directories that are frequently accessed together.（一个tablet可包含多个directory可以让多个频繁访问的directories聚集在一起提高访问效率）
 
 

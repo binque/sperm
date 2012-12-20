@@ -11,6 +11,9 @@ import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created with IntelliJ IDEA.
@@ -47,9 +50,16 @@ public class RestServer {
     public static Logger logger = new Logger();
 
     public static void runHttpServer(final Configuration configuration) {
+        logger.info("io-thread-number=" + configuration.getIoThreadNumber() +
+                ", io-queue-size=" + configuration.getIoQueueSize());
+        logger.info("async=" + configuration.isAsync() +
+                ", stat=" + configuration.isStat() +
+                ", cache=" + configuration.isCache());
         ChannelFactory factory = new NioServerSocketChannelFactory(
-                Executors.newCachedThreadPool(),
-                Executors.newCachedThreadPool());
+                Executors.newSingleThreadExecutor(),
+                new ThreadPoolExecutor(configuration.getIoThreadNumber(), configuration.getIoThreadNumber(),
+                        0, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(configuration.getIoQueueSize())),
+                configuration.getIoThreadNumber());
         ServerBootstrap bootstrap = new ServerBootstrap(factory);
         bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
             public ChannelPipeline getPipeline() throws Exception {

@@ -218,6 +218,8 @@ http://stackoverflow.com/questions/11327316/how-to-join-tables-in-hbase
 *** hbase increment
 http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html
 
+可以用来做原子更新
+
 *** python client
 使用python来访问hbase确实可以很大地提高开发效率，但是通过thrift server来进行中转的话对于性能还是存在影响的，因此比较适合测试。
    - 首先需要启动thrift server。hbase-deamon.sh start thrift
