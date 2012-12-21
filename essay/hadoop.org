@@ -257,3 +257,14 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
    - Understanding Apache Hadoop’s Capacity Scheduler | Hortonworks http://hortonworks.com/blog/understanding-apache-hadoops-capacity-scheduler/
    - Upcoming Functionality in “Fair Scheduler 2.0″ | Apache Hadoop for the Enterprise | Cloudera http://www.cloudera.com/blog/2009/04/upcoming-functionality-in-fair-scheduler-20/
 
+
+** Hadoop权威指南
+*** 初识Hadoop
+古代，人们用牛来拉中午，当一头牛拉不动一根圆木的时候，他们不曾想过培育更大更壮的牛。同样，我们也不需要尝试开发超级计算机，而应试着结合使用更多计算机系统。
+
+*** 关于MapReduce
+   - 设置HADOOP_CLASSPATH就可以直接使用hadoop CLASSNAME来在本地运行mapreduce程序。 *TODO(dirlt): try it*
+
+*** 
+
+

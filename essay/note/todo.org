@@ -34,7 +34,6 @@
    - http://highscalability.com/blog/2012/10/31/gone-fishin-livejournal-architecture.html
 ** TODO 试试skype
 ** TODO umid服务,db research.probelm.
-** TODO 调研memcached. and netty and thrift.
 ** TODO 分析htable代码put.
 ** TODO hbase testing utility.（是否可以不使用这个东西）
 ** TODO 在tasktracker机器上面建立新人关系
