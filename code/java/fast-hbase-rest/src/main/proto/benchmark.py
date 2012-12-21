@@ -91,7 +91,7 @@ def queryColumnFamily(times=5):
             conn.request('GET','/appuserstat/2012-12-19_4c14d4471d41c86c6400072b/stat:',
                          headers = {'Keep-Alive':'timeout=10'})
         except:
-            print 'resr timeout'
+            print 'rest timeout'
         data2 = conn.getresponse().read()
     e = time.time()
     print 'rest time spent %lf / %d, avg %.4lf'%((e-s),times,(e-s)/times)
