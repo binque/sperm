@@ -16,6 +16,7 @@ then
 else
     export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64/
     export HADOOP_HOME=$HOME/utils/hadoop-0.20.2-cdh3u3/
+    export HADOOP_CLASSPATH=./target/classes
     export HBASE_HOME=$HOME/utils/hbase-0.90.4-cdh3u3/
     export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native/Linux-amd64-64/:$LD_LIBRARY_
     # add hadoop and hbase classpath.

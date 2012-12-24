@@ -261,3 +261,4 @@ public class MessageLzoProtobufWritable extends ProtobufWritable<MessageProtos1.
   - 参考代码 com.dirlt.java.mr.ClusterSummary
   - 获取更多信息可以阅读JobClient API
 
+

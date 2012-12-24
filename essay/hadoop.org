@@ -263,8 +263,97 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 古代，人们用牛来拉中午，当一头牛拉不动一根圆木的时候，他们不曾想过培育更大更壮的牛。同样，我们也不需要尝试开发超级计算机，而应试着结合使用更多计算机系统。
 
 *** 关于MapReduce
-   - 设置HADOOP_CLASSPATH就可以直接使用hadoop CLASSNAME来在本地运行mapreduce程序。 *TODO(dirlt): try it*
+   - 设置HADOOP_CLASSPATH就可以直接使用hadoop CLASSNAME来在本地运行mapreduce程序。
+   - hadoop jar $HADOOP_HOME/contrib/streaming/hadoop-streaming-0.20.2-cdh3u3.jar 可以用来启动streaming任务
+     - 使用stdin/stdout来作为输入和输出
+     - *NOTE（dirlt）：倒是可以探索一下如何使用，但是觉得能力有限*
+       - Input/Output Format
+       - 外围环境的访问比如访问hdfs以及hbase
+       - 程序打包。比如使用很多第三方库的话在其他机器上面没有部署。 
+   - hadoop pipes 可以用来启动pipes任务
+     - Hadoop的Pipes是Hadoop MapReduce的C++接口代称
+     - 使用Unix Domain Socket来作为输入和输出
+     - *NOTE（dirlt）：可能使用上面还是没有native mr或者是streaming方式方便*
 
-*** 
+*** Hadoop分布式文件系统
+  - 使用hadoop archive能够将大量小文档打包，存档文件之能够只读访问
+    - 使用hadoop archive -archiveName <file>.har -p <parent-path> src dst
+    - 存档过程使用mapreduce完成，输出结果为目录
+      - part-0 表示存档内容文件，应该是使用一个reduce做聚合。
+      - _index,_masterindex 是对存档内容文件的索引文件。
+    - har(hadoop archive)文件系统是建立在其他文件系统上面的，比如hdfs或者是local fs.
+      - hadoop fs -ls har:///file.har 那么访问的是默认的文件系统上面的file.har
+      - 如果想显示地访问hdfs文件系统的话，那么可以hadoop fs -ls har://hdfs-localhost:9000/file.har
+      - 如果想显示地访问本地文件系统的话，那么可以使用hadoop fs -ls har://file-localhost/file.har
+      - hadoop fs -ls har://schema-<host>/<path> 是通用的访问方式
+	
+*** Hadoop IO
+   - 文件系统
+     - ChecksumFileSystem 
+       - 使用decorator设计模式，底层filesystem称为RawFileSystem
+       - 对于每个文件filename都会创建.filename.crc文件存储校验和
+       - 计算crc的单位大小通过io.bytes.per.checksum来进行控制
+       - 读取文件如果出现错误的话，那么会抛出ChecksumException
+       - 考虑到存在多副本的情况，如果读取某个副本出错的话，期间那么会调用reportChecksumFailure方法
+	 - *NOTE（dirlt）：这个部分的代码不太好读，非常绕*    
+     - RawLocalFileSystem
+       - 本地文件系统
+     - LocalFileSystem
+       - RawLocalFileSystem + ChecksumFileSystem
+       - reportChecksumFailure实现为将校验和存在问题的文件移动到bad_files边际文件夹（side directory）
+     - DistributedFileSystem
+       - 分布式文件系统
+     - ChecksumDistributedFileSystem
+       - DistributedFileSystem + ChecksumFileSystem
+
+   - 压缩解压
+     - DEFLATE org.apache.hadoop.io.compress.DefaultCodec 扩展名.defalte
+     - Gzip org.apache.hadoop.io.compress.GzipCodec 扩展名.gz 使用DEFLATE算法但是增加了额外的文件头。
+     - bzip2 org.apache.hadoop.io.compress.BZip2Codec 扩展名.bz2 自身支持文件切分，内置同步点。
+     - LZO com.hadoop.compression.lzo.LzopCodec 扩展名.lzo 和lzop工具兼容，LZO算法增加了额外的文件头。
+       - LzopCodec则是纯lzo格式的codec,使用.lzo_deflate作为文件扩展名
+       - 因为LZO代码库拥有GPL许可，因此没有办法包含在Apache的发行版本里面。
+     - 运行MapReduce时候可能需要针对不同压缩文件解压读取，就需要构造CompressionCodec对象，我们可以通过CompressionCodecFactory来构造这个对象
+       - CompressionCodecFactory读取变量io.compression.codecs
+       - 然后根据输入文件的扩展名来选择使用何种codec.
+       - getDefaultExtension
+     - 压缩和解压算法可能同时存在Java实现和原生实现
+       - 如果是原生实现的话通常是.so，那么需要设置java.library.path或者是在环境变量里面设置LD_LIBRARY_PATH
+       - 如果同时有原生实现和Java实现，我们想只是使用原生实现的话，那么可以设置hadoop.native.lib = false来禁用原生实现。
+     - 压缩算法涉及到对应的InputFormat,也就涉及到是否支持切分
+       - 对于一些不支持切分的文件，可能存在一些外部工具来建立索引，从而支持切分。
+     - 下面这些选项可以针对map结果以及mapreduce结果进行压缩
+       - mapred.output.compress = true 将mapreduce结果做压缩
+       - mapred.output.compression.codec mapreduce压缩格式
+       - mapred.output.compress.type = BLOCK/RECORD 如果输出格式为SequenceFile的话，那么这个参数可以控制是块压缩还是记录压缩
+       - *NOTE（dirlt）：我现在强烈感觉MR的中间结果存储格式为SequenceFile*
+       - mapred.compress.map.output = true 将map结果做压缩
+       - mapred.map.output.compression.codec map压缩格式
+
+   - 序列化
+     - Hadoop的序列化都是基于Writable实现的，WritableComparable则是同时继承Writable,Comparable<T>.
+     - 序列化对象需要实现RawComparator，接口为public int compare(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2)进行二进制比较。
+       - WritableComparator简化了这个实现，继承WritableComparator就实现了这个接口
+       - 但是这个接口实现起来非常naive，就是将两个byte stream反序列化然后调用对象的compareTo实现
+       - 如果想要提高效率的话，可以考虑通过直接比较两个byte stream来做优化。
+     - 基于文件的数据结构
+       - SequenceFile 主要用来存储KV数据结构，多条记录之间会穿插一些同步标记，因此允许进行切分。
+	 - 使用SequenceFileInputFormat和SequenceFileOutputFormat来读取和输出SequenceFile
+         - hadoop fs -text 可以用来读取文件
+	 - mapred.output.compress.type = BLOCK/RECORD 可以用来控制压缩方式
+           - 如果没有使用压缩的话，那么格式为 recordLength(4byte) + keyLength(4byte) + key + value
+           - 如果使用记录压缩的话，那么格式为 recordLnegth(4byte) + keyLength(4byte) + key + compressedValue
+           - 如果使用块压缩的话，那么格式为 numberRecord(1-5byte) + keyLength(4byte) + compressedKeys + valueLength(4byte) + compressedValues.每个block之间会插入sync标记
+	   - 块压缩大小可以使用io.seqfile.compress.blocksize来控制，默认1MB
+       - MapFile 也是用来存储KV数据结构，但是可以认为已经按照了Key进行排序 *NOTE（dirlt）：要求添加顺序就按照Key排序*
+	 - 存储格式实际上也是SequenceFile，data，index都是。
+	 - 底层会建立index，index在搜索的时候会加载到内存里面，这样可以减少data上的随机查询次数。
+         - 使用io.map.index.interval可以控制多少个item在index里面创建一个条目
+	 - 使用io.map.index.skip = 0/1/2/n 可以控制skip几个index的item，如果为1的话那么表示只是使用1/2的索引。
+         - 从SequenceFile创建MapFile非常简单
+	   - 首先使用sort将SequenceFile进行排序(可以使用hadoop example的sort）
+           - 然后调用hadoop MapFileFixer来建立索引
+
+*** MapReduce应用开发
 
 

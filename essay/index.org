@@ -125,49 +125,53 @@ file:./images/valve-logo.jpg
    - [[file:design-reading.org][design-reading]] 关于设计方面的一些文章以及阅读心得。
 
 ** Note
-   - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
-   - [[file:note/fun.org][挺搞笑的]]
-   - [[file:note/excerpt.org][网络摘抄]] 
-   - [[file:note/lyric.org][歌词]] 
-   - [[file:note/movie.org][电影]] 
-   - [[file:note/pregnancy.org][怀孕]] 做爸爸妈妈需要注意的一些事情。
-   - [[file:note/health.org][健康]] 拥有健康的身体才能够更好地享受生活和工作。
-   - [[file:note/book.org][书籍]] 自己看过的一些书，可能不太好分类所以全部放在这里了。
-   - [[file:note/recipe.org][菜谱]] 是谁说的，活着就是为了更好的吃：）
-   - [[file:note/interview-problems.org][面试问题]] 作为面试官最痛苦的事情就是找不到面试题目。
-   - [[file:note/house.org][住房问题]] 在天朝这是一个大问题。
-   - [[file:note/struggle-with-ubuntu.org][折腾Ubuntu]]
-   - [[file:note/switch-back-to-windows.org][切换回windows]]
-   - [[file:note/purchase-compaq-notebook.org][购买compqa笔记本]]
-   - [[file:./note/visit-tj-data-center.org][参观天津机房]]
-   - [[file:./note/baidu-bit-shanghai-route.org][百度BIT上海行程]]
-   - [[file:./note/retrospect-2009.org][回顾2009]]
-   - [[file:./note/graduate-final-report.org][研究生答辩]]
-   - [[file:./note/talk-with-luoyan.org][和ly的谈话]]
-   - [[file:./note/cola-and-water.org][可乐和矿泉水]] 散文处女作
-   - [[file:./note/get-marriage-identity.org][领证经历]]
-   - [[file:./note/purchase-mba.org][购买MacBookAir]]
-   - [[file:note/okr.org][Objectives and Key Results]]
-   - [[file:note/2012-birthday.org][2012生日]]
-   - [[file:note/as-child-in-warm-house.org][温室长大的孩子]]
-   - [[file:note/how-to-apply-domain.org][如何申请域名]]
-   - [[file:note/2012-1-1-go-home.org][2012元旦回家]]
-   - [[file:note/drive-learning.org][学车经历]]
-   - [[file:note/code-for-run.org][为运行而生的代码]]
-   - [[file:note/retrospect-2011.org][回顾2011]]
-   - [[file:note/communicate-and-relationship.org][交流和关系]]
-   - [[file:note/purchase-diamond.org][购买钻戒]]
-   - [[file:note/take-wedding-photo.org][婚纱摄影经历]]
-   - [[file:note/be-careful-when-you-drive.org][开车务必小心]]
-   - [[file:note/have-a-nice-sleep-and-straighten-up.org][好好睡一觉，然后振作起来]]
-   - [[file:note/what-can-i-do-when-old.org][以后老了我能做什么]]
-   - [[file:note/decorate-house.org][装房笔记]]
-   - [[file:note/look-for-house-with-xcq.org][和xcq看房子]]
-   - [[file:note/zj-travel.org][浙游]]
-   - [[file:note/get-to-know-the-odds-problem.org][初探赔率问题]]
-   - [[file:note/new-era-carmack.org][新时代的卡马克]]
-   - [[file:note/purchase-car.org][购买汽车]]
-   - [[file:note/naruto.org][火影周边]]
-   - [[file:note/to-death.org][给离去的亲人们]]
-   - [[file:note/virgin-foot-massage.org][初次足疗]]
-   - [[file:note/not-easy-as-you-think.org][没有那么简单]]
+   - 折腾
+     - [[file:note/naruto.org][火影周边]]
+     - [[file:./note/graduate-final-report.org][研究生答辩]]
+     - [[file:./note/baidu-bit-shanghai-route.org][百度BIT上海行程]]
+     - [[file:note/purchase-compaq-notebook.org][购买compqa笔记本]]
+     - [[file:note/struggle-with-ubuntu.org][折腾Ubuntu]]
+     - [[file:note/switch-back-to-windows.org][切换回windows]]
+     - [[file:note/how-to-apply-domain.org][如何申请域名]]
+     - [[file:note/2012-new-year-go-home.org][2012元旦回家]]
+     - [[file:./note/get-marriage-identity.org][领证经历]]
+     - [[file:note/purchase-diamond.org][购买钻戒]]
+     - [[file:note/take-wedding-photo.org][婚纱摄影]]
+     - [[file:note/zj-travel.org][浙游]]
+     - [[file:note/purchase-car.org][购买汽车]]
+     - [[file:note/look-for-house-with-xcq.org][和xcq看房子]]
+     - [[file:note/2012-birthday.org][2012生日]]
+     - [[file:note/drive-learning.org][学车经历]]
+     - [[file:note/get-to-know-the-odds-problem.org][初探赔率问题]]
+     - [[file:./note/visit-tj-data-center.org][参观天津机房]]
+     - [[file:./note/purchase-mba.org][购买MacBookAir]]
+     - [[file:note/be-careful-when-you-drive.org][开车务必小心]]
+     - [[file:note/virgin-foot-massage.org][初次足疗]]
+
+   - 记录
+     - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
+     - [[file:note/fun.org][挺搞笑的]]
+     - [[file:note/excerpt.org][网络摘抄]]
+     - [[file:note/lyric.org][歌词]] 
+     - [[file:note/movie.org][电影]] 
+     - [[file:note/pregnancy.org][怀孕]] 做爸爸妈妈需要注意的一些事情。
+     - [[file:note/health.org][健康]] 拥有健康的身体才能够更好地享受生活和工作。
+     - [[file:note/book.org][书籍]] 自己看过的一些书，可能不太好分类所以全部放在这里了。
+     - [[file:note/recipe.org][菜谱]] 是谁说的，活着就是为了更好的吃：）
+     - [[file:note/house.org][住房]] 在天朝这是一个大问题。
+     - [[file:note/okr.org][OKR]] 
+     - [[file:note/to-death.org][给离去的亲人们]]
+    
+   - 思考
+     - [[file:note/new-era-carmack.org][新时代的卡马克]]
+     - [[file:./note/cola-and-water.org][可乐和矿泉水]] 散文处女作
+     - [[file:./note/retrospect-2009.org][回顾2009]]
+     - [[file:note/as-child-in-warm-house.org][温室长大的孩子]]
+     - [[file:note/retrospect-2011.org][回顾2011]]
+     - [[file:./note/talk-with-luoyan.org][和ly的谈话]]
+     - [[file:note/communicate-and-relationship.org][交流和关系]]
+     - [[file:note/code-for-run.org][为运行而生的代码]]
+     - [[file:note/have-a-nice-sleep-and-straighten-up.org][好好睡一觉，然后振作起来]]
+     - [[file:note/what-can-i-do-when-old.org][以后老了我能做什么]]
+     - [[file:note/not-easy-as-you-think.org][没有那么简单]]
+    

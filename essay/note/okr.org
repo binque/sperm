@@ -7,3 +7,5 @@
    - 数据平台数据流改造，kafka直接写入hdfs 10%
    - hadoop/hbase加深了解 10%
 
+
+
