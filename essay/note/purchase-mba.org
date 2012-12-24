@@ -1,19 +1,5 @@
 * purchase-mba
 #+TITLE:     购买MacBookAir 
-#+AUTHOR:    dirtysalt
-#+EMAIL:     dirtysalt1987@gmail.com
-#+DATE:      2012-08-24 Fri
-#+DESCRIPTION:
-#+KEYWORDS:
-#+LANGUAGE:  en
-#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t
-#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
-#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
-#+EXPORT_SELECT_TAGS: export
-#+EXPORT_EXCLUDE_TAGS: noexport
-#+LINK_UP:   
-#+LINK_HOME: 
-#+XSLT:
 
 原来的compaq笔记本买了也挺长时间的了，并且因为自己从百度离职了，配备的thinkpad-x201i就被回收了，手头上也没有什么可用的笔记本。ipad阅读倒是非常方便，但是却不适合用来完成工作（周末在天津），所以想入手一个笔记本。 
 
