@@ -41,4 +41,3 @@
 ** TODO 尝试编写多个table输入的情况
 ** TODO 博弈论学习
 ** TODO clojure
-** TODO 对index.org做整理

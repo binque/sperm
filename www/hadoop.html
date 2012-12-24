@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hadoop"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-24 18:15:12 CST"/>
+<meta name="generated" content="2012-12-24 18:41:22 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -861,6 +861,8 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 <h4 id="sec-1-5-4"><span class="section-number-4">1.5.4</span> Hadoop IO</h4>
 <div class="outline-text-4" id="text-1-5-4">
 
+
+<hr/>
 <ul>
 <li>文件系统
 <ul>
@@ -910,7 +912,6 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 <li>ChecksumDistributedFileSystem
 <ul>
 <li>DistributedFileSystem + ChecksumFileSystem
-
 </li>
 </ul>
 
@@ -918,6 +919,12 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 </ul>
 
 </li>
+</ul>
+
+
+
+<hr/>
+<ul>
 <li>压缩解压
 <ul>
 <li>DEFLATE org.apache.hadoop.io.compress.DefaultCodec 扩展名.defalte
@@ -975,7 +982,6 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 <li>mapred.compress.map.output = true 将map结果做压缩
 </li>
 <li>mapred.map.output.compression.codec map压缩格式
-
 </li>
 </ul>
 
@@ -983,6 +989,12 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 </ul>
 
 </li>
+</ul>
+
+
+
+<hr/>
+<ul>
 <li>序列化
 <ul>
 <li>Hadoop的序列化都是基于Writable实现的，WritableComparable则是同时继承Writable,Comparable&lt;T&gt;.
@@ -1061,6 +1073,26 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 <h4 id="sec-1-5-5"><span class="section-number-4">1.5.5</span> MapReduce应用开发</h4>
 <div class="outline-text-4" id="text-1-5-5">
 
+<ul>
+<li>Configuration用来读取配置文件，功能还是比较强大的，有变量替换的功能
+<ul>
+<li>&lt;property&gt;&lt;name&gt;&hellip;&lt;/name&gt;&lt;value&gt;&hellip;&lt;/value&gt;&lt;/property&gt;
+</li>
+<li>如果使用&lt;final&gt;true&lt;/final&gt;标记的话那么这个变量不允许被重置
+</li>
+<li>变量替换可以使用${variable}
+</li>
+<li>通过addResource来添加读取的配置文件
+
+</li>
+</ul>
+
+</li>
+<li>Hadoop集群有三种工作方式，分别为
+</li>
+</ul>
+
+
 
 
 </div>
@@ -1070,7 +1102,7 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-24 18:15:12 CST</p>
+<p class="date">Date: 2012-12-24 18:41:22 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

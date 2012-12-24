@@ -288,6 +288,7 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
       - hadoop fs -ls har://schema-<host>/<path> 是通用的访问方式
 	
 *** Hadoop IO
+--------------------
    - 文件系统
      - ChecksumFileSystem 
        - 使用decorator设计模式，底层filesystem称为RawFileSystem
@@ -306,6 +307,7 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
      - ChecksumDistributedFileSystem
        - DistributedFileSystem + ChecksumFileSystem
 
+--------------------
    - 压缩解压
      - DEFLATE org.apache.hadoop.io.compress.DefaultCodec 扩展名.defalte
      - Gzip org.apache.hadoop.io.compress.GzipCodec 扩展名.gz 使用DEFLATE算法但是增加了额外的文件头。
@@ -330,6 +332,7 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
        - mapred.compress.map.output = true 将map结果做压缩
        - mapred.map.output.compression.codec map压缩格式
 
+--------------------
    - 序列化
      - Hadoop的序列化都是基于Writable实现的，WritableComparable则是同时继承Writable,Comparable<T>.
      - 序列化对象需要实现RawComparator，接口为public int compare(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2)进行二进制比较。
@@ -355,5 +358,21 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
            - 然后调用hadoop MapFileFixer来建立索引
 
 *** MapReduce应用开发
+--------------------
+   - Configuration用来读取配置文件，功能还是比较强大的，有变量替换的功能
+     - <property><name>...</name><value>...</value></property>
+     - 如果使用<final>true</final>标记的话那么这个变量不允许被重置
+     - 变量替换可以使用${variable}
+     - 通过addResource来添加读取的配置文件
+
+--------------------
+   - Hadoop集群有三种工作方式，分别为
+     - standalone 使用单个JVM进程来模拟
+       - 如果不进行任何配置的话默认使用这个模式
+       - fs.default.name = file:/// 本地文件系统
+       - mapred.job.tracker = local
+     - pseudo-distributed 本地启动单节点集群
+     - fully-distributed 完全分布式环境
+
 
 
