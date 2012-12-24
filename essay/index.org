@@ -58,8 +58,7 @@ file:./images/valve-logo.jpg
    - [[file:./algorithm.org][algorithm]] 算法还是非常重要的。记录的都是现实中使用到的算法或者是比较有趣的数学问题吧。
    - [[file:./data-mining.org][data-mining]] 了解一些数据挖掘方面的知识还是比较有帮助的。其实我们每天都在不知不觉地进行数据挖掘。
    - [[file:lcov.org][lcov]] the LTP(Linux Testing Project) GCOV extension.用来完成C/C++测试覆盖。
-   - [[file:topcoder.org][topcoder]] 主要都是做offline的，感觉自己线上做题速度不行。因为时间关系可能只是挑一些需要思考但是不会涉及到太多复杂算法的题目。
-   - [[file:web-misc.org][web-misc]] 写/用web东西时候遇到的一些问题。因为自己对于web开发不太了解，所以内容上的话可能显得有点弱智。
+   - [[file:web-misc.org][web-misc]] web开发遇到的一些问题。因为自己对于web开发不太了解，所以内容上的话可能显得有点弱智。
    - [[file:folly.org][folly]] Folly is an open-source C++ library developed and used at Facebook.
    - [[file:flex-bison.org][flex-bison]] 可以用来书写词法和语法分析器，bison支持的语法是LALR（1）。
    - [[file:recommender-system.org][recommender-system]] 一些关于推荐系统东西，里面大部分都是介绍性质的文章。

@@ -70,7 +70,9 @@ file:../images/sleep-style-comparision.jpg
    - Profartssor 叫兽 
 
 --------------------
-file:../images/how-usa-president-election-works.jpg
+你不知道的美国大选
+
+[[file:../images/how-usa-president-election-works.jpg][点击]]
 
 --------------------
 一个武士手里拿一条活鱼问禅师：我跟你打一个赌，你猜我手里这个鱼是活的还是死的？禅师心想：如果说是活的，武士就会把鱼捏死。但明知是活的说是死的，就打了诳语。鱼命和原则哪个更重要？禅师沉思了半个小时，终于说道：是死的。武士看了看手中的鱼，说道：麻痹的，半个小时前还是活的。
@@ -305,7 +307,7 @@ file:../images/hainan-road-sign.jpg
 --------------------
 盘点那些无节操的神级PS
 
-file:../images/fuck-ps.jpg
+[[file:../images/fuck-ps.jpg][点击]]
 
 --------------------
 话说天下大势，合久必分分久必合，统一最大的敌人是？是康师傅吧！
@@ -546,7 +548,7 @@ file:../images/stone-lion.jpg
 --------------------
 句型填空：我在路上扶起了一位老奶奶，他抓住我的胳膊，迅速抬头对我说了一句话：“_______ ”「转」
 
-file:../images/when-i-help-grandma.jpg
+[[file:../images/when-i-help-grandma.jpg][点击]]
 
 --------------------
 
@@ -609,8 +611,9 @@ file:../images/baidu-map-ad.jpg
    01. “It works on my machine” 在我机器上好好的！！！（潜台词：怎么在你那就出问题了呢！！！）
 
 --------------------
+如何将考试材料带入考场
 
-file:../images/exam-cheating.jpg
+[[file:../images/exam-cheating.jpg][点击]]
 
 --------------------
 *年复一年，计算机人该做什么?*

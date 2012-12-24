@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="algorithm"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-11-20 21:26:45 CST"/>
+<meta name="generated" content="2012-12-24 23:38:53 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -100,15 +100,16 @@
 <ul>
 <li><a href="#sec-1">1 algorithm</a>
 <ul>
-<li><a href="#sec-1-1">1.1 glibc strlen code</a></li>
-<li><a href="#sec-1-2">1.2 consistent hashing</a></li>
-<li><a href="#sec-1-3">1.3 树最长距离</a></li>
-<li><a href="#sec-1-4">1.4 rsync core algorithm</a></li>
-<li><a href="#sec-1-5">1.5 开门抽奖问题</a></li>
-<li><a href="#sec-1-6">1.6 simhash算法原理和文档近似判断</a></li>
-<li><a href="#sec-1-7">1.7 等概率选取未知长度的链表中的元素</a></li>
-<li><a href="#sec-1-8">1.8 HyperLogLog</a></li>
-<li><a href="#sec-1-9">1.9 CONCISE</a></li>
+<li><a href="#sec-1-1">1.1 安装和配置topcoder</a></li>
+<li><a href="#sec-1-2">1.2 glibc strlen code</a></li>
+<li><a href="#sec-1-3">1.3 consistent hashing</a></li>
+<li><a href="#sec-1-4">1.4 树最长距离</a></li>
+<li><a href="#sec-1-5">1.5 rsync core algorithm</a></li>
+<li><a href="#sec-1-6">1.6 开门抽奖问题</a></li>
+<li><a href="#sec-1-7">1.7 simhash算法原理和文档近似判断</a></li>
+<li><a href="#sec-1-8">1.8 等概率选取未知长度的链表中的元素</a></li>
+<li><a href="#sec-1-9">1.9 HyperLogLog</a></li>
+<li><a href="#sec-1-10">1.10 CONCISE</a></li>
 </ul>
 </li>
 </ul>
@@ -123,8 +124,126 @@
 </div>
 
 <div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> glibc strlen code</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> 安装和配置topcoder</h3>
 <div class="outline-text-3" id="text-1-1">
+
+<p>安装topcoder非常简单： 
+</p><ul>
+<li>确认安装好javaws，因为topcoder客户端是一个java applet
+</li>
+<li>下载topcoder的客户端 # wget  <a href="http://www.topcoder.com/contest/arena/ContestAppletProd.jnlp">http://www.topcoder.com/contest/arena/ContestAppletProd.jnlp</a>
+</li>
+<li>启动这个applet之后就就可以进入arena了。
+</li>
+</ul>
+
+
+<p>
+为了方便地使用topcoder（比如将一些testcase下载下来的话），可以使用一些插件。个人觉得下面这个组合不错
+</p><ul>
+<li>code processor
+</li>
+<li>file edit
+</li>
+<li>TZTester
+</li>
+</ul>
+
+<p>这些插件都可以在这里找到 <a href="http://community.topcoder.com/tc?module=Static&amp;d1=applet&amp;d2=plugins">http://community.topcoder.com/tc?module=Static&amp;d1=applet&amp;d2=plugins</a> 
+</p>
+<p> 
+三个插件的下载地址分别是：
+</p><ul>
+<li><a href="http://community.topcoder.com/contest/classes/TZTester/TZTester.jar">http://community.topcoder.com/contest/classes/TZTester/TZTester.jar</a>
+</li>
+<li><a href="http://community.topcoder.com/contest/classes/CodeProcessor/CodeProcessor.jar">http://community.topcoder.com/contest/classes/CodeProcessor/CodeProcessor.jar</a>
+</li>
+<li><a href="http://community.topcoder.com/contest/classes/FileEdit/FileEdit.jar">http://community.topcoder.com/contest/classes/FileEdit/FileEdit.jar</a>
+</li>
+</ul>
+
+
+<p>
+下载完成之后在topcoder客户端里面的options-&gt;Editor里面进行配置
+</p><ul>
+<li>Add增加一个Editor
+</li>
+<li>EntryPoint填写 codeprocessor.EntryPoint 
+</li>
+<li>ClassPath将前面三个jar选择上
+</li>
+<li>然后选择这个为Default Editor
+</li>
+<li>然后点击Configure
+</li>
+<li>EntryPoint填写 fileedit.EntryPoint
+</li>
+<li>processor class填写 tangentz.TZTester
+</li>
+</ul>
+
+
+<p>
+继续点击Configure选项，在General这个部分基本上没有什么需要修改的：
+</p><ul>
+<li>read/write problem to ./TopCoder/code # 将题目保存到TopCoder/code目录里面
+</li>
+<li>
+</li>
+</ul>
+
+<p>然后就是配置Code Template。如果使用C++的话，那么可以考虑使用下面的模板
+</p>
+
+
+<pre class="src src-C++">/* coding:utf-8
+ * Copyright (C) dirlt
+ */
+#include &lt;cstdlib&gt;
+#include &lt;cctype&gt;
+#include &lt;cstring&gt;
+#include &lt;cstdio&gt;
+#include &lt;cmath&gt;
+#include &lt;ctime&gt;
+#include &lt;iostream&gt;
+#include &lt;sstream&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include &lt;map&gt;
+#include &lt;set&gt;
+#include &lt;algorithm&gt;
+#include &lt;queue&gt;
+#include &lt;stack&gt;
+using namespace std;
+typedef long long ll;
+
+class $CLASSNAME$ {
+ public:
+  $RC$ $METHODNAME$($METHODPARMS$) {
+  }
+  $TESTCODE$
+};
+
+// BEGIN CUT HERE
+int main() {
+  $CLASSNAME$ ___test;
+  ___test.run_test(-1);
+  return 0;
+}
+// END CUT HERE
+</pre>
+
+
+<p>
+以后每次打开题目都会在本地保存一份代码，并且里面附带测试用例，本地完成之后直接load即可保存到远程。nice!!!
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> glibc strlen code</h3>
+<div class="outline-text-3" id="text-1-2">
 
 <p>参考链接 <a href="http://www.kuqin.com/language/20071113/2308.html">http://www.kuqin.com/language/20071113/2308.html</a>. 这里和链接有点不太一样的就是，这个版本glibc实现考虑了非ASCII字符。
 </p>
@@ -159,7 +278,7 @@ const char *str;
   // lomagic = 0x0101010101010101L
 
   /* Bits 31, 24, 16, and 8 of this number are zero.  Call these bits
-   * the <span style="color: #00ffff; font-style: italic;">"holes."</span>  Note that there is a hole just to the left of
+   * the <span style="color: #ffff00;">"holes."</span>  Note that there is a hole just to the left of
    * each byte, with an extra at the end:
    *
    * bits:  01111110 11111110 11111110 11111111
@@ -225,9 +344,9 @@ const char *str;
 
 </div>
 
-<div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> consistent hashing</h3>
-<div class="outline-text-3" id="text-1-2">
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> consistent hashing</h3>
+<div class="outline-text-3" id="text-1-3">
 
 <ul>
 <li><a href="http://en.wikipedia.org/wiki/Consistent_hash">http://en.wikipedia.org/wiki/Consistent_hash</a>
@@ -253,9 +372,9 @@ The basic idea behind the consistent hashing algorithm is to hash both objects a
 
 </div>
 
-<div id="outline-container-1-3" class="outline-3">
-<h3 id="sec-1-3"><span class="section-number-3">1.3</span> 树最长距离</h3>
-<div class="outline-text-3" id="text-1-3">
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> 树最长距离</h3>
+<div class="outline-text-3" id="text-1-4">
 
 <p>树的最长距离定义为任意两个节点之间距离的最大值。咋一看这个问题，似乎就是根节点左子树高度和右子树高度之和，但是实际上可能对于子树里面可能会存在更长的距离。对于最长距离的话应该仅存在于这两者之间。
 </p>
@@ -287,9 +406,9 @@ def TreeDistance(root):
 
 </div>
 
-<div id="outline-container-1-4" class="outline-3">
-<h3 id="sec-1-4"><span class="section-number-3">1.4</span> rsync core algorithm</h3>
-<div class="outline-text-3" id="text-1-4">
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> rsync core algorithm</h3>
+<div class="outline-text-3" id="text-1-5">
 
 <ul>
 <li><a href="http://coolshell.cn/articles/7425.html">http://coolshell.cn/articles/7425.html</a>
@@ -326,9 +445,9 @@ def TreeDistance(root):
 
 </div>
 
-<div id="outline-container-1-5" class="outline-3">
-<h3 id="sec-1-5"><span class="section-number-3">1.5</span> 开门抽奖问题</h3>
-<div class="outline-text-3" id="text-1-5">
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> 开门抽奖问题</h3>
+<div class="outline-text-3" id="text-1-6">
 
 <p>原题是有三扇门，一扇门后面是一辆汽车，后面两扇门没有东西。主持人首先让你选择一扇门，之后主持人打开一扇后面没有任何东西的门，然后主持人问你是否需要更换你的选择？扩展一下这个问题，如果扩展到N(N&gt;=3)扇门的话，那么之前和之后中奖概率分别是多少？
 </p>
@@ -352,9 +471,9 @@ def TreeDistance(root):
 
 </div>
 
-<div id="outline-container-1-6" class="outline-3">
-<h3 id="sec-1-6"><span class="section-number-3">1.6</span> simhash算法原理和文档近似判断</h3>
-<div class="outline-text-3" id="text-1-6">
+<div id="outline-container-1-7" class="outline-3">
+<h3 id="sec-1-7"><span class="section-number-3">1.7</span> simhash算法原理和文档近似判断</h3>
+<div class="outline-text-3" id="text-1-7">
 
 <ul>
 <li><a href="http://blog.csdn.net/lgnlgn/article/details/6008498">http://blog.csdn.net/lgnlgn/article/details/6008498</a>
@@ -402,9 +521,9 @@ simhash算法原理非常简单：
 
 </div>
 
-<div id="outline-container-1-7" class="outline-3">
-<h3 id="sec-1-7"><span class="section-number-3">1.7</span> 等概率选取未知长度的链表中的元素</h3>
-<div class="outline-text-3" id="text-1-7">
+<div id="outline-container-1-8" class="outline-3">
+<h3 id="sec-1-8"><span class="section-number-3">1.8</span> 等概率选取未知长度的链表中的元素</h3>
+<div class="outline-text-3" id="text-1-8">
 
 <p>要求是只能够遍历这个链表一次。下面是代码， <b>注意这里的wanted会不断地被更新</b> 
 </p>
@@ -434,9 +553,9 @@ for ( p=list; p!=NULL; p=p-&gt;next ){
 
 </div>
 
-<div id="outline-container-1-8" class="outline-3">
-<h3 id="sec-1-8"><span class="section-number-3">1.8</span> HyperLogLog</h3>
-<div class="outline-text-3" id="text-1-8">
+<div id="outline-container-1-9" class="outline-3">
+<h3 id="sec-1-9"><span class="section-number-3">1.9</span> HyperLogLog</h3>
+<div class="outline-text-3" id="text-1-9">
 
 <ul>
 <li><a href="http://algo.inria.fr/flajolet/Publications/FlFuGaMe07.pdf">http://algo.inria.fr/flajolet/Publications/FlFuGaMe07.pdf</a>
@@ -481,7 +600,7 @@ Another interesting thing about this algorithm is that it introduces two paramet
 
 
 <pre class="src src-Python">def trailing_zeroes(num):
-  <span style="color: #00ffff; font-style: italic;">"""Counts the number of trailing 0 bits in num."""</span>
+  <span style="color: #ffff00;">"""Counts the number of trailing 0 bits in num."""</span>
   if num == 0:
     return 32 # Assumes 32 bit integer inputs!
   p = 0
@@ -490,12 +609,12 @@ Another interesting thing about this algorithm is that it introduces two paramet
   return p
 
 def estimate_cardinality(values, k):
-  <span style="color: #00ffff; font-style: italic;">"""Estimates the number of unique elements in the input set values.</span>
+  <span style="color: #ffff00;">"""Estimates the number of unique elements in the input set values.</span>
 
-<span style="color: #00ffff; font-style: italic;">  Arguments:</span>
-<span style="color: #00ffff; font-style: italic;">    values: An iterator of hashable elements to estimate the cardinality of.</span>
-<span style="color: #00ffff; font-style: italic;">    k: The number of bits of hash to use as a bucket number; there will be 2**k buckets.</span>
-<span style="color: #00ffff; font-style: italic;">  """</span>
+<span style="color: #ffff00;">  Arguments:</span>
+<span style="color: #ffff00;">    values: An iterator of hashable elements to estimate the cardinality of.</span>
+<span style="color: #ffff00;">    k: The number of bits of hash to use as a bucket number; there will be 2**k buckets.</span>
+<span style="color: #ffff00;">  """</span>
   num_buckets = 2 ** k
   max_zeroes = [0] * num_buckets
   for value in values:
@@ -532,9 +651,9 @@ def estimate_cardinality(values, k):
 
 </div>
 
-<div id="outline-container-1-9" class="outline-3">
-<h3 id="sec-1-9"><span class="section-number-3">1.9</span> CONCISE</h3>
-<div class="outline-text-3" id="text-1-9">
+<div id="outline-container-1-10" class="outline-3">
+<h3 id="sec-1-10"><span class="section-number-3">1.10</span> CONCISE</h3>
+<div class="outline-text-3" id="text-1-10">
 
 <ul>
 <li>Maximum Performance with Minimum Storage: Data Compression in Druid | Metamarkets <a href="http://metamarkets.com/2012/druid-bitmap-compression/">http://metamarkets.com/2012/druid-bitmap-compression/</a>
@@ -601,7 +720,7 @@ CONCISE针对这个部分稍微改进了一下
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-11-20 21:26:45 CST</p>
+<p class="date">Date: 2012-12-24 23:38:53 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

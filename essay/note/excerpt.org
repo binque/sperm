@@ -683,7 +683,7 @@ file:../images/secret-data-about-china.jpg
 
 许单单-互联网分析师 推荐图书清单
 
-file:../images/xudandan-booklist.jpg
+[[file:../images/xudandan-booklist.jpg][点击]]
 
 --------------------
 

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hadoop"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-24 18:41:22 CST"/>
+<meta name="generated" content="2012-12-24 23:10:34 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -1073,6 +1073,8 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 <h4 id="sec-1-5-5"><span class="section-number-4">1.5.5</span> MapReduce应用开发</h4>
 <div class="outline-text-4" id="text-1-5-5">
 
+
+<hr/>
 <ul>
 <li>Configuration用来读取配置文件，功能还是比较强大的，有变量替换的功能
 <ul>
@@ -1083,12 +1085,35 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 <li>变量替换可以使用${variable}
 </li>
 <li>通过addResource来添加读取的配置文件
-
 </li>
 </ul>
 
 </li>
+</ul>
+
+
+
+<hr/>
+<ul>
 <li>Hadoop集群有三种工作方式，分别为
+<ul>
+<li>standalone 使用单个JVM进程来模拟
+<ul>
+<li>如果不进行任何配置的话默认使用这个模式
+</li>
+<li>fs.default.name = <a href="file:////">///</a> 本地文件系统
+</li>
+<li>mapred.job.tracker = local
+</li>
+</ul>
+
+</li>
+<li>pseudo-distributed 本地启动单节点集群
+</li>
+<li>fully-distributed 完全分布式环境
+</li>
+</ul>
+
 </li>
 </ul>
 
@@ -1102,7 +1127,7 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-24 18:41:22 CST</p>
+<p class="date">Date: 2012-12-24 23:10:34 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
