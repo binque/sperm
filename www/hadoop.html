@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hadoop"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-25 13:54:29 CST"/>
+<meta name="generated" content="2012-12-25 15:06:23 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -1450,6 +1450,93 @@ Hadoop运行MapReduce作业的工作原理
 <p>
 shuffle和排序
 </p>
+<p>
+<img src="./images/mapreduce-shuffle-sort.jpg"  alt="./images/mapreduce-shuffle-sort.jpg" />
+</p>
+<p>
+ 有下面这些参数控制shuffle和sort的过程 <b>NOTE（dirlt）：书上倒是有很多参数，但是好多还是不太理解</b>
+</p><ul>
+<li>io.sort.mb map输出缓存空间大小，默认是100MB
+</li>
+<li>io.sort.spill.percent 如果map输出超过了缓存空间大小的这个阈值的话，那么就会spill,默认是0.8
+<ul>
+<li>每次spill之前先会对这个文件进行排序，如果有combiner的话那么会在上面调用combiner
+</li>
+<li>写磁盘是按照轮询的方式写到mapred.local.dir属性指定的目录下面
+</li>
+</ul>
+
+</li>
+<li>io.sort.factor 多路归并的数量，默认是10
+<ul>
+<li>在map阶段，因为最终会存在多个spill文件，所以需要做多路归并。 <b>TODO（dirlt）：如果归并数量少的话是否可能会多次merge？</b>
+</li>
+<li>在reduce阶段的话，因为可能存在多路map输出的结果，所以需要做多路归并。
+</li>
+</ul>
+
+</li>
+<li>min.num.spill.for.combine 如果指定combiner并且spill次数超过这个值的话就会调用combine,默认为3
+</li>
+<li>tracker.http.threads reduce通过HTTP接口来发起数据请求，这个就是HTTP接口相应线程数目，默认为40
+</li>
+<li>mapred.reduce.parallel.copies reduce启动多少个线程去请求map输出，默认为5
+</li>
+</ul>
+
+
+
+<hr/>
+<p>
+任务的执行
+</p><ul>
+<li>推测执行参数
+<ul>
+<li>如果某个任务执行缓慢的话会执行另外一个备份任务
+</li>
+<li>mapred.map.tasks.speculative.execution true
+</li>
+<li>mapred.reduce.tasks.speculative.execution true
+</li>
+</ul>
+
+</li>
+<li>JVM重用
+<ul>
+<li>一个JVM实例可以用来执行多个task.
+</li>
+<li>mapred.job.reuse.jvm.num.tasks/setNumTasksToExecutePerJvm 单个JVM运行任务的最大数目
+</li>
+<li>-1表示没有限制
+</li>
+</ul>
+
+</li>
+<li>任务执行环境
+<ul>
+<li>程序自身可以知道执行环境对于开发还是比较有帮助的
+</li>
+<li>这些属性对于streaming可以通过环境变量获得
+</li>
+<li>mapred.job.id string jobID
+</li>
+<li>mapred.tip.id string taskID
+</li>
+<li>mapred.task.id string attemptID
+</li>
+<li>mapred.task.partition int 作业中任务编号
+</li>
+<li>mapred.task.is.map boolean 是否为map
+</li>
+<li>mapred.work.output.dir / FileOutputFormat.getWorkOutputPath 当前工作目录
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+
 </div>
 </div>
 </div>
@@ -1457,7 +1544,7 @@ shuffle和排序
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-25 13:54:29 CST</p>
+<p class="date">Date: 2012-12-25 15:06:23 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
