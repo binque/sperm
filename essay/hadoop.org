@@ -535,4 +535,112 @@ file:./images/mapreduce-shuffle-sort.jpg
      - mapred.task.is.map boolean 是否为map
      - mapred.work.output.dir / FileOutputFormat.getWorkOutputPath 当前工作目录
       
+*** MapReduce的类型与格式
+--------------------
+MapReduce的类型
+
+老API里面还有MapRunner这个类，这个类主要的作用是可以用来控制Mapper运行的方法，比如可以多线程来控制Mapper的运行。
+但是在新API里面已经完全集成到Mapper实现里面来了，用户可以重写两个方法来完全控制mapper的运行
+   - map 如何处理kv
+   - run 如何从context里面读取kv
+#+BEGIN_SRC Java
+  protected void map(KEYIN key, VALUEIN value, 
+                     Context context) throws IOException, InterruptedException {
+    context.write((KEYOUT) key, (VALUEOUT) value);
+  }
+  public void run(Context context) throws IOException, InterruptedException {
+    setup(context);
+    while (context.nextKeyValue()) {
+      map(context.getCurrentKey(), context.getCurrentValue(), context);
+    }
+    cleanup(context);
+  }
+#+END_SRC
+*NOTE（dirlt）：觉得这个特性不是特别有用*
+
+*TODO（dirlt）：add more trivial thing*
+
+--------------------
+输入格式
+
+对于InputFormat来说包含两个任务
+   - 根据job描述来对输入进行切片（InputSplit）
+   - 根据切片信息来读取记录（RecordReader）
+#+BEGIN_SRC Java
+public abstract class InputFormat<K, V> {
+  public abstract 
+    List<InputSplit> getSplits(JobContext context
+                               ) throws IOException, InterruptedException;
+  
+   public abstract 
+    RecordReader<K,V> createRecordReader(InputSplit split,
+                                         TaskAttemptContext context
+                                        ) throws IOException, 
+                                                 InterruptedException;
+
+}
+
+public abstract class InputSplit {
+  public abstract long getLength() throws IOException, InterruptedException;
+
+  public abstract 
+    String[] getLocations() throws IOException, InterruptedException;
+}
+
+public abstract class RecordReader<KEYIN, VALUEIN> implements Closeable {
+  public abstract void initialize(InputSplit split,
+                                  TaskAttemptContext context
+                                  ) throws IOException, InterruptedException;
+
+  public abstract 
+  boolean nextKeyValue() throws IOException, InterruptedException;
+
+  public abstract
+  KEYIN getCurrentKey() throws IOException, InterruptedException;
+  
+  public abstract 
+  VALUEIN getCurrentValue() throws IOException, InterruptedException;
+
+  public abstract float getProgress() throws IOException, InterruptedException;
+  
+  public abstract void close() throws IOException;
+}
+#+END_SRC
+
+下面是一些常见的InputFormat实现
+   - FileInputFormat
+     - addInputPath或者是setInputPaths修改输入路径 mapred.input.dir
+     - setInputPathFilter可以修改过滤器 mapred.input.path.Filter.class
+       - 基本实现会排除隐藏.或者是_开头文件。
+       - 自定义的过滤器是建立在默认过滤器的基础上的。
+     - 分片大小由下面三个参数控制
+       - mapred.min.split.size 1
+       - mapred.max.split.size MAX
+       - dfs.block.size 64MB
+       - 算法是max(minSplitSize,min(maxSplitSize,blockSize))
+     - isSplitable可以控制输入文件是否需要分片
+   - CombineFileInputFormat 可以处理多个小文件输入，抽象类需要继承实现。
+   - TextInputFormat
+     - 输入单位是行，key是LongWritable表示行偏移，value是Text表示行内容
+   - KeyValueTextInputFormat
+     - 输入单位是行，按照key.value.seperator.in.input.line来进行分隔默认是\t
+     - key和value的格式都是Text
+   - NLineInputFormat
+     - 和TextInputFormat非常类似，大师使用多行输入默认为1行
+     - 通过mapred.line.input.format.linespermap来控制行数
+   - XML
+     - InputFormat使用StreamInputFormat,       
+     - 设置RecordReader使用stream.recordreader.class来设置
+     - RecordReader使用org.apache.hadoop.streaming.StreamXmlRecordReader
+     - *NOTE（dirlt）：也有现成的XmlInputFormat的实现*
+   - SequenceFileInputFormat
+   - SequenceFileAsTextInputFormat
+     - 将输入的kv转换成为text对象适合streaming处理方式
+   - SequenceFileAsBinaryInputFormat
+   - MultipleInputs
+   - DBInputFormat/DBOutputFormat JDBC数据库输入输出
+
+--------------------
+输出格式
+
 
