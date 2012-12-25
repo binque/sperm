@@ -501,3 +501,38 @@ file:./images/mapreduce-streamming-pipes.jpg
 --------------------
 shuffle和排序
 
+file:./images/mapreduce-shuffle-sort.jpg
+
+ 有下面这些参数控制shuffle和sort的过程 *NOTE（dirlt）：书上倒是有很多参数，但是好多还是不太理解*
+    - io.sort.mb map输出缓存空间大小，默认是100MB
+    - io.sort.spill.percent 如果map输出超过了缓存空间大小的这个阈值的话，那么就会spill,默认是0.8
+      - 每次spill之前先会对这个文件进行排序，如果有combiner的话那么会在上面调用combiner
+      - 写磁盘是按照轮询的方式写到mapred.local.dir属性指定的目录下面
+    - io.sort.factor 多路归并的数量，默认是10
+      - 在map阶段，因为最终会存在多个spill文件，所以需要做多路归并。 *TODO（dirlt）：如果归并数量少的话是否可能会多次merge？*
+      - 在reduce阶段的话，因为可能存在多路map输出的结果，所以需要做多路归并。
+    - min.num.spill.for.combine 如果指定combiner并且spill次数超过这个值的话就会调用combine,默认为3
+    - tracker.http.threads reduce通过HTTP接口来发起数据请求，这个就是HTTP接口相应线程数目，默认为40
+    - mapred.reduce.parallel.copies reduce启动多少个线程去请求map输出，默认为5
+
+--------------------
+任务的执行
+   - 推测执行参数
+     - 如果某个任务执行缓慢的话会执行另外一个备份任务
+     - mapred.map.tasks.speculative.execution true
+     - mapred.reduce.tasks.speculative.execution true
+   - JVM重用
+     - 一个JVM实例可以用来执行多个task.
+     - mapred.job.reuse.jvm.num.tasks/setNumTasksToExecutePerJvm 单个JVM运行任务的最大数目
+     - -1表示没有限制
+   - 任务执行环境
+     - 程序自身可以知道执行环境对于开发还是比较有帮助的
+     - 这些属性对于streaming可以通过环境变量获得
+     - mapred.job.id string jobID
+     - mapred.tip.id string taskID
+     - mapred.task.id string attemptID
+     - mapred.task.partition int 作业中任务编号
+     - mapred.task.is.map boolean 是否为map
+     - mapred.work.output.dir / FileOutputFormat.getWorkOutputPath 当前工作目录
+      
+
