@@ -328,7 +328,8 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
        - mapred.output.compress = true 将mapreduce结果做压缩
        - mapred.output.compression.codec mapreduce压缩格式
        - mapred.output.compress.type = BLOCK/RECORD 如果输出格式为SequenceFile的话，那么这个参数可以控制是块压缩还是记录压缩
-       - *NOTE（dirlt）：我现在强烈感觉MR的中间结果存储格式为SequenceFile*
+       - *NOTE（dirlt）：我现在强烈感觉MR的中间结果存储格式为SequenceFile* 
+       - *NOTE（dirlt）：应该是IFile，但是是否共享了这个配置呢？*
        - mapred.compress.map.output = true 将map结果做压缩
        - mapred.map.output.compression.codec map压缩格式
 
@@ -368,11 +369,135 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 --------------------
    - Hadoop集群有三种工作方式，分别为
      - standalone 使用单个JVM进程来模拟
-       - 如果不进行任何配置的话默认使用这个模式
+       - 如果不进行任何配置的话默认使用这个模式 *NOTE（dirlt）：这个模式确实不错*
        - fs.default.name = file:/// 本地文件系统
        - mapred.job.tracker = local
      - pseudo-distributed 本地启动单节点集群
+       - fs.default.name = hdfs://localhost
+       - mapred.job.tracker = localhost:8021 
      - fully-distributed 完全分布式环境
+       - fs.default.name = hdfs://<namenode>
+       - mapred.job.tracer = <jobtracker>:8021
+
+--------------------
+   - 使用hadoop启动MapReduce任务的常用参数
+     1. -D property=value 覆盖默认配置属性
+     2. -conf filename 添加配置文件
+     3. -fs uri 设置默认文件系统
+     4. -jt host:port 设置jobtracker
+     5. -files file,file2 这些文件可以在tasktracker工作目录下面访问
+     6. -archives archive,archive2 和files类似，但是是存档文件 *TODO（dirlt）：有啥区别呢？*
+     7. -libjars jar1,jar2 和files类似，通常这些JAR文件是MapReduce所需要的。
+
+--------------------
+如果希望运行时候动态创建集群的话，可以通过这几个类来创建
+   - MiniDFSCluster
+   - MiniMRCluster
+   - MiniHBaseCluster 
+   - MiniZooKeeperClutser
+   - *NOTE(dirlt):都称为Mini???Cluster？*
+另外还有自带的ClusterMapReduceTestCase以及HBaseTestingUtility来帮助进行mapreduce的testcase. 这些类散步在hadoop,hbase,hadoop-test以及hbase-test里面。 *TODO（dirlt）：try it out*
+
+*NOTE（dirlt）：但是个人觉得可能还是没有本地测试方便，不过倒是可以试试* 
+
+--------------------
+job，task and attempt
+   - jobID常见格式为 job_200904110811_0002
+     - 其中200904110811表示jobtracker从2009.04.11的08:11启动的
+     - 0002 表示第三个job,从0000开始计数。超过10000的话就不能够很好地排序
+   - taskID常见格式为 task_200904110811_0002_m_000003
+     - 前面一串数字和jobID匹配，表示从属于这个job
+     - m表示map任务，r表示reduce任务
+     - 000003表示这是第4个map任务。顺序是在初始化时候指定的，并不反应具体的执行顺序。
+   - attemptID常见格式为 attempt_200904110811_0002_m_000003_0
+     - 前面一串数字和taskID匹配，表示从属与这个task
+     - attempt出现的原因是因为一个task可能会因为失败重启或者是预测执行而执行多次
+     - 如果jobtracker重启而导致作业重启的话，那么做后面id从1000开始避免和原来的attempt冲突。
+
+--------------------
+作业调试
+
+   - 相关配置
+     - mapred.jobtracker.completeuserjobs.maximum 表示web页面下面展示completed jobs的个数，默认是100，超过的部分放到历史信息页。
+     - mapred.jobtracker.restart.recover = true jobtracker重启之后自动恢复作业
+     - hadoop.job.history.location 历史作业信息存放位置，超过30天删除，默认在_logs/history
+     - hadoop.job.history.user.location 如果不为none那么历史作业信息在这里也会存在一份，不会删除。 
+   - 相关命令
+     - hadoop fs -getmerge <src> <dst> 能够将hdfs的src下面所有的文件merge合并成为一份文件并且copy到本地
+     - hadoop job -history 察看作业历史
+     - hadoop job -counter 察看作业计数器
+   - 相关日志
+     - 系统守护进程日志 写入HADOOP_LOG_DIR里面，可以用来监控namenode以及datanode的运行情况
+     - MapReduce作业历史日志 _logs/history
+     - MapReduce任务日志 写入HADOOP_LOG_DIR/userlogs里面，可以用来监控每个job的运行情况
+   - 任务重现
+     - 首先将keep.failed.task.files设置为true,这样如果任务失败的话，那么这个任务的输入和输出都会保留下来
+       - 如果是map任务的话，那么输入分别会在本地保留
+       - 如果是reduce任务的话，那么对应的map任务输出会在本地保留
+       - 然后我们使用hadoop IsolationRunner job.xml来重新运行这个任务
+       - 可以修改HADOOP_OPTS添加远程调试选项来启动这个任务。
+     - 如果希望任务都保留而不仅仅是失败任务保留的话，那么可以设置 keep.task.files.pattern 为正则表达式（与保留的任务ID匹配）
+
+*** MapReduce的工作机制
+--------------------
+Hadoop运行MapReduce作业的工作原理
+
+file:./images/mapreduce-workflow-architecture.png
 
 
+其中有几点需要注意的：
+   - 计算分片信息是在本地完成的，分片信息和其他resouce(包括jars,files,archives等）一起copy到HDFS上面，然后jobtracker直接读取分片信息。
+   - 提交的资源可以设置replication数目，高副本数目可以缓解tasktracker获取resource的压力。参数是mapred.submit.replication.
+   - 对于streaming以及pipes的实现，无非就是task并不直接执行任务，而是开辟另外一个子进程来运行streaming或者是pipes的程序。
+
+file:./images/mapreduce-streamming-pipes.jpg
+
+--------------------
+进度和状态的更新
+   - map任务进度是已经处理输入的比例
+   - reduce任务进度分为三个部分
+     - shuffle 1/3
+     - sort 1/3
+     - reduce 1/3
+     - 也就是说如果刚运行完成sort的话，那么进度是2/3
+   - 状态的更新
+     - 触发事件
+       - 读取记录
+       - 输出记录
+       - 修改状态 reporter的setStatus
+       - 计数器修改
+       - reporter的progress 
+     - 子进程有单独线程每隔3秒检查progress位是否设置，如果设置的话那么和tasktracker发起心跳
+       - 通过mapred.task.timeout控制
+     - tasktracker每隔5秒和jobtracker做心跳
+       - 心跳时间通过 mapred.tasktracker.expircy.interval 设置
+     - jobClient定期会去jobtracker询问job是否完成
+       - jobClient也可以设置属性job.end.notification.url,任务完成jobtracker会调用这个url
+       - 可以认为就是推拉方式的结合。
+       
+--------------------
+失败检测和处理
+   - 任务失败
+     - 子进程抛出异常的话，tasktracker将异常信息记录到日志文件然后标记失败
+     - 对于streaming任务的话非0退出表示出现问题，也可以使用stream.non.zero.exit.is.failure = false来规避（ *这样是否就没有办法判断是否正常退出了？* ）
+     - 如果长时间没有响应的话，没有和tasktracker有交互，那么也会认为失败。这个时间使用mapred.task.timeout控制，默认10min
+     - 如果任务失败的话，jobtracker会尝试进行多次重试
+       - map重试次数通过 mapred.map.max.attempts 配置
+       - reduce重试次数通过 mapre.reduce.max.attempts 配置
+       - *任何任务重试超过4次的话那么会认为整个job失败*
+     - 另外需要区分KILLED状态和FAILED状态，对于KILLED状态可能是因为推测执行造成的，不会记录到failed attempts里面
+     - 如果我们希望允许少量任务失败的话，那么可以配置
+       - mapred.max.map.failures.percent 允许map失败的最大比率
+       - mapred.max.reduce.failures.percent 允许reduce失败的最大比率
+
+--------------------
+作业的调度
+   - fifo scheduler
+     - 可以通过mapred.job.priority或者是setJobPriority设置
+     - 当队列中有空闲的槽位需要执行任务时，从等待队列中选择优先级最高的作业
+   - fair scheduler
+   - capacity scheduler
+
+--------------------
+shuffle和排序
 
