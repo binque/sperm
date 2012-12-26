@@ -70,8 +70,8 @@ public class RestServer {
                 return pipeline;
             }
         });
-        logger.info("port=" + configuration.getPort());
-        bootstrap.bind(new InetSocketAddress(configuration.getPort()));
+        logger.info("ip=" + configuration.getIp() + ", port=" + configuration.getPort());
+        bootstrap.bind(new InetSocketAddress(configuration.getIp(), configuration.getPort()));
     }
 
     public static void main(String[] args) {

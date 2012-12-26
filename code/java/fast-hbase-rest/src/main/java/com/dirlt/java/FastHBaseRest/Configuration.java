@@ -8,6 +8,7 @@ package com.dirlt.java.FastHBaseRest;
  * To change this template use File | Settings | File Templates.
  */
 public class Configuration {
+    private String ip = "0.0.0.0";
     private int port = 8000;
     private String quorumSpec = "localhost:2181";
     private int cpuThreadNumber = 16;
@@ -24,7 +25,9 @@ public class Configuration {
 
     public boolean parse(String[] args) {
         for (String arg : args) {
-            if (arg.startsWith("--port=")) {
+            if (arg.startsWith("--ip=")) {
+                ip = arg.substring("--ip=".length());
+            } else if (arg.startsWith("--port=")) {
                 port = Integer.valueOf(arg.substring("--port=".length())).intValue();
             } else if (arg.startsWith("--hbase-quorum-spec=")) {
                 quorumSpec = arg.substring("--hbase-quorum-spec=".length());
@@ -59,10 +62,10 @@ public class Configuration {
 
     public static void usage() {
         System.out.println("Fast HBase Rest");
-        System.out.println("options:");
+        System.out.println("\t--ip # default 0.0.0.0");
         System.out.println("\t--port # default 8000");
         System.out.println("\t--debug # debug mode");
-        System.out.println("\t--quorum-spec # zookeeper address list. eg. \"host1,host2,host3\". default \"localhost\"");
+        System.out.println("\t--hbase-quorum-spec # zookeeper address list. eg. \"host1,host2,host3\". default \"localhost\"");
         System.out.println("\t--cpu-thread-number # default 16");
         System.out.println("\t--cpu-queue-size # default 4096");
         System.out.println("\t--cache-expire-time # default 3600 in seconds");
@@ -71,9 +74,12 @@ public class Configuration {
         System.out.println("\t--io-queue-size # default 4096");
         System.out.println("\t--service-name # set service name");
         System.out.println("\t--no-stat # turn off statistics");
-        System.out.println("\t--no-cache # turn off cache");
         System.out.println("\t--no-async # turn off async");
         System.out.println("\t--debug # debug mode");
+    }
+
+    public String getIp() {
+        return ip;
     }
 
     public int getPort() {
