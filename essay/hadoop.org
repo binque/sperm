@@ -250,13 +250,28 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
    - Make sure that the limit of open files is not reached, I had already done this by adding “mapred – nofile 65536″ in /etc/security/limits.conf.  This did not solve it. （增加文件数目限制）
    - Adding the following to /etc/security/limits.conf and restarting the TaskTracker solved it "mapred – nproc 8192" （增加开辟子进程的数目） 
 
+*** topology rack awareness
+有两种方式实现，主要是实现DNS-name/IP到network path映射，network path是如下格式的字符串
+   - /switch/rack
+
+第一种可以通过设置topology.node.switch.mapping.impl来设定DNSToSwitchMapping类
+#+BEGIN_SRC Java
+public interface DNSToSwitchMapping {
+  public List<String> resolve(List<String> names);
+}
+#+END_SRC
+实现这个类来完成DNS-name/IP-name到network path的映射.
+
+但是存在另外一种更好的办法就是ScriptBasedMapping，这个是DNSToSwichMapping的一个实现，可以通过配置脚本来做映射。
+将属性topology.script.filename设置成为脚本，脚本输入names，然后返回结果是按照空格或者是回车分隔的列表即可。
+*NOTE(dirlt):内部使用StringTokenizer来拆分结果*
+
 ** Topic
 *** Scheduler
    - Fair Scheduler Guide http://archive.cloudera.com/cdh/3/hadoop/fair_scheduler.html
    - Job Scheduling in Hadoop | Apache Hadoop for the Enterprise | Cloudera http://www.cloudera.com/blog/2008/11/job-scheduling-in-hadoop/
    - Understanding Apache Hadoop’s Capacity Scheduler | Hortonworks http://hortonworks.com/blog/understanding-apache-hadoops-capacity-scheduler/
    - Upcoming Functionality in “Fair Scheduler 2.0″ | Apache Hadoop for the Enterprise | Cloudera http://www.cloudera.com/blog/2009/04/upcoming-functionality-in-fair-scheduler-20/
-
 
 ** Hadoop权威指南
 *** 初识Hadoop
@@ -370,7 +385,7 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
    - Hadoop集群有三种工作方式，分别为
      - standalone 使用单个JVM进程来模拟
        - 如果不进行任何配置的话默认使用这个模式 *NOTE（dirlt）：这个模式确实不错*
-       - fs.default.name = file:/// 本地文件系统
+       - fs.default.name = file 本地文件系统
        - mapred.job.tracker = local
      - pseudo-distributed 本地启动单节点集群
        - fs.default.name = hdfs://localhost
@@ -387,6 +402,7 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
      4. -jt host:port 设置jobtracker
      5. -files file,file2 这些文件可以在tasktracker工作目录下面访问
      6. -archives archive,archive2 和files类似，但是是存档文件 *TODO（dirlt）：有啥区别呢？*
+	- 突然觉得这个差别在files只能是平级结构，而archive可以是层级结构。
      7. -libjars jar1,jar2 和files类似，通常这些JAR文件是MapReduce所需要的。
 
 --------------------
@@ -636,11 +652,170 @@ public abstract class RecordReader<KEYIN, VALUEIN> implements Closeable {
    - SequenceFileInputFormat
    - SequenceFileAsTextInputFormat
      - 将输入的kv转换成为text对象适合streaming处理方式
-   - SequenceFileAsBinaryInputFormat
+   - SequenceFileAsBinaryInputFormat *NOTE（dirlt）：似乎没有什么用！*
    - MultipleInputs
    - DBInputFormat/DBOutputFormat JDBC数据库输入输出
+   - TableInputFormat/TableOutputFormat HBase输入输出
 
 --------------------
 输出格式
+   - TextOutputFormat
+     - 使用mpared.textoutputformat.seperator来控制kv的分隔，默认是\t
+     - 对应的输入格式为KeyValueTextInputFormat
+     - 可以使用NullWritable来忽略输出的k或者是v
+   - SequenceFileOutputFormat
+   - SequenceFileAsBinaryOutpuFormat *NOTE（dirlt）：似乎没有什么用！*
+   - MapFileOutputFormat
+   - MultipleOutputFormat 
+   - MultipleOutputs
+     - 如果不像生成那写part-r-00000这些空文件的话，那么可以将OutputFormat设置成为NullOutputFormat
 
+*** MapReduce的特性
+   - 计数器
+     - streaming计数器和可以通过写stderr来提交
+       - reporter:counter:<group>,<counter>,<amount>
+       - reporter:status:<message>
+   - 连接
+     - map端连接 *TODO（dirlt）：try it out*
+       - 必须确保多路输入文件的reduce数量相同以及键相同。
+       - 使用ComposieInputFormat来运行map端连接。
+   - 分布式缓存
+     - 使用-files以及-archives来添加缓存文件
+     - 也可以使用DistributedAPI来完成之间事情
+       - addCacheFile/addCacheArchive
+       - 然后在task里面通过configuration的getLocalCacheFiles以及getLocalCacheArchives来获得这些缓存文件
+     - 工作原理
+       - 缓存文件首先被放到hdfs上面
+       - task需要的话那么会尝试下载，之后会对这个缓存文件进行引用计数，如果为0那么删除
+	 - 这也就意味着缓存文件可能会被多次下载
+         - 但是运气好的话多个task在一个node上面的话那么就不用重复下载
+       - 缓存文件存放在${mapred.local.dir}/taskTracker/archive下面，但是通过软连接指向工作目录
+       - 缓存大小通过local.cache.size来配置
+   - MapReduce库类
+     - ChainMapper/ChainReducer 能够在一个mapper以及reducer里面运行多次mapper以及reducer *TODO(dirlt):try it out*
 
+*** 构建Hadoop集群
+   - 很多教程说hadoop集群需要配置ssh,但是配置这个前提是你希望使用start-all.sh这个脚本来启动集群
+     - 我现在的公司使用apt-get来安装，使用cssh来登陆到所有的节点上面进行配置，因此没有配置这个信任关系
+   - Hadoop配置
+     - 配置文件
+       - hadoop-env.sh 环境变量脚本
+       - core-site.xml core配置，包括hdfs以及mapred的IO配置等
+       - hdfs-site.xml hadoop进程配置比如namenode以及datanode以及secondary namenode
+       - mapred-site.xml mapred进程配置比如jobtracker以及tasktracker
+       - masters 运行namenode（secondary namenode)的机器列表，每行一个, *无需分发到各个节点*
+	 - *在本地启动primary namenode*
+       - slaves 运行datanode以及tasktracker的机器列表，每行一个 *无需分发到各个节点*
+	 - *在本地启动jobtracker*
+       - hadoop-metrics.properties 对hadoop做监控的配置文件
+       - log4j.properties 日志配置文件
+       - 这些文件在conf目录下面有，如果想使用不同的文件也可以使用-config来另行指定
+       - *NOTE(dirlt):所以从上面这个脚本来看，还是具有一定的局限性的*
+     - hadoop-env.sh
+       - HADOOP_HEAPSIZE = 1000MB 守护进程大小
+       - HADOOP_NAMENODE_OPTS
+       - HADOOP_SECONDARYNAMENODE_OPTS
+       - HADOOP_IDENT_STRING 用户名称标记，默认为${USER}
+       - HADOOP_LOG_DIR hadoop日志文件，默认是HADOOP_INSTALL/logs
+     - core-site.xml
+       - io.file.buffer.size IO操作缓冲区大小，默认是4KB *这个需要提高*
+     - hdfs-site.xml
+       - fs.default.name
+       - hadoop.tmp.dir hadoop临时目录，默认是在/tmp/hadoop-${user.name}
+       - dfs.name.dir namenode数据目录，一系列的目录，namenode内容会同时备份在所有指定的目录中。默认为${hadoop.tmp.dir}/dfs/name
+       - dfs.data.dir datanode数据目录，一系列的目录，循环将数据写在各个目录里面。默认是${hadoop.tmp.dir}/dfs/data
+       - fs.checkpoint.dir secondarynamenode数据目录，一系列目录，所有目录都会写一份。默认为${hadoop.tmp.dir}/dfs/namesecondary
+       - dfs.datanode.ipc.address 0.0.0.0:50020 datanode的RPC接口，主要和namenode交互
+       - dfs.datanode.address 0.0.0.0:50010 datanode的data block传输接口，主要和client交互
+       - dfs.datanode.http.address 0.0.0.0:50075 datanode的HTTP接口，和user交互
+       - dfs.http.address 0.0.0.0:50070 namenode的HTTP接口
+       - dfs.secondary.http.address 0.0.0.0:50090 secondard namenode的HTTP接口
+       - dfs.datanode.dns.interface default 绑定的NIC，默认是绑定默认的NIC比如eth0	 
+       - dfs.hosts / dfs.hosts.exclude 加入的datanode以及排除的datanode
+       - dfs.replication = 3 副本数目
+       - dfs.block.size = 64MB
+       - dfs.datanode.du.reserved 默认datanode会使用目录所在磁盘所有空间，这个值可以保证有多少空间被reserved的
+       - fs.trash.interval 单位分钟，如果不为0的话，那么删除文件会移动到回收站，超过这个单位时间的文件才会完全删除。
+	 - 回收站位置/home/${user]/.Trash
+         - haddop fs -expunge 强制删除
+     - mapred-site.xml
+       - mapred.job.tracker
+       - mapred.local.dir MR中间数据存储，一系列目录，分散写到各个目录下面，默认为${hadoop.tmp.dir}/mapred/local
+       - mapred.system.dir MR运行期间存储，比如存放jar或者是缓存文件等。默认${hadoop.tmp.dir}/mapred/system
+       - mapred.tasktracker.map.tasks.maximum = 2 单个tasktracker最多多少map任务
+       - mapred.tasktracker.reduce.tasks.maximum = 2 
+       - mapred.child.java.opts = -Xmx200m 每个子JVM进程200M.
+       - mapred.task.tracker.report.address 127.0.0.1:0 tasktracker启动子进程通信的端口，0表示使用任意端口
+       - mapred.job.tracker.http.address 0.0.0.0:50030 jobtracker的HTTP接口
+       - mapred.task.tracker.http.address 0.0.0.0:50060 tasktrackder的HTTP接口
+       - mapred.tasktracker.dns.interface default 绑定的NIC，默认是绑定默认的NIC比如eth0
+       - mapred.hosts / mapred.hosts.exclude 加入的tasktracker以及排除的tasktracker.
+   - Hadoop Benchmark *NOTE（dirlt）：try it out*
+     - 在hadoop安装目录下面有jar可以来做基准测试
+     - TestDFSIO测试HDFS的IO性能
+     - Sort测试MapReduce性能
+     - MRBench多次运行一个小作业来检验小作业能否快速相应
+     - NNBench测试namenode硬件的负载
+   
+*** 管理Hadoop
+   - 永久性数据结构
+     - namenode的目录结构
+       - current表示当前的namenode数据（对于辅助节点上这个数据并不是最新的）
+       - previous.checkpoint表示secondarynamenode完成checkpoint的数据（和current可能存在一些编辑差距）
+	 - hadoop dfsadmin -saveNamespace 可以强制创建检查点,仅仅在安全模式下面运行
+         - 辅助namenode每隔5分钟会检查
+	   - 如果超过fs.checkpoint.period = 3600（sec），那么会创建检查点
+           - 如果编辑日志大小超过fs.checkpoint.size = 64MB,同样也会创建检查点
+	 - 除了将文件copy到namenode之外，在辅助节点上面可以使用选项-importCheckpoint来载入
+       - VERSION Java属性文件
+	 - namespaceID 每次格式化都会重新生成一个ID，这样可以防止错误的datanode加入
+         - cTime namenode存储系统创建时间，对于刚格式化的存储系统为0.对于升级的话会更新到最新的时间戳
+	 - storageType NAME_NODE or DATA_NODE
+	 - layoutVersion 负整数表示hdfs文件系统布局版本号，对于hadoop升级的话这个版本号可能不会变化
+       - edits 编辑日志文件
+       - fsimage 镜像文件
+       - fstime ???
+     - datanode的目录结构
+       - blk_<id>以及blk_<id>.meta 表示块数据以及对应的元信息，元数据主要包括校验和等内容
+       - 如果datanode文件非常多的话，超过dfs.datanode.numblocks = 64的话，那么会创建一个目录单独存放，最终结果就是形成树存储结构。
+       - dfs.data.dir目录是按照round-robin的算法选择的。
+
+   - 安全模式
+     - namenode启动的时候会尝试合并edit数据并且新建一个checkpoint，然后进入安全模式，在这个模式内文件系统是只读的
+     - 可以通过hadoop dfsadmin -safemode来操作安全模式
+     - 当达到下面几个条件的时候会离开安全模式
+       - 整个系统的副本数目大于某个阈值的副本数目比率超过一个阈值之后，然后继续等待一段时间就会离开安全模式
+       - dfs.replication.min = 1 副本数目阈值
+       - dfs.safemode.threshold.pct = 0.999 比率阈值
+       - dfs.safemode.extension = 30000(ms) 等待时间
+
+   - 工具
+     - dfsadmin
+     - fsck
+     - scanner
+       - DataBlockScanner每隔一段时间会扫描本地的data block检查是否出现校验和问题
+       - 时间间隔是dfs.datanode.scan.period.hours = 504默认三周
+       - 可以通过页面访问每个datanode的block情况 http://localhost:50075/blockScannerReport
+       - 加上listblocks参数可以看每个block情况 http://localhost:50075/blockScannerReport?listblocks *NOTE（dirlt）：可能会很大*
+     - balancer
+       - 通过start-balancer.sh来启动,集群中只允许存在一个均衡器
+       - 均衡的标准是datanode的利用率和集群平均利用率的插值，如果超过某个阈值就会进行block movement
+       - -threshold可以执行阈值，默认为10%
+       - dfs.balance.bandwidthPerSec = 1024 * 1024 用于balance的带宽上限。
+
+   - 监控
+     - 日志
+       - jobtracker的stack信息（thread-dump）http://localhost:50030/stacks
+     - 度量
+       - 度量从属于特性的上下文(context),包括下面几个
+	 - dfs
+	 - mapred
+         - rpc
+         - jvm
+       - 下面是几种常见的context
+	 - FileContext 度量写到文件
+         - GangliaContext 度量写到ganglia *(这个似乎比较靠谱）*
+	 - CompositeContext 组合context
+       - 度量可以从hadoop-metrics.properties进行配置
+    
+       

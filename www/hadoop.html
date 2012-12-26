@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hadoop"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-25 23:29:07 CST"/>
+<meta name="generated" content="2012-12-26 15:31:18 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -120,6 +120,7 @@
 <ul>
 <li><a href="#sec-1-3-1">1.3.1 搭建单节点集群</a></li>
 <li><a href="#sec-1-3-2">1.3.2 OutOfMemoryError</a></li>
+<li><a href="#sec-1-3-3">1.3.3 topology rack awareness</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-4">1.4 Topic</a>
@@ -136,6 +137,9 @@
 <li><a href="#sec-1-5-5">1.5.5 MapReduce应用开发</a></li>
 <li><a href="#sec-1-5-6">1.5.6 MapReduce的工作机制</a></li>
 <li><a href="#sec-1-5-7">1.5.7 MapReduce的类型与格式</a></li>
+<li><a href="#sec-1-5-8">1.5.8 MapReduce的特性</a></li>
+<li><a href="#sec-1-5-9">1.5.9 构建Hadoop集群</a></li>
+<li><a href="#sec-1-5-10">1.5.10 管理Hadoop</a></li>
 </ul>
 </li>
 </ul>
@@ -725,6 +729,39 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 
 
 </div>
+
+</div>
+
+<div id="outline-container-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> topology rack awareness</h4>
+<div class="outline-text-4" id="text-1-3-3">
+
+<p>有两种方式实现，主要是实现DNS-name/IP到network path映射，network path是如下格式的字符串
+</p><ul>
+<li>/switch/rack
+</li>
+</ul>
+
+
+<p>
+第一种可以通过设置topology.node.switch.mapping.impl来设定DNSToSwitchMapping类
+</p>
+
+
+<pre class="src src-Java">public interface DNSToSwitchMapping {
+  public List&lt;String&gt; resolve(List&lt;String&gt; names);
+}
+</pre>
+
+<p>
+实现这个类来完成DNS-name/IP-name到network path的映射.
+</p>
+<p>
+但是存在另外一种更好的办法就是ScriptBasedMapping，这个是DNSToSwichMapping的一个实现，可以通过配置脚本来做映射。
+将属性topology.script.filename设置成为脚本，脚本输入names，然后返回结果是按照空格或者是回车分隔的列表即可。
+<b>NOTE(dirlt):内部使用StringTokenizer来拆分结果</b>
+</p>
+</div>
 </div>
 
 </div>
@@ -750,7 +787,6 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 <li>Upcoming Functionality in “Fair Scheduler 2.0″ | Apache Hadoop for the Enterprise | Cloudera <a href="http://www.cloudera.com/blog/2009/04/upcoming-functionality-in-fair-scheduler-20/">http://www.cloudera.com/blog/2009/04/upcoming-functionality-in-fair-scheduler-20/</a>
 </li>
 </ul>
-
 
 
 </div>
@@ -1105,7 +1141,7 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 <ul>
 <li>如果不进行任何配置的话默认使用这个模式 <b>NOTE（dirlt）：这个模式确实不错</b>
 </li>
-<li>fs.default.name = <a href="file:////">///</a> 本地文件系统
+<li>fs.default.name = file 本地文件系统
 </li>
 <li>mapred.job.tracker = local
 </li>
@@ -1152,6 +1188,11 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 <li>-files file,file2 这些文件可以在tasktracker工作目录下面访问
 </li>
 <li>-archives archive,archive2 和files类似，但是是存档文件 <b>TODO（dirlt）：有啥区别呢？</b>
+<ul>
+<li>突然觉得这个差别在files只能是平级结构，而archive可以是层级结构。
+</li>
+</ul>
+
 </li>
 <li>-libjars jar1,jar2 和files类似，通常这些JAR文件是MapReduce所需要的。
 </li>
@@ -1723,11 +1764,13 @@ public abstract class RecordReader&lt;KEYIN, VALUEIN&gt; implements Closeable {
 </ul>
 
 </li>
-<li>SequenceFileAsBinaryInputFormat
+<li>SequenceFileAsBinaryInputFormat <b>NOTE（dirlt）：似乎没有什么用！</b>
 </li>
 <li>MultipleInputs
 </li>
 <li>DBInputFormat/DBOutputFormat JDBC数据库输入输出
+</li>
+<li>TableInputFormat/TableOutputFormat HBase输入输出
 </li>
 </ul>
 
@@ -1736,7 +1779,461 @@ public abstract class RecordReader&lt;KEYIN, VALUEIN&gt; implements Closeable {
 <hr/>
 <p>
 输出格式
-</p>
+</p><ul>
+<li>TextOutputFormat
+<ul>
+<li>使用mpared.textoutputformat.seperator来控制kv的分隔，默认是\t
+</li>
+<li>对应的输入格式为KeyValueTextInputFormat
+</li>
+<li>可以使用NullWritable来忽略输出的k或者是v
+</li>
+</ul>
+
+</li>
+<li>SequenceFileOutputFormat
+</li>
+<li>SequenceFileAsBinaryOutpuFormat <b>NOTE（dirlt）：似乎没有什么用！</b>
+</li>
+<li>MapFileOutputFormat
+</li>
+<li>MultipleOutputFormat 
+</li>
+<li>MultipleOutputs
+<ul>
+<li>如果不像生成那写part-r-00000这些空文件的话，那么可以将OutputFormat设置成为NullOutputFormat
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-8" class="outline-4">
+<h4 id="sec-1-5-8"><span class="section-number-4">1.5.8</span> MapReduce的特性</h4>
+<div class="outline-text-4" id="text-1-5-8">
+
+<ul>
+<li>计数器
+<ul>
+<li>streaming计数器和可以通过写stderr来提交
+<ul>
+<li>reporter:counter:&lt;group&gt;,&lt;counter&gt;,&lt;amount&gt;
+</li>
+<li>reporter:status:&lt;message&gt;
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+<li>连接
+<ul>
+<li>map端连接 <b>TODO（dirlt）：try it out</b>
+<ul>
+<li>必须确保多路输入文件的reduce数量相同以及键相同。
+</li>
+<li>使用ComposieInputFormat来运行map端连接。
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+<li>分布式缓存
+<ul>
+<li>使用-files以及-archives来添加缓存文件
+</li>
+<li>也可以使用DistributedAPI来完成之间事情
+<ul>
+<li>addCacheFile/addCacheArchive
+</li>
+<li>然后在task里面通过configuration的getLocalCacheFiles以及getLocalCacheArchives来获得这些缓存文件
+</li>
+</ul>
+
+</li>
+<li>工作原理
+<ul>
+<li>缓存文件首先被放到hdfs上面
+</li>
+<li>task需要的话那么会尝试下载，之后会对这个缓存文件进行引用计数，如果为0那么删除
+<ul>
+<li>这也就意味着缓存文件可能会被多次下载
+</li>
+<li>但是运气好的话多个task在一个node上面的话那么就不用重复下载
+</li>
+</ul>
+
+</li>
+<li>缓存文件存放在${mapred.local.dir}/taskTracker/archive下面，但是通过软连接指向工作目录
+</li>
+<li>缓存大小通过local.cache.size来配置
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+<li>MapReduce库类
+<ul>
+<li>ChainMapper/ChainReducer 能够在一个mapper以及reducer里面运行多次mapper以及reducer <b>TODO(dirlt):try it out</b>
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-9" class="outline-4">
+<h4 id="sec-1-5-9"><span class="section-number-4">1.5.9</span> 构建Hadoop集群</h4>
+<div class="outline-text-4" id="text-1-5-9">
+
+<ul>
+<li>很多教程说hadoop集群需要配置ssh,但是配置这个前提是你希望使用start-all.sh这个脚本来启动集群
+<ul>
+<li>我现在的公司使用apt-get来安装，使用cssh来登陆到所有的节点上面进行配置，因此没有配置这个信任关系
+</li>
+</ul>
+
+</li>
+<li>Hadoop配置
+<ul>
+<li>配置文件
+<ul>
+<li>hadoop-env.sh 环境变量脚本
+</li>
+<li>core-site.xml core配置，包括hdfs以及mapred的IO配置等
+</li>
+<li>hdfs-site.xml hadoop进程配置比如namenode以及datanode以及secondary namenode
+</li>
+<li>mapred-site.xml mapred进程配置比如jobtracker以及tasktracker
+</li>
+<li>masters 运行namenode（secondary namenode)的机器列表，每行一个, <b>无需分发到各个节点</b>
+<ul>
+<li><b>在本地启动primary namenode</b>
+</li>
+</ul>
+
+</li>
+<li>slaves 运行datanode以及tasktracker的机器列表，每行一个 <b>无需分发到各个节点</b>
+<ul>
+<li><b>在本地启动jobtracker</b>
+</li>
+</ul>
+
+</li>
+<li>hadoop-metrics.properties 对hadoop做监控的配置文件
+</li>
+<li>log4j.properties 日志配置文件
+</li>
+<li>这些文件在conf目录下面有，如果想使用不同的文件也可以使用-config来另行指定
+</li>
+<li><b>NOTE(dirlt):所以从上面这个脚本来看，还是具有一定的局限性的</b>
+</li>
+</ul>
+
+</li>
+<li>hadoop-env.sh
+<ul>
+<li>HADOOP_HEAPSIZE = 1000MB 守护进程大小
+</li>
+<li>HADOOP_NAMENODE_OPTS
+</li>
+<li>HADOOP_SECONDARYNAMENODE_OPTS
+</li>
+<li>HADOOP_IDENT_STRING 用户名称标记，默认为${USER}
+</li>
+<li>HADOOP_LOG_DIR hadoop日志文件，默认是HADOOP_INSTALL/logs
+</li>
+</ul>
+
+</li>
+<li>core-site.xml
+<ul>
+<li>io.file.buffer.size IO操作缓冲区大小，默认是4KB <b>这个需要提高</b>
+</li>
+</ul>
+
+</li>
+<li>hdfs-site.xml
+<ul>
+<li>fs.default.name
+</li>
+<li>hadoop.tmp.dir hadoop临时目录，默认是在/tmp/hadoop-${user.name}
+</li>
+<li>dfs.name.dir namenode数据目录，一系列的目录，namenode内容会同时备份在所有指定的目录中。默认为${hadoop.tmp.dir}/dfs/name
+</li>
+<li>dfs.data.dir datanode数据目录，一系列的目录，循环将数据写在各个目录里面。默认是${hadoop.tmp.dir}/dfs/data
+</li>
+<li>fs.checkpoint.dir secondarynamenode数据目录，一系列目录，所有目录都会写一份。默认为${hadoop.tmp.dir}/dfs/namesecondary
+</li>
+<li>dfs.datanode.ipc.address 0.0.0.0:50020 datanode的RPC接口，主要和namenode交互
+</li>
+<li>dfs.datanode.address 0.0.0.0:50010 datanode的data block传输接口，主要和client交互
+</li>
+<li>dfs.datanode.http.address 0.0.0.0:50075 datanode的HTTP接口，和user交互
+</li>
+<li>dfs.http.address 0.0.0.0:50070 namenode的HTTP接口
+</li>
+<li>dfs.secondary.http.address 0.0.0.0:50090 secondard namenode的HTTP接口
+</li>
+<li>dfs.datanode.dns.interface default 绑定的NIC，默认是绑定默认的NIC比如eth0       
+</li>
+<li>dfs.hosts / dfs.hosts.exclude 加入的datanode以及排除的datanode
+</li>
+<li>dfs.replication = 3 副本数目
+</li>
+<li>dfs.block.size = 64MB
+</li>
+<li>dfs.datanode.du.reserved 默认datanode会使用目录所在磁盘所有空间，这个值可以保证有多少空间被reserved的
+</li>
+<li>fs.trash.interval 单位分钟，如果不为0的话，那么删除文件会移动到回收站，超过这个单位时间的文件才会完全删除。
+<ul>
+<li>回收站位置/home/${user]/.Trash
+</li>
+<li>haddop fs -expunge 强制删除
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+<li>mapred-site.xml
+<ul>
+<li>mapred.job.tracker
+</li>
+<li>mapred.local.dir MR中间数据存储，一系列目录，分散写到各个目录下面，默认为${hadoop.tmp.dir}/mapred/local
+</li>
+<li>mapred.system.dir MR运行期间存储，比如存放jar或者是缓存文件等。默认${hadoop.tmp.dir}/mapred/system
+</li>
+<li>mapred.tasktracker.map.tasks.maximum = 2 单个tasktracker最多多少map任务
+</li>
+<li>mapred.tasktracker.reduce.tasks.maximum = 2 
+</li>
+<li>mapred.child.java.opts = -Xmx200m 每个子JVM进程200M.
+</li>
+<li>mapred.task.tracker.report.address 127.0.0.1:0 tasktracker启动子进程通信的端口，0表示使用任意端口
+</li>
+<li>mapred.job.tracker.http.address 0.0.0.0:50030 jobtracker的HTTP接口
+</li>
+<li>mapred.task.tracker.http.address 0.0.0.0:50060 tasktrackder的HTTP接口
+</li>
+<li>mapred.tasktracker.dns.interface default 绑定的NIC，默认是绑定默认的NIC比如eth0
+</li>
+<li>mapred.hosts / mapred.hosts.exclude 加入的tasktracker以及排除的tasktracker.
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+<li>Hadoop Benchmark <b>NOTE（dirlt）：try it out</b>
+<ul>
+<li>在hadoop安装目录下面有jar可以来做基准测试
+</li>
+<li>TestDFSIO测试HDFS的IO性能
+</li>
+<li>Sort测试MapReduce性能
+</li>
+<li>MRBench多次运行一个小作业来检验小作业能否快速相应
+</li>
+<li>NNBench测试namenode硬件的负载
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-10" class="outline-4">
+<h4 id="sec-1-5-10"><span class="section-number-4">1.5.10</span> 管理Hadoop</h4>
+<div class="outline-text-4" id="text-1-5-10">
+
+<ul>
+<li>永久性数据结构
+<ul>
+<li>namenode的目录结构
+<ul>
+<li>current表示当前的namenode数据（对于辅助节点上这个数据并不是最新的）
+</li>
+<li>previous.checkpoint表示secondarynamenode完成checkpoint的数据（和current可能存在一些编辑差距）
+<ul>
+<li>hadoop dfsadmin -saveNamespace 可以强制创建检查点,仅仅在安全模式下面运行
+</li>
+<li>辅助namenode每隔5分钟会检查
+<ul>
+<li>如果超过fs.checkpoint.period = 3600（sec），那么会创建检查点
+</li>
+<li>如果编辑日志大小超过fs.checkpoint.size = 64MB,同样也会创建检查点
+</li>
+</ul>
+
+</li>
+<li>除了将文件copy到namenode之外，在辅助节点上面可以使用选项-importCheckpoint来载入
+</li>
+</ul>
+
+</li>
+<li>VERSION Java属性文件
+<ul>
+<li>namespaceID 每次格式化都会重新生成一个ID，这样可以防止错误的datanode加入
+</li>
+<li>cTime namenode存储系统创建时间，对于刚格式化的存储系统为0.对于升级的话会更新到最新的时间戳
+</li>
+<li>storageType NAME_NODE or DATA_NODE
+</li>
+<li>layoutVersion 负整数表示hdfs文件系统布局版本号，对于hadoop升级的话这个版本号可能不会变化
+</li>
+</ul>
+
+</li>
+<li>edits 编辑日志文件
+</li>
+<li>fsimage 镜像文件
+</li>
+<li>fstime ???
+</li>
+</ul>
+
+</li>
+<li>datanode的目录结构
+<ul>
+<li>blk_&lt;id&gt;以及blk_&lt;id&gt;.meta 表示块数据以及对应的元信息，元数据主要包括校验和等内容
+</li>
+<li>如果datanode文件非常多的话，超过dfs.datanode.numblocks = 64的话，那么会创建一个目录单独存放，最终结果就是形成树存储结构。
+</li>
+<li>dfs.data.dir目录是按照round-robin的算法选择的。
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+<li>安全模式
+<ul>
+<li>namenode启动的时候会尝试合并edit数据并且新建一个checkpoint，然后进入安全模式，在这个模式内文件系统是只读的
+</li>
+<li>可以通过hadoop dfsadmin -safemode来操作安全模式
+</li>
+<li>当达到下面几个条件的时候会离开安全模式
+<ul>
+<li>整个系统的副本数目大于某个阈值的副本数目比率超过一个阈值之后，然后继续等待一段时间就会离开安全模式
+</li>
+<li>dfs.replication.min = 1 副本数目阈值
+</li>
+<li>dfs.safemode.threshold.pct = 0.999 比率阈值
+</li>
+<li>dfs.safemode.extension = 30000(ms) 等待时间
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+<li>工具
+<ul>
+<li>dfsadmin
+</li>
+<li>fsck
+</li>
+<li>scanner
+<ul>
+<li>DataBlockScanner每隔一段时间会扫描本地的data block检查是否出现校验和问题
+</li>
+<li>时间间隔是dfs.datanode.scan.period.hours = 504默认三周
+</li>
+<li>可以通过页面访问每个datanode的block情况 <a href="http://localhost:50075/blockScannerReport">http://localhost:50075/blockScannerReport</a>
+</li>
+<li>加上listblocks参数可以看每个block情况 <a href="http://localhost:50075/blockScannerReport?listblocks">http://localhost:50075/blockScannerReport?listblocks</a> <b>NOTE（dirlt）：可能会很大</b>
+</li>
+</ul>
+
+</li>
+<li>balancer
+<ul>
+<li>通过start-balancer.sh来启动,集群中只允许存在一个均衡器
+</li>
+<li>均衡的标准是datanode的利用率和集群平均利用率的插值，如果超过某个阈值就会进行block movement
+</li>
+<li>-threshold可以执行阈值，默认为10%
+</li>
+<li>dfs.balance.bandwidthPerSec = 1024 * 1024 用于balance的带宽上限。
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+<li>监控
+<ul>
+<li>日志
+<ul>
+<li>jobtracker的stack信息（thread-dump）<a href="http://localhost:50030/stacks">http://localhost:50030/stacks</a>
+</li>
+</ul>
+
+</li>
+<li>度量
+<ul>
+<li>度量从属于特性的上下文(context),包括下面几个
+<ul>
+<li>dfs
+</li>
+<li>mapred
+</li>
+<li>rpc
+</li>
+<li>jvm
+</li>
+</ul>
+
+</li>
+<li>下面是几种常见的context
+<ul>
+<li>FileContext 度量写到文件
+</li>
+<li>GangliaContext 度量写到ganglia <b>(这个似乎比较靠谱）</b>
+</li>
+<li>CompositeContext 组合context
+</li>
+</ul>
+
+</li>
+<li>度量可以从hadoop-metrics.properties进行配置
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+
 
 </div>
 </div>
@@ -1745,7 +2242,7 @@ public abstract class RecordReader&lt;KEYIN, VALUEIN&gt; implements Closeable {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-25 23:29:07 CST</p>
+<p class="date">Date: 2012-12-26 15:31:18 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
