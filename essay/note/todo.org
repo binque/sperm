@@ -29,15 +29,12 @@
 ** TODO 更换Android手机（MX2？）
 ** TODO 安装一些生活类型服务
 ** TODO 阅读systemtap论文，简单阅读=D
-** TODO linux tcp implementation.
 ** TODO High Scalability - High Scalability - Gone Fishin': LiveJournal Architecture
    - http://highscalability.com/blog/2012/10/31/gone-fishin-livejournal-architecture.html
 ** TODO 试试skype
 ** TODO umid服务,db research.probelm.
 ** TODO 分析htable代码put.
-** TODO hbase testing utility.（是否可以不使用这个东西）
-** TODO 在tasktracker机器上面建立新人关系
-** TODO 没有使用hadoop jar提交可以直接写本地文件(本地集群，验证本地集群是否可以跑hbase以及使用lzo等文件）
 ** TODO 尝试编写多个table输入的情况
 ** TODO 博弈论学习
 ** TODO clojure
+** TODO 整理hadoop里面一些todo.

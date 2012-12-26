@@ -2219,6 +2219,43 @@ vmlinuz的建立有两种方式。一是编译内核时通过“make zImage”�
 
 zImage(vmlinuz)和bzImage(vmlinuz)都是用gzip压缩的。它们不仅是一个压缩文件，而且在这两个文件的开头部分内嵌有gzip解压缩代码。所以你不能用gunzip 或 gzip –dc解包vmlinuz。内核文件中包含一个微型的gzip用于解压缩内核并引导它。两者的不同之处在于，老的zImage解压缩内核到低端内存(第一个640K)，bzImage解压缩内核到高端内存(1M以上)。如果内核比较小，那么可以采用zImage或bzImage之一，两种方式引导的系统运行时是相同的。大的内核采用bzImage，不能采用zImage。
 
+*** tcp IO
+http://www.ece.virginia.edu/cheetah/documents/papers/TCPlinux.pdf
+
+*NOTE（dirlt）：后面影响拥塞部分没有看*
+
+--------------------
+packet reception
+
+file:./images/tcp-packet-reception.png
+
+整个流程大致如下：
+   - linux里面使用sk_buff数据结构来描述packet.
+   - NIC检测到packet到达，分配sk_buffer数据结构，调用DMA Engine将packet放到sk_buff数据结构里面并且加入rx_ring这个ring_buffer里面
+   - 如果rx_ring满了的话那么将packet直接丢弃， *如果被上层处理的话直接引用而不会存在任何copy*
+   - 当DMA Engine完成处理之后NIC通过中断通知kernel进行处理。
+   - kernel将这个packet传递给IP层进行处理，IP层发现如果是tcp packet的话那么放到socket backlog里面。如果满了那么丢弃。
+   - tcp layer从socket backlog里面取出tcp packet， *copy到tcp recv buffer*
+   - tcp recv buffer交给application layer处理， *这里还存在一次copy*
+其中内核参数有
+   - /proc/sys/net/ipv4/tcp_rmem tcp recv buffer大小
+   - /proc/sys/net/core/netdev_max_backlog socket backlog大小
+
+--------------------
+packet transmission
+
+file:./images/tcp-packet-transmission.png
+
+整个流程大致如下：
+   - application layer将数据copy到tcp layer的tcp send buffer里面，如果空间不够的话那么就会出现阻塞。
+   - tcp layer等发送数据准备好或者是需要确认ACK的时候，将对应的packet推送到IP layer
+   - 然后ip layer将packet推送到qdisc（output queue）里面 *NOTE（dirlt）：然后这里应该定期有一个任务从queue里面取出放到ring buffer里面）*
+     - 如果qdisc队列满的话那么就会出现阻塞，反馈到tcp layer.
+   - driver如果检测到ring buffer里面存在packet的话，那么就会调用NIC DMA Engine将packet发送出去 *NOTE（dirlt）：感觉这个部分还是有点模糊！*
+其中内核参数有：
+   - /proc/sys/net/ipv4/tcp_wmem 这个和rmem非常类似
+   - *NOTE（dirlt）：qdisc文章里面说是txqueuelen控制的，但是似乎找不到这个参数！*
+
 ** application
 *** 返回值问题
 --------------------
