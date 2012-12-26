@@ -401,7 +401,7 @@ public interface DNSToSwitchMapping {
      3. -fs uri 设置默认文件系统
      4. -jt host:port 设置jobtracker
      5. -files file,file2 这些文件可以在tasktracker工作目录下面访问
-     6. -archives archive,archive2 和files类似，但是是存档文件 *TODO（dirlt）：有啥区别呢？*
+     6. -archives archive,archive2 和files类似，但是是存档文件
 	- 突然觉得这个差别在files只能是平级结构，而archive可以是层级结构。
      7. -libjars jar1,jar2 和files类似，通常这些JAR文件是MapReduce所需要的。
 
@@ -412,7 +412,7 @@ public interface DNSToSwitchMapping {
    - MiniHBaseCluster 
    - MiniZooKeeperClutser
    - *NOTE(dirlt):都称为Mini???Cluster？*
-另外还有自带的ClusterMapReduceTestCase以及HBaseTestingUtility来帮助进行mapreduce的testcase. 这些类散步在hadoop,hbase,hadoop-test以及hbase-test里面。 *TODO（dirlt）：try it out*
+另外还有自带的ClusterMapReduceTestCase以及HBaseTestingUtility来帮助进行mapreduce的testcase. 这些类散步在hadoop,hbase,hadoop-test以及hbase-test里面。 
 
 *NOTE（dirlt）：但是个人觉得可能还是没有本地测试方便，不过倒是可以试试* 
 
@@ -573,8 +573,19 @@ MapReduce的类型
   }
 #+END_SRC
 *NOTE（dirlt）：觉得这个特性不是特别有用*
-
-*TODO（dirlt）：add more trivial thing*
+   - mapred.input.format.class setInputFormat
+   - mapred.mapoutput.key.class setMapOutputKeyClass
+   - mapred.mapoutput.value.class setMapOutputValueClass
+   - mapred.output.key.class setOutputKeyClass
+   - mapred.output.value.class setOutputValueClass
+   - mapred.mapper.class setMapperClass
+   - mapred.map.runner.class setMapRunnerClass
+   - mapred.combiner.class setCombinerClass
+   - mapred.partitioner.class setPartitionerClass
+   - mapred.output.key.comparator.class setOutputKeyComparatorClass
+   - mapred.output.value.groupfn.class setOutputValueGroupingComparator
+   - mapred.reducer.class setReducerClass
+   - mapred.output.format.class setOutputFormat
 
 --------------------
 输入格式

@@ -38,3 +38,4 @@
 ** TODO 博弈论学习
 ** TODO clojure
 ** TODO 整理hadoop里面一些todo.
+** TODO bug系统的trace以及观察游戏模版是否正常运行
