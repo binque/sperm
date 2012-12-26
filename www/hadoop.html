@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hadoop"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-26 15:31:18 CST"/>
+<meta name="generated" content="2012-12-26 23:48:02 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -1187,7 +1187,7 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 </li>
 <li>-files file,file2 这些文件可以在tasktracker工作目录下面访问
 </li>
-<li>-archives archive,archive2 和files类似，但是是存档文件 <b>TODO（dirlt）：有啥区别呢？</b>
+<li>-archives archive,archive2 和files类似，但是是存档文件
 <ul>
 <li>突然觉得这个差别在files只能是平级结构，而archive可以是层级结构。
 </li>
@@ -1219,7 +1219,7 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 </li>
 </ul>
 
-<p>另外还有自带的ClusterMapReduceTestCase以及HBaseTestingUtility来帮助进行mapreduce的testcase. 这些类散步在hadoop,hbase,hadoop-test以及hbase-test里面。 <b>TODO（dirlt）：try it out</b>
+<p>另外还有自带的ClusterMapReduceTestCase以及HBaseTestingUtility来帮助进行mapreduce的testcase. 这些类散步在hadoop,hbase,hadoop-test以及hbase-test里面。 
 </p>
 <p>
 <b>NOTE（dirlt）：但是个人觉得可能还是没有本地测试方便，不过倒是可以试试</b> 
@@ -1619,10 +1619,36 @@ public void run(Context context) throws IOException, InterruptedException {
 
 <p>
 <b>NOTE（dirlt）：觉得这个特性不是特别有用</b>
-</p>
-<p>
-<b>TODO（dirlt）：add more trivial thing</b>
-</p>
+</p><ul>
+<li>mapred.input.format.class setInputFormat
+</li>
+<li>mapred.mapoutput.key.class setMapOutputKeyClass
+</li>
+<li>mapred.mapoutput.value.class setMapOutputValueClass
+</li>
+<li>mapred.output.key.class setOutputKeyClass
+</li>
+<li>mapred.output.value.class setOutputValueClass
+</li>
+<li>mapred.mapper.class setMapperClass
+</li>
+<li>mapred.map.runner.class setMapRunnerClass
+</li>
+<li>mapred.combiner.class setCombinerClass
+</li>
+<li>mapred.partitioner.class setPartitionerClass
+</li>
+<li>mapred.output.key.comparator.class setOutputKeyComparatorClass
+</li>
+<li>mapred.output.value.groupfn.class setOutputValueGroupingComparator
+</li>
+<li>mapred.reducer.class setReducerClass
+</li>
+<li>mapred.output.format.class setOutputFormat
+</li>
+</ul>
+
+
 
 <hr/>
 <p>
@@ -2242,7 +2268,7 @@ public abstract class RecordReader&lt;KEYIN, VALUEIN&gt; implements Closeable {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-26 15:31:18 CST</p>
+<p class="date">Date: 2012-12-26 23:48:02 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
