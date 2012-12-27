@@ -1,5 +1,6 @@
 * sysperf
-   - What Your Computer Does While You Wait http://duartes.org/gustavo/blog/post/what-your-computer-does-while-you-wait
+** What Your Computer Does While You Wait
+http://duartes.org/gustavo/blog/post/what-your-computer-does-while-you-wait
 
 | 指标                     | 数据              |
 |--------------------------+-------------------|
@@ -28,7 +29,6 @@
 | gettimeofday系统调用     | 3000cycles(1us)   |
 | 单CPU软中断次数          | 10w/s             |
    
-
 ** Numbers Everyone Should Know
    - L1 cache reference 0.5 ns
    - Branch mispredict 5 ns

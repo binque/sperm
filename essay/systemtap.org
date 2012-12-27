@@ -7,6 +7,7 @@
    - Dynamic Instrumentation of Production Systems http://static.usenix.org/event/usenix04/tech/general/full_papers/cantrill/cantrill_html/
    - sudo apt-get install systemtap # 直接使用apt安装
      - sudo apt-get install elfutils # 可能需要安装
+   - *NOTE（dirlt）：linux还自带perf工具也能够观察kernel行为*
 
 ** Introduction
 systemtap的工作原理是使用linux提供的kprobe接口 *TODO(dirlt):more about kprobe* ，将用户需要观测linux系统的行为转换成为c（使用kprobe)并且编译成为kernel object然后运行。 

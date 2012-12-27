@@ -1,6 +1,5 @@
 * concurrency
-** 观点
-*** Concurrency Hazards: Solving 11 Likely Problems In Your Multithreaded Code
+** Concurrency Hazards: Solving 11 Likely Problems In Your Multithreaded Code
 http://msdn.microsoft.com/en-us/magazine/cc817398.aspx
 
 大概有下面这几点吧：

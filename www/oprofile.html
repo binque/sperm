@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="oprofile"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-26 10:29:02 CST"/>
+<meta name="generated" content="2012-12-27 23:07:22 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -140,15 +140,10 @@
 <h3 id="sec-1-1"><span class="section-number-3">1.1</span> OProfile简介</h3>
 <div class="outline-text-3" id="text-1-1">
 
-<p>Oprofile是用于Linux的若干种评测和性能监控工具中的一种。它可以工作在不同的体系结构上，
-包括IA32,IA64和AMD Athlon系列。它的开销小，将被包含在(Linux)2.6版的内核中。
+<p>Oprofile是用于Linux的若干种评测和性能监控工具中的一种。它可以工作在不同的体系结构上，包括IA32,IA64和AMD Athlon系列。它的开销小，将被包含在(Linux)2.6版的内核中。
 </p>
 <p>
-Oprofile可以帮助用户识别诸如循环的展开、高速缓存的使用率低、低效的类型转换和冗余操作、
-错误预测转移等问题。它收集有关处理器事件的信息，其中包括TLB的故障、停机、存储器访问、
-位于 DCU(数据高速缓存单元)中的总线路数、一个 DCU 故障的周期数，以及不可高速缓存的和可高速缓存的指令的获取数量。
-Oprofile是一种细粒度的工具，可以为指令集或者为函数、系统调用或中断处理例程收集采样。
-Oprofile 通过取样来工作。使用收集到的评测数据，用户可以很容易地找出性能问题。
+Oprofile可以帮助用户识别诸如循环的展开、高速缓存的使用率低、低效的类型转换和冗余操作、错误预测转移等问题。它收集有关处理器事件的信息，其中包括TLB的故障、停机、存储器访问、位于 DCU(数据高速缓存单元)中的总线路数、一个 DCU 故障的周期数，以及不可高速缓存的和可高速缓存的指令的获取数量。Oprofile是一种细粒度的工具，可以为指令集或者为函数、系统调用或中断处理例程收集采样。Oprofile 通过取样来工作。使用收集到的评测数据，用户可以很容易地找出性能问题。
 </p>
 </div>
 
@@ -190,22 +185,13 @@ AMD Family 10 Events <a href="http://oprofile.sourceforge.net/docs/amd-family10-
 
 
 <p>
-关于RTC模式和TimeInterrupt模式之间的差别并不是非常了解。RTC[RealTimeClock]和TimeInterrupt模式工作方式
-大致都是在底层开启一个定时器并且定时触发中断，然后知道当时PC的位置，然后把这段时间都作为这条PC
-所执行的时间。定位相对来说粗糙的，但是对于大部分的情况都是管用的。但是如果执行代码部分是屏蔽了中断的话，
-那么实际上这个部分是不会被profile的。
+关于RTC模式和TimeInterrupt模式之间的差别并不是非常了解。RTC[RealTimeClock]和TimeInterrupt模式工作方式。大致都是在底层开启一个定时器并且定时触发中断，然后知道当时PC的位置，然后把这段时间都作为这条PC所执行的时间。定位相对来说粗糙的，但是对于大部分的情况都是管用的。但是如果执行代码部分是屏蔽了中断的话，那么实际上这个部分是不会被profile的。
 </p>
 <p>
-硬件事件计数器模式需要CPU的支持。CPU内部维护一系列事件计数器。Profile针对某些事件把计数器设置为
-初始值比如C，然后一旦操作触发事件的话,那么计数器就会&ndash;。一旦计数器变为0的话，CPU内部就会触发一个不可屏蔽
-的中断(NMI/Non Maskable Interrupt)。这个时候我们了解到PC在什么位置，就把这条指令作为触发这个时间的指令。
-需要注意的是,如果计数器的C设置非常低的话,那么产生NMI就会非常频繁。这样会导致overhead过高，系统非常不稳定。
-使用硬件事件计数器的话，需要CPU开启APIC这个选项，否则允许指定参数的得不到采样结果。
+硬件事件计数器模式需要CPU的支持。CPU内部维护一系列事件计数器。Profile针对某些事件把计数器设置为初始值比如C，然后一旦操作触发事件的话,那么计数器就会&ndash;。一旦计数器变为0的话，CPU内部就会触发一个不可屏蔽的中断(NMI/Non Maskable Interrupt)。这个时候我们了解到PC在什么位置，就把这条指令作为触发这个时间的指令。需要注意的是,如果计数器的C设置非常低的话,那么产生NMI就会非常频繁。这样会导致overhead过高，系统非常不稳定。使用硬件事件计数器的话，需要CPU开启APIC这个选项，否则允许指定参数的得不到采样结果。
 </p>
 <p>
-上面三种模式都是基于采样的方式，理论上说采样方式得到的结果并不准确，但是实际工作很好。还需要注意就是，
-陷入中断时刻和发出中断时刻会存在一些误差，在这段时间内指令还在运行。也就是说发出中断之后，CPU可能继续执行了
-后面几条指令之后，才陷入中断得到的PC值就是不准确的。
+上面三种模式都是基于采样的方式，理论上说采样方式得到的结果并不准确，但是实际工作很好。还需要注意就是，陷入中断时刻和发出中断时刻会存在一些误差，在这段时间内指令还在运行。也就是说发出中断之后，CPU可能继续执行了后面几条指令之后，才陷入中断得到的PC值就是不准确的。
 </p>
 </div>
 
@@ -371,8 +357,7 @@ AMD Family 10 Events <a href="http://oprofile.sourceforge.net/docs/amd-family10-
 
 
 <p>
-执行一次opcontrol &ndash;start,所使用的参数就会记录在/root/.oprofile/daemonrc文件。效果就等同于
-首先调用opcontrol &ndash;setup,然后调用opcontrol &ndash;start.
+执行一次opcontrol &ndash;start,所使用的参数就会记录在/root/.oprofile/daemonrc文件。效果就等同于首先调用opcontrol &ndash;setup,然后调用opcontrol &ndash;start.
 </p>
 </div>
 
@@ -382,8 +367,7 @@ AMD Family 10 Events <a href="http://oprofile.sourceforge.net/docs/amd-family10-
 <h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> opreport</h4>
 <div class="outline-text-4" id="text-1-4-2">
 
-<p>opreport包含两类参数，一类是过滤参数用于通知应用打印出关于哪些方面的信息，一类
-是命令参数是关于如何打印出这方面的信息。
+<p>opreport包含两类参数，一类是过滤参数用于通知应用打印出关于哪些方面的信息，一类是命令参数是关于如何打印出这方面的信息。
 </p>
 <p>
 常用过滤参数如下，过滤参数值可以使用glob风格来指定：
@@ -438,7 +422,7 @@ AMD Family 10 Events <a href="http://oprofile.sourceforge.net/docs/amd-family10-
 <p>
 常用用法如下：
 </p><ul>
-<li>opreport -l image:??? -o profile.log //产生profile.log.其中???是image.
+<li>opreport -l image:&lt;image&gt; -o profile.log //产生profile.log.
 </li>
 </ul>
 
@@ -458,16 +442,10 @@ AMD Family 10 Events <a href="http://oprofile.sourceforge.net/docs/amd-family10-
 <li>-b/&ndash;base-dirs //将被strip掉的调试信息中源文件绝对路径前缀
 </li>
 <li>-d/&ndash;search-dirs //源文件搜索路径
-</li>
-</ul>
-
-<p>这两个选项配合使用场景是，如果我是用/tmp/a.cc编译出来的话，那么debug信息里面
-存放的就是/tmp/a.cc的路径。如果我们源代码在其他路径比如/home/tmp/a.cc的话，
-那么就不能够进行annotate.使用这两个参数这样我们可以指定-b /tmp -d /home/tmp,
-这样debug信息中首先将/tmp stripped掉，然后拿a.cc在/home/tmp下面搜索。
-</p>
 <ul>
-<li>-D/&ndash;demangle=none/normal/smart //对C++名字解构(normal)
+<li>这两个选项配合使用场景是，如果我是用/tmp/a.cc编译出来的话，那么debug信息里面存放的就是/tmp/a.cc的路径。如果我们源代码在其他路径比如/home/tmp/a.cc的话，那么就不能够进行annotate.
+</li>
+<li>这个问题可以使用上面两个参数解决。我们可以指定-b <i>tmp -d /home/tmp,这样debug信息中首先将/tmp stripped掉，然后拿a.cc在/home/tmp下面搜索。    - -D</i>&ndash;demangle=none/normal/smart //对C++名字解构(normal)
 </li>
 <li>-i/&ndash;include-symbols/-e/&ndash;exclude-symbols //符号选择
 </li>
@@ -487,9 +465,9 @@ AMD Family 10 Events <a href="http://oprofile.sourceforge.net/docs/amd-family10-
 <p>
 常用方法如下：
 </p><ul>
-<li>opannotate -a ??? &gt; profile.asm //产生汇编文件注释.profile.asm是结果.???是image.
+<li>opannotate -a &lt;image&gt; &gt; profile.asm //产生汇编文件注释.profile.asm是结果.
 </li>
-<li>opannotate -s &ndash;output-dir=. ??? //产生源文件注释.在当前目录下面产生.???是image.
+<li>opannotate -s &ndash;output-dir=. &lt;image&gt; //产生源文件注释.在当前目录下面产生.
 </li>
 </ul>
 
@@ -503,69 +481,23 @@ AMD Family 10 Events <a href="http://oprofile.sourceforge.net/docs/amd-family10-
 <h3 id="sec-1-5"><span class="section-number-3">1.5</span> OProfile脚本</h3>
 <div class="outline-text-3" id="text-1-5">
 
-<p>为了方便使用oprofile编写了下面这个脚本
+<p><b>NOTE(dirlt):依然没有成功profile过kenerl！</b>
 </p>
-
-
-
-<pre class="src src-Python">#!/usr/bin/env python
-#coding:gbk
-#copy[write] by dirlt(dirtysalt1987@gmail.com)
-
-import string
-import re
-import os
-import sys
-
-class Profiler:
-    def __init__(self,
-                 image,
-                 report,
-                 srcdir,
-                 asmfile,
-                 cmd):
-        self._image=os.path.realpath(image)
-        self._cmd=cmd
-        self._report=report
-        self._srcdir=srcdir
-        self._asmfile=asmfile
-
-    def run(self):
-        content=[]
-        #&#28165;&#38500;&#21407;&#26469;&#25968;&#25454;..
-        content.append(<span style="color: #ffff00;">"sudo opcontrol --reset"</span>)
-        #&#21551;&#21160;oprofile
-        content.append(<span style="color: #ffff00;">"sudo opcontrol --no-vmlinux --separate=lib --start --image=%s"</span>%(self._image))
-        #&#21551;&#21160;&#27979;&#35797;&#31243;&#24207;..
-        content.append(self._cmd)
-        #dump oprofile
-        content.append(<span style="color: #ffff00;">"sudo opcontrol --dump"</span>)
-        #&#20851;&#38381;oprofile
-        content.append(<span style="color: #ffff00;">"sudo opcontrol --shutdown"</span>)
-        #&#20135;&#29983;&#25253;&#34920;
-        content.append(<span style="color: #ffff00;">"sudo opreport -l image:%s -o %s"</span>%(self._image,self._report))
-        #&#20135;&#29983;&#28304;&#20195;&#30721;
-        content.append(<span style="color: #ffff00;">"sudo opannotate -s --output-dir=%s %s"</span>%(self._srcdir,self._image))
-        #&#20135;&#29983;&#27719;&#32534;&#20195;&#30721;
-        content.append(<span style="color: #ffff00;">"sudo opannotate -a %s &gt; %s"</span>%(self._image,self._asmfile))
-
-        for x in content:
-            print x
-            os.system(x)
-        return True
-
-def main():
-    if(len(sys.argv)&lt;6):
-        print <span style="color: #ffff00;">"[&#20316;&#29992;]&#36816;&#34892;oprofile&#26469;&#20998;&#26512;&#31243;&#24207;&#30340;&#28909;&#28857;"</span>
-        print <span style="color: #ffff00;">"usage:%s image[elf-file] report srcdir asmfile command"</span>%sys.argv[0]
-        exit(0)
-    p=Profiler(sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4],string.join(sys.argv[5:]))
-    p.run()
-
-if __name__==<span style="color: #ffff00;">"__main__"</span>:
-    main()
-
-</pre>
+<p>
+<b>NOTE（dirlt）：另外觉得这个东西似乎长久没有整理，以后可能似乎不太会使用这个东西了</b>
+</p>
+<ul>
+<li>具体代码可以参见 utils/oprof
+</li>
+<li>只是对用户态应用程序做profile.
+</li>
+<li>生成profile汇总报表
+</li>
+<li>对源代码进行标注
+</li>
+<li>对汇编代码进行标注
+</li>
+</ul>
 
 
 </div>
@@ -586,8 +518,7 @@ if __name__==<span style="color: #ffff00;">"__main__"</span>:
 <p><a href="http://oprofile.sourceforge.net/doc/detailed-parameters.html#timer">http://oprofile.sourceforge.net/doc/detailed-parameters.html#timer</a>
 </p>
 <p>
-opcontrol并没有配置可以设置time interrupt模式，如果需要切换成为time interrupt
-模式的话，那么可以使用下面两条命令：
+opcontrol并没有配置可以设置time interrupt模式，如果需要切换成为time interrupt模式的话，那么可以使用下面两条命令：
 </p>
 
 
@@ -606,9 +537,7 @@ because OProfile is in timer mode.
 </pre>
 
 <p>
-那么说明之前使用oprofile同学使用的是性能计数器模式，而我们现在需要切换回time
-interrupt模式，所以出现冲突。我们可以首先删除/root/.oprofile/daemonrc这个文件，
-然后重新操作即可。
+那么说明之前使用oprofile同学使用的是性能计数器模式，而我们现在需要切换回time interrupt模式，所以出现冲突。我们可以首先删除/root/.oprofile/daemonrc这个文件，然后重新操作即可。
 </p></div>
 </div>
 </div>
@@ -616,7 +545,7 @@ interrupt模式，所以出现冲突。我们可以首先删除/root/.oprofile/d
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-26 10:29:02 CST</p>
+<p class="date">Date: 2012-12-27 23:07:22 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
