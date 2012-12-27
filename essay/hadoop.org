@@ -687,9 +687,10 @@ public abstract class RecordReader<KEYIN, VALUEIN> implements Closeable {
        - reporter:counter:<group>,<counter>,<amount>
        - reporter:status:<message>
    - 连接
-     - map端连接 *TODO（dirlt）：try it out*
+     - map端连接
        - 必须确保多路输入文件的reduce数量相同以及键相同。
-       - 使用ComposieInputFormat来运行map端连接。
+       - 使用CompositeInputFormat来运行map端连接。
+       - *NOTE（dirlt)；不过我稍微看了一下代码，实现上其实也是针对输入文件对每条记录读取，然后进行join包括inner或者是outer。感觉场景会有限，而且效率不会太高*
    - 分布式缓存
      - 使用-files以及-archives来添加缓存文件
      - 也可以使用DistributedAPI来完成之间事情
@@ -703,7 +704,11 @@ public abstract class RecordReader<KEYIN, VALUEIN> implements Closeable {
        - 缓存文件存放在${mapred.local.dir}/taskTracker/archive下面，但是通过软连接指向工作目录
        - 缓存大小通过local.cache.size来配置
    - MapReduce库类
-     - ChainMapper/ChainReducer 能够在一个mapper以及reducer里面运行多次mapper以及reducer *TODO(dirlt):try it out*
+     - ChainMapper/ChainReducer 能够在一个mapper以及reducer里面运行多次mapper以及reducer
+       - ChainMapper 允许在Map阶段，多个mapper组成一个chain,然后连续进行调用
+       - ChainReducer 允许在Reuduce阶段，reducer完成之后执行一个mapper chain.
+       - 最终达到的效果就是 M+ -> R -> M* （1个或者是多个mapper, 一个reducer，然后0个或者是多个mapper)
+       - *TODO(dirlt):这样做倒是可以将各个mapper组合起来用作adapter.*
 
 *** 构建Hadoop集群
    - 很多教程说hadoop集群需要配置ssh,但是配置这个前提是你希望使用start-all.sh这个脚本来启动集群

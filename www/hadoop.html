@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hadoop"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-26 23:48:02 CST"/>
+<meta name="generated" content="2012-12-27 12:13:12 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -1860,11 +1860,13 @@ public abstract class RecordReader&lt;KEYIN, VALUEIN&gt; implements Closeable {
 </li>
 <li>连接
 <ul>
-<li>map端连接 <b>TODO（dirlt）：try it out</b>
+<li>map端连接
 <ul>
 <li>必须确保多路输入文件的reduce数量相同以及键相同。
 </li>
-<li>使用ComposieInputFormat来运行map端连接。
+<li>使用CompositeInputFormat来运行map端连接。
+</li>
+<li><b>NOTE（dirlt)；不过我稍微看了一下代码，实现上其实也是针对输入文件对每条记录读取，然后进行join包括inner或者是outer。感觉场景会有限，而且效率不会太高</b>
 </li>
 </ul>
 
@@ -1910,7 +1912,18 @@ public abstract class RecordReader&lt;KEYIN, VALUEIN&gt; implements Closeable {
 </li>
 <li>MapReduce库类
 <ul>
-<li>ChainMapper/ChainReducer 能够在一个mapper以及reducer里面运行多次mapper以及reducer <b>TODO(dirlt):try it out</b>
+<li>ChainMapper/ChainReducer 能够在一个mapper以及reducer里面运行多次mapper以及reducer
+<ul>
+<li>ChainMapper 允许在Map阶段，多个mapper组成一个chain,然后连续进行调用
+</li>
+<li>ChainReducer 允许在Reuduce阶段，reducer完成之后执行一个mapper chain.
+</li>
+<li>最终达到的效果就是 M+ -&gt; R -&gt; M* （1个或者是多个mapper, 一个reducer，然后0个或者是多个mapper)
+</li>
+<li><b>TODO(dirlt):这样做倒是可以将各个mapper组合起来用作adapter.</b>
+</li>
+</ul>
+
 </li>
 </ul>
 
@@ -2268,7 +2281,7 @@ public abstract class RecordReader&lt;KEYIN, VALUEIN&gt; implements Closeable {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-26 23:48:02 CST</p>
+<p class="date">Date: 2012-12-27 12:13:12 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
