@@ -64,6 +64,7 @@ file:./images/valve-logo.jpg
    - [[file:recommender-system.org][recommender-system]] 一些关于推荐系统东西，里面大部分都是介绍性质的文章。
    - [[file:systemtap.org][systemtap]] 通过将观察语句编译成为内核驱动，和linux内核提供的接口匹配，来深度地观察linux操作系统。
    - [[file:gperftools.org][gperftools]] google的性能分析工具，[[file:tcmalloc.org][tcmalloc]] 实现也在里面。用来观察应用程序似乎是个不错的选择。
+   - [[file:perf.org][perf]] linux系统自带的性能分析工具，支持硬件以及软件事件计数器，支持profile kernel以及user code.
 
 ** Network Programming
    - [[file:unp.org][unp]] Unix网络编程(Unix Network Programming),W. Richard Stevens的又一神作。笔记里面只是对于TCP原理有比较详细讨论，这部分笔记也包含了TCP Illustrated v1里面和TCP相关的章节内容。对于编程方面也着重TCP socket使用，毕竟在大部分应用场景下面我们选用TCP模型更多，并且TCP里面有很多非常琐碎的知识。
