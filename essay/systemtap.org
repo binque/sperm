@@ -14,12 +14,14 @@ systemtap的工作原理是使用linux提供的kprobe接口 *TODO(dirlt):more ab
 systemtap使用一种触发式的工作方式，通过安装探针（probe）来监控系统的行为，一旦探针事件出现的话就会触发对应的代码。代码使用自己定义的语言，和C语言非常类似。
 
 file:./images/systemtap-prepare-workflow.gif
+
    - stap 流程从将脚本转换成解析树开始 (pass 1)
    - 然后使用细化（elaboration）步骤 (pass 2) 中关于当前运行的内核的符号信息解析符号
    - 接下来转换流程将解析树转换成 C 源代码 (pass 3) 并使用解析后的信息和 tapset 脚本（SystemTap 定义的库，包含有用的功能）
    - stap 的最后步骤是构造使用本地内核模块构建进程的内核模块 (pass 4)。
 
 file:./images/systemtap-run-workflow.gif
+
    - staprun 负责启动kernel object
    - stapio 负责收集kernel object的输出
    - 执行期间中断的话将执行清除进程，卸载模块并退出所有相关的实用程序
