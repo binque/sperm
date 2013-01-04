@@ -12,7 +12,7 @@
 ** TODO RSS paper planes
 ** TODO RSS All things Distributed.
 ** TODO 阅读RSS订阅（when free）
-** TODO 《娱乐至死》、《乌合之众》、《失控》,浅薄
+** TODO《失控》,《浅薄》
 ** TODO 老婆健身计划以及怀孕
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
@@ -29,7 +29,7 @@
 ** TODO 安装一些生活类型服务
 ** TODO 阅读systemtap论文，简单阅读=D
    - 重新整理
-   - archpaper
+   - archpaper DONE
    - red paper
    - 
 ** TODO 试试skype
