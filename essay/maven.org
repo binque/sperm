@@ -342,6 +342,7 @@ nexus有下面几种repo：
      - mvn test -Dtest=com.dirlt.java.mr.TestRunMultipleOutputs
      - mvn test -Dtest=com.dirlt.java.mr.TestRunMultipleOutputs#testSample 
      - -Dmaven.test.skip=true 跳过单元测试
+   - mvn process-test-resources. 将src/test/resources拷贝到target/test-classes目录下面作为测试的资源文件
    - mvn dependency
      - mvn dependency:copy-dependencies 将依赖的jar copy到target/dependency目录下面
      - mvn dependency:unpack-dependencies 和上面一样但是会unpack这些jar

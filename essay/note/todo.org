@@ -37,5 +37,7 @@
 ** TODO 尝试编写多个table输入的情况
 ** TODO 博弈论学习
 ** TODO clojure
-** TODO gz2lzo的改造包括单侧，以及appuserstat的改造
+** TODO gz2lzo的改造包括单侧
+   - 上线准备，无缝替换
+** TODO 以及appuserstat的改造
 ** TODO 整理《影响力》 

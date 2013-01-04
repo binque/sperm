@@ -1,5 +1,6 @@
 package com.dirlt.java.mr;
 
+import com.hadoop.mapreduce.LzoTextInputFormat;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -9,7 +10,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import java.io.IOException;
@@ -21,9 +21,9 @@ import java.io.IOException;
  * Time: 12:13 PM
  * To change this template use File | Settings | File Templates.
  */
-public class ReadGZipInput {
-    public static final String CLASS_NAME = ReadGZipInput.class.getSimpleName();
-    private static final String kInputFileName = ReadGZipInput.class.getResource("/gz").getPath();
+public class ReadLzoInput {
+    public static final String CLASS_NAME = ReadLzoInput.class.getSimpleName();
+    private static final String kInputFileName = ReadLzoInput.class.getResource("/lzo").getPath();
     private static final String kOutputFileName = "/tmp/out";
 
     public static class _Mapper extends Mapper<LongWritable, Text, NullWritable, NullWritable> {
@@ -51,7 +51,7 @@ public class ReadGZipInput {
         // setup environment.
         Job job = new Job(conf);
         job.setJobName(jobName);
-        job.setJarByClass(ReadGZipInput.class);
+        job.setJarByClass(ReadLzoInput.class);
 
         // mapper option.
         job.setMapperClass(_Mapper.class);
@@ -62,7 +62,7 @@ public class ReadGZipInput {
         job.setNumReduceTasks(0); // just one reducer.
 
         // input option.
-        job.setInputFormatClass(TextInputFormat.class);
+        job.setInputFormatClass(LzoTextInputFormat.class);
         FileInputFormat.setInputPaths(job, kInputFileName);
 
         // output option.
@@ -73,6 +73,8 @@ public class ReadGZipInput {
 
     public static void main(String[] args) throws Exception {
         Configuration configuration = new Configuration();
+        configuration.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.GzipCodec,com.hadoop.compression.lzo.LzopCodec");
+        configuration.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
         Job job = configureJob(configuration, args);
         job.submit();
         job.waitForCompletion(true);

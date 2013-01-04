@@ -53,6 +53,26 @@ def raiseHTTPRequest(url,data=None,timeout=3):
     f=urllib2.urlopen(url,data,timeout)
     return f.read()
 
+def printHTTPLatency(url,times=3,timeout=3):
+    count  = 0
+    print '----------------------------------------'
+    print 'testing http latency => %s'%(url)
+    scale = 3
+    for i in range(0,times):
+        start=time.time()
+        try:
+            raiseHTTPRequest(url,timeout=timeout)
+        except urllib2.URLError,e:
+            print '[%d]: NaN sec'%(i)
+            count += timeout * scale # approximately.
+            if (scale < 128):
+                scale *= 2
+            continue
+        end=time.time()
+        print '[%d]: %.2lf sec'%(i,end-start)
+        count += (end-start)
+    print 'avg: %.2lf sec'%(count * 1.0 / times)
+
 def exceptionToString(sep='\n'):
     exc_type, exc_value, exc_traceback = sys.exc_info()
     return sep.join(traceback.format_exception(exc_type, exc_value, exc_traceback))
@@ -64,5 +84,6 @@ if __name__=='__main__':
         raise Exception('hello')
     except:
         print exceptionToString()
-
+    printHTTPLatency('http://www.baidu.com')
+    
         
