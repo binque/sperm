@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="mapred"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-12-26 10:29:07 CST"/>
+<meta name="generated" content="2013-01-05 11:39:35 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -509,9 +509,59 @@ Let’s walk through an application execution sequence (steps are illustrated in
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-1-2">编写proto文件<br/>
-首先创建proto文件，比如message.proto
+<li id="sec-1-3-1-2">使用lzo<br/>
+关于如何使用lzo可以参看代码示例， com.dirlt.java.mr.ReadLzoInput . 下面几点需要说明：
+<ul>
+<li>LzoTextInputFormat用来处理lzo压缩的文本文件，
+<ul>
+<li>hadoop-lzo本身没有自带LzoTextOutputFormat，这样的话之能够输出TextOutputFormat然后通过lzop压缩
+</li>
+<li><b>elephant-bird提供了很多额外的InputFormat/OutputFormat.</b>
+</li>
+</ul>
 
+</li>
+<li>如果使用本地测试集群的话，那么需要提供lzo encoder/decoder. 
+<ul>
+<li>Configuration conf = new Configuration(); // 如果是本地测试集群的话，那么是没有读取core-site.xml的，因此也就是没有编码解码信息，需要通过下面语句提供
+</li>
+<li>conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.GzipCodec,com.hadoop.compression.lzo.LzopCodec");
+</li>
+<li>conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
+</li>
+</ul>
+
+</li>
+<li>LzoIndexer.main(new String[]{kOutputFileName}); // 如果需要在程序里面进行indexer的话，那么可以直接调用LzoIndexer
+<ul>
+<li>如果是分布式的话可以调用 DistributedLzoIndexer.main
+</li>
+<li>当然也可以按照下面的方法通过程序调用
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+<p>
+之后在输出目录下面会存在很多lzo文件，但是这些文件并不能够直接作为输入使用（因为hadoop不知道如何对这些lzo文件进行切分），需要对这些lzo文件进行索引。使用下面的命令来进行索引：
+</p><ul>
+<li>hadoop jar /usr/lib/hadoop/lib/hadoop-lzo-0.4.14.jar com.hadoop.compression.lzo.DistributedLzoIndexer &lt;output-dir&gt;
+</li>
+</ul>
+
+<p>完成之后对于每一个lzo文件都会存在一个.index文件。如果重复运行上面命令的话，会检查.index文件是否存在，如果存在的话那么就不会重新进行索引。
+</p>
+</li>
+</ul>
+<ul>
+<li id="sec-1-3-1-3">配合protobuf<br/>
+elephant-bird实现了protobuf+lzo组合使用方式。
+
+<p>
+首先创建proto文件，比如message.proto
+</p>
 
 
 <pre class="example">package com.dirlt.java.mr.proto;
@@ -594,45 +644,8 @@ message Message {
 </pre>
 
 
-</li>
-</ul>
-<ul>
-<li id="sec-1-3-1-3">使用lzo<br/>
-关于如何使用lzo可以参看代码示例， com.dirlt.java.mr.UseLzoProtobuf . 下面几点需要说明：
-<ul>
-<li>如果输入为lzo文件的话，那么类型是ProtobufWritable&lt;M&gt;（泛型），如果需要取值的话必须通过setConverter提供类信息
-</li>
-<li>如果使用本地测试集群的话，那么需要提供lzo encoder/decoder. 
-<ul>
-<li>Configuration conf = new Configuration(); // 如果是本地测试集群的话，那么是没有读取core-site.xml的，因此也就是没有编码解码信息，需要通过下面语句提供
-</li>
-<li>conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.GzipCodec,com.hadoop.compression.lzo.LzopCodec");
-</li>
-<li>conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
-</li>
-</ul>
-
-</li>
-<li>LzoIndexer.main(new String[]{kOutputFileName}); // 如果需要在程序里面进行indexer的话，那么可以直接调用LzoIndexer
-<ul>
-<li>如果是分布式的话可以调用 DistributedLzoIndexer.main
-</li>
-<li>当然也可以按照下面的方法通过程序调用
-</li>
-</ul>
-
-</li>
-</ul>
-
-
 <p>
-之后在输出目录下面会存在很多lzo文件，但是这些文件并不能够直接作为输入使用（因为hadoop不知道如何对这些lzo文件进行切分），需要对这些lzo文件进行索引。使用下面的命令来进行索引：
-</p><ul>
-<li>hadoop jar /usr/lib/hadoop/lib/hadoop-lzo-0.4.14.jar com.hadoop.compression.lzo.DistributedLzoIndexer &lt;output-dir&gt;
-</li>
-</ul>
-
-<p>完成之后对于每一个lzo文件都会存在一个.index文件。如果重复运行上面命令的话，会检查.index文件是否存在，如果存在的话那么就不会重新进行索引。
+关于如何使用lzo+protobuf可以参看代码示例， com.dirlt.java.mr.UseLzoProtobuf . 值得注意的是如果输入为lzo文件的话，那么类型是ProtobufWritable&lt;M&gt;（泛型），如果需要取值的话必须通过setConverter提供类信息。
 </p>
 </li>
 </ul>
@@ -765,7 +778,7 @@ message Message {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-12-26 10:29:07 CST</p>
+<p class="date">Date: 2013-01-05 11:39:35 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

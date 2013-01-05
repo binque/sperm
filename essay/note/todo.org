@@ -41,7 +41,4 @@
    - 上线准备，无缝替换
 ** TODO 以及appuserstat的改造
 ** TODO 整理《影响力》 
-** TODO 总结lzo使用
-** TODO org-mode的pic gallery/或者是编写什么html方式可以写好。
-   - 如果可以的话，编写一个程序做成缩图模式以及完全模式。
-** TODO 韭菜炒鸡蛋，西红柿鸡蛋
+** TODO 编写脚本用来做图片缩放，固定要等比例大小

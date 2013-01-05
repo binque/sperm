@@ -27,8 +27,9 @@ public class ReadLzoInput {
     private static final String kOutputFileName = "/tmp/out";
 
     public static class _Mapper extends Mapper<LongWritable, Text, NullWritable, NullWritable> {
+
         @Override
-        public void map(LongWritable key, Text value, Context context) {
+        public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
             System.out.println(value.toString());
         }
     }
