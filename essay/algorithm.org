@@ -1,4 +1,6 @@
 * algorithm
+#+OPTIONS: H:5
+
 ** 安装和配置topcoder
 安装topcoder非常简单： 
    - 确认安装好javaws，因为topcoder客户端是一个java applet
@@ -27,7 +29,7 @@
 
 继续点击Configure选项，在General这个部分基本上没有什么需要修改的：
    - read/write problem to ./TopCoder/code # 将题目保存到TopCoder/code目录里面
-   - 
+   - *TODO(dirlt):more*
 然后就是配置Code Template。如果使用C++的话，那么可以考虑使用下面的模板
 #+BEGIN_SRC C++
 /* coding:utf-8

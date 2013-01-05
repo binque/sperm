@@ -372,7 +372,7 @@
 ;; /text/ italic mode.
 ;; _text_ underline mode.
 ;; #<<anchor>>
-;; #+STYLE：<link rel="stylesheet" type="text/css" href="./org-manual.css" />
+;; #+STYLE: <link rel="stylesheet" type="text/css" href="./site.css" />
 (setq load-path (cons "~/.emacs.d/org-7.9.2/" load-path))
 (require 'org-install)
 (require 'org-publish)
@@ -393,11 +393,13 @@
          :base-directory "~/github/sperm/essay"
          :publishing-directory "~/github/sperm/www/"
          :section-numbers 't
+	 :style "<link rel=\"stylesheet\" type=\"text/css\" href=\"./site.css\" />"
          :table-of-contents 't)
         ("note"
          :base-directory "~/github/sperm/essay/note"
          :publishing-directory "~/github/sperm/www/note"
          :section-numbers 't
+	 :style "<link rel=\"stylesheet\" type=\"text/css\" href=\"../site.css\" />"
          :table-of-contents 't)))
 
 ;; auto indent
