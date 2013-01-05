@@ -114,6 +114,16 @@ http://codahale.com/you-cant-sacrifice-partition-tolerance/
 ** The Anatomy Of The Google Architecture
 http://www.slideshare.net/hasanveldstra/the-anatomy-of-the-google-architecture-fina-lv11
 
+The Google Philosophy
+   - Jedis build their own lightsabres (the MS Eat your own Dog Food)
+   - Parallelize Everything
+   - Distribute Everything (to atomic level if possible)
+   - Compress Everything (CPU cheaper than bandwidth) *优化带宽*
+   - Secure Everything (you can never be too paranoid)
+   - Cache (almost) Everything
+   - Redundantize Everything (in triplicate usually)
+   - Latency is VERY evil
+
 
 
 
