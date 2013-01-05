@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="mapred"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-01-05 11:39:35 CST"/>
+<meta name="generated" content="2013-01-05 16:09:12 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -693,6 +693,55 @@ message Message {
 
 </li>
 </ul>
+<ul>
+<li id="sec-1-3-2-2">MultipleTableInputFormat<br/>
+<ul>
+<li>参考代码 com.dirlt.java.mr.RunMultipleInputs2
+<ul>
+<li>需要配合MultipleInputs使用
+</li>
+<li>使用这个InputFormat可以同时支持多文件输入和多表输入
+</li>
+<li>多表输入还支持在一个table上面使用多个scan.
+</li>
+</ul>
+
+</li>
+<li>大致原理如下：
+<ul>
+<li>MultipleInputs底层使用Delegate模式，将inputFormat以及mapper和Path关联，然后将InputFormat实例化来对path进行切片得到InputSplit以及RecordReader.      
+</li>
+<li>为了能够和MultipleInputs兼容使用，代码实现上将TableInput转换成为String然后表示成为Path（TableInput包括tableName以及多个scan对象）
+<ul>
+<li>string格式为 &lt;tableName&gt; ! hexString(scan) ! hexString(scan) 
+</li>
+<li>从path中将TableInput字符串分离的代码是 path.toString().substring(path.getParent().toString().length() + 1); <b>TODO（dirlt）：对于大部分的情况是可以正常handle的</b>
+</li>
+</ul>
+
+</li>
+<li>MultipleTableInputFormat进行切片的时候将path取出内容进行解析，分离出TableInput出来，然后调用TableInputFormatBase的分片策略进行分片
+<ul>
+<li>setConf空实现是因为在ReflectionUtils.newInstance创建实例的时候会调用，而MultipleTableInputFormat本身没有使用到。
+</li>
+</ul>
+
+</li>
+<li>MultipleTableSplit的引入主要是因为TableSplit没有包含scan对象，而这个对象需要在TableRecordReader里面使用到。
+<ul>
+<li>InputSplit需要实现序列化的接口，因为切片信息生成是JobTracker完成保存在hdfs的，然后TaskTracker从hdfs中读取。
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</li>
+</ul>
 </div>
 
 </div>
@@ -778,7 +827,7 @@ message Message {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-01-05 11:39:35 CST</p>
+<p class="date">Date: 2013-01-05 16:09:12 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

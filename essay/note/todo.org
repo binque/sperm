@@ -34,7 +34,6 @@
    - 
 ** TODO 试试skype
 ** TODO 分析htable代码put.
-** TODO 尝试编写多个table输入的情况
 ** TODO 博弈论学习
 ** TODO clojure
 ** TODO gz2lzo的改造包括单侧

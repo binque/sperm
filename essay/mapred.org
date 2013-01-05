@@ -244,6 +244,21 @@ public class MessageLzoProtobufWritable extends ProtobufWritable<MessageProtos1.
      - DelegateInputFormat根据每个className初始化实例并且将inputPath给这个实例，这些对于FileInputFormat工作很好
      - 而对于TableInputFormat没有使用这个inputPath，而是直接读取configuration里面设置的TableOutputFormat.OUTPUT_TABLE这个值 
 
+**** MultipleTableInputFormat
+   - 参考代码 com.dirlt.java.mr.RunMultipleInputs2
+     - 需要配合MultipleInputs使用
+     - 使用这个InputFormat可以同时支持多文件输入和多表输入
+     - 多表输入还支持在一个table上面使用多个scan.
+   - 大致原理如下：
+     - MultipleInputs底层使用Delegate模式，将inputFormat以及mapper和Path关联，然后将InputFormat实例化来对path进行切片得到InputSplit以及RecordReader.      
+     - 为了能够和MultipleInputs兼容使用，代码实现上将TableInput转换成为String然后表示成为Path（TableInput包括tableName以及多个scan对象）
+       - string格式为 <tableName> ! hexString(scan) ! hexString(scan) 
+       - 从path中将TableInput字符串分离的代码是 path.toString().substring(path.getParent().toString().length() + 1); *TODO（dirlt）：对于大部分的情况是可以正常handle的*
+     - MultipleTableInputFormat进行切片的时候将path取出内容进行解析，分离出TableInput出来，然后调用TableInputFormatBase的分片策略进行分片
+       - setConf空实现是因为在ReflectionUtils.newInstance创建实例的时候会调用，而MultipleTableInputFormat本身没有使用到。
+     - MultipleTableSplit的引入主要是因为TableSplit没有包含scan对象，而这个对象需要在TableRecordReader里面使用到。
+       - InputSplit需要实现序列化的接口，因为切片信息生成是JobTracker完成保存在hdfs的，然后TaskTracker从hdfs中读取。
+
 *** 多路输出
 **** MultipleOutputs
    - 参考代码 com.dirlt.java.mr.RunMultipleOutputs
