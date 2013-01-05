@@ -3,6 +3,7 @@
 # do publish
 emacs --batch --script publish.el
 ./appbdstat # append baidu stat(tongji.baidu.com)
+cp org-manual.css ../www/
 cd ../www/
 rm -rf images
 ln -s ../essay/images/ images

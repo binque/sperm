@@ -372,6 +372,7 @@
 ;; /text/ italic mode.
 ;; _text_ underline mode.
 ;; #<<anchor>>
+;; #+STYLE：<link rel="stylesheet" type="text/css" href="./org-manual.css" />
 (setq load-path (cons "~/.emacs.d/org-7.9.2/" load-path))
 (require 'org-install)
 (require 'org-publish)
@@ -383,7 +384,7 @@
           (lambda () (setq truncate-lines nil)))
 (setq org-log-done t)
 ;;(setq org-agenta-files (file-expand-wildcards "~/github/sperm/essay/*.org"))
-(setq org-agenta-files "~/github/sperm/essay/Plan.org")
+;;(setq org-agenta-files "~/github/sperm/essay/plan.org")
 (setq org-export-have-math nil)
 (setq org-use-sub-superscripts (quote {}))
 (setq org-export-author-info nil)
