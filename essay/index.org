@@ -20,7 +20,6 @@ file:./images/valve-logo.jpg
 我想找到自己最爱的编程语言，然后快速地写出有用的程序。(现在自认为还没有做到这点,what a shame!)
    - linkedin http://www.linkedin.com/in/dirlt
    - 邮箱 [[mailto:dirtysalt1987@gmail.com][dirtysalt1987@gmail.com]]
-   - 博客 http://dirlt.com/blog
    - 新浪微博 http://weibo.com/dirlt
    - github https://github.com/dirtysalt
 
