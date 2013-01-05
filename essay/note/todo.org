@@ -5,9 +5,6 @@
     - http://www.rethinkdb.com/blog/
 ** TODO 阅读完Core Java I
 ** TODO dynamo, cassandra, dynamo文章似乎有点难懂，可能需要查阅一下资料才行
-** TODO The anatomy of google
-   - 同时阅读google机房建设文章
-   - post to disbuss board.
 ** TODO RSS system we make
 ** TODO RSS paper planes
 ** TODO RSS All things Distributed.
