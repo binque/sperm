@@ -31,7 +31,6 @@
    - 重新整理
    - archpaper DONE
    - red paper
-   - 
 ** TODO 试试skype
 ** TODO 分析htable代码put.
 ** TODO 博弈论学习
