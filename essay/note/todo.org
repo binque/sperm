@@ -9,7 +9,7 @@
 ** TODO RSS paper planes
 ** TODO RSS All things Distributed.
 ** TODO 阅读RSS订阅（when free）
-** TODO《失控》,《浅薄》
+** TODO 《失控》,《浅薄》
 ** TODO 老婆健身计划以及怀孕
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
@@ -35,5 +35,10 @@
 ** TODO gz2lzo的改造包括单侧
    - 上线准备，无缝替换
 ** TODO 以及appuserstat的改造
+   - do profile.
 ** TODO 整理《影响力》 
 ** TODO 编写脚本用来做图片缩放，固定要等比例大小
+** TODO 防辐射
+** TODO 豆浆等材料
+** TODO 预定号码
+   - http://www.bjguahao.gov.cn/comm/yyks.php?hpid=142 *是否足够近？*
