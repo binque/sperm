@@ -3,7 +3,6 @@
     - http://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis
     - http://www.slideshare.net/DstroyAllModels/riak-training-session-surge-2011
     - http://www.rethinkdb.com/blog/
-** TODO 阅读完Core Java I
 ** TODO dynamo, cassandra, dynamo文章似乎有点难懂，可能需要查阅一下资料才行
 ** TODO RSS system we make
 ** TODO RSS paper planes
@@ -11,9 +10,6 @@
 ** TODO 阅读RSS订阅（when free）
 ** TODO 《失控》,《浅薄》
 ** TODO 老婆健身计划以及怀孕
-** TODO gfs2(Colossus)
-** TODO oceanbase
-   - 阅读设计文档
 ** TODO netbsd/plan9
 ** TODO 如何优化当前dp任务
 ** TODO 详细说明分群任务(这个可能需要整体优化）
@@ -24,12 +20,8 @@
 ** TODO 找中医并且调理身体
 ** TODO 更换Android手机（MX2？）
 ** TODO 安装一些生活类型服务
-** TODO 试试skype
-** TODO 分析htable代码put.
 ** TODO 博弈论学习
 ** TODO clojure
-** TODO gz2lzo的改造包括单侧
-   - 上线准备，无缝替换
 ** TODO 以及appuserstat的改造
    - do profile.
 ** TODO 整理《影响力》 
@@ -37,4 +29,14 @@
 ** TODO 防辐射
 ** TODO 豆浆等材料
 ** TODO 挂号
-** TODO java profile / mapreduce profile.
+
+
+** TODO gfs2(Colossus)
+** TODO oceanbase
+   - 阅读设计文档
+** TODO mapreduce profile.
+** TODO 修改AppGroupStatMR.
+** TODO 阅读完Core Java I
+** TODO gz2lzo的改造包括单测
+   - 上线准备，无缝替换
+** TODO 分析htable代码put.
