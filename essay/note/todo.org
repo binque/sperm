@@ -24,10 +24,6 @@
 ** TODO 找中医并且调理身体
 ** TODO 更换Android手机（MX2？）
 ** TODO 安装一些生活类型服务
-** TODO 阅读systemtap论文，简单阅读=D
-   - 重新整理
-   - archpaper DONE
-   - red paper
 ** TODO 试试skype
 ** TODO 分析htable代码put.
 ** TODO 博弈论学习
@@ -40,5 +36,5 @@
 ** TODO 编写脚本用来做图片缩放，固定要等比例大小
 ** TODO 防辐射
 ** TODO 豆浆等材料
-** TODO 预定号码
-   - http://www.bjguahao.gov.cn/comm/yyks.php?hpid=142 *是否足够近？*
+** TODO 挂号
+** TODO java profile / mapreduce profile.

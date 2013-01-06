@@ -95,7 +95,6 @@ public class MultipleTableInputFormat extends InputFormat<ImmutableBytesWritable
         for (Path path : paths) {
             // actually it's not a real path. we just want to use Path object to hold the info.
             String s = path.toString().substring(path.getParent().toString().length() + 1);
-            System.out.println(path.toUri());
             Object[] objects = convertStringToTableInput(s);
             String tableName = (String) objects[0];
             HTable table = new HTable(context.getConfiguration(), tableName);
