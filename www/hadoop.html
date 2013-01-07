@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hadoop"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-01-06 19:36:10 CST"/>
+<meta name="generated" content="2013-01-07 18:10:47 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -1306,7 +1306,36 @@ job，task and attempt
 </li>
 <li>分析任务
 <ul>
-<li><b>TODO（dirlt）：</b>
+<li>JobConf允许设置profile参数 <b>NOTE（dirlt）：新的接口里面JobConf-&gt;JobContext-&gt;Job，Job没有这些接口，但是可以通过Configuration来设置</b>
+<ul>
+<li>setProfileEnabled 打开profile功能，默认false，属性 mapred.task.profile
+</li>
+<li>setProfileParams 设置profile参数
+<ul>
+<li>属性 mapred.task.profile.params
+</li>
+<li>默认使用hprof -agentlib:hprof=cpu=samples,heap=sites,force=n,thread=y,verbose=n,file=%s"
+</li>
+<li>其中%s会替换成为profile输出文件
+</li>
+<li><b>NOTE（dirlt）：其实这里似乎也可以设置成为jmxremote来通过jvisualvm来调试</b>
+</li>
+</ul>
+
+</li>
+<li>setProfileTaskRange(boolean,String)
+<ul>
+<li>参数1表示针对map还是reduce task做profile, true表示map, false表示reduce
+</li>
+<li>参数2表示针对哪些tasks做优化，"0-2"表示针对0，1，2三个任务，默认也是"0-2"
+</li>
+<li>map task对应属性mapred.task.profile.maps，reduce task对应属性mapred.task.profile.reduces
+</li>
+</ul>
+
+</li>
+</ul>
+
 </li>
 </ul>
 
@@ -2288,7 +2317,7 @@ public abstract class RecordReader&lt;KEYIN, VALUEIN&gt; implements Closeable {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-01-06 19:36:10 CST</p>
+<p class="date">Date: 2013-01-07 18:10:47 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

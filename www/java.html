@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="java"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-01-06 19:36:08 CST"/>
+<meta name="generated" content="2013-01-07 18:10:46 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -136,6 +136,7 @@
 <li><a href="#sec-1-6">1.6 Tool</a>
 <ul>
 <li><a href="#sec-1-6-1">1.6.1 jvisualvm</a></li>
+<li><a href="#sec-1-6-2">1.6.2 hprof</a></li>
 </ul>
 </li>
 </ul>
@@ -849,6 +850,11 @@ java虚拟机规范强调可移植性，对于在任何机器上来说相同的�
 
 </li>
 <li><b>NOTE(dirlt):我始终没有搞懂profiler和sampler两者的区别</b> ，不过从官方指南来看 Profiling Applications with VisualVM — Java.net <a href="http://visualvm.java.net/profiler.html">http://visualvm.java.net/profiler.html</a> 应该是使用profiler.
+<ul>
+<li><b>NOTE（dirlt）：可能对于profiler是通过在function前后加上instructment来完成的，而sampler就是纯粹的采样。</b>
+</li>
+</ul>
+
 </li>
 </ul>
 
@@ -862,13 +868,149 @@ java虚拟机规范强调可移植性，对于在任何机器上来说相同的�
 
 
 </div>
+
+</div>
+
+<div id="outline-container-1-6-2" class="outline-4">
+<h4 id="sec-1-6-2"><span class="section-number-4">1.6.2</span> hprof</h4>
+<div class="outline-text-4" id="text-1-6-2">
+
+<p>HPROF: A Heap/CPU Profiling Tool
+</p><ul>
+<li><a href="http://docs.oracle.com/javase/7/docs/technotes/samples/hprof.html">http://docs.oracle.com/javase/7/docs/technotes/samples/hprof.html</a>
+
+</li>
+<li>HPROF is actually a JVM native agent library which is dynamically loaded through a command line option, at JVM startup, and becomes part of the JVM process. <b>TODO(dirlt):什么叫做agent library?.属于JVM进程的一个部分</b>
+</li>
+<li>The binary format file from HPROF can be used with tools such as <a href="https://hat.dev.java.net/">HAT</a> to browse the allocated objects in the heap. 二进制输出可以使用HAT这个工具来察看
+</li>
+<li>HPROF is capable of presenting 
+<ul>
+<li>CPU usage, 
+</li>
+<li>heap allocation statistics, 
+</li>
+<li>and monitor contention profiles. <b>TODO（dirlt）：什么是monitor?</b>
+</li>
+<li>complete heap dumps and 
+</li>
+<li>states of all the monitors and threads
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+<p>
+使用java -agentlib:hprof=help可以察看hprof的调用方式
+</p>
+
+
+<pre class="example">
+     HPROF: Heap and CPU Profiling Agent (JVMTI Demonstration Code)
+
+hprof usage: java -agentlib:hprof=[help]|[&lt;option&gt;=&lt;value&gt;, ...]
+
+Option Name and Value  Description                    Default
+---------------------  -----------                    -------
+heap=dump|sites|all    heap profiling                 all
+cpu=samples|times|old  CPU usage                      off
+monitor=y|n            monitor contention             n
+format=a|b             text(txt) or binary output     a
+file=&lt;file&gt;            write data to file             java.hprof[{.txt}]
+net=&lt;host&gt;:&lt;port&gt;      send data over a socket        off
+depth=&lt;size&gt;           stack trace depth              4
+interval=&lt;ms&gt;          sample interval in ms          10
+cutoff=&lt;value&gt;         output cutoff point            0.0001
+lineno=y|n             line number in traces?         y
+thread=y|n             thread in traces?              n
+doe=y|n                dump on exit?                  y
+msa=y|n                Solaris micro state accounting n
+force=y|n              force output to &lt;file&gt;         y
+verbose=y|n            print messages about dumps     y
+
+Obsolete Options
+----------------
+gc_okay=y|n
+
+Examples
+--------
+  - Get sample cpu information every 20 millisec, with a stack depth of 3:
+      java -agentlib:hprof=cpu=samples,interval=20,depth=3 classname
+  - Get heap usage information based on the allocation sites:
+      java -agentlib:hprof=heap=sites classname
+
+Notes
+-----
+  - The option format=b cannot be used with monitor=y.
+  - The option format=b cannot be used with cpu=old|times.
+  - Use of the -Xrunhprof interface can still be used, e.g.
+       java -Xrunhprof:[help]|[&lt;option&gt;=&lt;value&gt;, ...]
+    will behave exactly the same as:
+       java -agentlib:hprof=[help]|[&lt;option&gt;=&lt;value&gt;, ...]
+
+Warnings
+--------
+  - This is demonstration code for the JVMTI interface and use of BCI,
+    it is not an official product or formal part of the JDK.
+  - The -Xrunhprof interface will be removed in a future release.
+  - The option format=b is considered experimental, this format may change
+    in a future release.
+</pre>
+
+<ul>
+<li>force=y 会删除原来的文件，如果是多个VM来同时使用hprof的话那么需要使用force=n
+</li>
+<li>heap=all不做heap profiling. sites能够看到分配热点，而dump能够看到所有分配以及所引用的对象 <b>NOTE（dirlt）：dump能够消耗大量内存，最好别使用，而且没有太大意义</b>
+</li>
+<li>cpu=samples采用采样方式来做分析,interval则是设置采样间隔。 <b>NOTE（dirlt）：可能比较使用于长期运行的程序profiling</b>
+</li>
+<li>cpu=times采用代码注入的方式在函数entry和return部分加上代码来做profile.
+</li>
+<li>thread=y 可以针对将不同线程区分开，每个线程单独进行profile. <b>NOTE（dirlt）：似乎没有太大的用途</b>
+</li>
+<li>depth=n 控制stacktrace的深度，加大深度可以看到更详细的调用栈。
+</li>
+<li>doe=n 在exit的时候不dump任何数据 <b>TODO（dirlt）：？这个有什么用呢</b>
+</li>
+</ul>
+
+
+
+<hr/>
+<p>
+How Does HPROF Work?
+</p><ul>
+<li>a dynamically-linked native library that uses JVM TI and writes out profiling information either to a file descriptor or to a socket in ascii or binary format. （native动态链接库完成的，使用了JVM TI接口，将数据写到socket或者是文件）
+<ul>
+<li><a href="http://docs.oracle.com/javase/7/docs/technotes/guides/jvmti/index.html">JVM TI</a> Java Virtual Machine Tool Interface
+</li>
+<li>calls to JVM TI
+</li>
+<li>event callbacks from JVM TI, 
+</li>
+<li>and through Byte Code Insertion (BCI) <b>NOTE(dirlt):修改bytecode,这个用来修改class文件</b>
+</li>
+</ul>
+
+</li>
+<li>The cpu=samples option doesn't use BCI, HPROF just spawns a separate thread that sleeps for a fixed number of micro seconds, and wakes up and samples all the running thread stacks using JVM TI. 通过另外线程通过JVM TI来监控其他线程栈
+</li>
+<li>The cpu=times option attempts to track the running stack of all threads, and keep accurate CPU time usage on all methods. This option probably places the greatest strain on the VM, where every method entry and method exit is tracked. Applications that make many method calls will be impacted more than others. 
+</li>
+<li>The heap=sites and heap=dump options are the ones that need to track object allocations. These options can be memory intensive (less so with hprof=sites) and applications that allocate many objects or allocate and free many objects will be impacted more with these options. On each object allocation, the stack must be sampled so we know where the object was allocated, and that stack information must be saved. HPROF has a series of tables allocated in the C or malloc() heap that track all it's information. HPROF currently does not allocate any Java objects. 
+</li>
+</ul>
+
+</div>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-01-06 19:36:08 CST</p>
+<p class="date">Date: 2013-01-07 18:10:46 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

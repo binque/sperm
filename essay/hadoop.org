@@ -447,7 +447,17 @@ job，task and attempt
      - MapReduce作业历史日志 _logs/history
      - MapReduce任务日志 写入HADOOP_LOG_DIR/userlogs里面，可以用来监控每个job的运行情况
    - 分析任务
-     - *TODO（dirlt）：*
+     - JobConf允许设置profile参数 *NOTE（dirlt）：新的接口里面JobConf->JobContext->Job，Job没有这些接口，但是可以通过Configuration来设置*
+       - setProfileEnabled 打开profile功能，默认false，属性 mapred.task.profile
+       - setProfileParams 设置profile参数
+	 - 属性 mapred.task.profile.params
+         - 默认使用hprof -agentlib:hprof=cpu=samples,heap=sites,force=n,thread=y,verbose=n,file=%s"
+	 - 其中%s会替换成为profile输出文件
+         - *NOTE（dirlt）：其实这里似乎也可以设置成为jmxremote来通过jvisualvm来调试*
+       - setProfileTaskRange(boolean,String)
+	 - 参数1表示针对map还是reduce task做profile, true表示map, false表示reduce
+	 - 参数2表示针对哪些tasks做优化，"0-2"表示针对0，1，2三个任务，默认也是"0-2"
+	 - map task对应属性mapred.task.profile.maps，reduce task对应属性mapred.task.profile.reduces
    - 任务重现
      - 首先将keep.failed.task.files设置为true,这样如果任务失败的话，那么这个任务的输入和输出都会保留下来
        - 如果是map任务的话，那么输入分别会在本地保留
