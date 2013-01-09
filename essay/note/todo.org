@@ -39,3 +39,5 @@
    - 上线准备，无缝替换
 ** TODO 分析htable代码put.
 ** TODO 修正3.0的bug
+** TODO gfs2.文章
+** TODO ds algorithm in databases. 包括本地和nosql.
