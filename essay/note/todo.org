@@ -32,12 +32,10 @@
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
    - 阅读设计文档
-** TODO 修改AppGroupStatMR.
-   - 还需要增加更新install选项
 ** TODO 阅读完Core Java I
 ** TODO gz2lzo的改造包括单测
    - 上线准备，无缝替换
 ** TODO 分析htable代码put.
-** TODO 修正3.0的bug
-** TODO gfs2.文章
 ** TODO ds algorithm in databases. 包括本地和nosql.
+** TODO 观察调度器的问题。
+

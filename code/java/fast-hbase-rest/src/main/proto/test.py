@@ -18,7 +18,23 @@ def queryColumn():
     request.table_name='t1'
     request.row_key='r1'
     request.column_family='cf'
+    request.qualifiers.append('c2')
     request.qualifiers.append('c1')
+
+    data = request.SerializeToString()
+    data2 = raiseHTTPRequest('http://localhost:8000/read',data,timeout=20)
+    response = message_pb2.ReadResponse()
+    response.ParseFromString(data2)
+    print response
+
+def queryEmptyColumn():
+    print '----------queryColumn----------'
+    request = message_pb2.ReadRequest()
+
+    request.table_name='t1'
+    request.row_key='r1'
+    request.column_family='cf'
+    request.qualifiers.append('not-exits')
 
     data = request.SerializeToString()
     data2 = raiseHTTPRequest('http://localhost:8000/read',data,timeout=20)
@@ -62,5 +78,6 @@ def write():
 
 if __name__=='__main__':
     queryColumn()
+    queryEmptyColumn()
     queryColumnFamily()
     write()

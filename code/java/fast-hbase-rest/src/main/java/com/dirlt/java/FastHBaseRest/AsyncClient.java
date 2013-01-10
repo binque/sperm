@@ -16,7 +16,9 @@ import org.jboss.netty.handler.codec.http.*;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -388,6 +390,28 @@ public class AsyncClient implements Runnable {
     }
 
     public void readResponse() {
+        // reorder
+        if (rdReq.getQualifiersCount() != 0) {
+            Map<String, MessageProtos1.ReadResponse.KeyValue> mapping = new HashMap<String, MessageProtos1.ReadResponse.KeyValue>();
+            for (MessageProtos1.ReadResponse.KeyValue kv : rdRes.getKvsList()) {
+                mapping.put(kv.getQualifier(), kv);
+            }
+            MessageProtos1.ReadResponse.Builder bd = MessageProtos1.ReadResponse.newBuilder();
+            int count = 0;
+            for (String k : rdReq.getQualifiersList()) {
+                MessageProtos1.ReadResponse.KeyValue v = mapping.get(k);
+                if (v == null) {
+                    MessageProtos1.ReadResponse.KeyValue.Builder sub = MessageProtos1.ReadResponse.KeyValue.newBuilder();
+                    sub.setQualifier(k);
+                    sub.setContent(ByteString.EMPTY);
+                    v = sub.build();
+                    count++;
+                }
+                bd.addKvs(v);
+            }
+            StatStore.getInstance().addCounter("read.count.field-not-exist", count);
+            rdRes = bd;
+        }
         msg = rdRes.build();
         code = Status.kHttpResponse;
         readEndTimestamp = System.currentTimeMillis();

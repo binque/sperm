@@ -19,6 +19,8 @@ message ReadRequest {
 
 message ReadResponse {
   message KeyValue {
+    // order as request.!!!
+    // if empty, return empty bytes.
     required string qualifier = 1;
     required bytes content = 2;
   }
