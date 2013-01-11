@@ -266,4 +266,20 @@ thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
 
 另外如果put是empty的话会抛出异常，因此在调用put之前最好判断put.isEmpty().
 
+--------------------
+*NOTE(dirlt):实际还是有大小限制的，可以看代码HBaseConfiguration.create
+#+BEGIN_SRC Java
+  public static Configuration addHbaseResources(Configuration conf) {
+    conf.addResource("hbase-default.xml");
+    conf.addResource("hbase-site.xml");
+
+    checkDefaultsVersion(conf);
+    checkForClusterFreeMemoryLimit(conf);
+    return conf;
+  }
+#+END_SRC
+ 可以看到加载了hbase-default.xml这个文件。这个文件是在hbase package自带的，默认值为10485760 = 10M
+
+
+
 

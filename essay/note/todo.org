@@ -33,7 +33,5 @@
    - 上线准备，无缝替换
 ** TODO 分析htable代码put.
 ** TODO ds algorithm in databases. 包括本地和nosql.
-** TODO 观察调度器的问题。
 ** TODO 以及appuserstat的改造
    - do profile.
-
