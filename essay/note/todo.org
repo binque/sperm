@@ -22,8 +22,6 @@
 ** TODO 安装一些生活类型服务
 ** TODO 博弈论学习
 ** TODO clojure
-** TODO 以及appuserstat的改造
-   - do profile.
 ** TODO 整理《影响力》 
 ** TODO 编写脚本用来做图片缩放，固定要等比例大小
 ** TODO 防辐射购买，去实体店购买。
@@ -36,4 +34,6 @@
 ** TODO 分析htable代码put.
 ** TODO ds algorithm in databases. 包括本地和nosql.
 ** TODO 观察调度器的问题。
+** TODO 以及appuserstat的改造
+   - do profile.
 
