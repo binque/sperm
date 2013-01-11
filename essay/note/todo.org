@@ -27,8 +27,6 @@
 ** TODO 整理《影响力》 
 ** TODO 编写脚本用来做图片缩放，固定要等比例大小
 ** TODO 防辐射购买，去实体店购买。
-** TODO 豆浆等材料
-
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
    - 阅读设计文档
