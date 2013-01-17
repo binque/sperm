@@ -33,4 +33,7 @@
 ** TODO ds algorithm in databases. 包括本地和nosql.
 ** TODO 以及appuserstat的改造
    - do profile.
+
 ** TODO 搞定amazon EC2.
+   - 整理步骤？
+** TODO 使用nginx + uwsgi+ web.py搭建服务？
