@@ -20,7 +20,6 @@
 ** TODO 租房
    - 年后
 ** TODO 找中医并且调理身体
-** TODO 安装一些生活类型服务
 ** TODO 博弈论学习
 ** TODO clojure
 ** TODO 整理《影响力》 
