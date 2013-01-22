@@ -71,6 +71,7 @@
    - sudo apt-get install systemtap
    - sudo apt-get install clojure
    - sudo apt-get install zsh
+   - sudo apt-get install collectl
 
 ** amarok循环播放
 在amarok的右下角有task progression的图标，选择repeat track即可。
@@ -318,3 +319,7 @@ System Settings =》 Universal Access里面的Seeing部分可以用来调整字�
 
 参考链接 http://ltek.dyndns.org/wordpress/?p=282
 
+** 修改主机名称
+sudo hostname <name>
+
+*NOTE(dirlt):mac works too=D*
