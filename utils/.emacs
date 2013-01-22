@@ -342,9 +342,9 @@
 ;;; default browser.
 ;; 使用chromium浏览器打开链接
 (setq browse-url-generic-program 
-      ;; (executable-find "google-chrome")
+      (executable-find "google-chrome"))
       ;; (executable-find "chromium-browser")
-      (executable-find "firefox"))
+      ;; (executable-find "firefox"))
 (if mac-system
     (setq browse-url-browser-function 'browse-url-default-macosx-browser))
 
