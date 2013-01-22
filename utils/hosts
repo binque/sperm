@@ -28,14 +28,11 @@ ff02::3	ip6-allhosts
 10.18.10.97 usocial
 54.241.35.194 dirlt-aws
 207.97.227.239 github.com
-
-207.97.227.239 github.com
-204.232.175.94 gist.github.com
-107.21.116.220 help.github.com
-207.97.227.252 nodeload.github.com
-107.22.3.110 status.github.com
-204.232.175.78 training.github.com
-207.97.227.243 www.github.com
+204.232.175.94 gist.github.com 
+107.21.116.220 help.github.com 
+207.97.227.252 nodeload.github.com 
+107.22.3.110 status.github.com 
+204.232.175.78 training.github.com 
 
 10.11.0.31      dp0.umeng.com                   dp0
 10.18.10.54     dp1.umeng.com                   dp1

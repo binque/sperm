@@ -23,6 +23,7 @@
 ** TODO 博弈论学习
 ** TODO clojure
 ** TODO 整理《影响力》 
+
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
    - 阅读设计文档
@@ -34,3 +35,6 @@
 ** TODO 以及appuserstat的改造
    - do profile.
 ** TODO 搞定amazon EC2.
+   - 整理步骤？
+** TODO 使用nginx + uwsgi+ web.py搭建服务？
+** TODO collectl

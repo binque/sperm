@@ -90,6 +90,7 @@ PATH=$HOME/utils/nginx/sbin:$PATH
 PATH=$HOME/utils/hadoop-0.20.2-cdh3u3/bin:$PATH
 PATH=$HOME/utils/hbase-0.90.4-cdh3u3/bin:$PATH
 PATH=$HOME/utils/oozie-2.3.2-cdh3u3/bin:$PATH
+PATH=$HOME/utils/uwsgi-1.4.4:$PATH
 
 # texmacs
 TEXMACS_PATH=$HOME/utils/TeXmacs-1.0.7-static-gnu-linux/
@@ -131,6 +132,6 @@ alias hadoop1="ssh -p 16021 -l yunbg hadoop1" # authorized.
 alias nexus="ssh -p 16021 -l yunbg nexus" # authorized.
 alias hudson="ssh -l ceshi hudson" # authorized.
 
-ssh-add ~/.ssh/aws_rsa
+ssh-add ~/.ssh/shiwen-aws_rsa
 ssh-add ~/.ssh/id_rsa
 
