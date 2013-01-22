@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="pregel"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-01-08 10:43:30 CST"/>
+<meta name="generated" content="2013-01-22 16:50:26 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -508,7 +508,7 @@ class Vertex {
 </li>
 <li>When Compute() requests sending a message to another vertex, the worker process first determines whether the des-tination vertex is owned by a remote worker machine, or by the same worker that owns the sender. In the remote case the message is buffered for delivery to the destination worker. When the buffer sizes reach a threshold, the largest buffers are asynchronously flushed, delivering each to its des-tination worker as a single network message. In the local case an optimization is possible: the message is placed di-rectly in the destination vertex’s incoming message queue.（发送消息的时候，pregel会确定dest vertex是否在同样一个worker上面，如果是在同一个worker的话，那么直接将消息放到队列里面即可，如果是远程节点的话，那么会进行batch然后异步发送）
 <ul>
-<li>*NOTE（dirlt）：因为vertex id分配到partiion算法是固定的，而partition分配到那个worker却未知，因此需要有一个服务或者是master知道某个partition是在哪个worker上面的。
+<li><b>NOTE（dirlt）：因为vertex id分配到partiion算法是固定的，而partition分配到那个worker却未知，因此需要有一个服务或者是master知道某个partition是在哪个worker上面的。</b>
 </li>
 </ul>
 
@@ -655,8 +655,8 @@ class Vertex {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-01-08 10:43:30 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2013-01-22 16:50:26 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

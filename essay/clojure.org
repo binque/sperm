@@ -7,6 +7,7 @@
   - Clojure - Functional Programming for the JVM http://java.ociweb.com/mark/clojure/article.html
   - Clojure Handbook (by jamesqiu) http://qiujj.com/static/clojure-handbook.html
   - technomancy/leiningen · GitHub https://github.com/technomancy/leiningen#readme
+  - Clojars https://clojars.org/ Clojars is a dead easy community repository for open source Clojure libraries. 
 
 package
   - http://github.com/downloads/clojure/clojure/clojure-1.2.0.zip

@@ -37,3 +37,4 @@
 ** TODO 搞定amazon EC2.
    - 整理步骤？
 ** TODO 使用nginx + uwsgi+ web.py搭建服务？
+** TODO collectl

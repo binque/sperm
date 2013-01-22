@@ -166,10 +166,12 @@ const char *str;
 
 ** consistent hashing
    - http://en.wikipedia.org/wiki/Consistent_hash
-   - http://www.tomkleinpeter.com/2008/03/17/programmers-toolbox-part-3-consistent-hashing/
-   - http://cn.last.fm/user/RJ/journal/2007/04/10/rz_libketama_-_a_consistent_hashing_algo_for_memcache_clients
-   - http://www.martinbroadhurst.com/Consistent-Hash-Ring.html
-   - http://www.lexemetech.com/2007/11/consistent-hashing.html
+   - Programmer’s Toolbox Part 3: Consistent Hashing http://www.tomkleinpeter.com/2008/03/17/programmers-toolbox-part-3-consistent-hashing/
+   - libketama - a consistent hashing algo for memcache clients http://cn.last.fm/user/RJ/journal/2007/04/10/rz_libketama_-_a_consistent_hashing_algo_for_memcache_clients
+   - Consistent Hash Ring http://www.martinbroadhurst.com/Consistent-Hash-Ring.html
+   - Tom White: Consistent Hashing http://www.tom-e-white.com/2007/11/consistent-hashing.html
+   - Consistent hashing - CodeProject http://www.codeproject.com/Articles/56138/Consistent-hashing
+   - 一致性hash算法 - consistent hashing http://blog.csdn.net/sparkliang/article/details/5279393
 
 The basic idea behind the consistent hashing algorithm is to hash both objects and caches using the same hash function.The reason to do this is to map the cache to an interval, which will contain a number of object hashes. If the cache is removed then its interval is taken over by a cache with an adjacent interval. All the other caches remain unchanged.
 
