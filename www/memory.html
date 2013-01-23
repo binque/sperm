@@ -7,7 +7,11 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="memory"/>
 <meta name="generator" content="Org-mode"/>
+<<<<<<< HEAD
 <meta name="generated" content="2013-01-08 10:43:35 CST"/>
+=======
+<meta name="generated" content="2013-01-22 16:50:27 CST"/>
+>>>>>>> 75ffa560a54765759f78aa59470108cd4308e835
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -109,6 +113,10 @@
 </li>
 <li><a href="#sec-1-2">1.2 Page Cache and Buffer Cache</a></li>
 <li><a href="#sec-1-3">1.3 Page Fault</a></li>
+<<<<<<< HEAD
+=======
+<li><a href="#sec-1-4">1.4 Linux Used Memory</a></li>
+>>>>>>> 75ffa560a54765759f78aa59470108cd4308e835
 </ul>
 </li>
 </ul>
@@ -311,13 +319,52 @@ Page Fault分为两种，minor fault和major fault，触发时机都是在进程
 如果按照磁盘读寻道延迟10ms,传输1page(4KB)耗时/60MB/s=0.05ms/page(<a href="sysperf.html">参考</a>)，相当载入页面需要耗时10ms . 而如果是minor fault的话仅仅是内存操作读写1个字节约为250ns(注意和page大小无关). <b>这就意味着耗时major fault是minor fault 40000=40K倍</b> 。改善这个情况手可以压缩内存使用，改善内存访问，然后关掉swap分区等。
 </p>
 </div>
+<<<<<<< HEAD
+=======
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Linux Used Memory</h3>
+<div class="outline-text-3" id="text-1-4">
+
+<p>Linux Used内存到底哪里去了？ | 非业余研究 <a href="http://blog.yufeng.info/archives/2456">http://blog.yufeng.info/archives/2456</a>
+</p><ul>
+<li>slab 为系统快速分配大量常用对象准备的对象池 <b>常驻内存</b>
+</li>
+<li>page tables 系统实现虚拟内存使用的页表内存块 <b>常驻内存</b>
+</li>
+</ul>
+
+<p>各种命令用来关注使用内存
+</p><ul>
+<li>nmon
+</li>
+<li>/proc/meminfo
+</li>
+<li>/proc/&lt;pid&gt;/status
+</li>
+<li>/proc/&lt;pid&gt;/statm
+</li>
+<li>slabtop
+</li>
+</ul>
+
+
+</div>
+>>>>>>> 75ffa560a54765759f78aa59470108cd4308e835
 </div>
 </div>
 </div>
 
 <div id="postamble">
+<<<<<<< HEAD
 <p class="date">Date: 2013-01-08 10:43:35 CST</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
+=======
+<p class="date">Date: 2013-01-22 16:50:27 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
+>>>>>>> 75ffa560a54765759f78aa59470108cd4308e835
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

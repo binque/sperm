@@ -1,6 +1,5 @@
 * linux
 #+OPTIONS: H:5
-
 ** proc filesystem
 *** /proc/<pid>/
 其中pid为对应的进程号，目录下面就是这个进程对应的信息。
@@ -110,6 +109,16 @@ TODO(zhangyan04):
 
 **** status
 TODO:
+
+**** statm
+Provides information about memory usage, measured in pages. The columns are:
+   - size total program size (same as VmSize in /proc/[pid]/status)
+   - resident resident set size (same as VmRSS in /proc/[pid]/status)
+   - share shared pages (from shared mappings)
+   - text text (code)
+   - lib library (unused in Linux 2.6)
+   - data data + stack
+   - dt dirty pages (unused in Linux 2.6) 
 
 *** /proc/meminfo
 系统中关于当前内存的利用状况等的信息，常由free命令使用；可以使用文件查看命令直接读取此文件，其内容显示为两列，前者为统计属性，后者为对应的值；
@@ -617,6 +626,7 @@ digestsize   : 4
 #+END_EXAMPLE
 
 *** /proc/loadavg
+   - Linux系统中Load Average含义 – Linux Kernel Exploration http://ilinuxkernel.com/?p=869
 保存关于CPU和磁盘I/O的负载平均值，其前三列分别表示每1秒钟、每5秒钟及每15秒的负载平均值，类似于uptime命令输出的相关信息；第四列是由斜线隔开的两个数值，前者表示当前正由内核调度的实体（进程和线程）的数目，后者表示系统当前存活的内核调度实体的数目；第五列表示此文件被查看前最近一个由内核创建的进程的PID.
 #+BEGIN_EXAMPLE
 [dirlt@umeng-ubuntu-pc] > cat /proc/loadavg 
@@ -2211,6 +2221,27 @@ ntp是可以在minpoll和maxpoll指定的时间间隔内来选择同步间隔的
 *** nethogs
 TODO(dirlt):
 
+*** slabtop
+slabtop - display kernel slab cache information in real time
+
+*** nmon
+nmon - systems administrator, tuner, benchmark tool.
+
+*** watch
+watch - execute a program periodically, showing output fullscreen TODO(dirlt):
+
+*** collectl
+collectl http://collectl.sourceforge.net/ *TODO(dirlt):似乎相当不错，将很多关键信息都做了收集和整合*
+
+*** vmtouch
+https://github.com/hoytech/vmtouch *NOTE（dirlt）：可以用来warmup数据，使用参数似乎也比较简单*
+
+里面有一些系统调用比较值得注意和学习：
+   - mlock/munlock 能够将一部分的内存lock住而不会切换到swap分区上面。
+   - mlockall/munlockall 将进程所有的内存都lock住而不会切换到swap分区上面。
+   - posix_fadvise 针对fd做一些访问模式的预测
+
+>>>>>>> 75ffa560a54765759f78aa59470108cd4308e835
 ** kernel
 *** vmlinuz
 vmlinuz是可引导的、压缩的内核。“vm”代表“Virtual Memory”。Linux 支持虚拟内存，不像老的操作系统比如DOS有640KB内存的限制。Linux能够使用硬盘空间作为虚拟内存，因此得名“vm”。vmlinuz是可执行的Linux内核，它位于/boot/vmlinuz，它一般是一个软链接。vmlinux是未压缩的内核，vmlinuz是vmlinux的压缩文件。
@@ -2255,6 +2286,14 @@ file:./images/tcp-packet-transmission.png
 其中内核参数有：
    - /proc/sys/net/ipv4/tcp_wmem 这个和rmem非常类似
    - *NOTE（dirlt）：qdisc文章里面说是txqueuelen控制的，但是似乎找不到这个参数！*
+
+*** tcp congestion control
+file:./images/tcp-congestion-control.png
+
+   - 初始状态是slow start
+   - cwnd(congestion window) 拥塞窗口，表示一次最多发送的数据包多少。
+   - ssthresh(slow start threshold) 慢速启动阈值。
+   - MSS(maximum segment size) 最大分节大小，和传输网络的MTU相关。
 
 ** application
 *** 返回值问题

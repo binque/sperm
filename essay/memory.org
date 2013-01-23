@@ -104,3 +104,13 @@ Page Fault分为两种，minor fault和major fault，触发时机都是在进程
 
 如果按照磁盘读寻道延迟10ms,传输1page(4KB)耗时/60MB/s=0.05ms/page([[file:sysperf.org][参考]])，相当载入页面需要耗时10ms . 而如果是minor fault的话仅仅是内存操作读写1个字节约为250ns(注意和page大小无关). *这就意味着耗时major fault是minor fault 40000=40K倍* 。改善这个情况手可以压缩内存使用，改善内存访问，然后关掉swap分区等。
 
+** Linux Used Memory
+Linux Used内存到底哪里去了？ | 非业余研究 http://blog.yufeng.info/archives/2456
+   - slab 为系统快速分配大量常用对象准备的对象池 *常驻内存*
+   - page tables 系统实现虚拟内存使用的页表内存块 *常驻内存*
+各种命令用来关注使用内存
+   - nmon
+   - /proc/meminfo
+   - /proc/<pid>/status
+   - /proc/<pid>/statm
+   - slabtop
