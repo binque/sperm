@@ -1,0 +1,981 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>distributed-system-reading</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="distributed-system-reading"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2013-01-08 10:44:14 CST"/>
+<meta name="author" content="dirtysalt"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style><link rel="stylesheet" type="text/css" href="./site.css" />
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">distributed-system-reading</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 distributed-system-reading</a>
+<ul>
+<li><a href="#sec-1-1">1.1 How to beat the CAP theorem</a>
+<ul>
+<li><a href="#sec-1-1-1">1.1.1 Consistency and Availability</a></li>
+<li><a href="#sec-1-1-2">1.1.2 What is a data system?</a></li>
+<li><a href="#sec-1-1-3">1.1.3 Beating the CAP theorem</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-2">1.2 Availability vs. Durability</a></li>
+<li><a href="#sec-1-3">1.3 Google Research Publication: Web Search for a Planet</a>
+<ul>
+<li><a href="#sec-1-3-1">1.3.1 Google architecture overview</a></li>
+<li><a href="#sec-1-3-2">1.3.2 Leveraging commodity parts</a></li>
+<li><a href="#sec-1-3-3">1.3.3 The power problem</a></li>
+<li><a href="#sec-1-3-4">1.3.4 Hardware-level application characteristics</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-4">1.4 You Can’t Sacrifice Partition Tolerance | codahale.com</a></li>
+<li><a href="#sec-1-5">1.5 The Anatomy Of The Google Architecture</a>
+<ul>
+<li><a href="#sec-1-5-1">1.5.1 The Basic Glue</a>
+<ul>
+<li><a href="#sec-1-5-1-1">1.5.1.1 Exterior Network</a></li>
+<li><a href="#sec-1-5-1-2">1.5.1.2 Data Centre</a></li>
+<li><a href="#sec-1-5-1-3">1.5.1.3 Rack</a></li>
+<li><a href="#sec-1-5-1-4">1.5.1.4 Hardware</a></li>
+<li><a href="#sec-1-5-1-5">1.5.1.5 Operating System</a></li>
+<li><a href="#sec-1-5-1-6">1.5.1.6 Interior Network</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-5-2">1.5.2 The Major Glue</a>
+<ul>
+<li><a href="#sec-1-5-2-1">1.5.2.1 GOOGLE FILE SYSTEM</a></li>
+<li><a href="#sec-1-5-2-2">1.5.2.2 GOOGLE DATABASE</a></li>
+<li><a href="#sec-1-5-2-3">1.5.2.3 GOOGLE MAPREDUCE</a></li>
+<li><a href="#sec-1-5-2-4">1.5.2.4 GOOGLE WORKQUEUE</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-5-3">1.5.3 BUILD YOUR OWN GOOGLE</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> distributed-system-reading</h2>
+<div class="outline-text-2" id="text-1">
+
+
+<ul>
+<li>Distributed Systems Reading List <a href="http://dancres.org/reading_list.html">http://dancres.org/reading_list.html</a>
+</li>
+</ul>
+
+
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> How to beat the CAP theorem</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<p><a href="http://nathanmarz.com/blog/how-to-beat-the-cap-theorem.html">http://nathanmarz.com/blog/how-to-beat-the-cap-theorem.html</a>
+</p>
+
+</div>
+
+<div id="outline-container-1-1-1" class="outline-4">
+<h4 id="sec-1-1-1"><span class="section-number-4">1.1.1</span> Consistency and Availability</h4>
+<div class="outline-text-4" id="text-1-1-1">
+
+<ul>
+<li>The CAP theorem states a database cannot guarantee consistency, availability, and partition-tolerance at the same time. But you can't sacrifice partition-tolerance (see here and here), so you must make a tradeoff between availability and consistency. (只能够在CA之间进行选择）
+</li>
+<li>Consistency means that after you do a successful write, future reads will always take that write into account. Availability means that you can always read and write to the system. During a partition, you can only have one of these properties.
+</li>
+<li>Systems that choose consistency over availability have to deal with some awkward issues. What do you do when the database isn't available? You can try buffering writes for later, but you risk losing those writes if you lose the machine with the buffer. Also, buffering writes can be a form of inconsistency because a client thinks a write has succeeded but the write isn't in the database yet. Alternatively, you can return errors back to the client when the database is unavailable. But if you've ever used a product that told you to "try again later", you know how aggravating this can be. (选择Consistency，如果出现unavailable的话，那么write如何处理，拒绝client write还是将这个write buffer起来稍后提交，但是即使稍后提交也会出现一致性问题）
+</li>
+<li>The other option is choosing availability over consistency. The best consistency guarantee these systems can provide is "eventual consistency". If you use an eventually consistent database, then sometimes you'll read a different result than you just wrote. Sometimes multiple readers reading the same key at the same time will get different results. Updates may not propagate to all replicas of a value, so you end up with some replicas getting some updates and other replicas getting different updates. It is up to you to repair the value once you detect that the values have diverged. This requires tracing back the history using vector clocks and merging the updates together (called "read repair").（如果选择availability的话，那么可能会出现read value inconsistent的情况。如果出现读取value不一致的话那么可能需要tracing back history并且使用vector clock来做merge update，这个过程称为 <b>read repair</b> ）
+</li>
+<li>I believe that maintaining eventual consistency in the application layer is too heavy of a burden for developers. Read-repair code is extremely susceptible to developer error; if and when you make a mistake, faulty read-repairs will introduce irreversible corruption into the database.（但是read-repair不太好理解同时容易出现bug致使corrupt database）
+</li>
+<li>There is another way. You can't avoid the CAP theorem, but you can isolate its complexity and prevent it from sabotaging your ability to reason about your systems. The complexity caused by the CAP theorem is a symptom of fundamental problems in how we approach building data systems. Two problems stand out in particular: the use of mutable state in databases and the use of incremental algorithms to update that state. It is the interaction between these problems and the CAP theorem that causes complexity.（CAP理论造成复杂性最基本的问题在于我们如何构建自己的系统，具体有两个问题：1.我们在database里面使用了mutable state 2.对于这个状态的更新都是增量完成的。正是因为这两个问题参杂在一起导致复杂性）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-2" class="outline-4">
+<h4 id="sec-1-1-2"><span class="section-number-4">1.1.2</span> What is a data system?</h4>
+<div class="outline-text-4" id="text-1-1-2">
+
+<ul>
+<li>There are two crucial properties to note about data. First, data is inherently time based. A piece of data is a fact that you know to be true at some moment of time. The second property of data follows immediately from the first: data is inherently immutable. Because of its connection to a point in time, the truthfulness of a piece of data never changes. One cannot go back in time to change the truthfulness of a piece of data. This means that there are only two main operations you can do with data: read existing data and add more data. CRUD has become CR. （关于数据的理解有两个特性 1.数据本质上是基于时间的，也就是说对于数据的正确性理解是在一定时间范围内的 2.考虑到数据是基于时间的，因为数据本质上是immutable的。考虑到这两点我们可以将data操作从CRUD限定为CR）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-1-3" class="outline-4">
+<h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> Beating the CAP theorem</h4>
+<div class="outline-text-4" id="text-1-1-3">
+
+<ul>
+<li>What caused complexity before was the interaction between incremental updates and the CAP theorem. Incremental updates and the CAP theorem really don't play well together; mutable values require read-repair in an eventually consistent system. By rejecting incremental updates, embracing immutable data, and computing queries from scratch each time, you avoid that complexity. The CAP theorem has been beaten（最主要的问题就是incemental updates和CAP不太好同时处理。如果data mutable的话那么incremental updates需要使用read-pair来达到最终一致性，而如果我们认为数据是immutable的并且拒绝使用incremental updates的话那么就可以避免使用这种复杂性）
+</li>
+</ul>
+
+
+<p>
+后面有一篇评论是这样的
+</p>
+<p class="verse">
+&gt;  The other option is choosing availability over consistency. The best consistency guarantee these systems can provide is "eventual consistency"<br/>
+<br/>
+No, the best consistency these systems can provide is eventually-known consistency: In addition to always servicing reads and writes, you can also ask "when is the most recent point such that you're guaranteed to be consistent with respect to all writes prior to that point?"<br/>
+<br/>
+This is a far more useful consistency model than eventual consistency, since it allows strong consistency to be constructed on top of it (at the expense of sacrificing availability during a partition).<br/>
+</p>
+
+
+<p>
+我觉得这个评论说的很对，nathan marz可能没有理解两者差别
+</p><ul>
+<li>eventual-consistency 系统最终可以一致，但是对于read来说不知道在那个点上数据是一致的。好比有A，B两个value需要同时更新 <b>事务</b> ，在t1有A(t1) B(t1),而在t2时候可能只是更新了A(t2),而B依然为B(t1). 但是系统没有办法知道在t1这个事务才完成。当然原因也是因为数据是mutable的。
+</li>
+<li>eventually-known consistency 同样系统最终可以一致，但是系统可以告诉说在t1上数据集合是一致的，虽然有部分数据修改成为了t2.
+</li>
+</ul>
+
+
+<p>
+<img src="./images/batch-realtime-architecture.png"  alt="./images/batch-realtime-architecture.png" />
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Availability vs. Durability</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<p>如果只有一个副本机器A，要是它出故障，则读肯定会失败。要是有多副本机器，A坏了，我还有B和C可以读。写也一样。所以说多副本提高了服务的availability。
+</p>
+<p>
+如果只有一个副本机器A，要是A的硬盘坏了，那数据就丢失了。要是有多个副本机器，则还可以从其他机器上找回来。所以说多副本提高了数据的durability，写完多副本的数据很难会丢失。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Google Research Publication: Web Search for a Planet</h3>
+<div class="outline-text-3" id="text-1-3">
+
+<ul>
+<li>link: <a href="http://research.google.com/archive/googlecluster.html">http://research.google.com/archive/googlecluster.html</a>
+</li>
+<li>date: 2003 <b>NOTE(dirlt):可以看得出这篇文章相当老了</b>
+</li>
+<li>google搜索架构包括软件和硬件 
+<ul>
+<li><b>NOTE（dirlt):我主要对硬件上的选择比较感兴趣</b>
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+
+</div>
+
+<div id="outline-container-1-3-1" class="outline-4">
+<h4 id="sec-1-3-1"><span class="section-number-4">1.3.1</span> Google architecture overview</h4>
+<div class="outline-text-4" id="text-1-3-1">
+
+<p>In summary, Google clusters follow three key design principles: 
+</p><ul>
+<li>Software reliability. We eschew fault-tol-erant hardware features such as redun-dant power supplies, a redundant array of inexpensive disks (RAID), and high-quality components, instead focusing on tolerating failures in software.（不在硬件层面保证可靠性，相反在软件层面来处理这些问题）
+</li>
+<li>Use replication for better request through-put and availability. Because machines are inherently unreliable, we replicate each of our internal services across many machines. Because we already replicate services across multiple machines to obtain sufficient capacity, this type of fault tolerance almost comes for free.（通过replication来获得高吞吐以及可用性）
+</li>
+<li>Price/performance beats peak performance. We purchase the CPU generation that currently gives the best performance per unit price, not the CPUs that give the best absolute performance. （关注price/performance而不仅仅是关注performance） 
+</li>
+<li>Using commodity PCs reduces the cost of computation. As a result, we can afford to use more computational resources per query, employ more expensive techniques in our ranking algorithm, or search a larger index of documents（使用廉价PC来构建集群）
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-2" class="outline-4">
+<h4 id="sec-1-3-2"><span class="section-number-4">1.3.2</span> Leveraging commodity parts</h4>
+<div class="outline-text-4" id="text-1-3-2">
+
+
+<hr/>
+<ul>
+<li>Google’s racks consist of 40 to 80 x86-based servers mounted on either side of a custom made rack (each side of the rack contains twenty 20u or forty 1u servers).（每个rack上面有40-80台x86服务器，rack每一面可以放下20个2u或者是40个1u服务器）
+<ul>
+<li>Our focus on price/performance favors servers that resemble mid-range desktop PCs in terms of their com-ponents, except for the choice of large disk drives.（主要使用普通的桌面PC但是换成大容量硬盘）
+</li>
+<li>Several CPU generations are in active service, ranging from single-processor 533- MHz Intel-Celeron-based servers to dual 1.4-GHz Intel Pentium III servers.（CPU有从533MHz的赛扬到1.4GHz的奔腾）
+</li>
+<li>Each server contains one or more integrated drive elec- tronics (IDE) drives, each holding 80 Gbytes.（使用80GB的IDE磁盘驱动器）
+</li>
+<li>The servers on each side of a rack interconnect via a 100-Mbps Ethernet switch that has one or two gigabit uplinks to a core gigabit switch that connects all racks together（rack一侧的机器之间通过100Mbps的以太交换机，rack之间交换机使用千兆网卡）
+</li>
+</ul>
+
+</li>
+<li>Our ultimate selection criterion is cost per query, expressed as the sum of capital expense (with depreciation) and operating costs (host-ing, system administration, and repairs) divid-ed by performance.（费用方面包括资本开销包括折旧，以及运维开销）
+<ul>
+<li>Realistically, a server will not last beyond two or three years, because of its disparity in performance when compared to newer machines. Machines older than three years are so much slower than current-gener-ation machines that it is difficult to achieve proper load distribution and configuration in clusters containing both types.（但是实际情况是，一台服务器可能在2-3年之后相比更新的机器性能就有非常大的差距，因此对于一台服务器的寿命而言就是2-3年的时间）
+</li>
+<li>Given the rel-atively short amortization period, the equip-ment cost figures prominently in the overall cost equation.（考虑到这点因素之后，因此开销主要还是集中在设备上）
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+
+<hr/>
+<ul>
+<li>For example, in late 2002 a rack of 88 dual-CPU 2-GHz Intel Xeon servers with 2 Gbytes of RAM and an 80-Gbyte hard disk was offered on RackSaver.com for around $278,000. This figure translates into a monthly capital cost of $7,700 per rack over three years. (2002年一个rack上面88个双核CPU的Xeon服务器，配备2G内存以及80GB的磁盘在racksaver.com上面大概需要278000美元，平均每年7700美元）.
+</li>
+<li>The relative importance of equipment cost makes traditional server solutions less appeal-ing for our problem because they increase per-formance but decrease the price/performance. （一些传统的服务器解决方案对于我们来说缺乏吸引力，主要是因为虽然增加了性能，但是降低了performance/price)
+<ul>
+<li>For example, four-processor motherboards are expensive, and because our application paral-lelizes very well, such a motherboard doesn’t recoup its additional cost with better perfor-mance. （比如对于能够支持4个CPU的主板，因为我们自身程序并行性已经非常好了，所以额外的开销并没有带来更好的性能）
+</li>
+<li>Similarly, although SCSI disks are faster and more reliable, they typically cost two or three times as much as an equal-capac-ity IDE drive.（而对于SCSI磁盘来说虽然更快并且并且更加可靠，但是价钱是同样大小的IDE的2-3倍）
+</li>
+</ul>
+
+</li>
+<li>The cost advantages of using inexpensive, PC-based clusters over high-end multi-processor servers can be quite substantial, at least for a highly parallelizable application like ours.（ <b>使用PC-based这样的集群而不是使用高端的多处理器server带来的好处是非常明显的，尤其是对于并行程度非常高的应用程序</b> ）
+<ul>
+<li>The example $278,000 rack contains 176 2-GHz Xeon CPUs, 176 Gbytes of RAM, and 7 Tbytes of disk space. 
+</li>
+<li>In com-parison, a typical x86-based server contains eight 2-GHz Xeon CPUs, 64 Gbytes of RAM, and 8 Tbytes of disk space; it costs about $758,000.（这个是高端服务器的报价，上面是之前提到的集群）
+</li>
+</ul>
+
+</li>
+<li>Operating thousands of mid-range PCs instead of a few high-end multiprocessor servers incurs significant system administra-tion and repair costs.（对于使用PC集群带来的唯一坏处就是机器非常多而故障率非常高，带来的管理成本和维修成本）
+<ul>
+<li>However, for a relative-ly homogenous application like Google, where most servers run one of very few appli-cations, these costs are manageable.（但是大部分的应用都是同构的，而且每个server上面只是运行有限的几个程序）
+</li>
+<li>Assum-ing tools to install and upgrade software on groups of machines are available, the time and cost to maintain 1,000 servers isn’t much more than the cost of maintaining 100 servers because all machines have identical configu-rations. （同时使用相同的配置以及自动化部署可以在一定程度上解决这个问题）
+</li>
+<li>Similarly, the cost of monitoring a cluster using a scalable application-monitor-ing system does not increase greatly with clus-ter size.（对于集群的监控通过可以扩展的监控系统完成）
+</li>
+<li>Furthermore, we can keep repair costs reasonably low by batching repairs and ensur-ing that we can easily swap out components with the highest failure rates, such as disks and power supplies.（可以批量地进行部件维修。而且因为软件本身就是对于hardward failure是可容忍的，所以替换一些出问题的组件也非常容易）
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-3" class="outline-4">
+<h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> The power problem</h4>
+<div class="outline-text-4" id="text-1-3-3">
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> Hardware-level application characteristics</h4>
+<div class="outline-text-4" id="text-1-3-4">
+
+<ul>
+<li>Examining various architectural characteris-tics of our application helps illustrate which hardware platforms will provide the best price/performance for our query-serving sys-tem.（分析应用程序的一些架构上面的特征，来解释什么硬件可以为查询系统提供更好的性价比）
+<ul>
+<li>We’ll concentrate on the characteristics of the index server, the component of our infra-structure whose price/performance most heav-ily impacts overall price/performance. （主要是针对index server这个部件来进行分析，因为这个部分对于性价比的影响非常大）
+</li>
+<li>The main activity in the index server consists of decoding compressed information in the inverted index and finding matches against a set of documents that could satisfy a query. （index server主要的功能就是decode反向索引信息然后做一些聚合操作）
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+<p>
+<img src="./images/google-index-server-measurements.png"  alt="./images/google-index-server-measurements.png" />
+</p>
+<ul>
+<li>The application has a moderately high CPI, considering that the Pentium III is capable of issuing three instructions per cycle. 考虑到P3能够一个cycle执行3条指令，现在每个cycle执行1.1条指令算是相对比较高的CPI了。
+</li>
+<li>We expect such behavior, considering that the applica-tion traverses dynamic data structures and that control flow is data dependent, creating a sig-nificant number of difficult-to-predict branches.（对于这个CPI的解释是因为进行遍历了太多动态的数据结构并且有数据以依赖，造成了非常多难以预测的分支）
+</li>
+<li>In fact, the same workload running on the newer Pentium 4 processor exhibits nearly twice the CPI and approximately the same branch prediction performance, even though the Pentium 4 can issue more instruc-tions concurrently and has superior branch prediction logic.（事实上，相同的workload在新的P4上面运行产生了2倍的CPI以及相同的分支条转性能，虽然P4能够同时执行更多的指令并且有更好的分支预测）
+</li>
+<li>In essence, there isn’t that much exploitable instruction-level parallelism (ILP) in the workload. Our measurements suggest that the level of aggressive out-of-order, speculative execution present in mod-ern processors is already beyond the point of diminishing performance returns for such programs.  <b>（所以说白了workload的ILP没有那么高，因此测试建议现代处理器里面的乱序执行以及推测执行对我们的应用程序没有太多的用途）</b>
+</li>
+<li>A more profitable way to exploit parallelism for applications such as the index server is to leverage the trivially parallelizable computa-tion.（所以探索并行性更经济的做法是利用这些本身就是可并行的计算）
+</li>
+<li>Exploiting such abundant thread-level parallelism at the microarchitecture level appears equally promising. Both simultaneous multithreading (SMT) and chip multiproces-sor (CMP) architectures target thread-level parallelism and should improve the perfor-mance of many of our servers.（另外在微处理器架构层面提升线程级别的并行性还是更加有意义的，SMT或者是CMP似乎都能够提高性能）
+<ul>
+<li>Some early experiments with a dual-context (SMT) Intel Xeon processor show more than a 30 percent performance improvement over a single-con-text setup. This speedup is at the upper bound of improvements reported by Intel for their SMT implementation.（早期的一些SMT实验发现能够提升30%的性能，但是似乎这个加速是存在上限的）
+</li>
+<li>We believe that the potential for CMP sys-tems is even greater. CMP designs, such as Hydra and Piranha seem especially promis-ing.（我们相信CMP是更加经济的做法）
+<ul>
+<li>In these designs, multiple (four to eight) simpler, in-order, short-pipeline cores replace a complex high-performance core. 设计上使用4-8个非常简单的，顺序执行，短流水线的核
+</li>
+<li>The penal-ties of in-order execution should be minor given how little ILP our application yields,（in-order执行带来的损失就是对于稍微降低ILP）
+</li>
+<li>and shorter pipelines would reduce or elimi-nate branch mispredict penalties. 短流水线却能够在一定程度上减少分支预测错误惩罚
+</li>
+<li>The avail-able thread-level parallelism should allow near-linear speedup with the number of cores, and a shared L2 cache of reasonable size would speed up interprocessor communication.（始终这种线程级别的并行能够基本达到线性加速，而使用合理大小的共享L2可以加快处理器之间的通信）
+</li>
+</ul>
+
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> You Can’t Sacrifice Partition Tolerance | codahale.com</h3>
+<div class="outline-text-3" id="text-1-4">
+
+<p><a href="http://codahale.com/you-cant-sacrifice-partition-tolerance/">http://codahale.com/you-cant-sacrifice-partition-tolerance/</a>
+</p>
+<ul>
+<li>On Partition Tolerance
+<ul>
+<li>In order to model partition tolerance, the network will be allowed to lose arbitrarily many messages sent from one node to another. When a network is partitioned, all messages sent from nodes in one component of the partition to nodes in another component are lost. (And any pattern of message loss can be modeled as a temporary partition separating the communicating nodes at the exact instant the message is lost.) 
+</li>
+<li>For a distributed (i.e., multi-node) system to not require partition-tolerance it would have to run on a network which is guaranteed to never drop messages (or even deliver them late) and whose nodes are guaranteed to never die. You and I do not work with these types of systems because they don’t exist.
+
+</li>
+</ul>
+
+</li>
+<li>But Never Both
+<ul>
+<li>You cannot, however, choose both consistency and availability in a distributed system.
+</li>
+<li>As a thought experiment, imagine a distributed system which keeps track of a single piece of data using three nodes—A, B, and C—and which claims to be both consistent and available in the face of network partitions. Misfortune strikes, and that system is partitioned into two components: {A,B} and {C}. In this state, a write request arrives at node C to update the single piece of data. That node only has two options:
+<ul>
+<li>Accept the write, knowing that neither A nor B will know about this new data until the partition heals.
+</li>
+<li>Refuse the write, knowing that the client might not be able to contact A or B until the partition heals.
+</li>
+</ul>
+
+</li>
+<li>You either choose availability (Door #1) or you choose consistency (Door #2). You cannot choose both.
+</li>
+<li>To claim to do so is claiming either that the system operates on a single node (and is therefore not distributed) or that an update applied to a node in one component of a network partition will also be applied to another node in a different partition component magically. 如果同时满足CA的话，就意味着需要牺牲P（或者是在网络断开的情况下面能够magically达成一致，当然这是不可能的）。而不允许parition tolerance的话似乎只有单机系统而非分布式系统。
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> The Anatomy Of The Google Architecture</h3>
+<div class="outline-text-3" id="text-1-5">
+
+<ul>
+<li>link： <a href="http://www.slideshare.net/hasanveldstra/the-anatomy-of-the-google-architecture-fina-lv11">http://www.slideshare.net/hasanveldstra/the-anatomy-of-the-google-architecture-fina-lv11</a>
+</li>
+<li>date：2009-12-09
+</li>
+</ul>
+
+
+<p>
+The Google Philosophy
+</p><ul>
+<li>Jedis build their own lightsabres (the MS Eat your own Dog Food)
+</li>
+<li>Parallelize Everything
+</li>
+<li>Distribute Everything (to atomic level if possible)
+</li>
+<li>Compress Everything (CPU cheaper than bandwidth) <b>优化带宽</b>
+</li>
+<li>Secure Everything (you can never be too paranoid)
+</li>
+<li>Cache (almost) Everything
+</li>
+<li>Redundantize Everything (in triplicate usually)
+</li>
+<li>Latency is VERY evil
+</li>
+</ul>
+
+
+
+</div>
+
+<div id="outline-container-1-5-1" class="outline-4">
+<h4 id="sec-1-5-1"><span class="section-number-4">1.5.1</span> The Basic Glue</h4>
+<div class="outline-text-4" id="text-1-5-1">
+
+<p><img src="./images/the-anatomy-of-google-architecture-basic-glue.png"  alt="./images/the-anatomy-of-google-architecture-basic-glue.png" />
+</p>
+<ol>
+<li>Exterior Network (Perimeter Architecture) （外部接入层）
+</li>
+<li>Data Centre（数据中心）
+</li>
+<li>Rack Characteristics（机架设计）
+</li>
+<li>Core Server Hardware（硬件设计）
+</li>
+<li>Operating System Implementation（操作系统）
+</li>
+<li>Interior Network Architecture（内部网络架构）
+</li>
+</ol>
+
+
+
+</div>
+
+<div id="outline-container-1-5-1-1" class="outline-5">
+<h5 id="sec-1-5-1-1"><span class="section-number-5">1.5.1.1</span> Exterior Network</h5>
+<div class="outline-text-5" id="text-1-5-1-1">
+
+<p><img src="./images/google-architecture-exterior-network.png"  alt="./images/google-architecture-exterior-network.png" />
+</p>
+<ul>
+<li>DNS Load Balanced splits traffic (country, .com multiple DNS, other X1) to FW
+</li>
+<li>Firewall filters traffic (http/s, smtp,pop etc)
+</li>
+<li>Netscalar Load Balancers take Request from FW blocks DOS attacks, ping floods (DOS) – blocks non IPv4/6 and none 80/443 ports and http multiplexes (limited caching capability)
+</li>
+<li>User Request forwarded to Squid (Reverse Proxy) probably HUGE cache (Petabytes?)
+<ul>
+<li>反向代理，似乎是穿透型的cache
+</li>
+<li>缓存命中率30-60%
+</li>
+<li>All Image Thumbnails caches, much Multimedia cached, Expensive common queries cached 缩略图片，多媒体以及开销比较大的搜索
+</li>
+</ul>
+
+</li>
+<li>If not in Cache forwarded to GWS (Custom C++ Web Server) – now not using Custom apache?     
+</li>
+<li>GWS sends the Request to appropriate internal (Cell) servers
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-1-2" class="outline-5">
+<h5 id="sec-1-5-1-2"><span class="section-number-5">1.5.1.2</span> Data Centre</h5>
+<div class="outline-text-5" id="text-1-5-1-2">
+
+<ul>
+<li>Last estimated were 36 Data Centers, 300+ GFSII Clusters and upwards of 800K machines.（36个数据中心，300+ GFS2集群， <b>80万机器</b> ）
+</li>
+<li>US (#1) – Europe (#2) – Asia (#3) – South America/Russia (#4)
+</li>
+<li>Australia – on Hold
+</li>
+<li>Future: Taiwan, Malaysia, Lithuania, and Blythewood, South Carolina.
+
+</li>
+<li>Standard Google Modular DC (Cell) holds 1160 Servers / 250KW Power Consumption in 30 racks (40U).（cell有30个rack，支持40U one side.）
+</li>
+<li>A Data Centre would consist of 100s of Modular Cells.（每个数据中心最多100左右个cell)
+</li>
+<li>MDCs can also be deployed autonomously at the Perimeter (stand alone). MDC可以独立部署
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-1-3" class="outline-5">
+<h5 id="sec-1-5-1-3"><span class="section-number-5">1.5.1.3</span> Rack</h5>
+<div class="outline-text-5" id="text-1-5-1-3">
+
+<p><img src="./images/google-architecture-rack.png"  alt="./images/google-architecture-rack.png" />
+</p>
+<p>
+<b>NOTE（dirlt）：在空间以及冷却系统上面减少成本</b>
+</p><ul>
+<li>Mini Server Size
+<ul>
+<li>Old Servers are Custom 1U
+</li>
+<li>New Servers are 2U
+</li>
+<li>seem 1/3 width of a normal 2U Server 宽度为普通2U服务器的1/3宽
+</li>
+</ul>
+
+</li>
+<li>40U/80U Custom Racks (50% each side) 
+<ul>
+<li>Huge Heating and Power Issues（冷却系统）
+</li>
+<li>Optimized Motherboards（主板优化）
+</li>
+<li>Have their own HW builds（定制硬件）
+</li>
+</ul>
+
+</li>
+<li>Motherboard directly mounted into Rack
+<ul>
+<li>servers have no casing - just bare boards（没有盖子）
+</li>
+<li>assist with heat dispersal issues <b>NOTE(dirlt):???</b>
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-1-4" class="outline-5">
+<h5 id="sec-1-5-1-4"><span class="section-number-5">1.5.1.4</span> Hardware</h5>
+<div class="outline-text-5" id="text-1-5-1-4">
+
+<p><b>NOTE（dirlt）：配置都非常普通</b>
+</p><ul>
+<li>2U Low-Cost (but not slow) Commodity Servers 
+<ul>
+<li>2009 Currently 2-Way, Dual Core/16GB/1-2TB +- Standard 
+</li>
+<li>Both Intel/AMD Chipsets – 1 NIC – 2 USB
+</li>
+<li>Looks like they RAID1/mirror the disks for better I/O - read performance
+</li>
+<li>SATA 7.2K/10K/15K drives? 8 x 2GB DDR3 ECC
+</li>
+</ul>
+
+</li>
+<li>Standard HW Build (Several HW Build Versions at any one time)
+<ul>
+<li>Currently at 7Gen Build (1G 2005 was probably Dual Core/SMP)
+</li>
+<li>Each Server 12V Battery Backup and can run autonomously without external power (lasts 20-30s?)
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">YEAR</th><th scope="col" class="left">Average Server Specification</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">1999/2000</td><td class="left">PII/PIII 128MB+</td></tr>
+<tr><td class="left">2003/2004</td><td class="left">Celeron 533, PIII 1.4 SMP, 2-4GB DRAM, Dual XEON 2.0/1-4GB/40-160GB IDE - SATA Disks via Silicon Images SATA 3114/SATA 3124</td></tr>
+<tr><td class="left">2006</td><td class="left">Dual Opteron/Working Set DRAM(4GB+)/2x400GB IDE (RAID0?)</td></tr>
+<tr><td class="left">2009</td><td class="left">2-Way/Dual Core/16GB/1-2TB SATA</td></tr>
+</tbody>
+</table>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-1-5" class="outline-5">
+<h5 id="sec-1-5-1-5"><span class="section-number-5">1.5.1.5</span> Operating System</h5>
+<div class="outline-text-5" id="text-1-5-1-5">
+
+<ul>
+<li>100% Redhat Linux Based since 1998 inception
+<ul>
+<li>RHEL (Why not CentOS?)
+</li>
+<li>2.6.X Kernel
+</li>
+<li>PAE(Physical Address Extension) 物理地址扩展，32位下面支持64GB内存
+</li>
+<li>Custom glibc.. rpc&hellip; ipvs&hellip;
+</li>
+<li>Custom FS (GFS II)
+</li>
+<li>Custom Kerberos
+</li>
+<li>Custom NFS
+</li>
+<li>Custom CUPS
+</li>
+<li>Custom gPXE bootloader 
+<ul>
+<li><b>NOTE（dirlt）：open-source network booting software</b>
+</li>
+</ul>
+
+</li>
+<li>Custom EVERYTHING&hellip;..
+</li>
+</ul>
+
+</li>
+<li>Kernel/Subsystem Modifications
+<ul>
+<li>tcmalloc – replaces glibc 2.3 malloc – much faster! works very well with threads&hellip;
+</li>
+<li>rpc – the rpc layer extensively modified to provide &gt; perf increase &lt; latency (52%/40%) <b>TODO（dirlt）：？？？</b>
+</li>
+<li>Significantly modified Kernel and Subsystems – all IPv6 enabled
+</li>
+<li>Developed and maintained systems to automate installation, updates, and upgrades of Linux systems.
+</li>
+<li>Served as technical lead of team responsible for customizing and deploying Linux to internal systems and workstations.
+</li>
+</ul>
+
+</li>
+<li>Use Python as the primary scripting language
+</li>
+<li>Deploy Ubuntu internally (likely for the Desktop) – also Chrome OS base
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-1-6" class="outline-5">
+<h5 id="sec-1-5-1-6"><span class="section-number-5">1.5.1.6</span> Interior Network</h5>
+<div class="outline-text-5" id="text-1-5-1-6">
+
+<p>Routing Protocol：
+</p><ul>
+<li>Internal network is IPv6 (exterior machines can be reached using IPv6)
+</li>
+<li>Heavily Modified Version of OSPF as the IRP
+</li>
+<li>Intra-rack network is 100baseT
+</li>
+<li>Inter-rack network is 1000baseT
+</li>
+<li>Inter-DC network pipes unknown but very fast
+</li>
+</ul>
+
+
+<p>
+Technology:
+</p><ul>
+<li>Juniper, Cisco, Foundry, HP, routers and switches
+</li>
+</ul>
+
+
+<p>
+Software:
+</p><ul>
+<li>ipvs (ip virtual server)
+</li>
+</ul>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-5-2" class="outline-4">
+<h4 id="sec-1-5-2"><span class="section-number-4">1.5.2</span> The Major Glue</h4>
+<div class="outline-text-4" id="text-1-5-2">
+
+<p><img src="./images/the-anatomy-of-google-architecture-major-glue.png"  alt="./images/the-anatomy-of-google-architecture-major-glue.png" />
+</p>
+<ul>
+<li>Google File System Architecture – GFS II     
+</li>
+<li>Google Database - Bigtable
+</li>
+<li>Google Computation - Mapreduce
+</li>
+<li>Google Scheduling - GWQ
+</li>
+</ul>
+
+
+
+</div>
+
+<div id="outline-container-1-5-2-1" class="outline-5">
+<h5 id="sec-1-5-2-1"><span class="section-number-5">1.5.2.1</span> GOOGLE FILE SYSTEM</h5>
+<div class="outline-text-5" id="text-1-5-2-1">
+
+<ul>
+<li>GFS II “Colossus“ Version 2 improves in many ways (is a complete rewrite)
+</li>
+<li>Elegant Master Failover (no more 2s delays&hellip;) <b>master 2s内可以恢复</b>
+</li>
+<li>Chunk Size is now 1MB – likely to improve latency for serving data other than Indexing <b>偏向实时处理,chunksize=1MB</b>
+</li>
+<li>Master can store more Chunk Metadata (therefore more chunks addressable up to 100 million) = also more Chunk Servers <b>支持亿级别chunk</b>
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-2-2" class="outline-5">
+<h5 id="sec-1-5-2-2"><span class="section-number-5">1.5.2.2</span> GOOGLE DATABASE</h5>
+<div class="outline-text-5" id="text-1-5-2-2">
+
+<ul>
+<li>Increased Scalability (across Namespace/Datacenters) 
+<ul>
+<li>Tablets spread over DC s for a table but expensive (both computationally and financially!) <b>NOTE（dirlt）：对于tablet跨数据中心的话代价非常大</b>
+</li>
+</ul>
+
+</li>
+<li>Multiple Bigtable Clusters replicated throughout DC 数据中心之间的bigtable集群相互同步。
+</li>
+<li>Current Status
+<ul>
+<li>Many Hundreds may be thousands of Bigtable Cells. Late 2009 stated 500 Bigtable clusters（2009年500个多个bigtable cluster)
+</li>
+<li>At minimum scaled to many thousands of machine per cell in production 每个集群上面有上千台机器。
+</li>
+<li>Cells manage Managing 3-figure TB data (0.X PB) 每个集群管理PB级别数据。
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-2-3" class="outline-5">
+<h5 id="sec-1-5-2-3"><span class="section-number-5">1.5.2.3</span> GOOGLE MAPREDUCE</h5>
+<div class="outline-text-5" id="text-1-5-2-3">
+
+<ul>
+<li>STATISTICS
+<ul>
+<li>In September 2009 Google ran 3,467,000 MR Jobs with an average 475 sec completion time averaging 488 machines per MR and utilising 25.5K Machine years 
+</li>
+<li>Technique extensively used by Yahoo with Hadoop (similar architecture to Google) and Facebook (since 06 multiple Hadoop clusters, one being 2500CPU/1PB with HBase).
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-5-2-4" class="outline-5">
+<h5 id="sec-1-5-2-4"><span class="section-number-5">1.5.2.4</span> GOOGLE WORKQUEUE</h5>
+<div class="outline-text-5" id="text-1-5-2-4">
+
+<ul>
+<li>Batch Submission/Scheduler System 批量提交和调度系统
+</li>
+<li>Arbitrates (process priorities) Schedules, Allocates Resources, process failover, Reports status, collects results 优先级分配资源，处理failover，汇报状态
+<ul>
+<li><b>NOTE（dirlt）：这个非常类似hadoop后期要做的yarn</b>
+</li>
+</ul>
+
+</li>
+<li>Workqueue can manage many tens of thousands of machines <b>管理上万机器</b>
+</li>
+<li>Launched via API or command line (sawzall example shown)
+</li>
+</ul>
+
+
+
+
+<pre class="example">saw --program code.szl --workqueue testing
+--input_files /gfs/cluster1/2005-02-0[1-7]/submits.* \
+--destination /gfs/cluster2/$USER/output@100
+</pre>
+
+
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-1-5-3" class="outline-4">
+<h4 id="sec-1-5-3"><span class="section-number-4">1.5.3</span> BUILD YOUR OWN GOOGLE</h4>
+<div class="outline-text-4" id="text-1-5-3">
+
+
+<p>
+<img src="./images/the-open-source-google-stack.png"  alt="./images/the-open-source-google-stack.png" />
+</p>
+
+<ul>
+<li>Google PROFITS US $16M A DAY 
+</li>
+<li>“Libraries are the predominant way of building programs”
+</li>
+<li>Agile Methodologies Used (development iterations, teamwork, collaboration, and process adaptability throughout the life-cycle of the project) 敏捷开发？
+</li>
+<li>An infrastructure handles versioning of applications so they can be release without a fear of breaking things = roll out with minimal QA <b>NOTE（dirlt）：有专门的程序来处理程序版本之间兼容关系，持续集成？！</b>
+</li>
+</ul>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2013-01-08 10:44:14 CST</p>
+<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>
+<html><body>
+<script type="text/javascript">
+var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3F54a700ad7035f6e485eaf2300641e7e9' type='text/javascript'%3E%3C/script%3E"));
+</script></body></html>

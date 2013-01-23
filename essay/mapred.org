@@ -1,0 +1,285 @@
+* mapred
+** Topic
+*** YARN
+**** Introducing Apache Hadoop YARN | Hortonworks
+http://hortonworks.com/blog/introducing-apache-hadoop-yarn/ 
+
+看起来YARN的主要目的是将Hadoop不仅仅用于map-reduce的计算方式，还包括MPI，graph-processing，simple services等，
+而MR仅仅是作为其中一种计算方式。底层依然是使用HDFS。发布方式的话还是将HDFS，YARN，MR，以及Common一起统一发布。
+
+**** Apache Hadoop YARN – Background and an Overview | Hortonworks
+http://hortonworks.com/blog/apache-hadoop-yarn-background-and-an-overview/
+
+对于MR来说，最关键的一点就是lack of data motion。通过将任务放在数据所在的机器上面，而不是将数据移动到任务所在的机器上面，可以节省带宽提高计算效率。现在来说MR分为下面三个部分：
+   - The end-user *MapReduce API* for programming the desired MapReduce application. 
+   - The *MapReduce framework*, which is the runtime implementation of various phases such as the map phase, the sort/shuffle/merge aggregation and the reduce phase. （framework做的事情是runtime的工作，比如怎么划分数据，怎么进行reducer上面的拉数据等）
+   - The *MapReduce system*, which is the backend infrastructure required to run the user’s MapReduce application, manage cluster resources, schedule thousands of concurrent jobs etc. （system做的事情是确保runtime可以work的工作，集群管理如何调度）
+
+file:./images/MRArch.png
+
+For a while, we have understood that the Apache Hadoop MapReduce framework needed an overhaul. In particular, with regards to the JobTracker, we needed to address several aspects regarding scalability, cluster utilization, ability for customers to control upgrades to the stack i.e. customer agility and equally importantly, supporting workloads other than MapReduce itself. 考虑对于MR framework需要做下面这些改进，尤其是对于JobTracker来说：
+   - 扩展性。我的理解是master有更好的处理能力，应该来支持更多的节点加入集群。2009年产品部署上能够达到5k个节点。
+   - 集群利用。现在hadoop是将所有的nodes看作是distince map-reduce slots的，并且两者是不可替换的。可能mapper使用非常多而reducer非常少（或者相反），这样的情况会限制集群利用效率。
+   - 灵活地控制software stack。我的理解是对于软件的升级，可能不能够完全替换，因此需要支持集群中有多个版本的MR运行。主要还是兼容性问题。
+   - 服务不同的workload而非MR。比如MPI，graph-processing，realtime-processing，并且减少HDFS到自己存储系统之间数据的迁移（现在MR输入一定要在HDFS上面）
+
+--------------------
+
+YARN主要做的工作就是在资源利用的改进上面，将资源利用已经workflow分离：
+   - 资源利用通过引入的ResouceManager（RM）以及NodeManager（NM）来管理。
+     - NM主要做单机上面的资源收集汇报给RM
+     - RM能够用来了解整个集群的资源使用情况，通过收集NM以及AM汇报信息。
+     - RM提供pluggable Scheduler来计算资源分配。
+   - workflow方面将MR和其他类型workflow分离，抽象成为ApplicationManager（AM）以及Container（既有ResourceAllocation概念，也有ApplicationNode概念）
+     
+file:./images/YARNArch.png
+
+**** Apache Hadoop YARN – Concepts and Applications | Hortonworks
+http://hortonworks.com/blog/apache-hadoop-yarn-concepts-and-applications/
+
+将AM和RM分离的好处在于：一方面减轻RM的压力这样可以让RM管理更多的集群，另外一方面可以让AM支持更多类型的计算而不仅仅是MR
+
+AM对RM提供Resource Request。对于Resource Model定义包括下面几个方面：
+   - Resource-name (hostname, rackname – we are in the process of generalizing this further to support more complex network topologies with YARN-18).（我需要哪些机器，可以制定host，rack，或者是*/any）
+   - Memory (in MB)（需要使用的内存大小）
+   - CPU (cores, for now)（CPU的个数）
+   - In future, expect us to add more resource-types such as disk/network I/O, GPUs etc.（各种IO参数）
+每一个Resource Model如果满足之后在一个机器上面形成一个Container。Resource Request包括下面几个部分：
+   - <resource-name, priority, resource-requirement, number-of-containers>
+   - resource-name is either hostname, rackname or * to indicate no preference. In future, we expect to support even more complex topologies for virtual machines on a host, more complex networks etc.
+   - priority is intra-application priority for this request (to stress, this isn’t across multiple applications).
+   - resource-requirement is required capabilities such as memory, cpu etc. (at the time of writing YARN only supports memory and cpu).
+   - number-of-containers is just a multiple of such containers.（我需要多少个这样的container？）
+
+ApplicationMaster需要通知Container来执行任务，因为现在的任务不限于MR，需要提供下面这些信息：
+   - Command line to launch the process within the container. 命令行
+   - Environment variables. 环境变量
+   - Local resources necessary on the machine prior to launch, such as jars, shared-objects, auxiliary data files etc. 一些本地资源
+   - Security-related tokens. 安全token
+
+整个YARN执行任务的步骤包括下面这几步： Application execution consists of the following steps:
+   - Application submission. 提交任务
+   - Bootstrapping the ApplicationMaster instance for the application. 启动AM
+   - Application execution managed by the ApplicationMaster instance. AM在不同的Container启动task
+
+Let’s walk through an application execution sequence (steps are illustrated in the diagram):
+   - A client program submits the application, including the necessary specifications to launch the application-specific ApplicationMaster itself. （用户首先提交AM）
+   - The ResourceManager assumes the responsibility to negotiate a specified container in which to start the ApplicationMaster and then launches the ApplicationMaster.（RM为AM分配所需要的Container，并且启动AM）
+   - The ApplicationMaster, on boot-up, registers with the ResourceManager – the registration allows the client program to query the ResourceManager for details, which allow it to  directly communicate with its own ApplicationMaster.（AM向RM进行注册）
+   - During normal operation the ApplicationMaster negotiates appropriate resource containers via the resource-request protocol.（AM通过Resouce Request和RM进行资源协调，获得所需要的Container）
+   - On successful container allocations, the ApplicationMaster launches the container by providing the container launch specification to the NodeManager. The launch specification, typically, includes the necessary information to allow the container to communicate with the ApplicationMaster itself.（AM通知Container所处的NM启动task）
+   - The application code executing within the container then provides necessary information (progress, status etc.) to its ApplicationMaster via an application-specific protocol.（Container会定时和AM进行通信，通知进度等）
+   - During the application execution, the client that submitted the program communicates directly with the ApplicationMaster to get status, progress updates etc. via an application-specific protocol.（client直接和AM进行通信了解整个任务进度）
+   - Once the application is complete, and all necessary work has been finished, the ApplicationMaster deregisters with the ResourceManager and shuts down, allowing its own container to be repurposed.（任务完成之后AM通知RM注销并且释放所持有的Container）
+
+file:./images/yarnflow.png
+
+**** Apache Mesos (Twitter Open Source Open House)
+https://speakerdeck.com/u/benh/p/apache-mesos-twitter-open-source-open-house
+
+**** Apache Hadoop YARN – NodeManager | Hortonworks
+http://hortonworks.com/blog/apache-hadoop-yarn-nodemanager/
+
+file:./images/yarn-nodemanager-arch.png
+
+   - NodeStatusUpdater 做一些资源状态汇报，并且接收RM请求停止已经运行的container
+   - ContainerManager *核心部分*
+     - RPC server 接收AM的命令运行或停止container，和ContainerTokenSecretManager协作完成请求认证。所有操作会记录在audit-log
+     - ResourceLocalizationService 准备一些applicaiton所需要的资源
+     - ContainersLauncher 维护container线程池，接收RM/AM的请求来运行和停止container
+     - AuxServices 提供额外服务。当application在这个node上面第一个container运行或者是application结束的时候会收到通知。
+     - ContainersMonitor 监控container运行状况，如果资源使用超限的话会kill container
+     - LogHandler 收集application本地产生的日志进行聚合并且上传到hdfs
+   - ContainerExecutor 执行container
+   - NodeHealthCheckerService 对于node做一些健康检查，将一些资源数据给NodeStatusUpdater
+   - Security
+     - ApplicationACLsManagerNM
+     - ContainerTokenSecretManager
+   - WebServer 当前运行的application以及对应的container，资源利用状况以及聚合的log
+
+**** Apache Hadoop YARN – ResourceManager | Hortonworks
+http://hortonworks.com/blog/apache-hadoop-yarn-resourcemanager/
+
+file:./images/yarn-resourcemanager-arch.png
+
+   - Components interfacing RM to the clients:
+     - ClientService 用户接口用来提交删除application以及获得当前集群的状况等数据
+     - AdminService 管理接口可以用来调整queue的优先级或者是增加node等
+   - Components connecting RM to the nodes:
+     - ResourceTrackerService 用来和NodeManager做RPC
+     - NMLivelinessMonitor 检测NM是否存活
+     - NodesListManager 维护当前所有的NM节点
+   - Components interacting with the per-application AMs 
+     - ApplicationMasterService 用来和AM交互部分接口，AM的资源请求通过这个接口提交，然后转向YarnScheduler处理
+     - AMLivelinessMonitor 检测AM是否存活
+   - The core of the ResourceManager *核心部分*
+     - ApplicationsManager 维护当所有提交的Application
+     - ApplicationACLsManager
+     - ApplicationMasterLauncher 负责AM的启动
+     - YarnScheduler *NOTE（dirlt）：似乎这个调度行为是在一开始就决定的*
+       - The Scheduler is responsible for allocating resources to the various running applications subject to constraints of capacities, queues etc. It performs its scheduling function based on the resource requirements of the applications such as memory, CPU, disk, network etc. Currently, only memory is supported and support for CPU is close to completion.
+     - ContainerAllocationExpirer application可能占用container但是却不使用。可以用来检测哪些container没有使用。
+   - TokenSecretManagers
+     - ApplicationTokenSecretManager
+     - ContainerTokenSecretManager
+     - RMDelegationTokenSecretManager
+   - DelegationTokenRenewer
+
+** 代码分析
+*** task如何向tasktracker进行定时汇报
+   - task不管是mapper还是reducer，和mr框架相关的内容都包含在了Context里面。
+   - Context初始化里面需要传入一个Reporter类，这个类主要用来和tasktracker汇报信息。Reporter本身是一个抽象类，一个具体实现类有TaskReporter
+   - TaskReporter本身实现了一个run方法，代码里面可以看到在和tasktracker通信。如果任务每个完成的话，那么会不断检查sendProgress这个标志位，这个标志位也被progress方法设置.
+   - 在MapTask以及ReduceTask里面的run方法，首先会创建reporter对象并且启动（startCommunicationThread），然后执行具体的map或者是reduce过程。（runNewMapper/runNewReducer） ，最后回到了Context.run
+   - 在Context.run里面本质工作是在不断地读取kv然后交给appcode来进行处理，在每次调用nextKeyValue里面，实际上调用了report.progress方法。
+简单地来说，有单独的汇报线程，然后在mapper以及reducer里面每次读取一个kv的话都会调用progress，之后汇报线程就可以向tasktracker汇报状态。因此如果自己某个任务耗时过长的话，可以调用context.progress().
+
+** 使用问题
+*** hadoop-lzo
+**** 安装配置
+   - 安装liblzo2库，sudo apt-get install liblzo2-2(liblzo2-dev)
+   - 安装lzop程序，sudo apt-get install lzop
+   - 下载hadoop-lzo. git clone git://github.com/kevinweil/hadoop-lzo.git https://github.com/kevinweil/hadoop-lzo
+   - 编译，ant compile-native tar 
+   - 将结果build/hadoop-lzo-0.4.14的hadoop-lzo-0.4.14.jar复制到 $HADOOP_HOME/lib，将build/hadoop-lzo-0.4.14/lib/native下的文件复制到$HADOOP_HOME/lib/native (native/Linux-amd64-64)
+   - 修改core-site.xml配置
+#+BEGIN_SRC XML
+<property>
+<name>io.compression.codecs</name>    
+<value>org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.BZip2Codec</value>
+</property>
+<property>
+<name>io.compression.codec.lzo.class</name>
+<value>com.hadoop.compression.lzo.LzoCodec</value>
+</property>
+#+END_SRC
+
+**** 使用lzo
+关于如何使用lzo可以参看代码示例， com.dirlt.java.mr.ReadLzoInput . 下面几点需要说明：
+   - LzoTextInputFormat用来处理lzo压缩的文本文件，
+     - hadoop-lzo本身没有自带LzoTextOutputFormat，这样的话之能够输出TextOutputFormat然后通过lzop压缩
+     - *elephant-bird提供了很多额外的InputFormat/OutputFormat.*
+   - 如果使用本地测试集群的话，那么需要提供lzo encoder/decoder. 
+     - Configuration conf = new Configuration(); // 如果是本地测试集群的话，那么是没有读取core-site.xml的，因此也就是没有编码解码信息，需要通过下面语句提供
+     - conf.set("io.compression.codecs", "org.apache.hadoop.io.compress.DefaultCodec,org.apache.hadoop.io.compress.GzipCodec,com.hadoop.compression.lzo.LzopCodec");
+     - conf.set("io.compression.codec.lzo.class", "com.hadoop.compression.lzo.LzoCodec");
+   - LzoIndexer.main(new String[]{kOutputFileName}); // 如果需要在程序里面进行indexer的话，那么可以直接调用LzoIndexer
+     - 如果是分布式的话可以调用 DistributedLzoIndexer.main
+     - 当然也可以按照下面的方法通过程序调用
+
+之后在输出目录下面会存在很多lzo文件，但是这些文件并不能够直接作为输入使用（因为hadoop不知道如何对这些lzo文件进行切分），需要对这些lzo文件进行索引。使用下面的命令来进行索引：
+   - hadoop jar /usr/lib/hadoop/lib/hadoop-lzo-0.4.14.jar com.hadoop.compression.lzo.DistributedLzoIndexer <output-dir>
+完成之后对于每一个lzo文件都会存在一个.index文件。如果重复运行上面命令的话，会检查.index文件是否存在，如果存在的话那么就不会重新进行索引。
+
+**** 配合protobuf
+elephant-bird实现了protobuf+lzo组合使用方式。
+
+首先创建proto文件，比如message.proto
+#+BEGIN_EXAMPLE
+package com.dirlt.java.mr.proto;
+
+// FATAL: This name works as a version number
+// Increase this number everytime you do a non-compatible modification!!
+// The block storage writer is responsible for write the version number.
+option java_outer_classname = "MessageProtos1";
+
+message Message {
+  required string text = 1;
+}
+#+END_EXAMPLE
+   - package 名字空间
+   - java_outer_classname 具体输出类名称
+使用protoc --java_out=<dir> message.proto就会在<dir>下面生成MessageProtos1.java文件。
+
+此外我们还需要为这个类写几个辅助类，但是索性的是辅助类并不是很复杂。
+   - InputFormat com.dirlt.java.mr.MessageLzoProtobufInputFormat
+#+BEGIN_SRC Java
+public class MessageLzoProtobufInputFormat extends LzoProtobufBlockInputFormat<MessageProtos1.Message> {
+    public MessageLzoProtobufInputFormat() {
+        super(new TypeRef<MessageProtos1.Message>() {
+        });
+    }
+}
+#+END_SRC
+
+   - OutputFormat com.dirlt.java.mr.MessageLzoProtobufOutputFormat
+#+BEGIN_SRC Java
+public class MessageLzoProtobufOutputFormat extends LzoProtobufBlockOutputFormat<MessageProtos1.Message> {
+    public MessageLzoProtobufOutputFormat() {
+        super(new TypeRef<MessageProtos1.Message>() {
+        });
+    }
+}
+#+END_SRC
+
+   - Writable com.dirlt.java.mr.MessageLzoProtobufWritable
+#+BEGIN_SRC Java
+public class MessageLzoProtobufWritable extends ProtobufWritable<MessageProtos1.Message> {
+    public MessageLzoProtobufWritable() {
+        super(new TypeRef<MessageProtos1.Message>() {
+        });
+    }
+
+    public MessageLzoProtobufWritable(MessageProtos1.Message message) {
+        super(message, new TypeRef<MessageProtos1.Message>() {
+        });
+    }
+}
+
+#+END_SRC
+
+关于如何使用lzo+protobuf可以参看代码示例， com.dirlt.java.mr.UseLzoProtobuf . 值得注意的是如果输入为lzo文件的话，那么类型是ProtobufWritable<M>（泛型），如果需要取值的话必须通过setConverter提供类信息。
+
+*** 多路输入
+**** MultipleInputs
+   - 参考代码 com.dirlt.java.mr.RunMultipleInputs1
+   - 支持一个htable和多个文件（但是对于htable不支持设置scan范围）
+   - 代码大致过程：
+     - 使用 TableMapReduceUtil.initTableMapperJob 初始化htable输入（作用就是为了指定htable的input table name）
+     - 之后在调用一次 MultipleInputs.addInputPath(job, new Path(kInTableName1), TableInputFormat.class, TMapper.class); 这里的kInTableName1可以随便定义，但是不要和接下来的hdfs路径重名。（作用是为了能够调整input format）
+     - 接下来就是添加hdfs输入  MultipleInputs.addInputPath(job, new Path(kInFileName1), TextInputFormat.class, FMapper.class); 可以调用多次来添加多个hdfs输入源。
+   - 原理解释：
+     - 使用MultipleInputs的话，hadoop会在环境变量中将输入内容设置成为inputPath=className, inputPath=className这样的字符串
+     - MultipleInputs底层将InputFormat替换成为了自己的DelegateInputFormat.
+     - DelegateInputFormat根据每个className初始化实例并且将inputPath给这个实例，这些对于FileInputFormat工作很好
+     - 而对于TableInputFormat没有使用这个inputPath，而是直接读取configuration里面设置的TableOutputFormat.OUTPUT_TABLE这个值 
+
+**** MultipleTableInputFormat
+   - 参考代码 com.dirlt.java.mr.RunMultipleInputs2
+     - 需要配合MultipleInputs使用
+     - 使用这个InputFormat可以同时支持多文件输入和多表输入
+     - 多表输入还支持在一个table上面使用多个scan.
+   - 大致原理如下：
+     - MultipleInputs底层使用Delegate模式，将inputFormat以及mapper和Path关联，然后将InputFormat实例化来对path进行切片得到InputSplit以及RecordReader.      
+     - 为了能够和MultipleInputs兼容使用，代码实现上将TableInput转换成为String然后表示成为Path（TableInput包括tableName以及多个scan对象）
+       - string格式为 <tableName> ! hexString(scan) ! hexString(scan) 
+       - 从path中将TableInput字符串分离的代码是 path.toString().substring(path.getParent().toString().length() + 1); *TODO（dirlt）：对于大部分的情况是可以正常handle的*
+     - MultipleTableInputFormat进行切片的时候将path取出内容进行解析，分离出TableInput出来，然后调用TableInputFormatBase的分片策略进行分片
+       - setConf空实现是因为在ReflectionUtils.newInstance创建实例的时候会调用，而MultipleTableInputFormat本身没有使用到。
+     - MultipleTableSplit的引入主要是因为TableSplit没有包含scan对象，而这个对象需要在TableRecordReader里面使用到。
+       - InputSplit需要实现序列化的接口，因为切片信息生成是JobTracker完成保存在hdfs的，然后TaskTracker从hdfs中读取。
+
+*** 多路输出
+**** MultipleOutputs
+   - 参考代码 com.dirlt.java.mr.RunMultipleOutputs
+   - 支持多个htable和多个文件
+   - 如果使用write(String namedOutput, K key, V value)会写到FileOutputFormat设置的目录下面，文件附上前缀namedOutput-，
+   - 如果使用write(String namedOutput, K key, V value, String baseOutputPath) 
+     - 如果baseOutputPath以/开头的话比如/a/b/c的话，那么输出文件为/a/b/c-m-00000
+     - 如果baseOutputPath以/结尾的话比如/ab/c/的话，那么输出文件为/a/b/c/-m-00000.
+     - 如果baseOutputPath没有以/开头的话，那么写到FileOutputFormat设置的目录下面，文件附上前缀baseOutputPath-.
+   - 因为最后输出是调用MultipleOutputs.write而非Context.write，因此和mrunit配合不太好
+     - 可以通过MockMultipleOutputs来进行测试 参考代码 com.dirlt.java.mr.MockMultipleOutput
+
+**** MultipleTableOutputFormat
+   - 参考代码 com.dirlt.java.mr.RunMultipleTableOutput
+   - 支持多个htable
+   - 调用context.write的key需要指定outputTable
+     - 其实这也意味着如果是单表输出的话那么key为null即可
+     - 前提是需要使用conf.set(TableOutputFormat.OUTPUT_TABLE,tableName);
+
+*** 获取集群运行状况
+  - 参考代码 com.dirlt.java.mr.ClusterSummary
+  - 获取更多信息可以阅读JobClient API
+
+

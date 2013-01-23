@@ -1,0 +1,488 @@
+* lyric
+#+TITLE: 歌词
+** rolling in th deep(adele)
+#+BEGIN_EXAMPLE
+There's a fire starting in my heart
+Reaching a fever pitch
+it's bringing me out the dark
+Finally I can see you crystal clear
+Go head and sell me out
+and I'll lay your shit bare
+
+See how I leave with every piece of you
+Don't underestimate the things that I will do
+There's a fire starting in my heart
+Reaching a fever pitch
+and it's bring me out the dark
+
+The scars of your love remind me of us
+They keep me thinking that we almost had it all
+The scars of your love they leave me breathless
+I can't help feeling
+We could have had it all
+Rolling in the deep
+You had my heart inside of your hand
+And you played it
+To the beat
+
+Baby I have no story to be told
+But I've heard one of you,
+and I'm gonna make your head burn
+Think of me in the depths of your despair
+Making a home down there,
+reminds you of the home we shared
+
+The scars of your love remind me of us
+They keep me thinking that we almost had it all
+The scars of your love they leave me breathless
+I can't help feeling
+We could have had it all
+Rolling in the deep
+You had my heart inside of your hand
+And you played it
+To the beat
+
+We could have had it all
+Rolling in the deep
+You had my heart inside of your hand
+But you played it
+With the beat
+
+Throw your soul through every open door
+Count your blessings to find what you look for
+Turned my sorrow into treasured gold
+You pay me back in kind and reap just what you sow
+
+We could have had it all
+We could have had it all
+It all, it all it all,
+We could have had it all
+Rolling in the deep
+You had my heart inside of your hand
+And you played it
+To the beat
+
+We could have had it all
+Rolling in the deep
+You had my heart inside of your hand
+But you played it,played it, played it,played it
+To the beat
+#+END_EXAMPLE
+
+** with or without you(U2)
+#+BEGIN_EXAMPLE
+See the stone set in your eyes
+See the thorn twist in your side
+I wait for you
+Sleight of hand and twist of fate
+On a bed of nails she makes me wait
+And I wait without you
+With or without you
+With or without you
+
+Through the storm we reach the shore
+You give it all but I want more
+And I'm waiting for you
+With or without you
+With or without you
+I can't live
+With or without you
+
+And you give yourself away
+And you give yourself away
+And you give
+And you give
+And you give yourself away
+My hands are tied
+My body bruised, she's got me with
+Nothing to win and
+Nothing left to lose
+
+And you give yourself away
+And you give yourself away
+And you give
+And you give
+And you give yourself away
+With or without you
+With or without you
+I can't live
+With or without you
+
+With or without you
+With or without you
+I can't live
+With or without you
+With or without you
+
+#+END_EXAMPLE
+** hey jude(beatles)
+#+BEGIN_EXAMPLE
+hey jude, don't make it bad.
+take a sad song and make it better.
+remember to let her into your heart,
+then you can start to make it better.
+hey jude, don't be afraid.
+you were made to go out and get her.
+the minute you let her under your skin,
+then you begin to make it better.
+and anytime you feel the pain, hey jude, refrain,
+don't carry the world upon your shoulders.
+for well you know that it's a fool who plays it cool
+by making his world a little colder.
+hey jude, don't let me down.
+you have found her, now go and get her.
+remember to let her into your heart,
+then you can start to make it better.
+so let it out and let it in, hey jude, begin,
+you're waiting for someone to perform with.
+and don't you know that it's just you, hey jude, you'll do,
+the movement you need is on your shoulder.
+hey jude, don't make it bad.
+take a sad song and make it better.
+remember to let her under your skin,
+then you'll begin to make it
+better better better better better better, oh.
+da da da da da da, da da da, hey jude...
+#+END_EXAMPLE
+
+** teardrop(massive attack)
+#+BEGIN_EXAMPLE
+love, love is a verb
+love is a doing word
+feathers on my breath
+gentle impulsion
+shakes me makes me lighter
+feathers on my breath
+teardrop on the fire
+feathers on my breath
+in the night of matter
+black flowers blossom
+feathers on my breath
+black flowers blossom
+feathers on my breath
+teardrop on the fire
+feathers on my breath
+water is my eye
+most faithful my love
+feathers on my breath
+teardrop on the fire of a confession
+feathers on my breath
+most faithful my love
+feathers on my breath
+teardrop on the fire
+feathers on my breath
+stumbling a little
+stumbling a little
+#+END_EXAMPLE
+
+** Eternal Flame
+http://www.gnu.org/fun/jokes/eternal-flame.html
+
+#+BEGIN_EXAMPLE
+I was taught assembler
+in my second year of school.
+It's kinda like construction work —
+with a toothpick for a tool.
+So when I made my senior year,
+I threw my code away,
+And learned the way to program
+that I still prefer today.
+
+Now, some folks on the Internet
+put their faith in C++.
+They swear that it's so powerful,
+it's what God used for us.
+And maybe it lets mortals dredge
+their objects from the C.
+But I think that explains
+why only God can make a tree.
+
+For God wrote in Lisp code
+When he filled the leaves with green.
+The fractal flowers and recursive roots:
+The most lovely hack I've seen.
+And when I ponder snowflakes,
+never finding two the same,
+I know God likes a language
+with its own four-letter name.
+
+Now, I've used a SUN under Unix,
+so I've seen what C can hold.
+I've surfed for Perls, found what Fortran's for,
+Got that Java stuff down cold.
+Though the chance that I'd write COBOL code
+is a SNOBOL's chance in Hell.
+And I basically hate hieroglyphs,
+so I won't use APL.
+
+Now, God must know all these languages,
+and a few I haven't named.
+But the Lord made sure, when each sparrow falls,
+that its flesh will be reclaimed.
+And the Lord could not count grains of sand
+with a 32-bit word.
+Who knows where we would go to
+if Lisp weren't what he preferred?
+
+And God wrote in Lisp code
+Every creature great and small.
+Don't search the disk drive for man.c,
+When the listing's on the wall.
+And when I watch the lightning burn
+Unbelievers to a crisp,
+I know God had six days to work,
+So he wrote it all in Lisp.
+
+Yes, God had a deadline.
+So he wrote it all in Lisp.
+#+END_EXAMPLE
+
+** 怒放的生命(汪峰)
+#+BEGIN_EXAMPLE
+曾经多少次跌倒在路上
+曾经多少次折断过翅膀
+如今我已不再感到彷徨
+我想超越这平凡的生活
+
+我想要怒放的生命
+就象飞翔在辽阔天空
+就象穿行在无边的旷野
+拥有挣脱一切的力量
+
+曾经多少次失去了方向
+曾经多少次破灭了梦想
+如今我已不再感到迷茫
+我要我的生命得到解放
+
+我想要怒放的生命
+就象飞翔在辽阔天空
+就象穿行在无边的旷野
+拥有挣脱一切的力量
+
+我想要怒放的生命
+就象矗立在彩虹之巅
+就象穿行在璀璨的星河
+拥有超越平凡的力量
+
+曾经多少次失去了方向
+曾经多少次破灭了梦想
+如今我已不再感到迷茫
+我要我的生命得到解放
+
+我想要怒放的生命
+就象飞翔在辽阔天空
+就象穿行在无边的旷野
+拥有挣脱一切的力量
+
+我想要怒放的生命
+就象矗立在彩虹之巅
+就象穿行在璀璨的星河
+拥有超越平凡的力量
+
+我想要怒放的生命
+就象飞翔在辽阔天空
+就象穿行在无边的旷野
+拥有挣脱一切的力量
+
+我想要怒放的生命
+就象矗立在彩虹之巅
+就象穿行在璀璨的星河
+拥有超越平凡的力量
+#+END_EXAMPLE
+
+** 彩虹桥(赛德克巴莱)
+#+BEGIN_EXAMPLE
+Ox bale wa,
+噢~~~ 真的啊！
+Oh, it's for real,
+
+Nii ku mpudehuk
+我來到這裡
+Here I am
+
+Tnlangan rudan hini wa...
+我曾英勇守護的山林……
+I used to guard these mountains and forests bravely...
+
+Bale wa bale!
+真的呀，是真的！
+Yeah, it's for real!
+
+Snrabe Nomin
+懷念過去的人們啊
+Reminisce the people from the past
+
+Meyah ku dehuk, Tnlangan ba rudan.
+我來到這裡
+Here I am
+
+Yaku ba Mona/Luhe, Qumulahang alang nii...
+我曾英勇守護的山林……
+I used to guard these mountains and forests bravely...
+
+Dudupun nami, Riso rabu harung.
+這是我們的山唷
+These are our mountains
+
+Kururu ta yayung, Maduk hii camac.
+這是我們的溪唷
+These are our creeks
+
+Seediq ta bale, Seediq ta bale…
+我們是真正的賽德克.巴萊唷……
+We're the true Seediq Bale...
+
+Phuling hiya, Qlmiqu mutara.
+我們在山裡追獵
+We go hunting in the mountains
+
+Gaya nu seediq, Mududahun ta hiya.
+我們在部落裡分享
+We share food in our clan
+
+Krruru ta mosa, Bubun qsiya.
+我們在溪流裡取水
+We fetch water from the creeks
+
+Nasi mu ba qulengi, Nasi mu ba qulengi!
+願我為此獻出生命！
+I'm willing to give my life for these!
+
+Smbubirac yayung nii
+溪流啊！不要再吵了
+Oh, creek! Be quiet.
+
+Muuyas baru sisin ga…
+祖靈鳥在唱歌了……
+Sisin babblers are singing...
+
+Pyasi uyas bale！
+請唱首好聽的歌吧！
+Sing us a beautiful song please!
+
+Spuyaso ta Seediq
+為我們的族人唱
+Sing for our people
+
+Uyas rudan cubeyo…
+來自祖靈的歌……
+A song of our ancestral spirit...
+
+Nasi mu ba qulengun, Nasi mu ba qulengun!
+願我也獻出生命！
+I'm willing to give my life too!
+
+Ledax wilaq bluwa
+巨石雷光下
+When the lightning rifts the rock
+
+Cumebu(tkriyak) hako utux
+彩虹出現了
+A rainbow appears
+
+Ima gisu ka hini,
+seediq mupahung wa…
+一個驕傲的人走來了……
+And a proud man emerges...
+
+Nima riso ka kiya?
+是誰如此驕傲啊？
+Who is this man so proud?
+
+Lutuc nu nisu wa，
+是你的子孫啊——
+It's your offspring
+
+Seediq blbale wa!
+賽德克.巴萊！
+A Seediq Bale!
+
+Seediq blbale wa!
+賽德克.巴萊！
+A Seediq Bale! 
+#+END_EXAMPLE
+  
+** in my remains(linkin park)
+#+BEGIN_EXAMPLE
+Separate, sifting through the wreckage, 
+I can't concentrate.
+Searching for the message in the fear and pain.
+Broken down and waiting for the chance to feel alive.
+Now in my remains, our promises, 
+they never came
+So let silence ring to wash away the worst of me.
+Come apart, 
+falling in the cracks of every broken heart.
+Digging through the wreckage of your disregard
+Sinking down and waiting 
+for the chance to feel alive.
+Now in my remains, 
+our promises, they never came
+So let silence ring to 
+wash away the worst of me.
+
+Like an army falling, one by one by one.
+Like an army falling, one by one by one.
+Like an army falling, one by one by one.
+Like an army falling, one by one by one.
+Now in my remains, 
+our promises, they never came
+So let silence ring to wash away the worst of me.
+Like an army falling, one by one by one.
+Like an army falling, one by one by one.
+#+END_EXAMPLE
+
+** wake me up when september ends(Green Day)
+#+BEGIN_EXAMPLE
+Summer has come and passed, the innocent can never last
+Wake me up when September ends
+Like my father's come to pass, seven years has gone so fast
+Wake me up when September ends
+
+Here comes the rain again, falling from the stars
+Drenched in my pain again, becoming who we are
+As my memory rests, but never forgets what I lost
+Wake me up when September ends
+
+Summer has come and passed, the innocent can never last
+Wake me up when September ends
+Ring out the bells again, like we did when spring began
+Wake me up when September ends
+
+Here comes the rain again, falling from the stars
+Drenched in my pain again, becoming who we are
+As my memory rests, but never forgets what I lost
+Wake me up when September ends
+
+Summer has come and passed, the innocent can never last
+Wake me up when September ends
+Like my father's come to pass, twenty years has gone so fast
+Wake me up when September ends
+
+Wake me up when September ends
+Wake me up when September ends
+#+END_EXAMPLE
+
+** 一生所爱(卢冠廷)
+#+BEGIN_EXAMPLE
+从前 现在 过去了再不来
+红红 落叶 长埋尘土内
+开始终结总是 没变改
+天边的你漂泊 在白云外
+苦海 泛起爱恨
+在世间 难逃避命运
+相亲 竟不可接近
+或我应该 相信是缘分
+情人 别后 永远 再不来(消散的情缘)
+无言 独坐 放眼 尘世外(愿来日再续)
+鲜花虽会凋谢(只愿) 但会再开(为你)
+一生所爱隐约(守候) 在白云外(期待)
+苦海 泛起爱恨
+在世间 难逃避命运
+相亲 竟不可接近
+或我应该 相信是缘分
+苦海 泛起爱恨
+在世间 难逃避命运
+相亲 竟不可接近
+或我应该 相信是缘分 
+#+END_EXAMPLE

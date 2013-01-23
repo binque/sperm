@@ -1,0 +1,285 @@
+* hbase
+** HBaseCon2012
+*** Storing and Manipulating Graphs in HBase - Dan Lynn, FullContact
+MultiScanTableInputFormat  http://code.google.com/p/socorro/source/browse/trunk/analysis/src/java/org/apache/hadoop/hbase/mapreduce/MultiScanTableInputFormat.java?r=2244
+
+这个InputFormat的注释非常有意思
+#+BEGIN_VERSE
+
+/**
+ * Similar to TableInputFormat except this is meant for an array of Scan objects that can
+ * be used to delimit row-key ranges.  This allows the usage of hashed dates to be prepended
+ * to row keys so that hbase won't create hotspots based on dates, while minimizing the amount
+ * of data that must be read during a MapReduce job for a given day.
+ * 
+ * Note: Only the first Scan object is used as a template.  The rest are only used for ranges.
+ * @author Daniel Einspanjer
+ * @author Xavier Stevens
+ *
+ */
+
+#+END_VERSE
+针对时间这种开头的rowkey，我们可以之前加上hashcode来将连续时间row打散，这样访问就不会集中在几个region上面了。
+而使用这种方式的话在扫描的时候就需要input format支持传入multi scan对象。
+
+*** Supporting HBase： How to Stabilize, Diagnose, and Repair - Jeff, Jonathan, Kathleen, Cloudera
+file:./images/hbasecon2012-hbase-cross-section.png
+
+TODO(dirlt):
+   - DOs and DON’Ts for keeping HBase Healthy
+     - DOs
+       - Monitor and Alert
+       - Optimize network
+       - Know your logs
+     - DON'Ts
+       - Swap
+       - Oversubscribe MR
+       - Share the network
+   - Understanding the logs helps us diagnose issues
+     - Related events logged by different processes in different places
+     - Log messages point at each other
+       - HDFS accesses by RS logged by NN and DN
+       - HBase accesses by MR logged by JT, RS, NN, ZK
+       - ZK logs indicate HBase health
+
+*** Unique Sets on HBase and Hadoop - Elliot Clark, StumbleUpon
+   - Try to get the best upper bound on runtime
+   - More and more flexibility will be required as time goes on
+   - Store more data now, and when new features are requested development will be easier
+   - Choose a good serialization framework and stick with it
+   - Always clean your data before inserting
+
+*** You’ve got HBase! How AOL Mail Handles Big Data
+   - Proper system tuning is essential
+     - Good information on tuning Hadoop is prolific, but…
+       - XFS > EXT
+       - JBOD > RAID
+     - As far as HBase is concerned…
+       - Just go buy Lars’ book
+   - Leverages Memcached to reduce query load on HBase
+   - Exploding regions
+     - Batch inserts via MapRed result in fast, symmetrical key space growth
+     - Attempting to split every region at the same time is a bad idea
+     - Turning off region splitting and using a custom “rolling region splitter” is a good idea
+     - Take time and load into consideration when selecting regions to split
+   - Large, non-splitable regions tell you things. 
+     - Our key space maps to accounts. Excessively large keys equal excessively “active” accounts
+
+** 观点
+*** 业强 2012-08-16 hbase讲座
+file:./images/hbase-architecture.png
+
+HRegion类似于tablet，每个HRegion有很多Store存储不同的column family。
+
+对于memstore内存大小限制的话，有两个方面：
+   - HRegion如果总体内存比较大的话，那么会选择几个Store里面的memstore进行flush
+   - 如果Store里面的memstore本身比较大的话，也会进行flush
+
+scan过程大致是这样的：
+   - 首先scanner得到memstore以及所有的hfile，以及这个似乎时候的timestamp（hbase使用timestamp作为version)进行归并排序。
+   - 如果期间memstore发生写，或者是flush，或者是进行compaction的话，那么会通知scanner
+   - scanner会重新组织这些内容，根据上次读取到的value,忽路duplicated的数据。   
+这样的好处就是通常在scanner的时候不会阻塞其他操作。
+
+--------------------
+
+但是我看了一下leveldb代码，觉得实现上更好。对于immutable memtable以及memtable做引用计数，在iterator里面保存两个table。
+如果memtable compaction之后的话，那么直接创建一个新的memtable即可。原有的table在iterator销毁的时候就会自动释放。
+
+--------------------
+
+对于column family是可以设置超时时间的。在进行flush或者是compaction的时候，会判断这个value是否超过ttl。如果超过ttl的话那么就会直接丢弃。
+
+*** asynchbase
+https://github.com/stumbleupon/asynchbase
+
+   - asynchbase和HTable的性能对比 http://www.tsunanet.net/~tsuna/asynchbase/benchmark/viz.html 
+   - OpenTSDB is a distributed, scalable Time Series Database (TSDB)  http://opentsdb.net/index.html 
+
+从看asynchbase介绍来看，我猜想asynchbase用在MR范围还是有限的。
+   - asynchbase就是一个异步client，能够很好地解决一个app里面对于hbase有很多个连接的场景。
+   - 但是在MR里面，拿我们现在的HourlyProcedure来说，每次get都是一个同步过程，一定要取回结果才能够进行下一步的操作。整个MR框架就限制了异步client的作用。
+   - asynchbase现在使用的场景应该是OpenTSDB，因为没有MR框架限制，所以异步client可以工作很好。
+
+*NOTE（dirlt@2012-12-10）：code/java/asynchbase下面有一些使用的示例代码，并且在自己的fast-hbase-rest里面也使用了asynchbase*.使用还是比较方便的
+实现上asynchbase没有使用任何org.apache.hbase的代码，从头完成了自己的协议访问，这个可以从HBaseClient的构造参数可以看到，在里面没有使用configuration,
+而是直接传入quorumSpec就是zookeeper的地址。
+
+*** HBase Write Path | Apache Hadoop for the Enterprise | Cloudera
+http://blog.cloudera.com/blog/2012/06/hbase-write-path/
+
+At first, it locates the address of the region server hosting the -ROOT- region from the ZooKeeper quorum.  From the root region server, the client finds out the location of the region server hosting the -META- region.（首先从Zookeeper里面找到-ROOT- region所在的region server，然后在找到对应的-META- region所在的region server，最后找到数据所在的region server。 *TODO（dirlt）：问题是-ROOT-和-META-里面是怎么组织数据的呢，怎么来帮助定位的？* ）
+
+写入的Write Ahead Log存放在/hbase/.logs下面，文件路径是 /hbase/.logs/<host>,<port>,<startcode>，文件名称/hbase/.logs/<host>,<port>,<startcode>/<host>%2C<port>%2C<startcode>.<timestamp>
+#+BEGIN_EXAMPLE
+/hbase/.logs/srv.example.com,60020,1254173957298
+/hbase/.logs/srv.example.com,60020,1254173957298/srv.example.com%2C60020%2C1254173957298.1254173957495
+#+END_EXAMPLE
+*NOTE（dirlt）：startcode表示这个regionserver启动的时间，log文件名后面的timestamp部分表示这个log文件产生时间。（这个是我的猜测=D）*
+
+By default, WAL file is rolled when its size is about 95% of the HDFS block size. You can configure the multiplier using parameter: “hbase.regionserver.logroll.multiplier”, and the block size using parameter: “hbase.regionserver.hlog.blocksize”. WAL file is also rolled periodically based on configured interval “hbase.regionserver.logroll.period”, an hour by default, even the WAL file size is smaller than the configured limit. 对于每个WAL文件roll的时机包括下面几个：
+   - 大小达到HDFS block size （64MB，可以通过hbase.regionserver.hlog.blocksize配置）的95%（可以通过hbase.regionserver.logroll.multiplier配置）
+   - 定期（1小时）进行（可以通过hbase.regionserver.logroll.period配置）
+
+*** HBase Log Splitting | Apache Hadoop for the Enterprise | Cloudera
+http://blog.cloudera.com/blog/2012/07/hbase-log-splitting/
+
+需要log split的原因是，在一台region server上面可能serve多个region，而这些region的WAL都记录在同一个文件里面。如果一个region server挂掉的话，那么对应的region需要放在其他region server上面进行serve，而在serve之前需要做日志恢复，这个日志包括所有对于这个region的修改，所以这就牵扯到了log split。所以所谓的log split是将一个WAL文件，按照不同region拆分成为多个文件，每个文件里面只是包含一个region的内容。log split发生在启动一个region server之前。
+
+Log splitting is done by HMaster as the cluster starts or by ServerShutdownHandler as a region server shuts down. Since we need to guarantee consistency, affected regions are unavailable until data is restored. So we need to recover and replay all WAL edits before letting those regions become available again. As a result, regions affected by log splitting are unavailable until the process completes and any required edits are applied.（log split过程是由master来完成的，为了保证一致性在进行split期间受影响的region不能够服务，下面是一个log splitting的图示流程:
+
+file:./images/hbase-log-splitting.png
+
+   - rename log dir是将对应的region server的目录重命名，这样是为了确保不会出现如果master认为region server挂掉但是实际上region server还在serve的情况。重命名为 /hbase/.logs/<host>, <port>,<startcode>-splitting
+     - It is important that HBase renames the folder. A region server may still be up when the master thinks it is down. The region server may not respond immediately and consequently doesn’t heartbeat its ZooKeeper session. HMaster may interpret this as an indication that the region server has failed. If the folder is renamed, any existing, valid WAL files still being used by an active but busy region server are not accidentally written to.
+     - /hbase/.logs/srv.example.com,60020,1254173957298-splitting
+   - start write threads 启动多个线程来写（如果存在多个文件的话也可以使用多个线程来读取），但是事实上这样效率依然不高，因为存在很多机器空闲。
+   - read edits from each log file, put edit entries in buffers, writers write edits to edits files. 读线程来进行拆分，将需要write的内容丢给写线程完成。
+     - 每个线程写入的文件为/hbase/<table_name>/<region_id>/recovered.edits/.temp
+     - 一旦写成功之后就会重命名为/hbase/<table_name>/<region_id>/recovered.edits/<sequenceid>，其中sequenceid是最后一条写入这个file的log对应的unique operation id.      
+     - As a result, when replaying the recovered edits, it is possible to determine if all edits have been written. If the last edit that was written to the HFile is greater than or equal to the edit sequence id included in the file name, it is clear that all writes from the edit file have been completed.（这样一旦在做文件恢复的时候就可以很容易地确定这个恢复文件是否需要读取。如果在HFile里面最大的sequence id比这个文件名显示的seq id大的话，那么可以认为不需要replay这个文件）
+   - close writers 关闭写线程以及对应的HDFS文件
+   - 指定新的region server来serve某些region，并且读取这个region对应的HDFS看是否有恢复文件，如果存在恢复文件的话那么就需要进行replay.
+
+
+--------------------
+
+Times to complete single threaded log splitting vary, but the process may take several hours if multiple region servers have crashed. Distributed log splitting was added in HBase version 0.92 (HBASE-1364) by Prakash Khemani from Facebook.  It reduces the time to complete the process dramatically, and hence improves the availability of regions and tables. For example, we knew a cluster crashed. With single threaded log splitting, it took around 9 hours to recover.  With distributed log splitting, it just took around 6 minutes.（由单个master来完成log splitting的工作非常耗时，所以引入了distributed log splitting这个机制，由facebook的工程师实现的）
+
+*distributed log splitting* 机制非常简单，就是将所有需要被splitting的WAL分布式并行地来完成。首先将这些文件全部放在zookeeper上面，然后cluster里面的机器可以上去认领自己来进行split那个日志，当然也要考虑这个机器在split日志的时候自己挂掉的情况。
+   - With distributed log splitting, the master is the boss.  It has a split log manager to manage all log files which should be scanned and split. Split log manager puts all the files under the splitlog ZooKeeper node (/hbase/splitlog) as tasks. For example, while in zkcli, “ls /hbase/splitlog” returns: [hdfs://host2.sample.com:56020/hbase/.logs/host8.sample.com,57020,1340474893275-splitting/host8.sample.com%3A57020.1340474893900, hdfs://host2.sample.com:56020/hbase/.logs/host3.sample.com,57020,1340474893299-splitting/host3.sample.com%3A57020.1340474893931, hdfs://host2.sample.com:56020/hbase/.logs/host4.sample.com,57020,1340474893287-splitting/host4.sample.com%3A57020.1340474893946] （master在zookeeper节点/hbase/splitlog下面增加需要做split的文件，而master本身只需要监控这个节点下面是否还有剩余的文件）
+file:./images/hbase-split-log-manager.png
+   - In each region server, there is a daemon thread called split log worker. Split log worker does the actual work to split the logs. The worker watches the splitlog znode all the time.  If there are new tasks, split log worker retrieves the task paths, and then loops through them all to grab any one which is not claimed by other worker yet.  After it grabs one, it tries to claim the ownership of the task, to work on the task if successfully owned, and to update the task’s state properly based on the splitting outcome. After the split worker completes the current task, it tries to grab another task to work on if any remains.（如果得到了这个log split的权限的话，那么就修改这个task的ownership）
+
+这个功能通过参数 hbase.master.distributed.log.splitting = true 来进行设置，split log manager也启动一个monitor thread来监控zookeeper节点观察出现的问题，逻辑如下： *NOTE（dirlt）：task状态切换有点琐碎，没有仔细阅读*
+   - Checks if there are any dead split log workers queued up. If so, it will resubmit those tasks owned by the dead workers. If the resubmit fails due to some ZooKeeper exception, the dead worker is queued up again for retry. *TODO（dirlt）：what's dead split log worker？可能是worker挂掉了，那么在这种情况下面需要重新提交任务并且由其他节点进行split）*
+   - Checks if there are any unassigned tasks. If so, create an ephemeral rescan node so that each split log worker is notified to re-scan unassigned tasks via the nodeChildrenChanged ZooKeeper event.（如果存在一些unassigned task的话，那么创建一个临时节点来触发worker得到事件，这样worker就会重新扫描看是否存在没有完成的task）
+   - Checks those assigned tasks if they are expired. If so, move the task to TASK_UNASSIGNED state again so that they can be retried. These tasks could be assigned to some slow workers, or could be already finished. It is fine since the split can be retried due to the idempotency of the log splitting task; that is, the same log splitting task can be processed many times without causing any problem.（如果task过期的话，可能是因为分配到slow worker或者是已经计算完毕，那么就会被重新设置TASK_UNASSIGNED.但是这个对于正确性没有影响因为是幂等的）
+
+*** clock skew
+如果region server和master的时间偏差太大的话，会造成region server启动失败
+#+BEGIN_EXAMPLE
+at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+        at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+        at java.lang.reflect.Constructor.newInstance(Constructor.java:513)
+        at org.apache.hadoop.ipc.RemoteException.instantiateException(RemoteException.java:95)
+        at org.apache.hadoop.ipc.RemoteException.unwrapRemoteException(RemoteException.java:79)
+        at org.apache.hadoop.hbase.regionserver.HRegionServer.reportForDuty(HRegionServer.java:1506)
+        at org.apache.hadoop.hbase.regionserver.HRegionServer.tryReportForDuty(HRegionServer.java:1470)
+        at org.apache.hadoop.hbase.regionserver.HRegionServer.run(HRegionServer.java:563)
+        at java.lang.Thread.run(Thread.java:662)
+Caused by: org.apache.hadoop.ipc.RemoteException: org.apache.hadoop.hbase.ClockOutOfSyncException: Server s3,60020,1304927875246 has been rejected; Reported time is too far out of sync with master.  Time difference of 41450ms > max allowed of 30000ms
+        at org.apache.hadoop.hbase.master.ServerManager.checkClockSkew(ServerManager.java:181)
+        at org.apache.hadoop.hbase.master.ServerManager.regionServerStartup(ServerManager.java:129)
+        at org.apache.hadoop.hbase.master.HMaster.regionServerStartup(HMaster.java:613)
+        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+        at java.lang.reflect.Method.invoke(Method.java:597)
+        at org.apache.hadoop.hbase.ipc.HBaseRPC$Server.call(HBaseRPC.java:570)
+        at org.apache.hadoop.hbase.ipc.HBaseServer$Handler.run(HBaseServer.java:1039)
+        at org.apache.hadoop.hbase.ipc.HBaseClient.call(HBaseClient.java:771)
+        at org.apache.hadoop.hbase.ipc.HBaseRPC$Invoker.invoke(HBaseRPC.java:257)
+        at $Proxy5.regionServerStartup(Unknown Source)
+        at org.apache.hadoop.hbase.regionserver.HRegionServer.reportForDuty(HRegionServer.java:1502)
+#+END_EXAMPLE
+通常出现这个问题的原因是因为ntp没有正常工作导致本地时钟出现偏差(clock skew).这个参数通过 hbase.master.maxclockskew 来配置，默认是30000(ms)也就是30s.
+
+为什么hbase要规定region server和master时间同步呢？下面这篇文章给出了解释我觉得比较靠谱
+   - hbase/hypertable集群启动需要进行时间同步原因？ http://www.cnblogs.com/xuqiang/archive/2011/12/14/2287327.html
+
+#+BEGIN_VERSE
+这里假设一个range从rs1到rs2，并且rs1当前时间是6:00，rs2的当前时间是5:00，并且rs1上在5:59的时候写入数据<k1, v1, 5:59>,之后该range迁移到了rs2了，并且rs2已经能够向外界提供服务了，在5:10来了个对k1的修改请求，将k1对应的值改成v2，这时rs2将写入<k1, v2, 5:10>。这时如果来了对k1的查询请求的话，rs2将返回<k1, v1>，但实际上这已经是旧的数据了。
+#+END_VERSE
+rs2最近写入的数据是v2，而接下来如果从rs2查询"latest"的数据的话返回的是v1。
+
+*** hbase join
+http://stackoverflow.com/questions/11327316/how-to-join-tables-in-hbase
+
+其实对于join来说无非三种：
+   - sort join 两路排序，之后进行merge。
+   - loop join 没有任何排序，直接循环匹配。
+   - hash join 遍历一路的时候去查另外一路。
+
+对于MR来说，个人认为sort join通常是效率最高的方式，而hash join次之（hbase的read效率不是很高）。
+
+** 使用问题
+*** hbase shell
+   - scan 'test' , { STARTROW=>'xyz' , ENDROW=>'uvw' , COLUMN=>['cf:url'], LIMIT=>10 }
+   - count 'test'
+   - create 'test', { NAME=>'cf' }
+   - get 'test', 'rowkey', {COLUMN = > ['cf:url']}
+   - get 'test', 'rowkey', 'cf:url'
+   - put 'test', 'rowkey', 'cf:url', 'value'
+
+如果需要输入二进制的话，可以使用\x1e这样的方式表示，但是务必使用". 比如"stat:abc\x1exyz"
+
+*** hbase increment
+http://hbase.apache.org/apidocs/org/apache/hadoop/hbase/client/Increment.html
+
+可以用来做原子更新
+
+*** python client
+使用python来访问hbase确实可以很大地提高开发效率，但是通过thrift server来进行中转的话对于性能还是存在影响的，因此比较适合测试。
+   - 首先需要启动thrift server。hbase-deamon.sh start thrift
+   - 然后安装happybase。pip install happybase github: https://github.com/wbolster/happybase doc: http://happybase.readthedocs.org/en/latest/index.html
+使用起来还是比较简单的，documentation里面的说明也非常详细。具体代码可以参考 code/py/happybase/main.py
+
+*NOTE（dirlt）：发现还是存在一些不兼容的thrift协议，比如使用scan似乎就存在问题*
+#+BEGIN_EXAMPLE
+Traceback (most recent call last):
+  File "./hbase.py", line 20, in <module>
+    for k,v in iters:
+  File "/usr/local/lib/python2.7/dist-packages/happybase/api.py", line 567, in scan
+    scan_id = client.scannerOpenWithScan(self.name, scan)
+  File "/usr/local/lib/python2.7/dist-packages/happybase/hbase/Hbase.py", line 1716, in scannerOpenWithScan
+    return self.recv_scannerOpenWithScan()
+  File "/usr/local/lib/python2.7/dist-packages/happybase/hbase/Hbase.py", line 1733, in recv_scannerOpenWithScan
+    raise x
+thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
+#+END_EXAMPLE
+
+** 代码分析
+*** put限制
+在HTable.validatePut对put大小进行了限制
+#+BEGIN_SRC Java
+  // validate for well-formedness
+  private void validatePut(final Put put) throws IllegalArgumentException{
+    if (put.isEmpty()) {
+      throw new IllegalArgumentException("No columns to insert");
+    }
+    if (maxKeyValueSize > 0) {
+      for (List<KeyValue> list : put.getFamilyMap().values()) {
+        for (KeyValue kv : list) {
+          if (kv.getLength() > maxKeyValueSize) {
+            throw new IllegalArgumentException("KeyValue size too large");
+          }
+        }
+      }
+    }
+  }
+#+END_SRC
+
+这里maxKeyValueSize是从配置文件里面读取出来的， this.maxKeyValueSize = conf.getInt("hbase.client.keyvalue.maxsize", -1);
+因此可以修改hbase.client.keyvalue.maxsize来修改大小。 *从实现上看这个大小应该是在client端进行限制的，个人推测在server端应该是没有大小限制的。*
+
+另外如果put是empty的话会抛出异常，因此在调用put之前最好判断put.isEmpty().
+
+--------------------
+*NOTE(dirlt):实际还是有大小限制的，可以看代码HBaseConfiguration.create
+#+BEGIN_SRC Java
+  public static Configuration addHbaseResources(Configuration conf) {
+    conf.addResource("hbase-default.xml");
+    conf.addResource("hbase-site.xml");
+
+    checkDefaultsVersion(conf);
+    checkForClusterFreeMemoryLimit(conf);
+    return conf;
+  }
+#+END_SRC
+ 可以看到加载了hbase-default.xml这个文件。这个文件是在hbase package自带的，默认值为10485760 = 10M
+
+
+
+

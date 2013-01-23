@@ -1,0 +1,7 @@
+#!/bin/bash
+function start() {
+    echo "ssh -p 12321 -vN -D 7070 dirlt@106.187.37.37"    
+    ssh -p 12321 -vN -D 7070 dirlt@106.187.37.37
+}
+
+start

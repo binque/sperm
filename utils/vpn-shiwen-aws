@@ -1,0 +1,7 @@
+#!/bin/bash
+function start() {
+    echo "ssh -vN -D 7070 ssh-proxy@54.241.35.4"
+    ssh -vN -D 7070 ssh-proxy@54.241.35.4
+}
+
+start

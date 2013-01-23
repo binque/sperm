@@ -1,0 +1,7 @@
+#!/bin/bash
+function start() {
+    echo "cd $HOME/.vpn-umeng-ubuntu-homepc && sudo openvpn --config client.conf"
+    cd $HOME/.vpn-umeng-ubuntu-homepc && sudo openvpn --config client.conf
+}
+
+start

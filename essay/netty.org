@@ -1,0 +1,58 @@
+* netty
+   - Netty: Home (Main.WebHome) https://netty.io/
+   - The Netty Project 3.x User Guide http://static.netty.io/3.5/guide/
+
+** concept
+*** Channel 
+可以认为是一个connection，这个connection上面有socket fd可以所以进行读写。
+
+*** ChannelHandler
+在这个connection上面的处理逻辑对象。总的来说有下面两种类型的handler
+   - ChannelUpstreamHandler 从net layer到app layer的数据流动处理逻辑
+   - ChannelDownstreamHandler 从app layer到net layer的数据流动处理逻辑
+
+然后在这两种类型的handler上面派生很多其他的handler，比如
+   - SimpleChannelHandler 可以同时处理upstream和downstream
+   - Encoder/Decoder 协议的编码和解码
+
+*** ChannelPipeline
+1 Channel  + N ChannelHandler，连接和这个连接上所有的处理逻辑对象。
+所有的Handler组成为了链表，不管是upstream还是downstream都会流过所有的handler.netty框架会判断这个handler是否需要处理某个事件
+
+*** ChannelEvent
+连接上所有触发的事件，可以是但是不仅限于下面几种类型
+   - ChannelStateEvent 连接状态的变化事件
+   - MessageEvent 消息可读（可以是ChannelBuffer读取字节流，也可以是已经成帧的消息）
+   - WriteCompletionEvent 数据写完
+   - ExceptionEvent 异常事件，可能是IO线程问题也可能是ChannelHandler处理异常
+
+*** ChannelBuffer
+这个和Channel倒是没有太大关系，比较偏向buffer的管理，主要针对网络通信这种read/write交互场景进行优化。
+
+** 使用问题
+*** boss/worker executor
+NioServerSocketChannelFactory构造函数需要指定boss/worker两个executor，有必要解释一下这两个对象的含义。
+
+首先了解一下netty的网络模型
+   - boss创建accept fd之后阻塞调用accept. 一旦accept一个connection之后，将这个connection fd交给worker.
+     - NOTE（dirlt）： *猜测分摊到哪个worker上的算法应该是round robin*
+   - worker将这个connection fd加入到自己的epoll/selector里面，检测可读可写事件的发生
+   - boss/worker都是runnable对象，需要外部提供线程池来执行
+
+worker的数量如果没有指定的话，with 2 * the number of available processors in the machine. The number of available processors is obtained by Runtime.availableProcessors()
+也可以用这个构造函数可以指定 public NioServerSocketChannelFactory(Executor bossExecutor,  Executor workerExecutor, int workerCount)
+
+所以如果传入的worker executor使用newFixedThreadPool并且线程数目比较小的话，那么就会出现这个问题 "netty的固定个数的worker线程阻塞大量的并发连接" http://www.oschina.net/question/241182_40955
+现象就是如果你的CPU core为4，那么就会创建8个worker对象，而如果线程数目使用5,那么浏览器创建第6个连接之后没有办法正常都写，原因就是因为boss创建第6个连接的时候，给第6个worker处理，而这个worker没有线程池可以run起来。
+
+这个问题解决办法也非常简单，要不就使用newCachedThreadPool()，要不就自己指定worker IO thread数目，要不确保创建的线程数目>=2*CPU core.
+
+
+
+
+
+     
+
+
+
+ 

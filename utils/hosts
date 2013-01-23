@@ -1,0 +1,89 @@
+##
+# Host Database
+#
+# localhost is used to configure the loopback interface
+# when the system is booting.  Do not change this entry.
+##
+127.0.0.1 localhost
+127.0.0.1 umeng-ubuntu-pc
+127.0.0.1 compaq-pc
+255.255.255.255	broadcasthost
+::1 localhost 
+fe80::1%lo0 localhost
+
+# The following lines are desirable for IPv6 capable hosts
+::1 localhost ip6-localhost ip6-loopback
+fe00::0	ip6-localnet
+ff00::0	ip6-mcastprefix
+ff02::1	ip6-allnodes
+ff02::2	ip6-allrouters
+ff02::3	ip6-allhosts
+
+122.11.52.244 git.fm
+122.11.52.244 github.umeng.com
+122.11.52.226 hadoop1
+122.11.52.227 nexus
+10.18.103.251 hudson
+10.18.102.188 dpwiki
+10.18.10.97 usocial
+54.241.35.194 dirlt-aws
+207.97.227.239 github.com
+204.232.175.94 gist.github.com 
+107.21.116.220 help.github.com 
+207.97.227.252 nodeload.github.com 
+107.22.3.110 status.github.com 
+204.232.175.78 training.github.com 
+
+10.11.0.31      dp0.umeng.com                   dp0
+10.18.10.54     dp1.umeng.com                   dp1
+
+10.11.0.2 	dp2.umeng.com 			dp2
+10.11.0.3 	dp3.umeng.com 			dp3
+10.11.0.4 	dp4.umeng.com 			dp4
+10.11.0.5 	dp5.umeng.com 			dp5
+10.11.0.6 	dp6.umeng.com 			dp6
+10.11.0.7 	dp7.umeng.com 			dp7
+10.11.0.8 	dp8.umeng.com 			dp8
+10.11.0.9 	dp9.umeng.com 			dp9
+10.11.0.10	dp10.umeng.com 			dp10
+10.11.0.11	dp11.umeng.com 			dp11
+10.11.0.12	dp12.umeng.com 			dp12
+10.11.0.13	dp13.umeng.com 			dp13
+10.11.0.14	dp14.umeng.com 			dp14
+10.11.0.15	dp15.umeng.com 			dp15
+10.11.0.16	dp16.umeng.com 			dp16
+10.11.0.17	dp17.umeng.com 			dp17
+10.11.0.18	dp18.umeng.com 			dp18
+10.11.0.19	dp19.umeng.com 			dp19
+10.11.0.20	dp20.umeng.com 			dp20
+10.11.0.21	dp21.umeng.com 			dp21
+10.11.0.22	dp22.umeng.com 			dp22
+10.11.0.23	dp23.umeng.com 			dp23
+10.11.0.24	dp24.umeng.com 			dp24
+10.11.0.25	dp25.umeng.com 			dp25
+10.11.0.26	dp26.umeng.com 			dp26
+10.11.0.27	dp27.umeng.com 			dp27
+10.11.0.28	dp28.umeng.com 			dp28
+10.11.0.29	dp29.umeng.com 			dp29
+10.11.0.30	dp30.umeng.com 			dp30
+
+10.11.0.45	dp31.umeng.com			dp31
+10.11.0.32	dp32.umeng.com			dp32
+10.11.0.33	dp33.umeng.com			dp33
+10.11.0.34	dp34.umeng.com			dp34
+10.11.0.35	dp35.umeng.com			dp35
+10.11.0.36	dp36.umeng.com			dp36
+10.11.0.37	dp37.umeng.com			dp37
+10.11.0.38	dp38.umeng.com			dp38
+10.11.0.39	dp39.umeng.com			dp39
+10.11.0.40	dp40.umeng.com			dp40
+10.11.0.41	dp41.umeng.com			dp41
+10.11.0.42	dp42.umeng.com			dp42
+10.11.0.43	dp43.umeng.com			dp43
+10.11.0.44	dp44.umeng.com			dp44
+
+10.18.10.14     unode04-alog-as1.umeng.com      unode04-alog-as1
+10.18.10.15     unode05-alog-as2.umeng.com      unode05-alog-as2
+10.18.10.17     unode07-plog-as2.umeng.com      unode07-plog-as2
+10.18.10.19     unode09-alog-db2.umeng.com      unode09-alog-db2
+10.18.10.29     unode19-ct-db8.umeng.com        unode19-ct-db8
