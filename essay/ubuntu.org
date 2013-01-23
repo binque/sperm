@@ -323,3 +323,12 @@ System Settings =》 Universal Access里面的Seeing部分可以用来调整字�
 sudo hostname <name>
 
 *NOTE(dirlt):mac works too=D*
+
+** root密码
+初次启动的时候需要使用sudo passwd root来修改root密码
+
+*NOTE（dirlt）：it works for mac too=D*
+
+
+
+
