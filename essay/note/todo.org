@@ -11,10 +11,6 @@
 ** TODO 《失控》,《浅薄》
 ** TODO 老婆健身计划以及怀孕
 ** TODO netbsd/plan9
-** TODO 如何优化当前dp任务
-** TODO 详细说明分群任务(这个可能需要整体优化）
-** TODO installhistory的改造跟进
-** TODO 下一代计算平台的设计
 ** TODO 租房
    - 年后
 ** TODO 找中医并且调理身体
@@ -26,13 +22,13 @@
 ** TODO oceanbase
    - 阅读设计文档
 ** TODO 阅读完Core Java I
-** TODO gz2lzo的改造包括单测
-   - 上线准备，无缝替换
-** TODO 分析htable代码put.
+** TODO 分析htable代码put
 ** TODO ds algorithm in databases. 包括本地和nosql.
-** TODO 以及appuserstat的改造
-   - do profile.
-** TODO 搞定amazon EC2.
    - 整理步骤？
 ** TODO 使用nginx + uwsgi+ web.py搭建服务？
 ** TODO collectl
+** TODO app user stat优化记录到github.
+   - Hadoop Job job_201212111309_19910 on History Viewer http://dp2:50030/jobdetailshistory.jsp?logFile=file%3A%2Fusr%2Flib%2Fhadoop-0.20%2Flogs%2Fhistory%2Fdone%2Fdp2_1355202591277_job_201212111309_19910_dp_AppUserStatV2ProfilerMR%25232013-01-20%252320130121195515** TODO 搞定amazon EC2.  
+** TODO 修改gz2lzo成为mapper方式，重新测量时间。
+** TODO 为调度器添加邮件报警功能
+   - 需要重启

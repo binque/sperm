@@ -8,6 +8,9 @@ import time
 import sys
 import traceback
 import urllib2
+import socket
+import fcntl
+import struct
 
 class UTCDateTime:
     @staticmethod
@@ -77,6 +80,14 @@ def exceptionToString(sep='\n'):
     exc_type, exc_value, exc_traceback = sys.exc_info()
     return sep.join(traceback.format_exception(exc_type, exc_value, exc_traceback))
 
+def getIpAddress(ifname):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(),
+        0x8915,  # SIOCGIFADDR
+        struct.pack('256s', ifname[:15])
+    )[20:24])
+
 if __name__=='__main__':
     UTCDateTime.unittest()
     LocalDateTime.unittest()
@@ -85,5 +96,4 @@ if __name__=='__main__':
     except:
         print exceptionToString()
     printHTTPLatency('http://www.baidu.com')
-    
-        
+            
