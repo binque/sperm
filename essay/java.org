@@ -264,8 +264,11 @@ location: class com.dirlt.X
 
 解决这个问题最好的办法，我觉得应该就是： *对于文件内部本身的类，不要使用import来导入，直接使用全称即可。*
 
+** 泛型陷阱
+TODO（dirlt）：
+
 ** JDK
-*** Date/Calendar
+*** Date & Calendar
 其实一开始Date是想做成日历的。所谓日历就是说能够处理年月日这些信息。但是Date本身处理比较差，没有考虑闰秒这种东西，另外因为日历仅仅是历法其中的一种，虽然广泛使用。因此有必要将历法单独形成一个类称为Calendar,而日历是历法的一种实现在Java里面是GregorianCalendar.而现在Date仅仅用于保存一个绝对的时间点就是时刻，保存的方法就是相对于某一固定时间点的毫秒数，而这个时间点就称为纪元(epoch),它是UTC 1970.1.1 00:00:00。
 
 *因此我们在比较时刻方面的话，可以使用Date,而在处理历法方面的话需要使用GregorianCalendar.*
@@ -273,13 +276,14 @@ location: class com.dirlt.X
 *** Exception
 java里面异常都是派生于Throwable，但是分解成为两个分支：
    1. Error.描述Java运行时系统的内部错误和资源耗尽。应用程序不应该抛出该类型对象。
-   2. Exception.分解为RuntimeException和其他。
+   2. Exception.分解为RuntimeException（运行时异常）和其他（编译时异常）。
+
 RuntimeException包括下面几种情况：
    - 错误类型转换。
    - 数组访问越界。
    - 访问空指针。
 
-java语言规范将派生于Error或者是RuntimeException的所有异常称为未检查异常(unchecked exception),而将所有其他异常称为已检查异常(checked).称为已检查异常原因是因为，java的异常规格也是作为函数声明的一部分的。因此如果方法foo抛出异常X,那么调用foo的方法，要么检查异常X,要么就在自己的规则里面写上throws X传给上层处理，无论如何你都是需要面对这个异常的，所以称为已检查。
+java语言规范将派生于Error或者是RuntimeException的所有异常称为未检查异常(unchecked exception),而将所有其他异常（也就是编译时异常）称为已检查异常(checked).称为已检查异常原因是因为，java的异常规格也是作为函数声明的一部分的。因此如果方法foo抛出异常X,那么调用foo的方法，要么检查异常X,要么就在自己的规则里面写上throws X传给上层处理，无论如何你都是需要面对这个异常的，所以称为已检查。
 
    - 抛出异常非常简单，使用new Exception()即可
    - 创建异常的话继承Throwable即可，构造参数可以传入message表示这个异常的详细信息。
@@ -340,6 +344,42 @@ Class类本身表示这个类的一些元信息。通常拿到这个类的元信
    3. constructors
 这样就可以开始做一些反射工作了。 *NOTE（dirlt）：more about reflection*
 
+*** Reflection
+*** Runnable & Thread
+线程包括下面6种状态，并且切换关系如下：
+   1. new 线程创建好并且分配资源但是没有运行，调用start进入runnable状态。
+   2. runnable 正在运行的状态。运行过程中如果调用return或者是exit的话，那么进入terminated状态。
+   3. terminated 线程已经被终止并且进行资源回收。
+   4. blocked 在runnable时候，如果acquire lock失败的话那么会进行block状态，当获得锁之后那么返回runnable状态。
+   5. waiting 在runnable时候，如果等待notification那么进行这个状态，如果notification触发的话那么返回runnable状态。
+   6. timed waiting 其实和waiting状态差不多，只不过这个notification状态会存在一个超时。
+
+守护线程（daemon）和unix操作系统的daemon有些差别。在java里面如果还有存活的线程的话，即使main线程完毕那么程序依然不会结束（这个在c/c++程序里面则不然）。如果将线程设置成为daemon状态的话，那么最后剩下的线程都是daemon的话，那么jvm也会自动退出。
+
+Runnable的run方法是不允许抛出任何异常的，对于可检查的异常可以在代码里面完成，而对于不可检查的异常因为不能够处理，因此如果触发的话那么线程终止。而对于可检查异常如果没有处理的话，那么在线程死亡之前，异常会被一个异常处理器处理：
+   - Thread.UncaughtExceptionHandler接口（void uncaughtException(Thread t,Throwable e) )，通过setUncaughtExceptionHandler为单个线程安装处理器，也可以通过setDefaultUncaughtExceptionHandler为所有线程安装。
+   - 默认处理器为空。如果线程安装的话，那么使用该线程的ThreadGroup对象作为异常处理器
+     - 如果这个线程存在父线程组，那么交给父线程组处理。
+     - 如果Thread.getDefaultUncaughtExceptionHandler为非空的话那么调用。
+     - 如果Throwable为ThreadDeath实例，那么什么也不做。
+     - 将线程名字和Throwable的stacktrace输出到stderr上面。
+
+synchronized关键字其实有两个场景
+   - 如果作用于对象或者是对象方法的话，那么其实相当是同步这个对象(对象存在一个mutex lock)     
+   - 如果作用于静态字段或者是静态方法的话，那么其实相当是同步这个类（类有一个mutex lock)
+一旦理解这点之后，就比较好理解為什麼存在
+   - wait
+   - notify
+   - notifyAll
+这些方法了。其实都是相当于这个lock对应的condition本身提供的方法。
+
+volatile关键字为 *实例字段* 的同步访问提供了一种免锁机制。如果声明一个字段为volatile的话，那么编译器和虚拟机就可以知道这个字段很可能会被另外一个线程并发更新。 *NOTE（dirlt）：在我看来使用volatile最好是作用在基本类型上面，这里将对象指针本身也作为基本类型来看待=D*
+
+*為什麼抛弃stop和suspend方法？* 其实这点非常好理解，因为这些方法都尝试破坏线程本身正常的行为。比如A，B两个线程同时acquire一个lock，如果A成功之后，B在等待，这个之后A被stop或者是suspend的话，那么情况就变成了死锁。
+     
+*** Collection
+TODO（dirlt）：
+    
 ** JVM
 *** 浮点运算
 float类型数值常量后面加上F比如3.042F,而double类型数值常量后面加上D比如3.402D.所有浮点数值计算都遵循IEEE 752规范。java提供了三种表示溢出或者计算错误的三种特殊浮点数值：
