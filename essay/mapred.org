@@ -134,6 +134,22 @@ file:./images/yarn-resourcemanager-arch.png
    - 在Context.run里面本质工作是在不断地读取kv然后交给appcode来进行处理，在每次调用nextKeyValue里面，实际上调用了report.progress方法。
 简单地来说，有单独的汇报线程，然后在mapper以及reducer里面每次读取一个kv的话都会调用progress，之后汇报线程就可以向tasktracker汇报状态。因此如果自己某个任务耗时过长的话，可以调用context.progress().
 
+*** Partitioner
+将kv分配到哪个reduce上，接口是
+#+BEGIN_SRC Java
+public abstract int getPartition(KEY key, VALUE value, int numPartitions);
+#+END_SRC
+   - key/value是输入的kv
+   - numPartitions是有总共多少reduce
+
+通常我们可能不设置这个partitioner,所以我们需要知道默认实现是HashPartitioner
+#+BEGIN_SRC Java
+  public int getPartition(K key, V value,
+                          int numReduceTasks) {
+    return (key.hashCode() & Integer.MAX_VALUE) % numReduceTasks;
+  }
+#+END_SRC
+
 ** 使用问题
 *** hadoop-lzo
 **** 安装配置

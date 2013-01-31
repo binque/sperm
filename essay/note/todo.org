@@ -16,7 +16,6 @@
 ** TODO 博弈论学习
 ** TODO clojure
 ** TODO 整理《影响力》 
-
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
    - 阅读设计文档
@@ -24,10 +23,10 @@
 ** TODO ds algorithm in databases. 包括本地和nosql.
 ** TODO 使用nginx + uwsgi+ web.py搭建服务？
 ** TODO collectl
+
 ** TODO 修改gz2lzo成为mapper方式
    - 在测试环境运行测量时间
    - 切换服务器时间之后完成
-** TODO fantuan编写和修改
+   - 修改gunzip和lzo方式，单独程序完成。
 ** TODO 分析htable代码put
-
-** TODO org.apache.hadoop.mapreduce.lib.partition.HashPartitioner
+** TODO 修改segment mark部分，多路hbase同时输入

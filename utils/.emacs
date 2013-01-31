@@ -179,8 +179,8 @@
 
 ;; ;;; python-mode.
 ;; ;; sudo apt-get install python-mode
-(setq load-path (cons "~/.emacs.d/python-mode.el-6.0.11" load-path))
-(require 'python-mode)
+;; (setq load-path (cons "~/.emacs.d/python-mode.el-6.0.11" load-path))
+;; (require 'python-mode)
 
 ;;; php-mode
 ;; sudo apt-get install php-elisp

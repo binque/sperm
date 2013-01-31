@@ -396,7 +396,7 @@ java虚拟机规范强调可移植性，对于在任何机器上来说相同的�
 ** Tool
 *** jvisualvm
    - 远程调试需要程序启动的时候加上下面这些选项：
-     - -Dcom.sun.management.jmxremote.port=2899
+     - -Dcom.sun.management.jmxremote.port  899
      - -Dcom.sun.management.jmxremote.ssl=false 不走ssl
      - -Dcom.sun.management.jmxremote.authenticate=false 不做验证  
    - *NOTE(dirlt):我始终没有搞懂profiler和sampler两者的区别* ，不过从官方指南来看 Profiling Applications with VisualVM — Java.net http://visualvm.java.net/profiler.html 应该是使用profiler.
