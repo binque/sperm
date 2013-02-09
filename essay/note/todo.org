@@ -19,8 +19,6 @@
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
    - 阅读设计文档
-** TODO 阅读完Core Java I
-** TODO ds algorithm in databases. 包括本地和nosql.
 ** TODO 使用nginx + uwsgi+ web.py搭建服务？
 ** TODO collectl
 
@@ -30,3 +28,4 @@
    - 修改gunzip和lzo方式，单独程序完成。
 ** TODO 分析htable代码put
 ** TODO 修改segment mark部分，多路hbase同时输入
+** TODO 分布式学习材料。
