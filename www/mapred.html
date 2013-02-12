@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="mapred"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-01-23 13:30:44 CST"/>
+<meta name="generated" content="2013-02-12 16:02:52 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -108,6 +108,7 @@
 <li><a href="#sec-1-2">1.2 代码分析</a>
 <ul>
 <li><a href="#sec-1-2-1">1.2.1 task如何向tasktracker进行定时汇报</a></li>
+<li><a href="#sec-1-2-2">1.2.2 Partitioner</a></li>
 </ul>
 </li>
 <li><a href="#sec-1-3">1.3 使用问题</a>
@@ -459,6 +460,41 @@ Let’s walk through an application execution sequence (steps are illustrated in
 
 <p>简单地来说，有单独的汇报线程，然后在mapper以及reducer里面每次读取一个kv的话都会调用progress，之后汇报线程就可以向tasktracker汇报状态。因此如果自己某个任务耗时过长的话，可以调用context.progress().
 </p>
+</div>
+
+</div>
+
+<div id="outline-container-1-2-2" class="outline-4">
+<h4 id="sec-1-2-2"><span class="section-number-4">1.2.2</span> Partitioner</h4>
+<div class="outline-text-4" id="text-1-2-2">
+
+<p>将kv分配到哪个reduce上，接口是
+</p>
+
+
+<pre class="src src-Java">public abstract int getPartition(KEY key, VALUE value, int numPartitions);
+</pre>
+
+<ul>
+<li>key/value是输入的kv
+</li>
+<li>numPartitions是有总共多少reduce
+</li>
+</ul>
+
+
+<p>
+通常我们可能不设置这个partitioner,所以我们需要知道默认实现是HashPartitioner
+</p>
+
+
+<pre class="src src-Java">public int getPartition(K key, V value,
+                        int numReduceTasks) {
+  return (key.hashCode() &amp; Integer.MAX_VALUE) % numReduceTasks;
+}
+</pre>
+
+
 </div>
 </div>
 
@@ -827,8 +863,8 @@ message Message {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-01-23 13:30:44 CST</p>
-<p class="creator">Org version 7.8.02 with Emacs version 23</p>
+<p class="date">Date: 2013-02-12 16:02:52 CST</p>
+<p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

@@ -147,6 +147,7 @@ file:./images/valve-logo.jpg
      - [[file:./note/purchase-mba.org][购买MacBookAir]]
      - [[file:note/be-careful-when-you-drive.org][开车务必小心]]
      - [[file:note/virgin-foot-massage.org][初次足疗]]
+     - [[file:./note/my-without-wife-wedding.org][没有新娘的婚礼]]
 
    - 记录
      - [[file:./note/todo.org][todo]] 记录自己日常需要完成的事情。
