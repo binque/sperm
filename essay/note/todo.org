@@ -10,19 +10,15 @@
 ** TODO 阅读RSS订阅（when free）
 ** TODO 《失控》,《浅薄》
 ** TODO 老婆健身计划以及怀孕
-** TODO 租房
-   - 年后
+** TODO 年后租房
 ** TODO 找中医并且调理身体
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
    - 阅读设计文档
-** TODO 使用nginx + uwsgi+ web.py搭建服务？
-** TODO collectl
 ** TODO 修改gz2lzo成为mapper方式
    - 在测试环境运行测量时间
    - 切换服务器时间之后完成
    - 修改gunzip和lzo方式，单独程序完成。
-** TODO 分析htable代码put
 ** TODO 修改segment mark部分，多路hbase同时输入
 ** TODO 分布式学习材料
 ** TODO appuserstat

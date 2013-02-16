@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hbase"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-01-30 23:26:07 CST"/>
+<meta name="generated" content="2013-02-16 17:20:08 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -128,6 +128,7 @@
 <li><a href="#sec-1-4">1.4 代码分析</a>
 <ul>
 <li><a href="#sec-1-4-1">1.4.1 put限制</a></li>
+<li><a href="#sec-1-4-2">1.4.2 put分析</a></li>
 </ul>
 </li>
 </ul>
@@ -760,6 +761,111 @@ private void validatePut(final Put put) throws IllegalArgumentException{
  可以看到加载了hbase-default.xml这个文件。这个文件是在hbase package自带的，默认值为10485760 = 10M
 </p>
 
+</div>
+
+</div>
+
+<div id="outline-container-1-4-2" class="outline-4">
+<h4 id="sec-1-4-2"><span class="section-number-4">1.4.2</span> put分析</h4>
+<div class="outline-text-4" id="text-1-4-2">
+
+<p>最后都走到了下面这个方法，可以看到对于每次put并不是立即去写hbase的，除非有特殊开关autoFlush. writeBuffer是一个ArrayList用来hold住所有需要write的put.默认autoFlush=false，所以会缓存到writeBufferSize大小才会commit，而大小是通过heapSize来得到的。而writeBufferSize是通过hbase.client.write.buffer这个属性配置的，默认是2097152=2M
+</p>
+
+
+
+<pre class="src src-Java">private void doPut(final List&lt;Put&gt; puts) throws IOException {
+  for (Put put : puts) {
+    validatePut(put);
+    writeBuffer.add(put);
+    currentWriteBufferSize += put.heapSize();
+  }
+  if (autoFlush || currentWriteBufferSize &gt; writeBufferSize) {
+    flushCommits();
+  }
+}
+</pre>
+
+
+<p>
+在flushCommits里面会在Connection上面去将这个writeBuffer写出去，如果失败的话那么会重新构造这个writeBuffer以及currentWriteBufferSize,注释里面也说了在这个操作里面会修改这些字段。 <b>NOTE（dirlt）：从下面的实现可以看到，writeBuffer里面剩余的都是没有成功的Put</b>
+</p>
+
+
+
+<pre class="src src-Java">public void flushCommits() throws IOException {
+  try {
+    connection.processBatchOfPuts(writeBuffer, tableName, pool);
+  } finally {
+    if (clearBufferOnFail) {
+      writeBuffer.clear();
+      currentWriteBufferSize = 0;
+    } else {
+      // the write buffer was adjusted by processBatchOfPuts
+      currentWriteBufferSize = 0;
+      for (Put aPut : writeBuffer) {
+        currentWriteBufferSize += aPut.heapSize();
+      }
+    }
+  }
+}
+</pre>
+
+
+<p>
+connection是一个virtual class,HConnection,默认实现是HConnectionImplementation，从注释可以知道这个connection是用来"Encapsulates connection to zookeeper and regionservers." 我们追踪processBatchOfPuts这个实现，开辟results数组记录那些put是成功的，成功的put之后会被remove出去。底层还是调用了processBatch这个过程。
+</p>
+
+
+
+<pre class="src src-Java">public void processBatchOfPuts(List&lt;Put&gt; list,
+    final byte[] tableName,
+    ExecutorService pool) throws IOException {
+  Object[] results = new Object[list.size()];
+  try {
+    processBatch((List) list, tableName, pool, results);
+  } catch (InterruptedException e) {
+    throw new IOException(e);
+  } finally {
+
+    // mutate list so that it is empty for complete success, or contains only failed records
+    // results are returned in the same order as the requests in list
+    // walk the list backwards, so we can remove from list without impacting the indexes of earlier members
+    for (int i = results.length - 1; i&gt;=0; i--) {
+      if (results[i] instanceof Result) {
+        // successful Puts are removed from the list here.
+        list.remove(i);
+      }
+    }
+  }
+}
+</pre>
+
+
+<p>
+processBatch代码比较冗长，大致意思如下：
+</p><ul>
+<li>prcessBatch会尝试执行多次，从配置hbase.client.retries.number获得，默认10
+</li>
+<li>每次重试之前都会sleep一段时间，这个时间从getPauseTime获得，是个大致指数退避的算法。
+</li>
+<li>根据每个row获得对应的HServerAddress,以HServerAddress为key将相同地址请求放在HashMap，HashMap类型是Map&lt;HServerAddress, MultiAction&gt;
+</li>
+<li>将每个MultiAction放到ExecutorService里面得到future对象，然后阻塞等待future对象返回并且逐个检查。
+</li>
+<li>处理每个请求返回的结果，检查过程比较麻烦没有仔细阅读。
+</li>
+</ul>
+
+
+<p>
+我们最关心的问题就是这个ExecutorService的线程池是什么，从HTable里面我们可以找到答案
+</p><ul>
+<li>new ThreadPoolExecutor(1, maxThreads, 60, TimeUnit.SECONDS, new SynchronousQueue&lt;Runnable&gt;(), new DaemonThreadFactory());
+</li>
+<li>maxThreads从属性hbase.htable.threads.max获得。
+</li>
+</ul>
 
 
 </div>
@@ -769,7 +875,7 @@ private void validatePut(final Put put) throws IllegalArgumentException{
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-01-30 23:26:07 CST</p>
+<p class="date">Date: 2013-02-16 17:20:08 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
