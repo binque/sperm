@@ -13,7 +13,6 @@
 ** TODO 租房
    - 年后
 ** TODO 找中医并且调理身体
-** TODO clojure
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
    - 阅读设计文档
@@ -25,14 +24,7 @@
    - 修改gunzip和lzo方式，单独程序完成。
 ** TODO 分析htable代码put
 ** TODO 修改segment mark部分，多路hbase同时输入
-** TODO 分布式学习材料。
-** TODO 汽车首保
-
-** 作息时间调整
-   - 7:00 起床，运动10分钟，然后冥想
-   - 7:30 吃饭，并且打开电脑或者是阅读书籍
-   - 8：30 上班出发，大约9：30到单位
-   - 每1.5个小时起来活动一次，中午12：00，下午3：00，以及下午6：00三次处理家里的事情
-   - 晚上8：30开始回家，大约10：00到家
-   - 洗刷10：30确保上床
-   - 11：00睡觉
+** TODO 分布式学习材料
+** TODO appuserstat
+   - http://dp2:50030/jobdetailshistory.jsp?logFile=file%3A%2Fusr%2Flib%2Fhadoop-0.20%2Flogs%2Fhistory%2Fdone%2Fdp2_1355202591277_job_201212111309_19910_dp_AppUserStatV2ProfilerMR%25232013-01-20%252320130121195515
+** TODO 还信用卡
