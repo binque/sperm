@@ -190,6 +190,8 @@ public abstract int getPartition(KEY key, VALUE value, int numPartitions);
    - hadoop jar /usr/lib/hadoop/lib/hadoop-lzo-0.4.14.jar com.hadoop.compression.lzo.DistributedLzoIndexer <output-dir>
 完成之后对于每一个lzo文件都会存在一个.index文件。如果重复运行上面命令的话，会检查.index文件是否存在，如果存在的话那么就不会重新进行索引。
 
+如果需要单独使用lzo而不是使用mapreduce来做压缩和解压缩的话，可以参考com.dirlt.java.mr.UseLzoStandadlone.
+
 **** 配合protobuf
 elephant-bird实现了protobuf+lzo组合使用方式。
 

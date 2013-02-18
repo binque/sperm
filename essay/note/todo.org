@@ -15,12 +15,9 @@
 ** TODO gfs2(Colossus)
 ** TODO oceanbase
    - 阅读设计文档
-** TODO 修改gz2lzo成为mapper方式
-   - 在测试环境运行测量时间
-   - 切换服务器时间之后完成
-   - 修改gunzip和lzo方式，单独程序完成。
-** TODO 修改segment mark部分，多路hbase同时输入
+** TODO hbase输入性能优化
 ** TODO 分布式学习材料
 ** TODO appuserstat
    - http://dp2:50030/jobdetailshistory.jsp?logFile=file%3A%2Fusr%2Flib%2Fhadoop-0.20%2Flogs%2Fhistory%2Fdone%2Fdp2_1355202591277_job_201212111309_19910_dp_AppUserStatV2ProfilerMR%25232013-01-20%252320130121195515
 ** TODO 还信用卡
+** TODO 请同事们吃饭吧
