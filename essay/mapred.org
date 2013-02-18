@@ -155,7 +155,10 @@ public abstract int getPartition(KEY key, VALUE value, int numPartitions);
 **** 安装配置
    - 安装liblzo2库，sudo apt-get install liblzo2-2(liblzo2-dev)
    - 安装lzop程序，sudo apt-get install lzop
-   - 下载hadoop-lzo. git clone git://github.com/kevinweil/hadoop-lzo.git https://github.com/kevinweil/hadoop-lzo
+   - 下载hadoop-lzo. git clone git://github.com/kevinweil/hadoop-lzo.git
+     - https://github.com/kevinweil/hadoop-lzo
+     - https://github.com/twitter/hadoop-lzo *提供maven地址*
+     - http://code.google.com/a/apache-extras.org/p/hadoop-gpl-compression/
    - 编译，ant compile-native tar 
    - 将结果build/hadoop-lzo-0.4.14的hadoop-lzo-0.4.14.jar复制到 $HADOOP_HOME/lib，将build/hadoop-lzo-0.4.14/lib/native下的文件复制到$HADOOP_HOME/lib/native (native/Linux-amd64-64)
    - 修改core-site.xml配置
