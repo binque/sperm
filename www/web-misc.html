@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="web-misc"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-02-16 17:20:04 CST"/>
+<meta name="generated" content="2013-02-18 18:21:55 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -100,19 +100,20 @@
 <ul>
 <li><a href="#sec-1">1 web-misc</a>
 <ul>
-<li><a href="#sec-1-1">1.1 wordpress使用相关</a>
+<li><a href="#sec-1-1">1.1 Wordpress Related</a>
 <ul>
 <li><a href="#sec-1-1-1">1.1.1 解决WordPress半角引号变成全角引号问题的方法</a></li>
 <li><a href="#sec-1-1-2">1.1.2 在wordpress添加百度统计代码</a></li>
 </ul>
 </li>
-<li><a href="#sec-1-2">1.2 OAuth2与Basic Auth</a>
+<li><a href="#sec-1-2">1.2 OAuth2 &amp; Basic Auth</a>
 <ul>
 <li><a href="#sec-1-2-1">1.2.1 Basic Auth</a></li>
 <li><a href="#sec-1-2-2">1.2.2 OAuth2</a></li>
 <li><a href="#sec-1-2-3">1.2.3 修改weibo.py支持Basic Auth</a></li>
 </ul>
 </li>
+<li><a href="#sec-1-3">1.3 WSGI in Python</a></li>
 </ul>
 </li>
 </ul>
@@ -127,7 +128,7 @@
 </div>
 
 <div id="outline-container-1-1" class="outline-3">
-<h3 id="sec-1-1"><span class="section-number-3">1.1</span> wordpress使用相关</h3>
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Wordpress Related</h3>
 <div class="outline-text-3" id="text-1-1">
 
 
@@ -217,7 +218,7 @@ document.write(unescape(<span style="color: #ffff00;">"%3Cscript src='"</span> +
 </div>
 
 <div id="outline-container-1-2" class="outline-3">
-<h3 id="sec-1-2"><span class="section-number-3">1.2</span> OAuth2与Basic Auth</h3>
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> OAuth2 &amp; Basic Auth</h3>
 <div class="outline-text-3" id="text-1-2">
 
 <p>突然想看看sina weibo的API接口，首先遇到的问题就是登陆问题。weibo提供了几种认证方式：
@@ -566,17 +567,79 @@ class APIClient(object):
 </pre>
 
 
-
-
+</div>
+</div>
 
 </div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> WSGI in Python</h3>
+<div class="outline-text-3" id="text-1-3">
+
+<p>python运行web大约有下面三种方式：
+</p><ol>
+<li>程序自己启动http server直接对外服务
+</li>
+<li>用WSGI编写然后使用gunicorn这样的container启动对外服务
+</li>
+<li>nginx在前端做反向代理，uwsgi做WSGI Container和nginx通信
+</li>
+</ol>
+
+
+<p>
+实践证明1这个方案因为python GIL缘故只能使用单线程处理，并且http server扩展性也不好。而方案2相对来说比较灵活，可以使用不同的container启动，并且也可以很容易地切换成为方案3，但是却不能够很好地处理子域名问题，同时部署上没有方案3灵活。
+自己搭建fantuan.dirlt.com里面就涉及到了子域名这个问题，最后还是使用方案3解决的，使用的就是nginx + uwsgi + web.py这个解决方案。所以这里简单地记录一下如何配置。
+</p>
+<p>
+在nginx/site-enables里面从default产生一份新的配置文件，修改内容
+</p>
+
+
+<pre class="example">server {
+        server_name fantuan.dirlt.com;
+        location / {
+                include uwsgi_params;
+                uwsgi_pass  127.0.0.1:8001;
+        }
+}
+</pre>
+
+<p>
+也就是说对于fantuan.dirlt.com这个请求包含uwsgi_params里面的参数全部转发到127.0.0.1:8001这个端口。
+</p>
+<p>
+然后在本地启动uwsgi绑定在127.0.0.1:8001这个端口上面，同时考虑到uwsgi支持配置文件的方式，我们首先编写配置文件
+</p>
+
+
+<pre class="example">[uwsgi]
+chdir = .
+module = server:application
+master = True
+processes = 4
+socket = 127.0.0.1:8001
+vacuum = True
+max-requests = 128
+</pre>
+
+
+<p>
+<b>TODO（dirlt）：里面的字段的意思还不是清楚</b> 最重要的就是两个参数
+</p><ul>
+<li>module x:y 说明x.py里面的y对象是WSGI function对象
+</li>
+<li>socket 必须指定是127.0.0.1:8001
+</li>
+</ul>
+
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-02-16 17:20:04 CST</p>
+<p class="date">Date: 2013-02-18 18:21:55 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

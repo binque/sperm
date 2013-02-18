@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="mapred"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-02-16 17:20:06 CST"/>
+<meta name="generated" content="2013-02-18 18:21:56 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -518,7 +518,16 @@ Let’s walk through an application execution sequence (steps are illustrated in
 </li>
 <li>安装lzop程序，sudo apt-get install lzop
 </li>
-<li>下载hadoop-lzo. git clone git://github.com/kevinweil/hadoop-lzo.git <a href="https://github.com/kevinweil/hadoop-lzo">https://github.com/kevinweil/hadoop-lzo</a>
+<li>下载hadoop-lzo. git clone git://github.com/kevinweil/hadoop-lzo.git
+<ul>
+<li><a href="https://github.com/kevinweil/hadoop-lzo">https://github.com/kevinweil/hadoop-lzo</a>
+</li>
+<li><a href="https://github.com/twitter/hadoop-lzo">https://github.com/twitter/hadoop-lzo</a> <b>提供maven地址</b>
+</li>
+<li><a href="http://code.google.com/a/apache-extras.org/p/hadoop-gpl-compression/">http://code.google.com/a/apache-extras.org/p/hadoop-gpl-compression/</a>
+</li>
+</ul>
+
 </li>
 <li>编译，ant compile-native tar 
 </li>
@@ -588,6 +597,9 @@ Let’s walk through an application execution sequence (steps are illustrated in
 </ul>
 
 <p>完成之后对于每一个lzo文件都会存在一个.index文件。如果重复运行上面命令的话，会检查.index文件是否存在，如果存在的话那么就不会重新进行索引。
+</p>
+<p>
+如果需要单独使用lzo而不是使用mapreduce来做压缩和解压缩的话，可以参考com.dirlt.java.mr.UseLzoStandadlone.
 </p>
 </li>
 </ul>
@@ -863,7 +875,7 @@ message Message {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-02-16 17:20:06 CST</p>
+<p class="date">Date: 2013-02-18 18:21:56 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
