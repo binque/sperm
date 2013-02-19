@@ -18,8 +18,12 @@ import java.util.Arrays;
  */
 public class CompareHBaseTable {
     public static void main(String[] args) throws Exception {
-        String t1 = "t1"; // args[0];
-        String t2 = "t2"; // args[1];
+        String t1 = "t1";
+        String t2 = "t2";
+        if (args.length >= 2) {
+            t1 = args[0];
+            t2 = args[1];
+        }
 
         Configuration configuration = HBaseConfiguration.create();
         Scan scan = new Scan();
