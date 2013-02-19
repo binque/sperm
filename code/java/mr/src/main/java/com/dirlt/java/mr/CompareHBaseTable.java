@@ -6,8 +6,12 @@ import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.util.Bytes;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NavigableMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -47,26 +51,28 @@ public class CompareHBaseTable {
                     System.err.println("Congratulations! They are same!");
                     break;
                 } else if (ra == null) {
-                    System.err.println("BAD! table " + t2 + " has more, recent one = '" + rb.toString() + "'");
+                    System.err.println("BAD! table " + t2 + " has more");
                     break;
                 } else if (rb == null) {
-                    System.err.println("BAD! table " + t1 + " has more, recent one = '" + ra.toString() + "'");
+                    System.err.println("BAD! table " + t1 + " has more");
                     break;
                 } else {
-                    boolean same = true;
                     if (!Arrays.equals(ra.getRow(), rb.getRow())) {
-                        same = false;
-                    }
-                    if (same) {
-                        try {
-                            Result.compareResults(ra, rb);
-                        } catch (Exception e) {
-                            same = false;
-                        }
-                    }
-                    if (!same) {
-                        System.err.println("BAD! table " + t1 + " = '" + ra.toString() + "', table " + t2 + " = '" + rb.toString() + "'");
+                        System.err.println("BAD! ROW DIFF! '" + Bytes.toString(ra.getRow()) + "', '" + Bytes.toString(rb.getRow()) + "'");
                         break;
+                    }
+                    // damn.
+                    NavigableMap<byte[], NavigableMap<byte[], byte[]>> v1 = ra.getNoVersionMap();
+                    NavigableMap<byte[], NavigableMap<byte[], byte[]>> v2 = ra.getNoVersionMap();
+                    Iterator<Map.Entry<byte[], NavigableMap<byte[], byte[]>>> iterator1 = v1.entrySet().iterator();
+                    Iterator<Map.Entry<byte[], NavigableMap<byte[], byte[]>>> iterator2 = v2.entrySet().iterator();
+                    while (iterator1.hasNext() && iterator2.hasNext()) {
+
+                    }
+                    if (iterator1.hasNext()) {
+                        // TODO(dirlt):
+                    } else if (iterator2.hasNext()) {
+                        // TODO(dirlt):
                     }
                 }
             }
