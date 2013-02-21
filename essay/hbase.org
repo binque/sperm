@@ -206,11 +206,16 @@ http://stackoverflow.com/questions/11327316/how-to-join-tables-in-hbase
 
 ** 使用问题
 *** hbase shell
-   - scan 'test' , { STARTROW=>'xyz' , ENDROW=>'uvw' , COLUMN=>['cf:url'], LIMIT=>10 }
+   - scan 'test' 
+     - STARTROW=>'xyz' 
+     - ENDROW=>'uvw'
+     - COLUMN=>['cf:url']
+     - LIMIT=>10
+     - VERSIONS=>3
    - count 'test'
    - create 'test', { NAME=>'cf' }
-   - get 'test', 'rowkey', {COLUMN = > ['cf:url']}
-   - get 'test', 'rowkey', 'cf:url'
+   - get 'test', 'rowkey', 
+     - COLUMN = > ['cf:url']
    - put 'test', 'rowkey', 'cf:url', 'value'
 
 如果需要输入二进制的话，可以使用\x1e这样的方式表示，但是务必使用". 比如"stat:abc\x1exyz"
@@ -279,7 +284,6 @@ thrift.Thrift.TApplicationException: Invalid method name: 'scannerOpenWithScan'
   }
 #+END_SRC
  可以看到加载了hbase-default.xml这个文件。这个文件是在hbase package自带的，默认值为10485760 = 10M
-
 
 *** put分析
 最后都走到了下面这个方法，可以看到对于每次put并不是立即去写hbase的，除非有特殊开关autoFlush. writeBuffer是一个ArrayList用来hold住所有需要write的put.默认autoFlush=false，所以会缓存到writeBufferSize大小才会commit，而大小是通过heapSize来得到的。而writeBufferSize是通过hbase.client.write.buffer这个属性配置的，默认是2097152=2M
