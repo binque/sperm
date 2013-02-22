@@ -57,6 +57,31 @@ def queryColumnFamily():
     response.ParseFromString(data2)
     print response
 
+def multiQuery():
+    print '----------multiQuery----------'
+    mRequest = message_pb2.MultiReadRequest()
+
+    request = message_pb2.ReadRequest()
+    request.table_name='t1'
+    request.row_key='r1'
+    request.column_family='cf'
+    request.qualifiers.append('c2')
+    request.qualifiers.append('c1')
+    mRequest.requests.extend([request])
+
+    request = message_pb2.ReadRequest()
+    request.table_name='t1'
+    request.row_key='r1'
+    request.column_family='cf'
+    mRequest.requests.extend([request])
+
+    data = mRequest.SerializeToString()
+    data2 = raiseHTTPRequest('http://localhost:8000/multi-read',data,timeout=20)
+    mResponse = message_pb2.MultiReadResponse()
+    mResponse.ParseFromString(data2)
+    print mResponse
+    
+    
 def write():
     print '----------write----------'
     request = message_pb2.WriteRequest()
@@ -75,9 +100,39 @@ def write():
     response.ParseFromString(data2)
     print response
     
+def multiWrite():
+    print '----------multiWrite----------'
+    mRequest = message_pb2.MultiWriteRequest()
+
+    request = message_pb2.WriteRequest()
+    request.table_name = 't1'
+    request.row_key = 'r0'
+    request.column_family = 'cf'
+    kv = request.kvs.add()
+    kv.qualifier = 'key'
+    kv.content = 'value'
+    mRequest.requests.extend([request])
+
+    request = message_pb2.WriteRequest()
+    request.table_name = 't1'
+    request.row_key = 'r1'
+    request.column_family = 'cf'
+    kv = request.kvs.add()
+    kv.qualifier = 'key'
+    kv.content = 'value'
+    mRequest.requests.extend([request])
+
+    data = mRequest.SerializeToString()
+    data2 = raiseHTTPRequest('http://localhost:8000/multi-write',data,timeout=20)
+
+    mResponse = message_pb2.MultiWriteResponse()
+    mResponse.ParseFromString(data2)
+    print mResponse
 
 if __name__=='__main__':
     queryColumn()
     queryEmptyColumn()
     queryColumnFamily()
     write()
+    multiQuery()
+    multiWrite()

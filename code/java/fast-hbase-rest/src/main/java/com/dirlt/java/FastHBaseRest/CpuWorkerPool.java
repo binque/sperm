@@ -1,9 +1,6 @@
 package com.dirlt.java.FastHBaseRest;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -33,8 +30,8 @@ public class CpuWorkerPool {
         return instance;
     }
 
-    public void submit(Runnable runnable) {
+    public Future submit(Runnable runnable) {
         // wait runnable.
-        executorService.submit(runnable);
+        return executorService.submit(runnable);
     }
 }

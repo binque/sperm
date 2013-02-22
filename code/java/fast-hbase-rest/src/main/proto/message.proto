@@ -27,6 +27,14 @@ message ReadResponse {
   repeated KeyValue kvs = 4;
 }
 
+// --------------------
+message MultiReadRequest {
+  repeated ReadRequest requests = 1;
+}
+
+message MultiReadResponse {
+  repeated ReadResponse responses = 1;
+}
 
 // --------------------
 message WriteRequest {
@@ -44,3 +52,11 @@ message WriteRequest {
 message WriteResponse {    
 }
 
+// --------------------
+message MultiWriteRequest {
+  repeated WriteRequest requests = 1;
+}
+
+message MultiWriteResponse {
+  repeated WriteResponse responses = 1;
+}

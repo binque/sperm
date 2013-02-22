@@ -24,7 +24,9 @@ public class RestHandler extends SimpleChannelHandler {
     static {
         allowedPath.add("/stat");
         allowedPath.add("/read");
+        allowedPath.add("/multi-read");
         allowedPath.add("/write");
+        allowedPath.add("/multi-write");
     }
 
     private Configuration configuration;
@@ -75,6 +77,7 @@ public class RestHandler extends SimpleChannelHandler {
 
         stat.addCounter("rpc.in.count", 1);
         client.code = AsyncClient.Status.kHttpRequest;
+        client.subRequest = false;
         client.channel = channel;
         client.httpRequest = request;
         client.path = path;
