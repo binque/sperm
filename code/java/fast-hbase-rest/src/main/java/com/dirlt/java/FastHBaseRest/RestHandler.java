@@ -112,6 +112,5 @@ public class RestHandler extends SimpleChannelHandler {
         StatStore.getInstance().addCounter("session.duration",
                 client.sessionEndTimestamp - client.sessionStartTimestamp);
         e.getChannel().close();
-
     }
 }

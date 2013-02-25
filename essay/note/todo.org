@@ -20,3 +20,7 @@
    - http://dp2:50030/jobdetailshistory.jsp?logFile=file%3A%2Fusr%2Flib%2Fhadoop-0.20%2Flogs%2Fhistory%2Fdone%2Fdp2_1355202591277_job_201212111309_19910_dp_AppUserStatV2ProfilerMR%25232013-01-20%252320130121195515
 ** TODO 请同事们吃饭吧
 ** TODO HBaseConfiguration.create解析。
+** TODO 整理JNI的调用方法和注意问题等。
+** TODO 购车和做保养（发票和行车正）（2年质保，太湖路购买）
+** TODO 整理weibo
+** TODO 装修房子事情
