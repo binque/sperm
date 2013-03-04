@@ -14,6 +14,9 @@
 ** TODO oceanbase
    - 阅读设计文档
 ** TODO hbase输入性能优化
+   - speculative 好非常多
+     - http://dp2:50030/jobdetails.jsp?jobid=job_201301231102_7237&refresh=0 30 min.
+     - http://dp2:50030/jobdetails.jsp?jobid=job_201301231102_7236&refresh=0 20 min
 ** TODO appuserstat
    - http://dp2:50030/jobdetailshistory.jsp?logFile=file%3A%2Fusr%2Flib%2Fhadoop-0.20%2Flogs%2Fhistory%2Fdone%2Fdp2_1355202591277_job_201212111309_19910_dp_AppUserStatV2ProfilerMR%25232013-01-20%252320130121195515
 ** TODO 整理JNI的调用方法和注意问题等。

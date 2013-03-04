@@ -31,6 +31,8 @@ public class RestHandler extends SimpleChannelHandler {
 
     private Configuration configuration;
     private AsyncClient client; // binding to the channel pipeline.
+    private boolean chunked = false;
+
 
     public RestHandler(Configuration configuration) {
         this.configuration = configuration;
@@ -45,6 +47,7 @@ public class RestHandler extends SimpleChannelHandler {
         StatStore stat = StatStore.getInstance();
         String path = null;
 
+        // invalid uri.
         try {
             URI uri = new URI(request.getUri());
             path = uri.getPath();
@@ -55,6 +58,7 @@ public class RestHandler extends SimpleChannelHandler {
             return;
         }
 
+        // invalid path.
         if (!allowedPath.contains(path)) {
             stat.addCounter("uri.unknown.count", 1);
             channel.close(); // just close the connection.
@@ -79,8 +83,8 @@ public class RestHandler extends SimpleChannelHandler {
         client.code = AsyncClient.Status.kHttpRequest;
         client.subRequest = false;
         client.channel = channel;
-        client.httpRequest = request;
         client.path = path;
+        client.buffer = request.getContent();
         client.run();
     }
 

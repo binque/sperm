@@ -12,7 +12,10 @@ import org.hbase.async.PutRequest;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
-import org.jboss.netty.handler.codec.http.*;
+import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
+import org.jboss.netty.handler.codec.http.HttpResponse;
+import org.jboss.netty.handler.codec.http.HttpResponseStatus;
+import org.jboss.netty.handler.codec.http.HttpVersion;
 
 import java.io.ByteArrayOutputStream;
 import java.util.*;
@@ -65,7 +68,7 @@ public class AsyncClient implements Runnable {
     public AtomicInteger refCounter;
     public List<AsyncClient> clients;
 
-    public HttpRequest httpRequest;
+    public ChannelBuffer buffer;
     public String path;
     public byte[] bs;
     public MessageProtos1.ReadRequest.Builder rdReqBuilder;
@@ -153,8 +156,6 @@ public class AsyncClient implements Runnable {
 
     public void handleHttpRequest() {
         RestServer.logger.debug("http request");
-
-        ChannelBuffer buffer = httpRequest.getContent();
         int size = buffer.readableBytes();
         StatStore.getInstance().addCounter("rpc.in.bytes", size);
         bs = new byte[size];
