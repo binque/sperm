@@ -4,12 +4,33 @@
 
 import message_pb2
 import time
-
+import httplib
 import urllib2
+
 def raiseHTTPRequest(url,data=None,timeout=3):
     # if we do post, we have to provide data.
     f=urllib2.urlopen(url,data,timeout)
     return f.read()
+
+def queryColumnSameConnection():
+    print '----------queryColumn----------'
+    request = message_pb2.ReadRequest()
+
+    request.table_name='t1'
+    request.row_key='r1'
+    request.column_family='cf'
+    request.qualifiers.append('c2')
+    request.qualifiers.append('c1')
+
+    data = request.SerializeToString()
+
+    conn = httplib.HTTPConnection('localhost',8000,timeout=20)
+    for i in range(0,3):
+        conn.request('GET','/read',data)
+        data2 = conn.getresponse().read()
+        response = message_pb2.ReadResponse()
+        response.ParseFromString(data2)
+        print response
 
 def queryColumn():
     print '----------queryColumn----------'
@@ -26,6 +47,7 @@ def queryColumn():
     response = message_pb2.ReadResponse()
     response.ParseFromString(data2)
     print response
+
 
 def queryEmptyColumn():
     print '----------queryColumn----------'
@@ -130,6 +152,7 @@ def multiWrite():
     print mResponse
 
 if __name__=='__main__':
+    queryColumnSameConnection()
     queryColumn()
     queryEmptyColumn()
     queryColumnFamily()

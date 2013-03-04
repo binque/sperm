@@ -113,4 +113,13 @@ public class RestHandler extends SimpleChannelHandler {
                 client.sessionEndTimestamp - client.sessionStartTimestamp);
         e.getChannel().close();
     }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
+        RestServer.logger.debug("exception caught");
+
+        StatStore.getInstance().addCounter("exception.count", 1);
+        e.getCause().printStackTrace();
+        e.getChannel().close();
+    }
 }

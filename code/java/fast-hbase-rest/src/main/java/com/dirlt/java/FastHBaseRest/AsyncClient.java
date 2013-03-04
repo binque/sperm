@@ -182,13 +182,10 @@ public class AsyncClient implements Runnable {
     }
 
     public void readRequest() {
+        RestServer.logger.debug("read request");
         if (!subRequest) {
             // parse request.
-            if (rdReqBuilder == null) {
-                rdReqBuilder = MessageProtos1.ReadRequest.newBuilder();
-            } else {
-                rdReqBuilder.clear();
-            }
+            rdReqBuilder = MessageProtos1.ReadRequest.newBuilder();
             try {
                 rdReqBuilder.mergeFrom(bs);
             } catch (InvalidProtocolBufferException e) {
@@ -206,6 +203,7 @@ public class AsyncClient implements Runnable {
         columnFamily = rdReq.getColumnFamily();
 
         rdRes = MessageProtos1.ReadResponse.newBuilder();
+
         prefix = makeCacheKeyPrefix(tableName, rowKey, columnFamily);
 
         if (rdReq.getQualifiersCount() == 0) {
@@ -221,11 +219,8 @@ public class AsyncClient implements Runnable {
     }
 
     public void multiRead() {
-        if (mRdReqBuilder == null) {
-            mRdReqBuilder = MessageProtos1.MultiReadRequest.newBuilder();
-        } else {
-            mRdReqBuilder.clear();
-        }
+        RestServer.logger.debug("multi read request");
+        mRdReqBuilder = MessageProtos1.MultiReadRequest.newBuilder();
         try {
             mRdReqBuilder.mergeFrom(bs);
         } catch (InvalidProtocolBufferException e) {
@@ -257,12 +252,9 @@ public class AsyncClient implements Runnable {
     }
 
     public void writeRequest() {
+        RestServer.logger.debug("write request");
         if (!subRequest) {
-            if (wrReqBuilder == null) {
-                wrReqBuilder = MessageProtos1.WriteRequest.newBuilder();
-            } else {
-                wrReqBuilder.clear();
-            }
+            wrReqBuilder = MessageProtos1.WriteRequest.newBuilder();
             // parse request.
             try {
                 wrReqBuilder.mergeFrom(bs);
@@ -287,11 +279,8 @@ public class AsyncClient implements Runnable {
     }
 
     public void multiWrite() {
-        if (mWrReqBuilder == null) {
-            mWrReqBuilder = MessageProtos1.MultiWriteRequest.newBuilder();
-        } else {
-            mWrReqBuilder.clear();
-        }
+        RestServer.logger.debug("multi write request");
+        mWrReqBuilder = MessageProtos1.MultiWriteRequest.newBuilder();
         try {
             mWrReqBuilder.mergeFrom(bs);
         } catch (InvalidProtocolBufferException e) {
@@ -524,11 +513,7 @@ public class AsyncClient implements Runnable {
         } else {
             int count = parent.refCounter.decrementAndGet();
             if (count == 0) {
-                if (parent.mRdRes == null) {
-                    parent.mRdRes = MessageProtos1.MultiReadResponse.newBuilder();
-                } else {
-                    parent.mRdRes.clear();
-                }
+                parent.mRdRes = MessageProtos1.MultiReadResponse.newBuilder();
                 for (AsyncClient client : parent.clients) {
                     parent.mRdRes.addResponses(client.rdRes);
                 }
@@ -550,11 +535,7 @@ public class AsyncClient implements Runnable {
         } else {
             int count = parent.refCounter.decrementAndGet();
             if (count == 0) {
-                if (parent.mWrRes == null) {
-                    parent.mWrRes = MessageProtos1.MultiWriteResponse.newBuilder();
-                } else {
-                    parent.mWrRes.clear();
-                }
+                parent.mWrRes = MessageProtos1.MultiWriteResponse.newBuilder();
                 for (AsyncClient client : parent.clients) {
                     parent.mWrRes.addResponses(client.wrRes);
                 }
