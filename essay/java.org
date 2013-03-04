@@ -393,6 +393,17 @@ java虚拟机规范强调可移植性，对于在任何机器上来说相同的�
 *** GC
    - Sun jdk 1.6 gc http://www.slideshare.net/BlueDavy/sun-jdk-16-gc
 
+*** JNI
+   - Java Native Interface: Programmer's Guide and Specification http://192.9.162.55/docs/books/jni/
+
+**** Introduction
+**** Getting Started
+**** Basic Types, Strings, and Arrays
+**** Fields and Methods
+**** Local and Gloabl References
+**** Exceptions
+**** The 
+
 ** Tool
 *** jvisualvm
    - 远程调试需要程序启动的时候加上下面这些选项：
