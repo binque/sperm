@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hbase"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-02-21 19:43:46 CST"/>
+<meta name="generated" content="2013-03-04 13:28:39 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -129,6 +129,7 @@
 <ul>
 <li><a href="#sec-1-4-1">1.4.1 put限制</a></li>
 <li><a href="#sec-1-4-2">1.4.2 put分析</a></li>
+<li><a href="#sec-1-4-3">1.4.3 HBaseConfiguration</a></li>
 </ul>
 </li>
 </ul>
@@ -884,13 +885,53 @@ processBatch代码比较冗长，大致意思如下：
 
 
 </div>
+
+</div>
+
+<div id="outline-container-1-4-3" class="outline-4">
+<h4 id="sec-1-4-3"><span class="section-number-4">1.4.3</span> HBaseConfiguration</h4>
+<div class="outline-text-4" id="text-1-4-3">
+
+<p>HBaseConfiguration继承于Configuration，主要是用来创建配置数据的。和Configuration主要区别，在于加载了一些额外的HBase方面的配置。
+</p>
+
+
+
+<pre class="src src-Java">public static Configuration addHbaseResources(Configuration conf) {
+  conf.addResource(<span style="color: #ffff00;">"hbase-default.xml"</span>);
+  conf.addResource(<span style="color: #ffff00;">"hbase-site.xml"</span>);
+
+  checkDefaultsVersion(conf);
+  checkForClusterFreeMemoryLimit(conf);
+  return conf;
+}
+</pre>
+
+<ul>
+<li>hbase-default.xml（hbase的jar自带）
+</li>
+<li>hbase-site.xml（集群配置文件）
+</li>
+<li>检查版本
+</li>
+<li>检查内存配置
+</li>
+</ul>
+
+
+<p>
+<b>NOTE（dirlt）：所以一些配置选项如果在hbase-site.xml里面没有找到的话，默认值应该都可以在hbase-default.xml里面找到</b>
+</p>
+
+
+</div>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-02-21 19:43:46 CST</p>
+<p class="date">Date: 2013-03-04 13:28:39 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

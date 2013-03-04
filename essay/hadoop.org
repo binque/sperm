@@ -847,3 +847,7 @@ public abstract class RecordReader<KEYIN, VALUEIN> implements Closeable {
        - 度量可以从hadoop-metrics.properties进行配置
     
        
+
+** 代码分析
+
+

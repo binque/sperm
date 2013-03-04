@@ -359,3 +359,25 @@ processBatch代码比较冗长，大致意思如下：
    - new ThreadPoolExecutor(1, maxThreads, 60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new DaemonThreadFactory());
    - maxThreads从属性hbase.htable.threads.max获得。
    
+*** HBaseConfiguration
+HBaseConfiguration继承于Configuration，主要是用来创建配置数据的。和Configuration主要区别，在于加载了一些额外的HBase方面的配置。
+
+#+BEGIN_SRC Java
+  public static Configuration addHbaseResources(Configuration conf) {
+    conf.addResource("hbase-default.xml");
+    conf.addResource("hbase-site.xml");
+
+    checkDefaultsVersion(conf);
+    checkForClusterFreeMemoryLimit(conf);
+    return conf;
+  }
+#+END_SRC
+   - hbase-default.xml（hbase的jar自带）
+   - hbase-site.xml（集群配置文件）
+   - 检查版本
+   - 检查内存配置
+
+*NOTE（dirlt）：所以一些配置选项如果在hbase-site.xml里面没有找到的话，默认值应该都可以在hbase-default.xml里面找到*
+
+
+
