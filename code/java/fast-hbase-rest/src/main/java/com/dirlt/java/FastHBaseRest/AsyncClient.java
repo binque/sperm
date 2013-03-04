@@ -16,8 +16,7 @@ import org.jboss.netty.handler.codec.http.*;
 
 import java.io.ByteArrayOutputStream;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created with IntelliJ IDEA.
@@ -60,16 +59,25 @@ public class AsyncClient implements Runnable {
     public boolean async; // whether async mode.
     public Status code = Status.kStat; // default value.
     public Channel channel;
-    public Future future;
-    public CountDownLatch latch;
+
+    // for multi interface.
+    public AsyncClient parent;
+    public AtomicInteger refCounter;
+    public List<AsyncClient> clients;
 
     public HttpRequest httpRequest;
     public String path;
     public byte[] bs;
+    public MessageProtos1.ReadRequest.Builder rdReqBuilder;
     public MessageProtos1.ReadRequest rdReq;
+    public MessageProtos1.WriteRequest.Builder wrReqBuilder;
     public MessageProtos1.WriteRequest wrReq;
+    public MessageProtos1.MultiReadRequest.Builder mRdReqBuilder;
+    public MessageProtos1.MultiWriteRequest.Builder mWrReqBuilder;
     public MessageProtos1.ReadResponse.Builder rdRes;
     public MessageProtos1.WriteResponse.Builder wrRes;
+    public MessageProtos1.MultiReadResponse.Builder mRdRes;
+    public MessageProtos1.MultiWriteResponse.Builder mWrRes;
     public Message msg;
 
     public long sessionStartTimestamp;
@@ -176,16 +184,20 @@ public class AsyncClient implements Runnable {
     public void readRequest() {
         if (!subRequest) {
             // parse request.
-            MessageProtos1.ReadRequest.Builder builder = MessageProtos1.ReadRequest.newBuilder();
+            if (rdReqBuilder == null) {
+                rdReqBuilder = MessageProtos1.ReadRequest.newBuilder();
+            } else {
+                rdReqBuilder.clear();
+            }
             try {
-                builder.mergeFrom(bs);
+                rdReqBuilder.mergeFrom(bs);
             } catch (InvalidProtocolBufferException e) {
                 // just close channel.
                 RestServer.logger.debug("parse message exception");
                 StatStore.getInstance().addCounter("rpc.in.count.invalid", 1);
                 channel.close();
             }
-            rdReq = builder.build();
+            rdReq = rdReqBuilder.build();
         }
         readStartTimestamp = System.currentTimeMillis();
 
@@ -193,13 +205,9 @@ public class AsyncClient implements Runnable {
         rowKey = rdReq.getRowKey();
         columnFamily = rdReq.getColumnFamily();
 
-        RestServer.logger.debug("client object = " + this.hashCode());
         rdRes = MessageProtos1.ReadResponse.newBuilder();
         prefix = makeCacheKeyPrefix(tableName, rowKey, columnFamily);
 
-        // reset qualifiers.
-        readCacheQualifiers = null;
-        readHBaseQualifiers = null;
         if (rdReq.getQualifiersCount() == 0) {
             // read column family
             // then we can't do cache.
@@ -213,61 +221,58 @@ public class AsyncClient implements Runnable {
     }
 
     public void multiRead() {
-        MessageProtos1.MultiReadRequest.Builder builder = MessageProtos1.MultiReadRequest.newBuilder();
+        if (mRdReqBuilder == null) {
+            mRdReqBuilder = MessageProtos1.MultiReadRequest.newBuilder();
+        } else {
+            mRdReqBuilder.clear();
+        }
         try {
-            builder.mergeFrom(bs);
+            mRdReqBuilder.mergeFrom(bs);
         } catch (InvalidProtocolBufferException e) {
             // just close channel.
             RestServer.logger.debug("parse message exception");
             StatStore.getInstance().addCounter("rpc.in.count.invalid", 1);
             channel.close();
         }
-        MessageProtos1.MultiReadRequest multiReadRequest = builder.build();
-        List<AsyncClient> clients = new LinkedList<AsyncClient>();
-        RestServer.logger.debug("outer client = " + this.hashCode());
-        // so advanced!
-        CountDownLatch latch = new CountDownLatch(multiReadRequest.getRequestsCount());
+        MessageProtos1.MultiReadRequest multiReadRequest = mRdReqBuilder.build();
+        if (refCounter == null) {
+            refCounter = new AtomicInteger(multiReadRequest.getRequestsCount());
+        } else {
+            refCounter.set(multiReadRequest.getRequestsCount());
+        }
+        if (clients == null) {
+            clients = new LinkedList<AsyncClient>();
+        } else {
+            clients.clear();
+        }
         for (MessageProtos1.ReadRequest request : multiReadRequest.getRequestsList()) {
             AsyncClient client = new AsyncClient(configuration);
             client.code = Status.kReadRequest;
             client.subRequest = true;
             client.rdReq = request;
-            // don't operate channel in sub client.
-            Future f = CpuWorkerPool.getInstance().submit(client);
-            client.future = f;
-            client.latch = latch;
+            client.parent = this;
             clients.add(client);
+            CpuWorkerPool.getInstance().submit(client);
         }
-        // wait for futures complete.
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            // ignore it.
-            // TODO(dirlt):
-        }
-        MessageProtos1.MultiReadResponse.Builder builder1 = MessageProtos1.MultiReadResponse.newBuilder();
-        for (AsyncClient client : clients) {
-            builder1.addResponses(client.rdRes);
-        }
-        msg = builder1.build();
-        code = Status.kHttpResponse;
-        run();
-
     }
 
     public void writeRequest() {
         if (!subRequest) {
-            MessageProtos1.WriteRequest.Builder builder = MessageProtos1.WriteRequest.newBuilder();
+            if (wrReqBuilder == null) {
+                wrReqBuilder = MessageProtos1.WriteRequest.newBuilder();
+            } else {
+                wrReqBuilder.clear();
+            }
             // parse request.
             try {
-                builder.mergeFrom(bs);
+                wrReqBuilder.mergeFrom(bs);
             } catch (InvalidProtocolBufferException e) {
                 // just close channel.
                 RestServer.logger.debug("parse message exception");
                 StatStore.getInstance().addCounter("rpc.in.count.invalid", 1);
                 channel.close();
             }
-            wrReq = builder.build();
+            wrReq = wrReqBuilder.build();
         }
         tableName = wrReq.getTableName();
         rowKey = wrReq.getRowKey();
@@ -282,51 +287,49 @@ public class AsyncClient implements Runnable {
     }
 
     public void multiWrite() {
-        MessageProtos1.MultiWriteRequest.Builder builder = MessageProtos1.MultiWriteRequest.newBuilder();
+        if (mWrReqBuilder == null) {
+            mWrReqBuilder = MessageProtos1.MultiWriteRequest.newBuilder();
+        } else {
+            mWrReqBuilder.clear();
+        }
         try {
-            builder.mergeFrom(bs);
+            mWrReqBuilder.mergeFrom(bs);
         } catch (InvalidProtocolBufferException e) {
             // just close channel.
             RestServer.logger.debug("parse message exception");
             StatStore.getInstance().addCounter("rpc.in.count.invalid", 1);
             channel.close();
         }
-        MessageProtos1.MultiWriteRequest multiWriteRequest = builder.build();
-        List<AsyncClient> clients = new LinkedList<AsyncClient>();
-        // so advanced!.
-        CountDownLatch latch = new CountDownLatch(multiWriteRequest.getRequestsCount());
+        MessageProtos1.MultiWriteRequest multiWriteRequest = mWrReqBuilder.build();
+        if (refCounter == null) {
+            refCounter = new AtomicInteger(multiWriteRequest.getRequestsCount());
+        } else {
+            refCounter.set(multiWriteRequest.getRequestsCount());
+        }
+        if (clients == null) {
+            clients = new LinkedList<AsyncClient>();
+        } else {
+            clients.clear();
+        }
         for (MessageProtos1.WriteRequest request : multiWriteRequest.getRequestsList()) {
             AsyncClient client = new AsyncClient(configuration);
             client.code = Status.kWriteRequest;
             client.subRequest = true;
             client.wrReq = request;
-            // don't operate channel in sub client.
-            Future f = CpuWorkerPool.getInstance().submit(client);
-            // don't operate channel in sub client.
-            client.future = f;
-            client.latch = latch;
+            client.parent = this;
             clients.add(client);
+            CpuWorkerPool.getInstance().submit(client);
         }
-        // wait for futures complete.
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-            // ignore it.
-            // TODO(dirlt):
-        }
-        MessageProtos1.MultiWriteResponse.Builder builder1 = MessageProtos1.MultiWriteResponse.newBuilder();
-        for (AsyncClient client : clients) {
-            builder1.addResponses(client.wrRes);
-        }
-        msg = builder1.build();
-        code = Status.kHttpResponse;
-        run();
     }
 
     public void readLocalCache() {
         RestServer.logger.debug("read local cache");
 
-        readCacheQualifiers = new ArrayList<String>();
+        if (readCacheQualifiers == null) {
+            readCacheQualifiers = new ArrayList<String>();
+        } else {
+            readCacheQualifiers.clear();
+        }
 
         // check local cache mean while fill the cache request.
         int readCount = 0;
@@ -380,7 +383,7 @@ public class AsyncClient implements Runnable {
 
         GetRequest getRequest = new GetRequest(tableName, rowKey);
         getRequest.family(columnFamily);
-        if (readHBaseQualifiers != null) { // read qualifiers.
+        if (rdReq.getQualifiersCount() != 0) {
             // otherwise we read all qualifiers from column family.
             // a little bit tedious.
             byte[][] qualifiers = new byte[readHBaseQualifiers.size()][];
@@ -405,7 +408,7 @@ public class AsyncClient implements Runnable {
                 // we don't return because we put into CpuWorkerPool.
                 client.code = Status.kReadResponse;
                 client.readHBaseServiceEndTimestamp = System.currentTimeMillis();
-                if (readHBaseQualifiers != null) { // read qualifiers.
+                if (client.rdReq.getQualifiersCount() != 0) {
                     // fill the cache and builder.
                     for (KeyValue kv : keyValues) {
                         String k = new String(kv.qualifier()); // not kv.key(), that's rowkey.
@@ -430,7 +433,6 @@ public class AsyncClient implements Runnable {
                         MessageProtos1.ReadResponse.KeyValue.Builder bd = MessageProtos1.ReadResponse.KeyValue.newBuilder();
                         bd.setQualifier(k);
                         bd.setContent(ByteString.copyFrom(value));
-                        RestServer.logger.debug("inner client = " + client.hashCode());
                         client.rdRes.addKvs(bd);
                     }
                     StatStore.getInstance().addCounter("read.duration.hbase.column-family",
@@ -520,7 +522,20 @@ public class AsyncClient implements Runnable {
             code = Status.kHttpResponse;
             run();
         } else {
-            latch.countDown();
+            int count = parent.refCounter.decrementAndGet();
+            if (count == 0) {
+                if (parent.mRdRes == null) {
+                    parent.mRdRes = MessageProtos1.MultiReadResponse.newBuilder();
+                } else {
+                    parent.mRdRes.clear();
+                }
+                for (AsyncClient client : parent.clients) {
+                    parent.mRdRes.addResponses(client.rdRes);
+                }
+                parent.msg = parent.mRdRes.build();
+                parent.code = Status.kHttpResponse;
+                CpuWorkerPool.getInstance().submit(parent);
+            }
         }
     }
 
@@ -533,7 +548,20 @@ public class AsyncClient implements Runnable {
             code = Status.kHttpResponse;
             run();
         } else {
-            latch.countDown();
+            int count = parent.refCounter.decrementAndGet();
+            if (count == 0) {
+                if (parent.mWrRes == null) {
+                    parent.mWrRes = MessageProtos1.MultiWriteResponse.newBuilder();
+                } else {
+                    parent.mWrRes.clear();
+                }
+                for (AsyncClient client : parent.clients) {
+                    parent.mWrRes.addResponses(client.wrRes);
+                }
+                parent.msg = parent.mWrRes.build();
+                parent.code = Status.kHttpResponse;
+                CpuWorkerPool.getInstance().submit(parent);
+            }
         }
     }
 
