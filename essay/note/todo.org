@@ -24,3 +24,4 @@
    - 每章都稍微看看
 ** TODO 整理weibo
 ** TODO 装修房子事情
+** TODO 修改submit.py脚本，并且上线游戏模版。
