@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hdfs"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-01-23 13:31:11 CST"/>
+<meta name="generated" content="2013-03-05 19:40:35 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -924,6 +924,13 @@ The filesystem under path '/hbase/.corrupt/dp18.umeng.com%3A60020.1349065853563'
 <li>Local file fs.LocalFileSystem
 </li>
 <li>HDFS hdfs hdfs.DistributedFileSystem
+<ul>
+<li>No file update options(record append, etc). all files are write-once.
+</li>
+<li>Designed for streaming. Random seeks devastate performance.
+</li>
+</ul>
+
 </li>
 <li>HAR(Hadoop Archive) har fs.HarFileSystem
 </li>
@@ -931,7 +938,7 @@ The filesystem under path '/hbase/.corrupt/dp18.umeng.com%3A60020.1349065853563'
 
 
 <p>
-以 com.dirlt.java.hdfs.GetFS 为例，如果使用java -cp方式运行的话，那么结果如下
+-以 com.dirlt.java.hdfs.GetFS 为例，如果使用java -cp方式运行的话，那么结果如下
 </p>
 
 
@@ -1017,7 +1024,7 @@ uri = file:///
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-01-23 13:31:11 CST</p>
+<p class="date">Date: 2013-03-05 19:40:35 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
