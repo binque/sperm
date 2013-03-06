@@ -15,6 +15,7 @@
    - 阅读设计文档
 ** TODO hbase输入性能优化
    - 多路输入来优化
+   - hbase同时读写的时候对于scan的压力如何？
    - speculative 好非常多
      - http://dp2:50030/jobdetails.jsp?jobid=job_201301231102_7237&refresh=0 30 min.
      - http://dp2:50030/jobdetails.jsp?jobid=job_201301231102_7236&refresh=0 20 min
@@ -25,3 +26,6 @@
 ** TODO 整理weibo
 ** TODO 装修房子事情
 ** TODO 修改submit.py脚本，并且上线游戏模版。
+   - 测试游戏模版不分群的情况
+   - 上线不分群的结果。
+** TODO 回顾一下2012吧，有一些事情也值得一说。
