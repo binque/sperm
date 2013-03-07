@@ -18,6 +18,7 @@ else
     export HADOOP_HOME=$HOME/utils/hadoop-0.20.2-cdh3u3/
     export HADOOP_CLASSPATH=./target/classes
     export HBASE_HOME=$HOME/utils/hbase-0.90.4-cdh3u3/
+    export HIVE_HOME=$HOME/utils/hive-0.7.1-cdh3u3/
     export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native/Linux-amd64-64/:$LD_LIBRARY_
     # add hadoop and hbase classpath.
     CLASSPATH=$HADOOP_HOME/conf:$HBASE_HOME/conf:$CLASSPATH
@@ -90,6 +91,7 @@ PATH=$HOME/utils/nginx/sbin:$PATH
 PATH=$HOME/utils/hadoop-0.20.2-cdh3u3/bin:$PATH
 PATH=$HOME/utils/hbase-0.90.4-cdh3u3/bin:$PATH
 PATH=$HOME/utils/oozie-2.3.2-cdh3u3/bin:$PATH
+PATH=$HOME/utils/hive-0.7.1-cdh3u3/bin:$PATH
 PATH=$HOME/utils/uwsgi-1.4.4:$PATH
 
 # texmacs
