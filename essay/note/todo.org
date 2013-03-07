@@ -25,5 +25,6 @@
 ** TODO 装修房子事情
 ** TODO 回顾一下2012吧，有一些事情也值得一说。
 ** TODO 配置hive/impala.
+   - hive配置好。
 ** TODO 比较Java和JNI效率上面的差异。
 ** TODO 修改简历内容

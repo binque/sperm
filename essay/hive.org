@@ -33,12 +33,33 @@ metadata store主要是用来存储数据库的一些元数据信息，有下面
 
 
 --------------------
-配置remote server
+配置remote server. remote metadata store server和client之间交互是通过thrift完成的，thrift server通过jdbc连接到mysql或者是其他数据库上。 *NOTE(dirlt):之所以需要这个主要是因为impala要求metastore必须是remote的*
 
-*NOTE(dirlt):之所以需要这个主要是因为impala要求metastore必须是remote的*
+Server Configuration Parameters
+| Config Param                          | Config Value                                                           | Comment                                  |
+|---------------------------------------+------------------------------------------------------------------------+------------------------------------------|
+| javax.jdo.option.ConnectionURL        | jdbc:mysql://<host name>/<database name>?createDatabaseIfNotExist=true | metadata is stored in a MySQL server     |
+| javax.jdo.option.ConnectionDriverName | com.mysql.jdbc.Driver                                                  | MySQL JDBC driver class                  |
+| javax.jdo.option.ConnectionUserName   | <user name>                                                            | user name for connecting to mysql server |
+| javax.jdo.option.ConnectionPassword   | <password>                                                             | password for connecting to mysql server  |
+| hive.metastore.warehouse.dir          | <base hdfs path>                                                       | default location for Hive tables.        |
 
-   - 安装配置mysql
-   - 
+If you are using MySQL as the datastore for metadata, put MySQL client libraries in HIVE_HOME/lib before starting Hive Client or HiveMetastore Server. 如果使用ubuntu的话，可以直接使用 sudo apt-get install libmysql-java 安装，然后jar都在/usr/share/java下面。
+
+Client Configuration Parameters
+| Config Param                 | Config Value                | Comment                                       |
+|------------------------------+-----------------------------+-----------------------------------------------|
+| hive.metastore.uris          | thrift://<host_name>:<port> | host and port for the thrift metastore server |
+| hive.metastore.local         | false                       | this is local store                           |
+| hive.metastore.warehouse.dir | <base hdfs path>            | default location for Hive tables.             |
+
+thrift server 通过 hive --service metastore 启动，port在9083上面. 环境变量METASTORE_PORT来配置。 *NOTE（dirlt）：hive-env.sh里面可以设置*
+#+BEGIN_EXAMPLE
+13/03/07 18:06:34 INFO metastore.HiveMetaStore: Started the new metaserver on port [9083]...
+13/03/07 18:06:34 INFO metastore.HiveMetaStore: Options.minWorkerThreads = 200
+13/03/07 18:06:34 INFO metastore.HiveMetaStore: Options.maxWorkerThreads = 100000
+13/03/07 18:06:34 INFO metastore.HiveMetaStore: TCP keepalive = true
+#+END_EXAMPLE
 
 *** SQL Operations
    - 数据默认是使用ctrl-a来做分割 *NOTE（dirlt）：how wierd:(*

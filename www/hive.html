@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hive"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-03-07 15:53:59 CST"/>
+<meta name="generated" content="2013-03-07 18:21:59 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -214,17 +214,57 @@ metadata store主要是用来存储数据库的一些元数据信息，有下面
 
 <hr/>
 <p>
-配置remote server
+配置remote server. remote metadata store server和client之间交互是通过thrift完成的，thrift server通过jdbc连接到mysql或者是其他数据库上。 <b>NOTE(dirlt):之所以需要这个主要是因为impala要求metastore必须是remote的</b>
 </p>
 <p>
-<b>NOTE(dirlt):之所以需要这个主要是因为impala要求metastore必须是remote的</b>
+Server Configuration Parameters
+</p><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">Config Param</th><th scope="col" class="left">Config Value</th><th scope="col" class="left">Comment</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">javax.jdo.option.ConnectionURL</td><td class="left">jdbc:mysql://&lt;host name&gt;/&lt;database name&gt;?createDatabaseIfNotExist=true</td><td class="left">metadata is stored in a MySQL server</td></tr>
+<tr><td class="left">javax.jdo.option.ConnectionDriverName</td><td class="left">com.mysql.jdbc.Driver</td><td class="left">MySQL JDBC driver class</td></tr>
+<tr><td class="left">javax.jdo.option.ConnectionUserName</td><td class="left">&lt;user name&gt;</td><td class="left">user name for connecting to mysql server</td></tr>
+<tr><td class="left">javax.jdo.option.ConnectionPassword</td><td class="left">&lt;password&gt;</td><td class="left">password for connecting to mysql server</td></tr>
+<tr><td class="left">hive.metastore.warehouse.dir</td><td class="left">&lt;base hdfs path&gt;</td><td class="left">default location for Hive tables.</td></tr>
+</tbody>
+</table>
+
+
+<p>
+If you are using MySQL as the datastore for metadata, put MySQL client libraries in HIVE_HOME/lib before starting Hive Client or HiveMetastore Server. 如果使用ubuntu的话，可以直接使用 sudo apt-get install libmysql-java 安装，然后jar都在/usr/share/java下面。
 </p>
-<ul>
-<li>安装配置mysql
-</li>
-<li>
-</li>
-</ul>
+<p>
+Client Configuration Parameters
+</p><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col class="left" /><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">Config Param</th><th scope="col" class="left">Config Value</th><th scope="col" class="left">Comment</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">hive.metastore.uris</td><td class="left">thrift://&lt;host_name&gt;:&lt;port&gt;</td><td class="left">host and port for the thrift metastore server</td></tr>
+<tr><td class="left">hive.metastore.local</td><td class="left">false</td><td class="left">this is local store</td></tr>
+<tr><td class="left">hive.metastore.warehouse.dir</td><td class="left">&lt;base hdfs path&gt;</td><td class="left">default location for Hive tables.</td></tr>
+</tbody>
+</table>
+
+
+<p>
+thrift server 通过 hive &ndash;service metastore 启动，port在9083上面. 环境变量METASTORE_PORT来配置。 <b>NOTE（dirlt）：hive-env.sh里面可以设置</b>
+</p>
+
+
+<pre class="example">13/03/07 18:06:34 INFO metastore.HiveMetaStore: Started the new metaserver on port [9083]...
+13/03/07 18:06:34 INFO metastore.HiveMetaStore: Options.minWorkerThreads = 200
+13/03/07 18:06:34 INFO metastore.HiveMetaStore: Options.maxWorkerThreads = 100000
+13/03/07 18:06:34 INFO metastore.HiveMetaStore: TCP keepalive = true
+</pre>
 
 
 </div>
@@ -295,7 +335,7 @@ Time taken: 5.787 seconds
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-03-07 15:53:59 CST</p>
+<p class="date">Date: 2013-03-07 18:21:59 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
