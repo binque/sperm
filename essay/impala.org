@@ -38,8 +38,23 @@ Queries executed using Impala are handled as follows:
    - Storage - DataNodes with 10 or more disks each. I/O speeds are often the limiting factor for disk performance with Impala. Ensure you have sufficient disk space to store the data Impala will be querying. *NOTE（dirlt）：感叹未来的趋势就是拿内存当磁盘用*
 
 *** Prerequsite
-   - Install CDH4 as described in CDH4 Installation.
+   - Install CDH4 as described in CDH4 Installation. https://ccp.cloudera.com/display/CDH4DOC/CDH4+Installation
+     - add following to /etc/apt/sources.list.d/cloudera.list 
+       - deb [arch=amd64] http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh precise-cdh4 contrib
+       - deb-src http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh precise-cdh4 contrib
+     - curl -s http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh/archive.key | sudo apt-key add -
+     - sudo apt-get update
+     - sudo apt-get install hadoop-0.20-mapreduce-jobtracker
+     - sudo apt-get install hadoop-hdfs-namenode
+     - sudo apt-get install hadoop-0.20-mapreduce-tasktracker hadoop-hdfs-datanode
+     - sudo apt-get install hadoop-client
    - Install Hive as described in Hive Installation. As part of this process, you must configure Hive to use an external database as a metastore. 必须使用外部数据库来作为metastore *NOTE(dirlt):hive允许使用内存数据库做metastore*
+
+tarball:
+   - hadoop http://archive.cloudera.com/cdh4/cdh/4/hadoop-2.0.0-cdh4.2.0.tar.gz
+   - hbase http://archive.cloudera.com/cdh4/cdh/4/hbase-0.94.2-cdh4.2.0.tar.gz
+   - zookeeper http://archive.cloudera.com/cdh4/cdh/4/zookeeper-3.4.5-cdh4.2.0.tar.gz
+   - hive http://archive.cloudera.com/cdh4/cdh/4/hive-0.10.0-cdh4.2.0.tar.gz
 
 *** Ubuntu
 source compile:
@@ -48,6 +63,7 @@ source compile:
 
 binary install:
    - 
+
 
 
 

@@ -38,6 +38,7 @@ Apache Hadoop包括了下面这些组件：
    - [[http://pig.apache.org/][Pig]] A high-level data-flow language and execution framework for parallel computation.
    - [[http://zookeeper.apache.org/][ZooKeeper]] A high-performance coordination service for distributed applications.
 
+
 *** CDH和Apache Hadoop的关系
 CDH Hadoop FAQ https://ccp.cloudera.com/display/SUPPORT/Hadoop+FAQ
 
@@ -47,6 +48,11 @@ TODO(dirlt):translate it!!!
    - What license is Cloudera's Distribution Including Apache Hadoop released under? / Just like Hadoop, Cloudera's Distribution Including Apache Hadoop is released under the Apache Public License version 2.
    - Is Cloudera forking Hadoop? / Absolutely not. Cloudera is committed to the Hadoop project and the principles of the Apache Software License and Foundation. We continue to work actively with current releases of Hadoop and deliver certified releases to the community as appropriate.
    - Does Cloudera contribute their changes back to Apache? / We do, and will continue to contribute all eligible changes back to Apache. We occasionally release code we know to be stable even if our contribution to Apache is still in progress. Some of our changes are not eligible for contribution, as they capture the Cloudera brand, or link to our tools and documentation, but these do not affect compatibility with core project.
+
+*** CDH产品组件构成
+http://www.cloudera.com/content/cloudera/en/products/cdh.html
+
+file:./images/cloudera-enterprise-diagram.png
 
 ** 观点
 *** Hadoop即将过时了吗？
@@ -847,7 +853,6 @@ public abstract class RecordReader<KEYIN, VALUEIN> implements Closeable {
        - 度量可以从hadoop-metrics.properties进行配置
     
        
-
 ** 代码分析
 
 
