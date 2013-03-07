@@ -33,7 +33,10 @@ metadata store主要是用来存储数据库的一些元数据信息，有下面
 
 
 --------------------
-配置remote server. remote metadata store server和client之间交互是通过thrift完成的，thrift server通过jdbc连接到mysql或者是其他数据库上。 *NOTE(dirlt):之所以需要这个主要是因为impala要求metastore必须是remote的*
+
+*配置remote server*
+
+remote metadata store server和client之间交互是通过thrift完成的，thrift server通过jdbc连接到mysql或者是其他数据库上。 *NOTE(dirlt):之所以需要这个主要是因为impala要求metastore必须是remote的*
 
 Server Configuration Parameters
 | Config Param                          | Config Value                                                           | Comment                                  |
@@ -61,7 +64,7 @@ thrift server 通过 hive --service metastore 启动，port在9083上面. 环境
 13/03/07 18:06:34 INFO metastore.HiveMetaStore: TCP keepalive = true
 #+END_EXAMPLE
 
-*** SQL Operations
+*** Example
    - 数据默认是使用ctrl-a来做分割 *NOTE（dirlt）：how wierd:(*
 
 #+BEGIN_EXAMPLE
