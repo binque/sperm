@@ -7,8 +7,8 @@
 file:./images/valve-logo.jpg
 
 我叫章炎{dirtysalt}{dirlt}.我是一名软件工程师：
-   - 2012.5-now 在友盟{Umeng}的数据平台{DataPlatform}工作，主要是负责统计数据处理。
-   - 2008-2012.5 在百度{Baidu}的基础架构部{Infrastructure}工作，主要负责基础组件，开发工具以及分布式系统。
+   - 2012.5-now 在[[http://www.umeng.com][ 友盟{Umeng}]] 的数据平台{DataPlatform}工作，主要是负责统计数据处理。
+   - 2008-2012.5 在 [[http://www.baidu.com][百度{Baidu}]] 的基础架构部{Infrastructure}工作，主要负责基础组件，开发工具以及分布式系统。
 
 可以从我的linkedin里面看到我做过的projects。感觉自己对各方面都感兴趣，不过现在关注的主要是:
    - 计算机系统(Compute System)
