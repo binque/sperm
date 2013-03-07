@@ -23,7 +23,4 @@
    - http://dp2:50030/jobdetailshistory.jsp?logFile=file%3A%2Fusr%2Flib%2Fhadoop-0.20%2Flogs%2Fhistory%2Fdone%2Fdp2_1355202591277_job_201212111309_19910_dp_AppUserStatV2ProfilerMR%25232013-01-20%252320130121195515
 ** TODO 整理weibo
 ** TODO 装修房子事情
-** TODO 修改submit.py脚本，并且上线游戏模版。
-   - 测试游戏模版不分群的情况
-   - 上线不分群的结果。
 ** TODO 回顾一下2012吧，有一些事情也值得一说。
