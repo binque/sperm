@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hive"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-03-07 14:38:20 CST"/>
+<meta name="generated" content="2013-03-07 15:53:59 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -118,6 +118,11 @@
 <h2 id="sec-1"><span class="section-number-2">1</span> hive</h2>
 <div class="outline-text-2" id="text-1">
 
+<ul>
+<li>Home - Apache Hive - Apache Software Foundation <a href="https://cwiki.apache.org/confluence/display/Hive/Home">https://cwiki.apache.org/confluence/display/Hive/Home</a>
+</li>
+</ul>
+
 
 
 </div>
@@ -188,7 +193,14 @@ hive0.7以后提供自动切换local-mode功能，设置 hive&gt; SET hive.exec.
 <h4 id="sec-1-1-3"><span class="section-number-4">1.1.3</span> Metadata Store</h4>
 <div class="outline-text-4" id="text-1-1-3">
 
-<p>metadata store主要是用来存储数据库的一些元数据信息，有下面相关的配置参数：
+<ul>
+<li><a href="https://cwiki.apache.org/confluence/display/Hive/AdminManual+MetastoreAdmin">https://cwiki.apache.org/confluence/display/Hive/AdminManual+MetastoreAdmin</a> <b>NOTE（dirlt）：配置remote server</b>
+</li>
+</ul>
+
+
+<p>
+metadata store主要是用来存储数据库的一些元数据信息，有下面相关的配置参数：
 </p><ul>
 <li>javax.jdo.option.ConnectionURL.
 </li>
@@ -196,11 +208,25 @@ hive0.7以后提供自动切换local-mode功能，设置 hive&gt; SET hive.exec.
 </li>
 </ul>
 
-<p>默认实现是在本地的derby db，默认存储位置是./metastore_db. metastore其他实现需要支持JPO（Java Persistent Object）
+<p>默认实现是在本地的derby db，默认存储位置是./metastore_db. metastore其他实现需要支持JPO（Java Persistent Object） Metastore can be stored in any database that is supported by JPOX. The database schema is defined in JDO metadata annotations file package.jdo at src/contrib/hive/metastore/src/model.
+</p>
+
+
+<hr/>
+<p>
+配置remote server
 </p>
 <p>
-Metastore can be stored in any database that is supported by JPOX. The database schema is defined in JDO metadata annotations file package.jdo at src/contrib/hive/metastore/src/model.
+<b>NOTE(dirlt):之所以需要这个主要是因为impala要求metastore必须是remote的</b>
 </p>
+<ul>
+<li>安装配置mysql
+</li>
+<li>
+</li>
+</ul>
+
+
 </div>
 
 </div>
@@ -261,6 +287,7 @@ Time taken: 5.787 seconds
 </li>
 </ul>
 
+
 </div>
 </div>
 </div>
@@ -268,7 +295,7 @@ Time taken: 5.787 seconds
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-03-07 14:38:20 CST</p>
+<p class="date">Date: 2013-03-07 15:53:59 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

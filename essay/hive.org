@@ -24,12 +24,21 @@ hive0.7以后提供自动切换local-mode功能，设置 hive> SET hive.exec.mod
    - The total number of reduce tasks required is 1 or 0.
 
 *** Metadata Store
+    - https://cwiki.apache.org/confluence/display/Hive/AdminManual+MetastoreAdmin *NOTE（dirlt）：配置remote server*
+
 metadata store主要是用来存储数据库的一些元数据信息，有下面相关的配置参数：
    - javax.jdo.option.ConnectionURL.
    - javax.jdo.option.ConnectionDriverName.
-默认实现是在本地的derby db，默认存储位置是./metastore_db. metastore其他实现需要支持JPO（Java Persistent Object）
+默认实现是在本地的derby db，默认存储位置是./metastore_db. metastore其他实现需要支持JPO（Java Persistent Object） Metastore can be stored in any database that is supported by JPOX. The database schema is defined in JDO metadata annotations file package.jdo at src/contrib/hive/metastore/src/model.
 
-Metastore can be stored in any database that is supported by JPOX. The database schema is defined in JDO metadata annotations file package.jdo at src/contrib/hive/metastore/src/model.
+
+--------------------
+配置remote server
+
+*NOTE(dirlt):之所以需要这个主要是因为impala要求metastore必须是remote的*
+
+   - 安装配置mysql
+   - 
 
 *** SQL Operations
    - 数据默认是使用ctrl-a来做分割 *NOTE（dirlt）：how wierd:(*

@@ -48,7 +48,7 @@ Queries executed using Impala are handled as follows:
      - sudo apt-get install hadoop-hdfs-namenode
      - sudo apt-get install hadoop-0.20-mapreduce-tasktracker hadoop-hdfs-datanode
      - sudo apt-get install hadoop-client
-   - Install Hive as described in Hive Installation. As part of this process, you must configure Hive to use an external database as a metastore. 必须使用外部数据库来作为metastore *NOTE(dirlt):hive允许使用内存数据库做metastore*
+   - Install Hive as described in Hive Installation. As part of this process, you must configure Hive to use an external database as a metastore. 必须使用外部数据库来作为metastore *NOTE(dirlt):hive允许使用内嵌数据库做metastore*
 
 tarball:
    - hadoop http://archive.cloudera.com/cdh4/cdh/4/hadoop-2.0.0-cdh4.2.0.tar.gz
