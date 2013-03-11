@@ -8,6 +8,8 @@ then
     MAC=1
 fi
 
+PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH
+
 # compatible with maven.
 CLASSPATH=.:./target/classes:./target/dependency
 if [ $MAC = 1 ]
@@ -15,25 +17,30 @@ then
     export JAVA_HOME=/Library/Java/Home/
 else
     export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64/
-    export HADOOP_HOME=$HOME/utils/hadoop-0.20.2-cdh3u3/
     export HADOOP_CLASSPATH=./target/classes
+    #export HADOOP_HOME=$HOME/utils/hadoop-0.20.2-cdh3u3/
+    export HADOOP_HOME=$HOME/utils/hadoop-2.0.0-cdh4.2.0/
     export HBASE_HOME=$HOME/utils/hbase-0.90.4-cdh3u3/
+    export HBASE_HOME=$HOME/utils/hbase-0.94.2-cdh4.2.0/
     export OOZIE_HOME=$HOME/utils/oozie-2.3.2-cdh3u3/
-    export HIVE_HOME=$HOME/utils/hive-0.7.1-cdh3u3/
+    #export HIVE_HOME=$HOME/utils/hive-0.7.1-cdh3u3/
+    export HIVE_HOME=$HOME/utils/hive-0.10.0-cdh4.2.0/
+
     # native library.
     export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native/Linux-amd64-64/:$LD_LIBRARY_
     # add hadoop and hbase classpath.
-    CLASSPATH=$HADOOP_HOME/conf:$HBASE_HOME/conf:$CLASSPATH    
+    CLASSPATH=$HADOOP_HOME/etc/hadoop:$HADOOP_HOME/conf:$HBASE_HOME/conf:$CLASSPATH    
     PATH=$HADOOP_HOME/bin:$PATH
+    PATH=$HADOOP_HOME/sbin:$PATH
     PATH=$HBASE_HOME/bin:$PATH
     PATH=$OOZIE_HOME/bin:$PATH
-    PATH=$HIVE_HOME/bin:$PATH
+    PATH=$HIVE_HOME/bin:$PATH    
 fi
 # add jdk classpath.
 CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:$CLASSPATH
 export CLASSPATH
 
-PATH=$HOME/utils/bin:$JAVA_HOME/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH
+PATH=$HOME/utils/bin:$JAVA_HOME/bin:$PATH
 if [ -z $MANPATH ]
 then
     MANPATH="."

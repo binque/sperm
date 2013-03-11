@@ -27,6 +27,22 @@ def queryColumn():
     response.ParseFromString(data2)
     #print response
 
+def queryColumn2():
+    print '----------queryColumn2----------'
+    request = message_pb2.ReadRequest()
+
+    request.table_name='appuserstat'
+    request.row_key='2013-03-08_4db949a2112cf75caa00002a'
+    request.column_family='stat'
+    request.qualifiers.append('provinces_7_lanCnt')
+
+    data = request.SerializeToString()
+    data2 = raiseHTTPRequest('http://dp0:12345/read',data,timeout=20)
+
+    response = message_pb2.ReadResponse()
+    response.ParseFromString(data2)
+    print response
+
 def queryColumnFamily():
     print '----------queryColumnFamily----------'
     request = message_pb2.ReadRequest()
@@ -68,6 +84,9 @@ def multiQuery():
 
     
 if __name__=='__main__':
-    queryColumn()
-    queryColumnFamily()
-    multiQuery()
+    # queryColumn()
+    # queryColumnFamily()
+    # multiQuery()
+
+    for i in range(0,100):
+        queryColumn2()
