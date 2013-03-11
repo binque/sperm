@@ -8,43 +8,61 @@ then
     MAC=1
 fi
 
+# basic paths.
 PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH
 
+# add current directory.
+LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+
 # compatible with maven.
+export M2_REPO=$HOME/.m2/repository/
 CLASSPATH=.:./target/classes:./target/dependency
+
+CDH4=1
+
 if [ $MAC = 1 ]
 then
+    # on mac, I just use java.
     export JAVA_HOME=/Library/Java/Home/
 else
     export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64/
     export HADOOP_CLASSPATH=./target/classes
-    #export HADOOP_HOME=$HOME/utils/hadoop-0.20.2-cdh3u3/
-    export HADOOP_HOME=$HOME/utils/hadoop-2.0.0-cdh4.2.0/
+
+    export HADOOP_HOME=$HOME/utils/hadoop-0.20.2-cdh3u3/
+    export HADOOP_CONF_DIR=$HADOOP_HOME/conf   
     export HBASE_HOME=$HOME/utils/hbase-0.90.4-cdh3u3/
-    export HBASE_HOME=$HOME/utils/hbase-0.94.2-cdh4.2.0/
+    export HBASE_CONF_DIR=$HBASE_HOME/conf
     export OOZIE_HOME=$HOME/utils/oozie-2.3.2-cdh3u3/
-    #export HIVE_HOME=$HOME/utils/hive-0.7.1-cdh3u3/
-    export HIVE_HOME=$HOME/utils/hive-0.10.0-cdh4.2.0/
+    export OOZIE_URL="http://localhost:11000/oozie" # default url.
+    export HIVE_HOME=$HOME/utils/hive-0.7.1-cdh3u3/
+
+    if [ $CDH4 = 1 ]
+    then
+	export HADOOP_HOME=$HOME/utils/hadoop-2.0.0-cdh4.2.0
+	export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop/
+	export HBASE_HOME=$HOME/utils/hbase-0.94.2-cdh4.2.0/
+	export HBASE_CONF_DIR=$HBASE_HOME/conf	
+	export HIVE_HOME=$HOME/utils/hive-0.10.0-cdh4.2.0/
+    fi
 
     # native library.
-    export LD_LIBRARY_PATH=$HADOOP_HOME/lib/native/Linux-amd64-64/:$LD_LIBRARY_
+    LD_LIBRARY_PATH=$HADOOP_HOME/lib/native/Linux-amd64-64/:$LD_LIBRARY_PATH
     # add hadoop and hbase classpath.
-    CLASSPATH=$HADOOP_HOME/etc/hadoop:$HADOOP_HOME/conf:$HBASE_HOME/conf:$CLASSPATH    
+    CLASSPATH=$HADOOP_CONF_DIR:$HBASE_CONF_DIR:$CLASSPATH
+    
     PATH=$HADOOP_HOME/bin:$PATH
     PATH=$HADOOP_HOME/sbin:$PATH
     PATH=$HBASE_HOME/bin:$PATH
     PATH=$OOZIE_HOME/bin:$PATH
     PATH=$HIVE_HOME/bin:$PATH    
 fi
+
 # add jdk classpath.
 CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:$CLASSPATH
 export CLASSPATH
+export LD_LIBRARY_PATH
 
 PATH=$HOME/utils/bin:$JAVA_HOME/bin:$PATH
-if [ -z $MANPATH ]
-then
-    MANPATH="."
-fi
 MANPATH=/usr/local/share/man:/usr/share/man:$MANPATH
 
 # most items are useless since I get apt-get install :)
@@ -114,16 +132,14 @@ PATH=$GOROOT/bin:$PATH
 GOPATH=$HOME/go/
 export GOPATH
 
-# export 
 export PATH
 export MANPATH
-export M2_REPO=$HOME/.m2/repository/
+
+# lanuage.
 export LC_ALL=en_US.UTF8
 export LANG=en_US.UTF8
 
-# default value of oozie url.
-export OOZIE_URL="http://localhost:11000/oozie" 
-
+# git related.
 git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --"
 git config --global color.ui true
 git config --global user.name "dirtysalt"
@@ -135,6 +151,7 @@ git config --global alias.st status
 git config --global alias.unstage 'reset'
 git config --global alias.last 'log -1 HEAD'
 
+# some useful alias.
 alias ed="emacs" # for typo.
 alias dstat='dstat -cdlmnpsy' # easy use.
 alias dp0="ssh -p 16021 -l dp dp0" # authorized.
@@ -143,6 +160,7 @@ alias hadoop1="ssh -p 16021 -l yunbg hadoop1" # authorized.
 alias nexus="ssh -p 16021 -l yunbg nexus" # authorized.
 alias hudson="ssh -l ceshi hudson" # authorized.
 
+# private key.
 ssh-add ~/.ssh/shiwen-aws_rsa
 ssh-add ~/.ssh/id_rsa
 
