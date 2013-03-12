@@ -84,7 +84,7 @@ public class RestServer {
         }
         // easy way!!
         if (!configuration.isDebug()) {
-            //logger.xdebug = false;
+            logger.xdebug = false;
         }
         LocalCache.init(configuration);
         CpuWorkerPool.init(configuration);

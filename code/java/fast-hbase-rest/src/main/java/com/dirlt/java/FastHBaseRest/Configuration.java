@@ -20,7 +20,7 @@ public class Configuration {
     private String serviceName = "unknown";
     private boolean stat = true;
     private boolean cache = true;
-    private boolean debug = false;
+    private boolean debug = true;
     private boolean async = true;
 
     public boolean parse(String[] args) {
@@ -51,8 +51,8 @@ public class Configuration {
                 cache = false;
             } else if (arg.startsWith("--no-async")) {
                 async = false;
-            } else if (arg.startsWith("--debug")) {
-                debug = true;
+            } else if (arg.startsWith("--no-debug")) {
+                debug = false;
             } else {
                 return false;
             }
@@ -75,7 +75,7 @@ public class Configuration {
         System.out.println("\t--service-name # set service name");
         System.out.println("\t--no-stat # turn off statistics");
         System.out.println("\t--no-async # turn off async");
-        System.out.println("\t--debug # debug mode");
+        System.out.println("\t--no-debug # turn off debug mode");
     }
 
     public String getIp() {

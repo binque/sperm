@@ -47,17 +47,16 @@ def queryColumnNone():
     print '----------queryColumnNone----------'
     request = message_pb2.ReadRequest()
 
-    request.table_name='appretention'
+    request.table_name='appretentionstat'
     request.row_key='2013-03-12_4db949a2112cf75caa00002a'
     request.column_family='stat'
     request.qualifiers.append('provinces_7_lanCnt')
 
     data = request.SerializeToString()
-    data2 = raiseHTTPRequest('http://dp0:12345/read',data,timeout=20)
-
-    response = message_pb2.ReadResponse()
-    response.ParseFromString(data2)
-    print response
+    try:
+        data2 = raiseHTTPRequest('http://dp0:12345/read',data,timeout=20)
+    except Exception,e:
+        pass
 
 def queryColumnFamily():
     print '----------queryColumnFamily----------'
@@ -100,8 +99,8 @@ def multiQuery():
 
     
 if __name__=='__main__':
-    # queryColumn()
-    # queryColumnFamily()
-    # multiQuery()
+    queryColumn()
+    queryColumnFamily()
+    multiQuery()
     queryColumnNone()
     
