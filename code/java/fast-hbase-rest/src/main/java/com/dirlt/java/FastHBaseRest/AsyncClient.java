@@ -232,6 +232,13 @@ public class AsyncClient implements Runnable {
             channel.close();
         }
         MessageProtos1.MultiReadRequest multiReadRequest = mRdReqBuilder.build();
+        if (multiReadRequest.getRequestsCount() == 0) {
+            RestServer.logger.debug("multi read no sub request");
+            StatStore.getInstance().addCounter("rpc.multi-read.error.count", 1);
+            channel.close();
+            return;
+        }
+        StatStore.getInstance().addCounter("rpc.multi-read.count", 1);
         if (refCounter == null) {
             refCounter = new AtomicInteger(multiReadRequest.getRequestsCount());
         } else {
@@ -293,6 +300,13 @@ public class AsyncClient implements Runnable {
             channel.close();
         }
         MessageProtos1.MultiWriteRequest multiWriteRequest = mWrReqBuilder.build();
+        if (multiWriteRequest.getRequestsCount() == 0) {
+            RestServer.logger.debug("multi write no sub request");
+            StatStore.getInstance().addCounter("rpc.multi-write.error.count", 1);
+            channel.close();
+            return;
+        }
+        StatStore.getInstance().addCounter("rpc.multi-write.count", 1);
         if (refCounter == null) {
             refCounter = new AtomicInteger(multiWriteRequest.getRequestsCount());
         } else {
