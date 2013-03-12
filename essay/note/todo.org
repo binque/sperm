@@ -28,3 +28,5 @@
    - hive配置好。
 ** TODO 比较Java和JNI效率上面的差异。
 ** TODO 修改简历内容
+   - linkedin的简历修改。
+
