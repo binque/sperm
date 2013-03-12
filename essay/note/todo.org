@@ -25,8 +25,11 @@
 ** TODO 装修房子事情
 ** TODO 回顾一下2012吧，有一些事情也值得一说。
 ** TODO 配置hive/impala.
-   - hive配置好。
+   - hive配置好，但是lib似乎没有找到
+   - 后面还需要尝试deb安装。
 ** TODO 比较Java和JNI效率上面的差异。
 ** TODO 修改简历内容
    - linkedin的简历修改。
-
+** TODO appuserstat 重跑部分数据。  
+** TODO 游戏模版bug修复。
+** TODO dp0的fast-rest服务问题

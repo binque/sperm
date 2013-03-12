@@ -43,6 +43,22 @@ def queryColumn2():
     response.ParseFromString(data2)
     print response
 
+def queryColumnNone():
+    print '----------queryColumnNone----------'
+    request = message_pb2.ReadRequest()
+
+    request.table_name='appretention'
+    request.row_key='2013-03-12_4db949a2112cf75caa00002a'
+    request.column_family='stat'
+    request.qualifiers.append('provinces_7_lanCnt')
+
+    data = request.SerializeToString()
+    data2 = raiseHTTPRequest('http://dp0:12345/read',data,timeout=20)
+
+    response = message_pb2.ReadResponse()
+    response.ParseFromString(data2)
+    print response
+
 def queryColumnFamily():
     print '----------queryColumnFamily----------'
     request = message_pb2.ReadRequest()
@@ -87,6 +103,5 @@ if __name__=='__main__':
     # queryColumn()
     # queryColumnFamily()
     # multiQuery()
-
-    for i in range(0,100):
-        queryColumn2()
+    queryColumnNone()
+    

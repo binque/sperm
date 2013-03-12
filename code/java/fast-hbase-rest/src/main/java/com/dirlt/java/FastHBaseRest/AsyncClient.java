@@ -61,6 +61,7 @@ public class AsyncClient implements Runnable {
     public boolean cache; // whether to cache it.
     public boolean async; // whether async mode.
     public Status code = Status.kStat; // default value.
+    public boolean error = false;
     public Channel channel;
 
     // for multi interface.
@@ -247,6 +248,7 @@ public class AsyncClient implements Runnable {
             client.subRequest = true;
             client.rdReq = request;
             client.parent = this;
+            client.error = false;
             clients.add(client);
             CpuWorkerPool.getInstance().submit(client);
         }
@@ -307,6 +309,7 @@ public class AsyncClient implements Runnable {
             client.subRequest = true;
             client.wrReq = request;
             client.parent = this;
+            client.error = false;
             clients.add(client);
             CpuWorkerPool.getInstance().submit(client);
         }
@@ -389,6 +392,7 @@ public class AsyncClient implements Runnable {
         }
 
         final AsyncClient client = this;
+        client.code = Status.kReadResponse;
         client.readHBaseServiceStartTimestamp = System.currentTimeMillis();
         Deferred<ArrayList<KeyValue>> deferred = HBaseService.getInstance().get(getRequest);
         // if failed, we don't return.
@@ -396,7 +400,6 @@ public class AsyncClient implements Runnable {
             @Override
             public Object call(ArrayList<KeyValue> keyValues) throws Exception {
                 // we don't return because we put into CpuWorkerPool.
-                client.code = Status.kReadResponse;
                 client.readHBaseServiceEndTimestamp = System.currentTimeMillis();
                 if (client.rdReq.getQualifiersCount() != 0) {
                     // fill the cache and builder.
@@ -436,9 +439,10 @@ public class AsyncClient implements Runnable {
         deferred.addErrback(new Callback<Object, Exception>() {
             @Override
             public Object call(Exception o) throws Exception {
-                // we don't care.
                 o.printStackTrace();
                 StatStore.getInstance().addCounter("read.count.error", 1);
+                client.error = true;
+                CpuWorkerPool.getInstance().submit(client);
                 return null;
             }
         });
@@ -460,13 +464,13 @@ public class AsyncClient implements Runnable {
 
         Deferred<Object> deferred = HBaseService.getInstance().put(putRequest);
         final AsyncClient client = this;
+        client.code = Status.kWriteResponse;
         client.writeHBaseServiceStartTimestamp = System.currentTimeMillis();
         // if failed, we don't return.
         deferred.addCallback(new Callback<Object, Object>() {
             @Override
             public Object call(Object obj) throws Exception {
                 // we don't return because we put into CpuWorkerPool.
-                client.code = Status.kWriteResponse;
                 CpuWorkerPool.getInstance().submit(client);
                 return null;
             }
@@ -477,37 +481,46 @@ public class AsyncClient implements Runnable {
                 // we don't care.
                 o.printStackTrace();
                 StatStore.getInstance().addCounter("write.count.error", 1);
+                client.error = true;
+                CpuWorkerPool.getInstance().submit(client);
                 return null;
             }
         });
     }
 
     public void readResponse() {
-        // reorder
-        if (rdReq.getQualifiersCount() != 0) {
-            Map<String, MessageProtos1.ReadResponse.KeyValue> mapping = new HashMap<String, MessageProtos1.ReadResponse.KeyValue>();
-            for (MessageProtos1.ReadResponse.KeyValue kv : rdRes.getKvsList()) {
-                mapping.put(kv.getQualifier(), kv);
-            }
-            MessageProtos1.ReadResponse.Builder bd = MessageProtos1.ReadResponse.newBuilder();
-            int count = 0;
-            for (String k : rdReq.getQualifiersList()) {
-                MessageProtos1.ReadResponse.KeyValue v = mapping.get(k);
-                if (v == null) {
-                    MessageProtos1.ReadResponse.KeyValue.Builder sub = MessageProtos1.ReadResponse.KeyValue.newBuilder();
-                    sub.setQualifier(k);
-                    sub.setContent(ByteString.EMPTY);
-                    v = sub.build();
-                    count++;
+        if (!error) {
+            // no error happens.
+            // reorder the value.
+            if (rdReq.getQualifiersCount() != 0) {
+                Map<String, MessageProtos1.ReadResponse.KeyValue> mapping = new HashMap<String, MessageProtos1.ReadResponse.KeyValue>();
+                for (MessageProtos1.ReadResponse.KeyValue kv : rdRes.getKvsList()) {
+                    mapping.put(kv.getQualifier(), kv);
                 }
-                bd.addKvs(v);
+                MessageProtos1.ReadResponse.Builder bd = MessageProtos1.ReadResponse.newBuilder();
+                int count = 0;
+                for (String k : rdReq.getQualifiersList()) {
+                    MessageProtos1.ReadResponse.KeyValue v = mapping.get(k);
+                    if (v == null) {
+                        MessageProtos1.ReadResponse.KeyValue.Builder sub = MessageProtos1.ReadResponse.KeyValue.newBuilder();
+                        sub.setQualifier(k);
+                        sub.setContent(ByteString.EMPTY);
+                        v = sub.build();
+                        count++;
+                    }
+                    bd.addKvs(v);
+                }
+                StatStore.getInstance().addCounter("read.count.field-not-exist", count);
+                rdRes = bd;
             }
-            StatStore.getInstance().addCounter("read.count.field-not-exist", count);
-            rdRes = bd;
+            readEndTimestamp = System.currentTimeMillis();
+            StatStore.getInstance().addCounter("read.duration", readEndTimestamp - readStartTimestamp);
         }
-        readEndTimestamp = System.currentTimeMillis();
-        StatStore.getInstance().addCounter("read.duration", readEndTimestamp - readStartTimestamp);
         if (!subRequest) {
+            if (error) {
+                channel.close();
+                return;
+            }
             msg = rdRes.build();
             code = Status.kHttpResponse;
             run();
@@ -516,6 +529,11 @@ public class AsyncClient implements Runnable {
             if (count == 0) {
                 parent.mRdRes = MessageProtos1.MultiReadResponse.newBuilder();
                 for (AsyncClient client : parent.clients) {
+                    // if any one fails, then it fails.
+                    if (client.error) {
+                        parent.channel.close();
+                        return;
+                    }
                     parent.mRdRes.addResponses(client.rdRes);
                 }
                 parent.msg = parent.mRdRes.build();
@@ -526,10 +544,16 @@ public class AsyncClient implements Runnable {
     }
 
     public void writeResponse() {
-        writeHBaseServiceEndTimestamp = System.currentTimeMillis();
-        StatStore.getInstance().addCounter("write.duration",
-                writeHBaseServiceEndTimestamp - writeHBaseServiceStartTimestamp);
+        if (!error) {
+            writeHBaseServiceEndTimestamp = System.currentTimeMillis();
+            StatStore.getInstance().addCounter("write.duration",
+                    writeHBaseServiceEndTimestamp - writeHBaseServiceStartTimestamp);
+        }
         if (!subRequest) {
+            if (error) {
+                channel.close();
+                return;
+            }
             msg = wrRes.build();
             code = Status.kHttpResponse;
             run();
@@ -538,6 +562,10 @@ public class AsyncClient implements Runnable {
             if (count == 0) {
                 parent.mWrRes = MessageProtos1.MultiWriteResponse.newBuilder();
                 for (AsyncClient client : parent.clients) {
+                    if (client.error) {
+                        parent.channel.close();
+                        return;
+                    }
                     parent.mWrRes.addResponses(client.wrRes);
                 }
                 parent.msg = parent.mWrRes.build();

@@ -18,7 +18,7 @@ LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
 export M2_REPO=$HOME/.m2/repository/
 CLASSPATH=.:./target/classes:./target/dependency
 
-CDH4=1
+CDH4=0
 
 if [ $MAC = 1 ]
 then
