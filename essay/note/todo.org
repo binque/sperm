@@ -14,7 +14,6 @@
 ** TODO oceanbase
    - 阅读设计文档
 ** TODO hbase输入性能优化
-   - 多路输入来优化
    - hbase同时读写的时候对于scan的压力如何？
    - speculative 好非常多
      - http://dp2:50030/jobdetails.jsp?jobid=job_201301231102_7237&refresh=0 30 min.
@@ -32,4 +31,3 @@
    - linkedin的简历修改。
 ** TODO appuserstat 重跑部分数据。  
 ** TODO 游戏模版bug修复。
-** TODO dp0的fast-rest服务问题
