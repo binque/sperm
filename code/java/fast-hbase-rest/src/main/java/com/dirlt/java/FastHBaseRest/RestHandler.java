@@ -27,16 +27,25 @@ public class RestHandler extends SimpleChannelHandler {
         allowedPath.add("/multi-read");
         allowedPath.add("/write");
         allowedPath.add("/multi-write");
+        allowedPath.add("/clear-cache");
     }
 
     private Configuration configuration;
     private AsyncClient client; // binding to the channel pipeline.
-    private boolean chunked = false;
-
 
     public RestHandler(Configuration configuration) {
         this.configuration = configuration;
         client = new AsyncClient(configuration); // each handler corresponding a channel or a connection.
+    }
+
+    private void writeContent(Channel channel, String content) {
+        HttpResponse response = new DefaultHttpResponse(
+                HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+        response.setHeader("Content-Length", content.length());
+        ChannelBuffer buffer = ChannelBuffers.buffer(content.length());
+        buffer.writeBytes(content.getBytes());
+        response.setContent(buffer);
+        channel.write(response);
     }
 
     @Override
@@ -67,15 +76,15 @@ public class RestHandler extends SimpleChannelHandler {
 
         // as stat, we can easily handle it.
         if (path.equals("/stat")) {
-            HttpResponse response = new DefaultHttpResponse(
-                    HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
-            // handle it in the same thread.
-            String content = stat.toString();
-            response.setHeader("Content-Length", content.length());
-            ChannelBuffer buffer = ChannelBuffers.buffer(content.length());
-            buffer.writeBytes(content.getBytes());
-            response.setContent(buffer);
-            channel.write(response);
+            String content = stat.toString() + LocalCache.getInstance().toString();
+            writeContent(channel, content);
+            return;
+        }
+
+        if (path.equals("/clear-cache")) {
+            String content = "OK";
+            LocalCache.getInstance().clear();
+            writeContent(channel, content);
             return;
         }
 

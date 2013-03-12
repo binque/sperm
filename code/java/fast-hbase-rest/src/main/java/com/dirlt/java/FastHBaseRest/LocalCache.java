@@ -2,6 +2,7 @@ package com.dirlt.java.FastHBaseRest;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheStats;
 
 import java.util.concurrent.TimeUnit;
 
@@ -40,5 +41,21 @@ public class LocalCache {
 
     public void set(String k, byte[] b) {
         cache.put(k, b);
+    }
+
+    public void clear() {
+        cache.invalidateAll();
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        CacheStats stats = cache.stats();
+//        sb.append(String.format("cache.request.count = %s\n", stats.requestCount()));
+//        sb.append(String.format("cache.hit.count = %s\n", stats.hitCount()));
+//        sb.append(String.format("cache.hit.rate = %s\n", stats.hitRate()));
+//        sb.append(String.format("cache.miss.count = %s\n", stats.missCount()));
+//        sb.append(String.format("cache.miss.rate = %s\n", stats.missRate()));
+        sb.append(String.format("cache.eviction.count = %s\n", stats.evictionCount()));
+        return sb.toString();
     }
 }
