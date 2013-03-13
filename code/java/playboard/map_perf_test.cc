@@ -37,7 +37,6 @@ static void action() {
 }
 
 static void action2() {
-  printf("enter...\n");
   double start = gettime_ms();  
   map<int, long> dict;
   for(int i = 0; i < NUMBER; i++) {
@@ -47,11 +46,11 @@ static void action2() {
     dict[i] += dict[(i + 1000) % NUMBER];
   }
   double end = gettime_ms();
-  printf("exit...%.2lf\n", end - start);  
+  printf("%.2lf\n", end - start);  
 }
 
 int main() {
-  action();
+  //action();
   action2();
   return 0;
 }

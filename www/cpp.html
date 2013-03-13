@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="cpp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-01-23 13:31:21 CST"/>
+<meta name="generated" content="2013-03-13 11:57:31 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -121,6 +121,11 @@
 <li><a href="#sec-1-5-1">1.5.1 boost::bind</a></li>
 <li><a href="#sec-1-5-2">1.5.2 boost::spirit</a></li>
 <li><a href="#sec-1-5-3">1.5.3 google::protobuf dynamic usage</a></li>
+</ul>
+</li>
+<li><a href="#sec-1-6">1.6 misc</a>
+<ul>
+<li><a href="#sec-1-6-1">1.6.1 诡异的性能问题</a></li>
 </ul>
 </li>
 </ul>
@@ -875,12 +880,151 @@ x.push(boost::bind(&amp;B::fun,&amp;b,_1,456));
 </p>
 </div>
 </div>
+
+</div>
+
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> misc</h3>
+<div class="outline-text-3" id="text-1-6">
+
+
+</div>
+
+<div id="outline-container-1-6-1" class="outline-4">
+<h4 id="sec-1-6-1"><span class="section-number-4">1.6.1</span> 诡异的性能问题</h4>
+<div class="outline-text-4" id="text-1-6-1">
+
+<p><b>NOTE（dirlt）：现在我觉得可能是glibc的问题，而非编译器的问题</b>
+</p>
+<p>
+程序代码如下。程序非常简单，action是为了测试一下以string为key的map性能，action2是为了测试一下以int为key的map性能。然后我们分两组测试运行：
+</p><ol>
+<li>运行action，然后运行action2
+</li>
+<li>只运行action2
+</li>
+</ol>
+
+
+
+
+<pre class="src src-C++">/* coding:utf-8
+ * Copyright (C) dirlt
+ */
+
+#include &lt;sys/time.h&gt;
+#include &lt;map&gt;
+#include &lt;string&gt;
+#include &lt;cstdio&gt;
+
+using namespace std;
+
+static inline double gettime_ms() {
+  struct timeval tv;
+  gettimeofday(&amp;tv, NULL);
+  return tv.tv_sec * 1000.0 + tv.tv_usec * 0.001;
+}
+
+static const int NUMBER = 10000000;
+static const char* PREFIX = <span style="color: #ffff00;">"s"</span>;
+
+static void action() {
+  double start = gettime_ms();  
+  map&lt;string, long&gt; dict;
+  char buf[64];
+  char buf2[64];
+  for(int i = 0; i &lt; NUMBER; i++) {
+    snprintf(buf, sizeof(buf), <span style="color: #ffff00;">"%s%d"</span>, PREFIX, i);
+    dict[buf] = i;
+  }
+  for(int i = 0; i &lt; NUMBER; i++) {
+    snprintf(buf, sizeof(buf), <span style="color: #ffff00;">"%s%d"</span>, PREFIX, i);
+    snprintf(buf2, sizeof(buf2), <span style="color: #ffff00;">"%s%d"</span>, PREFIX, (i + 1000) % NUMBER);
+    dict[buf] += dict[buf2];
+  }
+  double end = gettime_ms();
+  printf(<span style="color: #ffff00;">"%.2lf\n"</span>, end - start);
+}
+
+static void action2() {
+  double start = gettime_ms();  
+  map&lt;int, long&gt; dict;
+  for(int i = 0; i &lt; NUMBER; i++) {
+    dict[i] = i;
+  }
+  for(int i = 0; i &lt; NUMBER; i++) {
+    dict[i] += dict[(i + 1000) % NUMBER];
+  }
+  double end = gettime_ms();
+  printf(<span style="color: #ffff00;">"%.2lf\n"</span>, end - start);  
+}
+
+int main() {
+  action();
+  action2();
+  return 0;
+}
+</pre>
+
+
+<p>
+运行结果如下。可以看到测试组1里面action2运行时间为2.9s左右，而测试组2里面action2运行时间为8.5s <b>时间差别很大</b>
+</p>
+
+
+<pre class="example">➜  playboard git:(master) ✗ g++ map_perf_test.cc -O2             
+➜  playboard git:(master) ✗ ./a.out 
+19764.38
+2957.30
+➜  playboard git:(master) ✗ g++ map_perf_test.cc -O2
+➜  playboard git:(master) ✗ ./a.out                 
+8521.25
+</pre>
+
+
+<p>
+可能是编译器的结果？切换成为clang++来编译.效果是一样的。 <b>时间差别很大</b>
+</p>
+
+
+<pre class="example">➜  playboard git:(master) ✗ clang++ map_perf_test.cc -O2
+➜  playboard git:(master) ✗ ./a.out 
+19494.99
+3052.83
+➜  playboard git:(master) ✗ clang++ map_perf_test.cc -O2
+➜  playboard git:(master) ✗ ./a.out 
+8495.00
+</pre>
+
+
+<p>
+然后我放到自己的macbook air下面使用clang重新编译， <b>时间是差不多的</b>
+</p>
+
+
+<pre class="example">➜  playboard git:(master) ✗ g++ map_perf_test.cc -O2
+➜  playboard git:(master) ✗ ./a.out
+22759.82
+4203.22
+playboard git:(master) ✗ g++ map_perf_test.cc -O2
+➜  playboard git:(master) ✗ ./a.out
+4214.48
+</pre>
+
+
+
+
+
+
+
+</div>
+</div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-01-23 13:31:21 CST</p>
+<p class="date">Date: 2013-03-13 11:57:31 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
