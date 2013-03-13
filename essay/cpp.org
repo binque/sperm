@@ -558,8 +558,4 @@ playboard git:(master) ✗ g++ map_perf_test.cc -O2
 4214.48
 #+END_EXAMPLE
 
-
-
-
-
-  
+*NOTE(dirlt):另外我让同事在其他机器上使用g++3.4.5编译运行，时间差别也非常大*
