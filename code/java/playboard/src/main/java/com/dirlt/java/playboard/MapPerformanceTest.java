@@ -11,7 +11,7 @@ import java.util.Map;
  * To change this template use File | Settings | File Templates.
  */
 public class MapPerformanceTest {
-    private static final int NUMBER = 1000000;
+    private static final int NUMBER = 10000000;
     private static final String PREFIX = "s";
     private static final int kWarmupCount = 10;
 

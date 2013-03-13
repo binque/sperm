@@ -1,4 +1,4 @@
- java
+* java
 ** 相关资料
   - Core Java Volume I: Fundamentals
   - JVM performance optimization
@@ -782,7 +782,6 @@ Accessing Objects
      - GetPrimitiveArrayCritical/ReleasePrimitiveArrayCritical 和上面非常类似，但是进入的是一个critical region停止GC算法，所以更有可能返回pinning版本。
    - Fields and Methods
      - A field or method ID remains valid until the virtual machine unloads the class or interface that defines the corresponding field or method. After the class or inter-face is unloaded, the method or field ID becomes invalid. 在class被unload之前field/method ID都是有效的。
-
 
 ** Tool
 *** jvisualvm
