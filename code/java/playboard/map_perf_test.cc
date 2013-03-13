@@ -19,6 +19,7 @@ static const int NUMBER = 10000000;
 static const char* PREFIX = "s";
 
 static void action() {
+  printf("action...\n");
   double start = gettime_ms();  
   map<string, long> dict;
   char buf[64];
@@ -37,6 +38,7 @@ static void action() {
 }
 
 static void action2() {
+  printf("action2...\n");
   double start = gettime_ms();  
   map<int, long> dict;
   for(int i = 0; i < NUMBER; i++) {
@@ -49,8 +51,8 @@ static void action2() {
   printf("%.2lf\n", end - start);  
 }
 
-int main() {
-  //action();
+int main() {  
+  action();
   action2();
   return 0;
 }

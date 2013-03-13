@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="cpp"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-03-13 12:06:48 CST"/>
+<meta name="generated" content="2013-03-13 14:09:47 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -1014,14 +1014,31 @@ playboard git:(master) ✗ g++ map_perf_test.cc -O2
 
 <p>
 <b>NOTE(dirlt):另外我让同事在其他机器上使用g++3.4.5编译运行，时间差别也非常大</b>
-</p></div>
+</p>
+
+<hr/>
+
+<p>
+看来确实是glibc的内存分配问题，多谢微博 @Thomas 的指导。strace两个binary发现：
+</p><ul>
+<li>action调用了很多brk（8288次）,mmap（17次）来分配内存，每次都是分配小内存.运行完成之后这些内存buffer起来了。
+</li>
+<li>在action调用之后的action2没有调用任何系统调用分配内存，都是在用户态完成。
+</li>
+<li>而如果没有action先调用的话，action2就需要自己调用brk（4737次）,mmap（17次），所以比较耗时。
+</li>
+</ul>
+
+<p>改用 <a href="tcmalloc.html">tcmalloc</a> 之后没有这个问题了。tcmalloc调用brk（541次），mmap（500次）。
+</p>
+</div>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-03-13 12:06:48 CST</p>
+<p class="date">Date: 2013-03-13 14:09:47 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

@@ -559,3 +559,12 @@ playboard git:(master) ✗ g++ map_perf_test.cc -O2
 #+END_EXAMPLE
 
 *NOTE(dirlt):另外我让同事在其他机器上使用g++3.4.5编译运行，时间差别也非常大*
+
+--------------------
+
+看来确实是glibc的内存分配问题，多谢微博 @Thomas 的指导。strace两个binary发现：
+   - action调用了很多brk（8288次）,mmap（17次）来分配内存，每次都是分配小内存.运行完成之后这些内存buffer起来了。
+   - 在action调用之后的action2没有调用任何系统调用分配内存，都是在用户态完成。
+   - 而如果没有action先调用的话，action2就需要自己调用brk（4737次）,mmap（17次），所以比较耗时。
+改用 [[file:tcmalloc.org][tcmalloc]] 之后没有这个问题了。tcmalloc调用brk（541次），mmap（500次）。
+
