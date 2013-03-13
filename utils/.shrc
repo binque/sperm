@@ -11,22 +11,13 @@ fi
 # basic paths.
 PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH
 
-# add current directory.
-LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
-
-# compatible with maven.
-export M2_REPO=$HOME/.m2/repository/
-CLASSPATH=.:./target/classes:./target/dependency
-
-CDH4=0
-
+CDH4=1
 if [ $MAC = 1 ]
 then
     # on mac, I just use java.
     export JAVA_HOME=/Library/Java/Home/
 else
     export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64/
-    export HADOOP_CLASSPATH=./target/classes
 
     export HADOOP_HOME=$HOME/utils/hadoop-0.20.2-cdh3u3/
     export HADOOP_CONF_DIR=$HADOOP_HOME/conf   
@@ -42,14 +33,14 @@ else
 	export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop/
 	export HBASE_HOME=$HOME/utils/hbase-0.94.2-cdh4.2.0/
 	export HBASE_CONF_DIR=$HBASE_HOME/conf	
-	export HIVE_HOME=$HOME/utils/hive-0.10.0-cdh4.2.0/
+	export HIVE_HOME=$HOME/utils/hive-0.10.0-cdh4.2.0/	
     fi
 
-    # native library.
-    LD_LIBRARY_PATH=$HADOOP_HOME/lib/native/Linux-amd64-64/:$LD_LIBRARY_PATH
-    # add hadoop and hbase classpath.
-    CLASSPATH=$HADOOP_CONF_DIR:$HBASE_CONF_DIR:$CLASSPATH
-    
+    # java native library.    
+    export JAVA_LIBRARY_PATH=$HADOOP_HOME/lib/native/Linux-amd64-64:$HADOOP_HOME/lib/native
+    # hadoop classpath.
+    export HADOOP_CLASSPATH=./target/classes:$HADOOP_HOME/lib/hadoop-lzo-0.4.15.jar
+
     PATH=$HADOOP_HOME/bin:$PATH
     PATH=$HADOOP_HOME/sbin:$PATH
     PATH=$HBASE_HOME/bin:$PATH
@@ -58,10 +49,11 @@ else
 fi
 
 # add jdk classpath.
-CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:$CLASSPATH
-export CLASSPATH
-export LD_LIBRARY_PATH
+export M2_REPO=$HOME/.m2/repository/
+export CLASSPATH=.:./target/classes:./target/dependency:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:$CLASSPATH
+export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
 
+# basic settings.
 PATH=$HOME/utils/bin:$JAVA_HOME/bin:$PATH
 MANPATH=/usr/local/share/man:/usr/share/man:$MANPATH
 
@@ -122,16 +114,15 @@ PATH=$HOME/utils/nginx/sbin:$PATH
 PATH=$HOME/utils/uwsgi-1.4.4:$PATH
 
 # texmacs
-TEXMACS_PATH=$HOME/utils/TeXmacs-1.0.7-static-gnu-linux/
+export TEXMACS_PATH=$HOME/utils/TeXmacs-1.0.7-static-gnu-linux/
 PATH=$TEXMACS_PATH/bin:$PATH
-export TEXMACS_PATH
 
 # golang-go.
 export GOROOT=$HOME/utils/go
+export GOPATH=$HOME/go/
 PATH=$GOROOT/bin:$PATH
-GOPATH=$HOME/go/
-export GOPATH
 
+# export path and manpath.
 export PATH
 export MANPATH
 

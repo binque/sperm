@@ -203,8 +203,9 @@ http://web.archive.org/web/20110510125644/http://tech.backtype.com/the-dark-side
 Making Hadoop easy to deploy, use, and operate should be the #1 priority for the developers of Hadoop.
 
 ** 使用问题
-*** 搭建单节点集群
-搭建单节点集群允许我们在单机做一些模拟或者是测试，还是非常有意义的。如何操作的话可以参考链接 http://z/home/dirlt/utils/hadoop-0.20.2-cdh3u3/docs/single_node_setup.html
+*** CDH3u3搭建单节点集群    
+搭建单节点集群允许我们在单机做一些模拟或者是测试，还是非常有意义的。如何操作的话可以参考链接 http://localhost/utils/hadoop-0.20.2-cdh3u3/docs/single_node_setup.html 
+
 这里稍微总结一下：
    - 首先安装ssh和rsync # sudo apt-get install ssh &&  sudo apt-get install rsync 
    - 本机建立好信任关系 # cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
@@ -243,6 +244,22 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
    - webconsole
      -  NameNode - http://localhost:50070/ 
      -  JobTracker - http://localhost:50030/
+
+*** CDH4.2.0搭建单节点集群
+基本流程和CDH3u3是相同的，但是有一些差异我记录下来。
+   - 配置文件在/etc/hadoop，包括环境配置脚本.比如hadoop-env.sh
+   - sbin目录下面有hadoop集群启动停止工具，libexec目录下面是公用的配置脚本，而bin下面则偏向应用程序。 *NOTE（dirlt）：感觉比较乱*
+   - mapred-site.xml中jobtracker地址配置key修改为 mapred.jobtracker.address
+   - hadoop-daemons.sh会使用/sbin/slaves.sh来在各个节点启动，但是 *不知道什么原因，很多环境变量没有设置* ，所以在slaves.sh执行ssh命令部分最开始增加了 source ~/.shrc; 来强制设置我的环境变量
+   - CDH4.2.0 native-library都放在了目录lib/native下面，而不是CDH3u3的lib/native/Linux-amd64-64下面，这点需要注意。
+   - CDH4.2.0 没有自带libhadoop.so, 所以启动的时候都会出现 ”Unable to load native-hadoop library for your platform... using builtin-java classes where applicable“ 这个警告。需要自己编译放到lib/native目录下面。
+   - CDH4.2.0 lib下面没有任何文件，所有的lib都在share/hadoop/*/lib下面，比如share/hadoop/common/lib. 这点和CDH3有差别，CDH3所有的jar都放在lib目录下面。使用 hadoop classpath 命令可以察看
+#+BEGIN_EXAMPLE
+➜  ~HADOOP_HOME  hadoop classpath
+/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/etc/hadoop/:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/common/lib/*:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/common/*:./target/classes:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/contrib/capacity-scheduler/*.jar:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/hdfs:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/hdfs/lib/*:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/hdfs/*:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/yarn/lib/*:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/yarn/*:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/mapreduce/lib/*:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/mapreduce/*
+#+END_EXAMPLE
+   - 环境变量JAVA_LIBRARY_PATH用来设置native library path, HADOOP_CLASSPATH可以用来设置hadoop相关的classpath（比如使用hadoop-lzo等）
+   - 使用命令 hadoop org/apache/hadoop/examples/QuasiMonteCarlo 1 1 确定集群是否可以正常运行。
 
 *** OutOfMemoryError
    - hadoop的mapreduce作业中经常出现Java heap space解决方案 http://blog.sina.com.cn/s/blog_6345041c01011bjq.html
@@ -852,7 +869,6 @@ public abstract class RecordReader<KEYIN, VALUEIN> implements Closeable {
 	 - CompositeContext 组合context
        - 度量可以从hadoop-metrics.properties进行配置
     
-       
 ** 代码分析
 
 

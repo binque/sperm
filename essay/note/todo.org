@@ -7,6 +7,10 @@
 ** TODO RSS system we make
 ** TODO RSS paper planes
 ** TODO RSS All things Distributed.
+** TODO zookeeper论文阅读
+** TODO hbase书籍整理
+** TODO pig论文阅读
+** TODO pig学习
 ** TODO 《失控》,《浅薄》
 ** TODO 老婆健身计划以及怀孕
 ** TODO 找中医并且调理身体
