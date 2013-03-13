@@ -525,7 +525,7 @@ int main() {
 }
 #+END_SRC
 
-运行结果如下。可以看到测试组1里面action2运行时间为2.9s左右，而测试组2里面action2运行时间为8.5s *时间差别很大*
+*在自己的Ubuntu机器下面使用g++4.6编译* 运行结果如下。可以看到测试组1里面action2运行时间为2.9s左右，而测试组2里面action2运行时间为8.5s *时间差别很大*
 #+BEGIN_EXAMPLE
 ➜  playboard git:(master) ✗ g++ map_perf_test.cc -O2             
 ➜  playboard git:(master) ✗ ./a.out 
@@ -536,7 +536,7 @@ int main() {
 8521.25
 #+END_EXAMPLE
 
-可能是编译器的结果？切换成为clang++来编译.效果是一样的。 *时间差别很大*
+可能是编译器的原因？ *在自己的Ubuntu机器下面clang++来编译，时间差别同样很大*
 #+BEGIN_EXAMPLE
 ➜  playboard git:(master) ✗ clang++ map_perf_test.cc -O2
 ➜  playboard git:(master) ✗ ./a.out 
@@ -547,7 +547,7 @@ int main() {
 8495.00
 #+END_EXAMPLE
 
-然后我放到自己的macbook air下面使用clang重新编译， *时间是差不多的*
+*在自己的macbook air下面使用clang重新编译，时间是差不多的*
 #+BEGIN_EXAMPLE
 ➜  playboard git:(master) ✗ g++ map_perf_test.cc -O2
 ➜  playboard git:(master) ✗ ./a.out
