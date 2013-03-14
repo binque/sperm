@@ -11,29 +11,44 @@ fi
 # basic paths.
 PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH
 
-CDH4=1
+CDH3=0
+CDH4_SRC=0
+CDH4_APT=1
+
 if [ $MAC = 1 ]
 then
     # on mac, I just use java.
     export JAVA_HOME=/Library/Java/Home/
 else
     export JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64/
-
-    export HADOOP_HOME=$HOME/utils/hadoop-0.20.2-cdh3u3/
-    export HADOOP_CONF_DIR=$HADOOP_HOME/conf   
-    export HBASE_HOME=$HOME/utils/hbase-0.90.4-cdh3u3/
-    export HBASE_CONF_DIR=$HBASE_HOME/conf
-    export OOZIE_HOME=$HOME/utils/oozie-2.3.2-cdh3u3/
-    export OOZIE_URL="http://localhost:11000/oozie" # default url.
-    export HIVE_HOME=$HOME/utils/hive-0.7.1-cdh3u3/
-
-    if [ $CDH4 = 1 ]
+   
+    if [ $CDH3 = 1 ]
     then
+	export HADOOP_HOME=$HOME/utils/hadoop-0.20.2-cdh3u3/
+	export HADOOP_CONF_DIR=$HADOOP_HOME/conf   
+	export HBASE_HOME=$HOME/utils/hbase-0.90.4-cdh3u3/
+	export HBASE_CONF_DIR=$HBASE_HOME/conf
+	export OOZIE_HOME=$HOME/utils/oozie-2.3.2-cdh3u3/
+	export OOZIE_URL="http://localhost:11000/oozie" # default url
+	export HIVE_HOME=$HOME/utils/hive-0.7.1-cdh3u3/
+    fi
+
+    if [ $CDH4_SRC = 1 ]
+    then	
 	export HADOOP_HOME=$HOME/utils/hadoop-2.0.0-cdh4.2.0
 	export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop/
 	export HBASE_HOME=$HOME/utils/hbase-0.94.2-cdh4.2.0/
 	export HBASE_CONF_DIR=$HBASE_HOME/conf	
 	export HIVE_HOME=$HOME/utils/hive-0.10.0-cdh4.2.0/	
+    fi
+
+    if [ $CDH4_APT = 1 ]
+    then
+	export HADOOP_HOME=/usr/lib/hadoop/
+	export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop/
+	export HBASE_HOME=/usr/lib/hbase/
+	export HBASE_CONF_DIR=$HBASE_HOME/conf	
+	export HIVE_HOME=/usr/lib/hive/
     fi
 
     # java native library.    
@@ -112,10 +127,8 @@ MANPATH=$HOME/utils/clisp/share/man:$MANPATH
 PATH=$HOME/github/depot_tools:$PATH
 PATH=$HOME/utils/nginx/sbin:$PATH
 PATH=$HOME/utils/uwsgi-1.4.4:$PATH
-
-# texmacs
-export TEXMACS_PATH=$HOME/utils/TeXmacs-1.0.7-static-gnu-linux/
-PATH=$TEXMACS_PATH/bin:$PATH
+PATH=$HOME/utils/TeXmacs-1.0.7-static-gnu-linux/bin:$PATH
+PATH=$HOME/utils/apache-maven-3.0.4/bin:$PATH
 
 # golang-go.
 export GOROOT=$HOME/utils/go

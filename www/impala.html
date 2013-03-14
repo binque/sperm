@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="impala"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-03-07 17:37:41 CST"/>
+<meta name="generated" content="2013-03-14 17:32:50 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -111,6 +111,8 @@
 <li><a href="#sec-1-3-1">1.3.1 Hardware Requirements</a></li>
 <li><a href="#sec-1-3-2">1.3.2 Prerequsite</a></li>
 <li><a href="#sec-1-3-3">1.3.3 Ubuntu</a></li>
+<li><a href="#sec-1-3-4">1.3.4 Gettting Started</a></li>
+<li><a href="#sec-1-3-5">1.3.5 TroubleShooting</a></li>
 </ul>
 </li>
 </ul>
@@ -185,7 +187,6 @@
 </ul>
 
 
-
 <p>
 Queries executed using Impala are handled as follows:
 </p><ol>
@@ -246,24 +247,15 @@ Queries executed using Impala are handled as follows:
 <ul>
 <li>Install CDH4 as described in CDH4 Installation. <a href="https://ccp.cloudera.com/display/CDH4DOC/CDH4+Installation">https://ccp.cloudera.com/display/CDH4DOC/CDH4+Installation</a>
 <ul>
-<li>add following to /etc/apt/sources.list.d/cloudera.list 
-<ul>
-<li>deb [arch=amd64] <a href="http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh">http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh</a> precise-cdh4 contrib
-</li>
-<li>deb-src <a href="http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh">http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh</a> precise-cdh4 contrib
-</li>
-</ul>
-
-</li>
-<li>curl -s <a href="http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh/archive.key">http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh/archive.key</a> | sudo apt-key add -
-</li>
-<li>sudo apt-get update
+<li>添加下面source,然后sudo apt-get update
 </li>
 <li>sudo apt-get install hadoop-0.20-mapreduce-jobtracker
 </li>
 <li>sudo apt-get install hadoop-hdfs-namenode
 </li>
-<li>sudo apt-get install hadoop-0.20-mapreduce-tasktracker hadoop-hdfs-datanode
+<li>sudo apt-get install hadoop-0.20-mapreduce-tasktracker 
+</li>
+<li>sudo apt-get install hadoop-hdfs-datanode
 </li>
 <li>sudo apt-get install hadoop-client
 </li>
@@ -271,8 +263,23 @@ Queries executed using Impala are handled as follows:
 
 </li>
 <li>Install Hive as described in Hive Installation. As part of this process, you must configure Hive to use an external database as a metastore. 必须使用外部数据库来作为metastore <b>NOTE(dirlt):hive允许使用内嵌数据库做metastore</b>
+<ul>
+<li>sudo apt-get install hive
 </li>
 </ul>
+
+</li>
+</ul>
+
+
+
+
+<pre class="example">deb [arch=amd64] http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh precise-cdh4 contrib
+deb-src http://archive.cloudera.com/cdh4/ubuntu/precise/amd64/cdh precise-cdh4 contrib
+
+deb [arch=amd64] http://beta.cloudera.com/impala/ubuntu/precise/amd64/impala precise-impala0 contrib
+deb-src http://beta.cloudera.com/impala/ubuntu/precise/amd64/impala precise-impala0 contrib
+</pre>
 
 
 <p>
@@ -289,6 +296,20 @@ tarball:
 </ul>
 
 
+<p>
+<b>NOTE(dirlt):最好不要用tarball安装</b> impala需要使用hdfs的short-circuit read的特性，这个特性需要有libhadoop.so.但是tarball没有自带native实现
+</p>
+
+
+<pre class="example">Enabling short-circuit reads allows Impala to read local data directly from the file system. This removes
+the need to communicate through the DataNodes, improving performance. This setting also minimizes
+the number of additional copies of data. Short-circuit reads requires libhadoop.so (the Hadoop
+Native Library) to be accessible to both the server and the client. libhadoop.so is not available if you
+have installed from a tarball. You must install from an .rpm, .deb, or parcel in order to use short-circuit
+local reads.
+</pre>
+
+
 </div>
 
 </div>
@@ -297,11 +318,21 @@ tarball:
 <h4 id="sec-1-3-3"><span class="section-number-4">1.3.3</span> Ubuntu</h4>
 <div class="outline-text-4" id="text-1-3-3">
 
-<p>source compile:
+<p>source compile: <b>NOTE（dirlt）：比较麻烦</b>
 </p><ul>
 <li>sudo apt-get install libboost-all-dev libevent1-dev automake libtool flex bison g++ libssl-dev make cmake doxygen libglib2.0-dev python-dev libzip2 subversion libsasl2-dev wget git unzip
 </li>
-<li>
+<li>llvm maven3 # github README上面有描述
+</li>
+<li>git clone <a href="https://github.com/cloudera/impala.git">https://github.com/cloudera/impala.git</a>
+</li>
+<li>cd impala &amp;&amp; . bin/impala-config.sh # <b>NOTE(dirlt):我使用oh-my-zsh似乎有问题，切换成为bash就成功</b>
+</li>
+<li>cd thirdparty &amp;&amp; ./download_thirdparty.sh # <b>NOTE(dirlt):如果自己手动下载了hadoop和hive的话，可以修改一下脚本，因为这两个包还是比较大的</b>
+</li>
+<li>cd ${IMPALA_HOME} &amp;&amp; ./build_public.sh -build_thirdparty
+</li>
+<li><b>NOTE（dirlt）：编译麻烦，我没有成功，放弃</b>
 </li>
 </ul>
 
@@ -309,13 +340,109 @@ tarball:
 <p>
 binary install:
 </p><ul>
-<li>
+<li>sudo apt-get install impala
+</li>
+<li>sudo apt-get install impala-shell
 </li>
 </ul>
 
 
+</div>
+
+</div>
+
+<div id="outline-container-1-3-4" class="outline-4">
+<h4 id="sec-1-3-4"><span class="section-number-4">1.3.4</span> Gettting Started</h4>
+<div class="outline-text-4" id="text-1-3-4">
+
+<ul>
+<li>启动hdfs
+</li>
+<li>无需启动mapreduce/yarn/hbase.
+</li>
+<li>启动hive metastore
+</li>
+<li>使用hive创建table并且导入数据
+</li>
+<li>启动impalad # impala daemon. sudo impalad start
+</li>
+<li>启动statstored # imapala存储统计数据进行优化. sudo statestored start
+</li>
+<li>启动impala shell 
+<ul>
+<li>connect &lt;host&gt; # 连接到host的impalad. connect localhost
+</li>
+<li>refresh # 从hive metastore读取meta数据，保存在内存中
+</li>
+<li>SQL语句
+</li>
+</ul>
+
+</li>
+</ul>
 
 
+<p>
+下面是一个例子，使用Hive和Impala来做SQL查询
+</p>
+
+
+
+<pre class="example">➜  lib  impala-shell
+Welcome to the Impala shell. Press TAB twice to see a list of available commands.
+
+Copyright (c) 2012 Cloudera, Inc. All rights reserved.
+
+(Build version: Impala v0.6 (720f93c) built on Sat Feb 23 18:52:43 PST 2013)
+[Not connected] &gt; connect localhost
+Connected to localhost:21000
+[localhost:21000] &gt; refresh
+Successfully refreshed catalog
+[localhost:21000] &gt; select * from kv where k = 400;
+Query: select * from kv where k = 400
+Query finished, fetching results ...
+400     val_400
+Returned 1 row(s) in 0.65s
+[localhost:21000] &gt; 
+</pre>
+
+
+
+</div>
+
+</div>
+
+<div id="outline-container-1-3-5" class="outline-4">
+<h4 id="sec-1-3-5"><span class="section-number-4">1.3.5</span> TroubleShooting</h4>
+<div class="outline-text-4" id="text-1-3-5">
+
+
+<hr/>
+<p>
+启动sudo impalad start出现下面错误
+</p>
+
+
+<pre class="example">0314 16:41:13.884233 18187 impala-server.cc:573] ERROR: short-circuit local reads is disabled because
+  - dfs.client.read.shortcircuit is not enabled.
+E0314 16:41:13.884558 18187 impala-server.cc:575] Impala is aborted due to improper configurations.
+</pre>
+
+
+<p>
+这个问题原因是因为impala需要使用hdfs的short-circuit功能直接读取本地文件系统，避免从datannode传输。为了使用这个功能需要在hdfs-site.xml加上下面选项
+</p>
+
+
+<pre class="example">&lt;property&gt;
+  &lt;name&gt;dfs.client.read.shortcircuit&lt;/name&gt;
+  &lt;value&gt;true&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+  &lt;name&gt;dfs.domain.socket.path&lt;/name&gt;
+  &lt;value&gt;/var/run/hadoop-hdfs/dn._PORT&lt;/value&gt;
+&lt;/property&gt;
+</pre>
 
 </div>
 </div>
@@ -324,8 +451,8 @@ binary install:
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-03-07 17:37:41 CST</p>
-<p class="creator">Org version 7.8.11 with Emacs version 24</p>
+<p class="date">Date: 2013-03-14 17:32:50 CST</p>
+<p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

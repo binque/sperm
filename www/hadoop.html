@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="hadoop"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-03-13 20:34:54 CST"/>
+<meta name="generated" content="2013-03-14 17:32:52 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -737,17 +737,9 @@ Making Hadoop easy to deploy, use, and operate should be the #1 priority for the
 </li>
 <li>CDH4.2.0 lib下面没有任何文件，所有的lib都在share/hadoop/*/lib下面，比如share/hadoop/common/lib. 这点和CDH3有差别，CDH3所有的jar都放在lib目录下面。使用 hadoop classpath 命令可以察看
 </li>
-</ul>
-
-
-
-
-<pre class="example">➜  ~HADOOP_HOME  hadoop classpath
-/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/etc/hadoop/:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/common/lib/*:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/common/*:./target/classes:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/contrib/capacity-scheduler/*.jar:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/hdfs:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/hdfs/lib/*:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/hdfs/*:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/yarn/lib/*:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/yarn/*:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/mapreduce/lib/*:/home/dirlt/utils/hadoop-2.0.0-cdh4.2.0/share/hadoop/mapreduce/*
-</pre>
-
-<ul>
 <li>环境变量JAVA_LIBRARY_PATH用来设置native library path, HADOOP_CLASSPATH可以用来设置hadoop相关的classpath（比如使用hadoop-lzo等）
+</li>
+<li>使用hdfs namenode -format来做格式化 <b>注意如果使用sudo apt-get来安装的话，是其他用户比如hdfs,impala,mapred,yarn来启动的，所以必须确保目录对于这些用户是可写的</b>
 </li>
 <li>使用命令 hadoop org/apache/hadoop/examples/QuasiMonteCarlo 1 1 确定集群是否可以正常运行。
 </li>
@@ -2386,7 +2378,7 @@ public abstract class RecordReader&lt;KEYIN, VALUEIN&gt; implements Closeable {
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-03-13 20:34:54 CST</p>
+<p class="date">Date: 2013-03-14 17:32:52 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

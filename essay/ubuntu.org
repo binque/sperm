@@ -72,6 +72,8 @@
    - sudo apt-get install clojure
    - sudo apt-get install zsh
    - sudo apt-get install collectl
+   - sudo apt-get install vim
+   - sudo apt-get install xbmc
 
 ** amarok循环播放
 在amarok的右下角有task progression的图标，选择repeat track即可。

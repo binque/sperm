@@ -97,10 +97,34 @@ def multiQuery():
     mResponse.ParseFromString(data2)
     #print mResponse
 
-    
+
+def queryColumnLarge():
+    print '----------queryColumnLarge----------'
+    request = message_pb2.ReadRequest()
+
+    request.table_name='appuserstat'
+    request.row_key='2013-03-08_4d707f5e112cf75410007470'
+    request.column_family='stat'
+    request.qualifiers.append('models_1_lanCnt')
+
+    data = request.SerializeToString()
+    s = time.time()
+    data2 = raiseHTTPRequest('http://dp0:12345/read',data,timeout=20)
+    print "data size = %d bytes"%(len(data2))
+    e = time.time()
+    print 'time spent %.2lfs'%((e-s))
+
+    response = message_pb2.ReadResponse()
+    response.ParseFromString(data2)
+
+    x = response.kvs[0].content
+    xs = x.split("\f")
+    print "models size = %d"%(len(xs))
+
 if __name__=='__main__':
     queryColumn()
     queryColumnFamily()
     multiQuery()
     queryColumnNone()
+    queryColumnLarge()
     

@@ -31,7 +31,6 @@ metadata store主要是用来存储数据库的一些元数据信息，有下面
    - javax.jdo.option.ConnectionDriverName.
 默认实现是在本地的derby db，默认存储位置是./metastore_db. metastore其他实现需要支持JPO（Java Persistent Object） Metastore can be stored in any database that is supported by JPOX. The database schema is defined in JDO metadata annotations file package.jdo at src/contrib/hive/metastore/src/model.
 
-
 --------------------
 
 *配置remote server*
@@ -104,3 +103,40 @@ Time taken: 5.787 seconds
    - load data.
    - do select *NOTE(dirlt):可以看到这里运行了mr任务*
 
+
+*** TroubleShooting
+--------------------
+调用SQL select count(*) from kv, hive出现下面问题（CDH4.2.0有，CDH3u3没有）
+#+BEGIN_EXAMPLE
+java.io.FileNotFoundException: File does not exist: hdfs://localhost:9000/home/dirlt/utils/hive-0.10.0-cdh4.2.0/lib/hive-builtins-0.10.0-cdh4.2.0.jar
+	at org.apache.hadoop.hdfs.DistributedFileSystem.getFileStatus(DistributedFileSystem.java:807)
+	at org.apache.hadoop.mapreduce.filecache.ClientDistributedCacheManager.getFileStatus(ClientDistributedCacheManager.java:288)
+	at org.apache.hadoop.mapreduce.filecache.ClientDistributedCacheManager.getFileStatus(ClientDistributedCacheManager.java:224)
+	at org.apache.hadoop.mapreduce.filecache.ClientDistributedCacheManager.determineTimestamps(ClientDistributedCacheManager.java:93)
+	at org.apache.hadoop.mapreduce.filecache.ClientDistributedCacheManager.determineTimestampsAndCacheVisibilities(ClientDistributedCacheManager.java:57)
+	at org.apache.hadoop.mapreduce.JobSubmitter.copyAndConfigureFiles(JobSubmitter.java:254)
+	at org.apache.hadoop.mapreduce.JobSubmitter.copyAndConfigureFiles(JobSubmitter.java:290)
+	at org.apache.hadoop.mapreduce.JobSubmitter.submitJobInternal(JobSubmitter.java:361)
+	at org.apache.hadoop.mapreduce.Job$11.run(Job.java:1218)
+	at org.apache.hadoop.mapreduce.Job$11.run(Job.java:1215)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:416)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1408)
+	at org.apache.hadoop.mapreduce.Job.submit(Job.java:1215)
+	at org.apache.hadoop.mapred.JobClient$1.run(JobClient.java:617)
+	at org.apache.hadoop.mapred.JobClient$1.run(JobClient.java:612)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:416)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1408)
+	at org.apache.hadoop.mapred.JobClient.submitJob(JobClient.java:612)
+	at org.apache.hadoop.hive.ql.exec.ExecDriver.execute(ExecDriver.java:447)
+	at org.apache.hadoop.hive.ql.exec.ExecDriver.main(ExecDriver.java:689)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:616)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:208)
+Job Submission failed with exception 'java.io.FileNotFoundException(File does not exist: hdfs://localhost:9000/home/dirlt/utils/hive-0.10.0-cdh4.2.0/lib/hive-builtins-0.10.0-cdh4.2.0.jar)'
+#+END_EXAMPLE
+
+这个问题我猜想应该Hive CDH4之后使用lean jar的方式，要求依赖jar文件存放在hdfs上面，运行时候然后下载到本地执行。把hive/lib下面的jar全部上传到HDFS上面之后这个问题解决。
