@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="leveldb"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-01-23 13:31:04 CST"/>
+<meta name="generated" content="2013-03-16 20:25:51 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -531,8 +531,12 @@
 <li><a href="#sec-1-10-9-6">1.10.9.6 CRC32C</a></li>
 <li><a href="#sec-1-10-9-7">1.10.9.7 Hash</a></li>
 <li><a href="#sec-1-10-9-8">1.10.9.8 BloomFilterPolicy</a></li>
+</ul></li>
 </ul>
 </li>
+<li><a href="#sec-1-11">1.11 Discussion</a>
+<ul>
+<li><a href="#sec-1-11-1">1.11.1 leveldb通过iterator遍历，对于相同的key如何保证获取到最新的值（hpplinux)</a></li>
 </ul>
 </li>
 </ul>
@@ -14186,16 +14190,119 @@ virtual bool KeyMayMatch(const Slice&amp; key, const Slice&amp; bloom_filter) co
 }
 </pre>
 
+
 </div>
 </div>
+</div>
+
+</div>
+
+<div id="outline-container-1-11" class="outline-3">
+<h3 id="sec-1-11"><span class="section-number-3">1.11</span> Discussion</h3>
+<div class="outline-text-3" id="text-1-11">
+
+
+</div>
+
+<div id="outline-container-1-11-1" class="outline-4">
+<h4 id="sec-1-11-1"><span class="section-number-4">1.11.1</span> leveldb通过iterator遍历，对于相同的key如何保证获取到最新的值（hpplinux)</h4>
+<div class="outline-text-4" id="text-1-11-1">
+
+<p><b>Question</b>
+</p>
+
+
+
+<pre class="example">我在看LevelDB代码的时候遇到了一个问题，百思不得其解，也找不到可以探讨请教的人，所以冒昧的给您发了这封邮件，希望得到您的帮助。
+我遇到的问题是这样的：
+在
+void Version::AddIterators(const ReadOptions&amp; options,
+                           std::vector&lt;Iterator*&gt;* iters) {
+  // Merge all level zero files together since they may overlap
+  for (size_t i = 0; i &lt; files_[0].size(); i++) {
+    iters-&gt;push_back(
+        vset_-&gt;table_cache_-&gt;NewIterator(
+            options, files_[0][i]-&gt;number, files_[0][i]-&gt;file_size));
+  }
+ 
+  // For levels &gt; 0, we can use a concatenating iterator that sequentially
+  // walks through the non-overlapping files in the level, opening them
+  // lazily.
+  for (int level = 1; level &lt; config::kNumLevels; level++) {
+    if (!files_[level].empty()) {
+      iters-&gt;push_back(NewConcatenatingIterator(options, level));
+    }
+  }
+}
+ 
+中对于Level 0层是按照下标从0到N开始遍历的， 但是由于数据加入的时候老的文件在前，新的在后，所以这样的话在iters数组中
+下标最小的不一定是最新的。
+而在DBImpl::NewInternalIterator 中会把该函数的返回结果直接进行merging，而且原则是key相同的话选取丢弃后面出现的。
+ 
+这样的策略的话会不会导致较老的数据被留下，较新的被删除 ？
+</pre>
+
+
+
+<hr/>
+
+<p>
+<b>Answer</b>
+</p>
+<p>
+是这样的，你可以看到AddIterators这个部分是被DBImpl::NewInternalIterator调用的，得到所有的iterators之后，构造一个MergingIterator对象。
+</p>
+
+
+
+<pre class="src src-C++">// &#23545;&#20110;version&#26469;&#35828;&#21487;&#33021;&#23384;&#22312;&#24456;&#22810;&#25991;&#20214;&#38656;&#35201;&#36941;&#21382;.
+versions_-&gt;current()-&gt;AddIterators(options, &amp;list);
+// &#23558;&#36825;&#20123;&#20869;&#23481;&#26500;&#36896;&#31216;&#20026;&#19968;&#20010;merge iterator.
+// &#27880;&#24847;&#36825;&#37324;&#30340;&#20869;&#23481;&#37117;&#21152;&#20102;&#24341;&#29992;&#35745;&#25968;.
+Iterator* internal_iter =
+    NewMergingIterator(&amp;internal_comparator_, &amp;list[0], list.size());
+</pre>
+
+
+<p>
+注意它这里提供的comparator是一个internal_comparator. 这个comparator不仅仅比较user key, 还比较sequence number. 因为sequence number是顺序分配的，所以新的kv得到更大的sequence number. 代码在这里：
+</p>
+
+
+
+<pre class="src src-C++">int InternalKeyComparator::Compare(const Slice&amp; akey, const Slice&amp; bkey) const {
+  // Order by:
+  //    increasing user key (according to user-supplied comparator)
+  //    decreasing sequence number
+  //    decreasing type (though sequence# should be enough to disambiguate)
+  int r = user_comparator_-&gt;Compare(ExtractUserKey(akey), ExtractUserKey(bkey));
+  if (r == 0) {
+    const uint64_t anum = DecodeFixed64(akey.data() + akey.size() - 8);
+    const uint64_t bnum = DecodeFixed64(bkey.data() + bkey.size() - 8);
+    if (anum &gt; bnum) { // &#25353;&#29031;sequence number&#27604;&#36739;.
+     // &#20043;&#21069;&#25105;&#20204;&#22312;MemTableInserter&#37324;&#38754;&#21487;&#20197;&#30475;&#21040;sequence number&#26159;&#19981;&#26029;&#22686;&#21152;&#30340;.
+      r = -1;
+    } else if (anum &lt; bnum) {
+      r = +1;
+    }
+  }
+  return r;
+}
+
+</pre>
+
+
+<p>
+然后这个就好解释问题了。首先每个iterator内部都是按照key做好排序的，多路iterator如果出现相同的key那么使用sequence number大的那个，这样就可以保证始终首先看到的是新值。
+</p></div>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-01-23 13:31:04 CST</p>
-<p class="creator">Org version 7.8.02 with Emacs version 23</p>
+<p class="date">Date: 2013-03-16 20:25:51 CST</p>
+<p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

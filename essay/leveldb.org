@@ -10136,3 +10136,78 @@ NOTE(dirlt):之前可能对于filter有点错误理解.觉得这个filter没有�
     return true;
   }
 #+END_SRC
+
+** Discussion
+*** leveldb通过iterator遍历，对于相同的key如何保证获取到最新的值（hpplinux)
+*Question*
+
+#+BEGIN_EXAMPLE
+我在看LevelDB代码的时候遇到了一个问题，百思不得其解，也找不到可以探讨请教的人，所以冒昧的给您发了这封邮件，希望得到您的帮助。
+我遇到的问题是这样的：
+在
+void Version::AddIterators(const ReadOptions& options,
+                           std::vector<Iterator*>* iters) {
+  // Merge all level zero files together since they may overlap
+  for (size_t i = 0; i < files_[0].size(); i++) {
+    iters->push_back(
+        vset_->table_cache_->NewIterator(
+            options, files_[0][i]->number, files_[0][i]->file_size));
+  }
+ 
+  // For levels > 0, we can use a concatenating iterator that sequentially
+  // walks through the non-overlapping files in the level, opening them
+  // lazily.
+  for (int level = 1; level < config::kNumLevels; level++) {
+    if (!files_[level].empty()) {
+      iters->push_back(NewConcatenatingIterator(options, level));
+    }
+  }
+}
+ 
+中对于Level 0层是按照下标从0到N开始遍历的， 但是由于数据加入的时候老的文件在前，新的在后，所以这样的话在iters数组中
+下标最小的不一定是最新的。
+而在DBImpl::NewInternalIterator 中会把该函数的返回结果直接进行merging，而且原则是key相同的话选取丢弃后面出现的。
+ 
+这样的策略的话会不会导致较老的数据被留下，较新的被删除 ？
+#+END_EXAMPLE
+
+--------------------
+
+*Answer*
+
+是这样的，你可以看到AddIterators这个部分是被DBImpl::NewInternalIterator调用的，得到所有的iterators之后，构造一个MergingIterator对象。
+
+#+BEGIN_SRC C++
+  // 对于version来说可能存在很多文件需要遍历.
+  versions_->current()->AddIterators(options, &list);
+  // 将这些内容构造称为一个merge iterator.
+  // 注意这里的内容都加了引用计数.
+  Iterator* internal_iter =
+      NewMergingIterator(&internal_comparator_, &list[0], list.size());
+#+END_SRC
+
+注意它这里提供的comparator是一个internal_comparator. 这个comparator不仅仅比较user key, 还比较sequence number. 因为sequence number是顺序分配的，所以新的kv得到更大的sequence number. 代码在这里：
+
+#+BEGIN_SRC C++
+int InternalKeyComparator::Compare(const Slice& akey, const Slice& bkey) const {
+  // Order by:
+  //    increasing user key (according to user-supplied comparator)
+  //    decreasing sequence number
+  //    decreasing type (though sequence# should be enough to disambiguate)
+  int r = user_comparator_->Compare(ExtractUserKey(akey), ExtractUserKey(bkey));
+  if (r == 0) {
+    const uint64_t anum = DecodeFixed64(akey.data() + akey.size() - 8);
+    const uint64_t bnum = DecodeFixed64(bkey.data() + bkey.size() - 8);
+    if (anum > bnum) { // 按照sequence number比较.
+     // 之前我们在MemTableInserter里面可以看到sequence number是不断增加的.
+      r = -1;
+    } else if (anum < bnum) {
+      r = +1;
+    }
+  }
+  return r;
+}
+
+#+END_SRC
+
+然后这个就好解释问题了。首先每个iterator内部都是按照key做好排序的，多路iterator如果出现相同的key那么使用sequence number大的那个，这样就可以保证始终首先看到的是新值。
