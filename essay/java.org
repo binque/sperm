@@ -394,7 +394,7 @@ java虚拟机规范强调可移植性，对于在任何机器上来说相同的�
    - Sun jdk 1.6 gc http://www.slideshare.net/BlueDavy/sun-jdk-16-gc
      
 ** JNI
-   - Java Native Interface: Programmer's Guide and Specification http://192.9.162.55/docs/books/jni/ *NOTE(dirlt):比较详细*
+   - Java Native Interface: Programmer's Guide and Specification http://192.9.162.55/docs/books/jni/  *NOTE(dirlt):比较详细*
 
 *** Introduction
 The JNI is designed to handle situations where you need to combine Java applications with native code. As a two-way interface, the JNI can support two types of native code: native libraries and native applications. （允许相互调用）

@@ -11,9 +11,9 @@ fi
 # basic paths.
 PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/sbin:$PATH
 
-CDH3=0
+CDH3=1
 CDH4_SRC=0
-CDH4_APT=1
+CDH4_APT=0
 
 if [ $MAC = 1 ]
 then

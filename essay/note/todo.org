@@ -18,3 +18,7 @@
 ** TODO 整理weibo
 ** TODO 装修房子事情
 ** TODO 回顾一下2012吧，有一些事情也值得一说。
+** TODO impala设计文档和工作原理
+
+** TODO maven JNI
+
