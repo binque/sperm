@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="distributed-system-reading"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-01-23 13:31:18 CST"/>
+<meta name="generated" content="2013-03-18 20:29:13 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -140,6 +140,7 @@
 <li><a href="#sec-1-5-3">1.5.3 BUILD YOUR OWN GOOGLE</a></li>
 </ul>
 </li>
+<li><a href="#sec-1-6">1.6 Case Study GFS: Evolution on Fast-forward</a></li>
 </ul>
 </li>
 </ul>
@@ -960,15 +961,70 @@ Software:
 </li>
 </ul>
 
+
 </div>
+</div>
+
+</div>
+
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> Case Study GFS: Evolution on Fast-forward</h3>
+<div class="outline-text-3" id="text-1-6">
+
+
+<hr/>
+
+<p class="verse">
+MCKUSICK Now, under the current schema for GFS, you have one master per cell, right?<br/>
+<br/>
+QUINLAN That’s correct.<br/>
+<br/>
+MCKUSICK And historically you’ve had one cell per data center, right?<br/>
+<br/>
+QUINLAN That was initially the goal, but it didn’t work out like that to a large extent—partly because of the limitations of the single-master design and partly because isolation proved to be difficult. As a consequence, people generally ended up with more than one cell per data center. We also ended up doing what we call a “multi-cell” approach, which basically made it possible to put multiple GFS masters on top of a pool of chunkservers. That way, the chunkservers could be configured to have, say, eight GFS masters assigned to them, and that would give you at least one pool of underlying storage—with multiple master heads on it, if you will. Then the application was responsible for partitioning data across those different cells.<br/>
+<br/>
+</p>
+
+
+<p>
+GFS初始设计是在一个data center/cell部署一个master. 但是事实证明这种方式不太好，一方面是因为master本身限制造成压力，另外一方面是在单master上面完成隔离比较困难。因此后来采用了mult-cell的方法，在一个data center/cell部署多个master,但是这些master贡献一个chunkserver pool. 用户程序通过自己partition决定数据元信息存放在哪个master上面。
+</p>
+
+<hr/>
+
+<p class="verse">
+MCKUSICK What longer-term strategy have you come up with for dealing with the file-count issue? Certainly, it doesn’t seem that a distributed master is really going to help with that—not if the master still has to keep all the metadata in memory, that is.<br/>
+<br/>
+QUINLAN The distributed master certainly allows you to grow file counts, in line with the number of machines you’re willing to throw at it. That certainly helps.<br/>
+<br/>
+One of the appeals of the distributed multimaster model is that if you scale everything up by two orders of magnitude, then getting down to a 1-MB average file size is going to be a lot different from having a 64-MB average file size. If you end up going below 1 MB, then you’re also going to run into other issues that you really need to be careful about. For example, if you end up having to read 10,000 10-KB files, you’re going to be doing a lot more seeking than if you’re just reading 100 1-MB files.<br/>
+<br/>
+My gut feeling is that if you design for an average 1-MB file size, then that should provide for a much larger class of things than does a design that assumes a 64-MB average file size. Ideally, you would like to imagine a system that goes all the way down to much smaller file sizes, but 1 MB seems a reasonable compromise in our environment.<br/>
+<br/>
+MCKUSICK What have you been doing to design GFS to work with 1-MB files?<br/>
+<br/>
+QUINLAN We haven’t been doing anything with the existing GFS design. Our distributed master system that will provide for 1-MB files is essentially a whole new design. That way, we can aim for something on the order of 100 million files per master. You can also have hundreds of masters. <br/>
+<br/>
+MCKUSICK So, essentially no single master would have all this data on it?<br/>
+<br/>
+QUINLAN That’s the idea.<br/>
+<br/>
+</p>
+
+
+<p>
+<b>NOTE（dirlt）：说实话没看懂他们到底是什么意思</b> 不过似乎他们在解决文件数量这个问题上面使用的是分布式master解决方案，每个master不会持有所有的数据。分布式master的解决方案可以让每个master保存100 millions文件数目，并且以1MB为blocksize. 但是1MB已经是blocksize能够缩小到的底线了，如果低于1MB的话那么就需要重新设计。
+</p>
+
+<hr/>
 </div>
 </div>
 </div>
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-01-23 13:31:18 CST</p>
-<p class="creator">Org version 7.8.02 with Emacs version 23</p>
+<p class="date">Date: 2013-03-18 20:29:13 CST</p>
+<p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
 </div>

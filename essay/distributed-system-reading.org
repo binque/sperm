@@ -282,6 +282,7 @@ file:./images/the-open-source-google-stack.png
 
 ** Case Study GFS: Evolution on Fast-forward
 --------------------
+#+BEGIN_VERSE
 MCKUSICK Now, under the current schema for GFS, you have one master per cell, right?
 
 QUINLAN That’s correct.
@@ -290,9 +291,12 @@ MCKUSICK And historically you’ve had one cell per data center, right?
 
 QUINLAN That was initially the goal, but it didn’t work out like that to a large extent—partly because of the limitations of the single-master design and partly because isolation proved to be difficult. As a consequence, people generally ended up with more than one cell per data center. We also ended up doing what we call a “multi-cell” approach, which basically made it possible to put multiple GFS masters on top of a pool of chunkservers. That way, the chunkservers could be configured to have, say, eight GFS masters assigned to them, and that would give you at least one pool of underlying storage—with multiple master heads on it, if you will. Then the application was responsible for partitioning data across those different cells.
 
+#+END_VERSE
+
 GFS初始设计是在一个data center/cell部署一个master. 但是事实证明这种方式不太好，一方面是因为master本身限制造成压力，另外一方面是在单master上面完成隔离比较困难。因此后来采用了mult-cell的方法，在一个data center/cell部署多个master,但是这些master贡献一个chunkserver pool. 用户程序通过自己partition决定数据元信息存放在哪个master上面。
 
 --------------------
+#+BEGIN_VERSE
 MCKUSICK What longer-term strategy have you come up with for dealing with the file-count issue? Certainly, it doesn’t seem that a distributed master is really going to help with that—not if the master still has to keep all the metadata in memory, that is.
 
 QUINLAN The distributed master certainly allows you to grow file counts, in line with the number of machines you’re willing to throw at it. That certainly helps.
@@ -308,6 +312,8 @@ QUINLAN We haven’t been doing anything with the existing GFS design. Our distr
 MCKUSICK So, essentially no single master would have all this data on it?
 
 QUINLAN That’s the idea.
+
+#+END_VERSE
 
 *NOTE（dirlt）：说实话没看懂他们到底是什么意思* 不过似乎他们在解决文件数量这个问题上面使用的是分布式master解决方案，每个master不会持有所有的数据。分布式master的解决方案可以让每个master保存100 millions文件数目，并且以1MB为blocksize. 但是1MB已经是blocksize能够缩小到的底线了，如果低于1MB的话那么就需要重新设计。
 
