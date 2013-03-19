@@ -77,6 +77,18 @@
    - sudo apt-get install latex-cjk-all
    - sudo apt-get install texlive-fonts-recommended
 
+** 察看ubuntu内部版本
+lsb_release -a
+
+#+BEGIN_EXAMPLE
+➜  note git:(master) ✗ lsb_release -a
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description:    Ubuntu 12.04 LTS
+Release:        12.04
+Codename:       precise
+#+END_EXAMPLE
+
 ** amarok循环播放
 在amarok的右下角有task progression的图标，选择repeat track即可。
 
