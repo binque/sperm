@@ -176,4 +176,5 @@ file:./images/valve-logo.jpg
      - [[file:note/have-a-nice-sleep-and-straighten-up.org][好好睡一觉，然后振作起来]]
      - [[file:note/what-can-i-do-when-old.org][以后老了我能做什么]]
      - [[file:note/not-easy-as-you-think.org][没有那么简单]]
+     - [[file:note/retrospect-2012.org][回顾2012]]
     

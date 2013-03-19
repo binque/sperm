@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="distributed-system-reading"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-03-19 12:00:59 CST"/>
+<meta name="generated" content="2013-03-19 18:03:06 CST"/>
 <meta name="author" content="dirtysalt"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -990,8 +990,9 @@ QUINLAN That was initially the goal, but it didn’t work out like that to a lar
 
 <p>
 GFS初始设计是在一个data center/cell部署一个master. 但是事实证明这种方式不太好，一方面是因为master本身限制造成压力，另外一方面是在单master上面完成隔离比较困难。因此后来采用了mult-cell的方法，在一个data center/cell部署多个master,但是这些master贡献一个chunkserver pool. 用户程序通过自己partition决定数据元信息存放在哪个master上面。
-</p>
+》
 
+</p>
 <hr/>
 
 <p class="verse">
@@ -1066,7 +1067,7 @@ QUINLAN You serialize the writes through a single process that can ensure the re
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-03-19 12:00:59 CST</p>
+<p class="date">Date: 2013-03-19 18:03:06 CST</p>
 <p class="creator">Org version 7.8.02 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
