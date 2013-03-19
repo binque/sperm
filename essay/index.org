@@ -161,13 +161,13 @@ file:./images/valve-logo.jpg
      - [[file:note/book.org][书籍]] 自己看过的一些书，可能不太好分类所以全部放在这里了。
      - [[file:note/recipe.org][菜谱]] 是谁说的，活着就是为了更好的吃：）
      - [[file:note/house.org][住房]] 在天朝这是一个大问题。
-     - [[file:note/okr.org][OKR]] 
      - [[file:note/to-death.org][给离去的亲人们]]
     
    - 思考
      - [[file:note/new-era-carmack.org][新时代的卡马克]]
      - [[file:./note/cola-and-water.org][可乐和矿泉水]] 散文处女作
      - [[file:./note/retrospect-2009.org][回顾2009]]
+     - [[file:note/retrospect-2010.org][回顾2010]]
      - [[file:note/as-child-in-warm-house.org][温室长大的孩子]]
      - [[file:note/retrospect-2011.org][回顾2011]]
      - [[file:./note/talk-with-luoyan.org][和ly的谈话]]
