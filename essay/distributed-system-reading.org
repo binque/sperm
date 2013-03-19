@@ -281,6 +281,8 @@ file:./images/the-open-source-google-stack.png
    - An infrastructure handles versioning of applications so they can be release without a fear of breaking things = roll out with minimal QA *NOTE（dirlt）：有专门的程序来处理程序版本之间兼容关系，持续集成？！*
 
 ** Case Study GFS: Evolution on Fast-forward
+@2009
+
 --------------------
 #+BEGIN_VERSE
 MCKUSICK Now, under the current schema for GFS, you have one master per cell, right?
@@ -315,6 +317,37 @@ QUINLAN That’s the idea.
 
 #+END_VERSE
 
-*NOTE（dirlt）：说实话没看懂他们到底是什么意思* 不过似乎他们在解决文件数量这个问题上面使用的是分布式master解决方案，每个master不会持有所有的数据。分布式master的解决方案可以让每个master保存100 millions文件数目，并且以1MB为blocksize. 但是1MB已经是blocksize能够缩小到的底线了，如果低于1MB的话那么就需要重新设计。
+*NOTE（dirlt）：没有太看懂* 解决文件数量限制问题可以通过分布式master来解决。 *NOTE（dirlt）：但是个人觉得降低chunkszie似乎没有什么意义？*
 
 --------------------
+With the recent emergence within Google of BigTable, a distributed storage system for managing structured data, one potential remedy for the file-count problem—albeit perhaps not the very best one—is now available.
+
+#+BEGIN_VERSE
+MCKUSICK I guess the question I’m really trying to pose here is: Did BigTable just get stuck into a lot of these applications as an attempt to deal with the small-file problem, basically by taking a whole bunch of small things and then aggregating them together?
+
+QUINLAN That has certainly been one use case for BigTable, but it was actually intended for a much more general sort of problem. If you’re using BigTable in that way—that is, as a way of fighting the file-count problem where you might have otherwise used a file system to handle that—then you would not end up employing all of BigTable’s functionality by any means. BigTable isn’t really ideal for that purpose in that it requires resources for its own operations that are nontrivial. Also, it has garbage-collection policy that’s not super-aggressive, so that might not be the most efficient way to use your space. I’d say that the people who have been using BigTable purely to deal with the file- count problem probably haven’t been terribly happy, but there’s no question that it is one way for people to handle that problem.
+
+#+END_VERSE
+
+The other major challenge for GFS, of course, has revolved around finding ways to build latency- sensitive applications on top of a file system designed around an entirely different set of priorities.
+
+Our user base has definitely migrated from being a MapReduce-based world to more of an interactive world that relies on things such as BigTable. Gmail is an obvious example of that. Videos aren’t quite as bad where GFS is concerned because you get to stream data, meaning you can buffer. Still, trying to build an interactive database on top of a file system that was designed from the start to support more batch-oriented operations has certainly proved to be a pain point.
+
+*BigTable的出现解决了GFS出现的两个问题，一个侧面地解决了大量小文件存储问题虽然不是非常优雅但也可用，另外一方面是来处理延迟敏感的user-face application*
+
+--------------------
+#+BEGIN_VERSE
+MCKUSICK Was this done by design?
+
+QUINLAN At the time, it must have seemed like a good idea, but in retrospect I think the consensus is that it proved to be more painful than it was worth. It just doesn’t meet the expectations people have of a file system, so they end up getting surprised. Then they had to figure out work-arounds. MCKUSICK In retrospect, how would you handle this differently?
+
+QUINLAN I think it makes more sense to have a single writer per file.
+
+MCKUSICK All right, but what happens when you have multiple people wanting to append to a log? 
+
+QUINLAN You serialize the writes through a single process that can ensure the replicas are consistent.
+#+END_VERSE
+
+*GFS里面对于一个文件允许多个writer同时操作，因为mutation order以及支持random write造成的一致性问题一直是论文中最难理解的部分。google要是从头设计的话，也会使用HDFS方式支持append并且一个文件只允许一个appender*
+
+
