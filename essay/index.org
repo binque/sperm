@@ -79,7 +79,7 @@ file:./images/valve-logo.jpg
    - [[file:netty.org][netty]] an asynchronous event-driven network application framework in *Java* based on Java NIO.
 
 ** Storage System
-   - Readings in Database Systems http://redbook.cs.berkeley.edu/
+   - [[file:storage-system-reading.org][storage-system-reading]] 关于存储系统方面的一些文章以及阅读心得。
    - [[file:dbms.org][dbms]] DBMS(database management system)现在正在研究。打算首先阅读一下数据库系统基础教程(A First Course in Database Systems by Jeffrey D. Ullman),然后看看另外一本也是Jeffrey D. Ullman写的数据库系统实现(Database System Implementation).主要是了解DBMS方面的理论和大致实现，之后会稍微结合现有数据库实现阅读代码(MySQL/PostgreSQL).
    - [[file:leveldb.org][leveldb]] google的开源kv存储系统。支持billion级别的数据量，适合于写少读多的情况。当时阅读的时候是从github上面clone下来的，可能还存相当多的bug.TODO(dirlt):更深入的阅读.
    - [[file:mongodb.org][mongodb]] 面向文档的分布式存储系统，但是却可以针对文档字段索引来加快查询。功能上比通常我们认为的NoSQL强但是弱于RDBMS.
@@ -91,7 +91,7 @@ file:./images/valve-logo.jpg
    - [[file:memcached.org][memcached]]  an in-memory key-value store for small chunks of arbitrary data (strings, objects) 可以用来搭建分布式缓存服务
 
 ** Distributed System
-   - [[file:distributed-system-reading.org][distributed-system-reading]]  关于分布式方面的一些文章以及阅读心得。
+   - [[file:distributed-system-reading.org][distributed-system-reading]] 关于分布式系统方面的一些文章以及阅读心得。
    - [[file:streambase.org][streambase]] 在实现baidu in-house的分布式实时流式计算系统之前，调研的商用流式计算系统。没有办法获得源代码只能够从文档中猜测其内部实现以及参考其提供的功能与接口。
    - [[file:chubby.org][chubby]] google为松耦合分布式系统开发的锁服务，但是在现实中还可以作为名字服务来使用。
    - [[file:gfs.org][gfs]] google分布式基础架构的分布式文件系统。

@@ -1,0 +1,7 @@
+* storage-system-reading
+#+OPTIONS: H:4
+
+   - Readings in Database Systems http://redbook.cs.berkeley.edu/
+
+
+
