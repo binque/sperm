@@ -1,5 +1,4 @@
 * todo
-** TODO 装修经历
 ** TODO 购房经历
 ** TODO 了解几种DB Riak,CouchDB,CouchBase,MemSQL
     - http://kkovacs.eu/cassandra-vs-mongodb-vs-couchdb-vs-redis
